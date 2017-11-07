@@ -30,8 +30,10 @@ Add this to your application's `shard.yml`:
 ```yaml
 dependencies:
   mosquito:
-    github: [your-github-name]/mosquito
+    github: robacarp/mosquito
 ```
+
+and run `shards install` from your application root.
 
 ## Usage
 
