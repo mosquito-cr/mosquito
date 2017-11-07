@@ -1,0 +1,9 @@
+name: mosquito
+version: 0.1.0
+
+authors:
+  - Robert L Carpenter <robert@robacarp.com>
+
+crystal: 0.23.1
+
+license: MIT
