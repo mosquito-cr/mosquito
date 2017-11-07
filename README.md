@@ -19,7 +19,9 @@ Current Limitations:
 
 ## Project State
 
-2017-11-06 - Minimally working alpha. No functionality is tested, but it all seems to be working in manual tests. Use in a production environment at your own risk, and please open issues and feature requests.
+2017-11-06
+
+> Minimally working alpha. No functionality is tested, but it all seems to be working in manual tests. Use in a production environment at your own risk, and please open issues and feature requests.
 
 ## Installation
 
@@ -92,7 +94,7 @@ end
 
 Would produce this output:
 ```crystal
-017-11-06 17:20:13 -0700 - Mosquito is buzzing...
+2017-11-06 17:20:13 -0700 - Mosquito is buzzing...
 2017-11-06 17:20:13 -0700 - Queues: periodically_puts_job
 2017-11-06 17:20:13 -0700 - Running task periodically_puts_job<mosquito:task:1510014013586:954> from periodically_puts_job
 2017-11-06 17:20:13 -0700 - [PeriodicallyPutsJob] The time is now 2017-11-06 17:20:13 -0700 and the wizard is feeling skeptical
@@ -109,11 +111,7 @@ Would produce this output:
 
 ## Contributing
 
-1. Fork it ( https://github.com/robacarp/mosquito/fork )
-2. Create your feature branch (git checkout -b my-new-feature)
-3. Commit your changes (git commit -am 'Add some feature')
-4. Push to the branch (git push origin my-new-feature)
-5. Create a new Pull Request
+Contributions are welcome. Please fork the repository, commit changes on a branch, and then open a pull request.
 
 ## Contributors
 
