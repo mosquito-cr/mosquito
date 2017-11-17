@@ -5,6 +5,10 @@ module Mosquito
     include Logger
 
     def puts(message)
+      print "#{message}\n"
+    end
+
+    def print(message)
       log "[#{self.class.name}] #{message}"
     end
 
@@ -32,6 +36,10 @@ module Mosquito
       @succeeded = false
     rescue e
       puts "Job failed! Raised #{typeof(e)}: #{e.message}"
+      e.backtrace.each do |trace|
+        puts trace
+      end
+
       @succeeded = false
     end
 
