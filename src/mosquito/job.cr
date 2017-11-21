@@ -35,7 +35,7 @@ module Mosquito
     rescue JobFailed
       @succeeded = false
     rescue e
-      puts "Job failed! Raised #{typeof(e)}: #{e.message}"
+      puts "Job failed! Raised #{e.class}: #{e.message}"
       e.backtrace.each do |trace|
         puts trace
       end
