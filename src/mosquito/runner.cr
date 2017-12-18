@@ -4,6 +4,9 @@ module Mosquito
   class Runner
     include Logger
 
+    # Minimum time in seconds to wait between checking for jobs in redis.
+    IDLE_WAIT = 15
+
     def self.start
       new.run
     end
@@ -14,16 +17,30 @@ module Mosquito
     def initialize
       @queues = [] of Queue
       @last_run_epoch = Int64.new(0)
+      @start_time = 0_i64
     end
 
     def run
       log "Mosquito is buzzing..."
 
       while true
+        start_time
         fetch_queues
         enqueue_periodic_tasks
         enqueue_delayed_tasks
         dequeue_and_run_tasks
+        idle_wait
+      end
+    end
+
+    private def start_time
+      @start_time = Time.now.epoch
+    end
+
+    private def idle_wait
+      delta = Time.now.epoch - @start_time
+      if delta < IDLE_WAIT
+        sleep(IDLE_WAIT - delta)
       end
     end
 
