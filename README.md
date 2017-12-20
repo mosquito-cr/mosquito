@@ -19,9 +19,9 @@ Current Limitations:
 
 ## Project State
 
-2017-11-06
+2017-12-20
 
-> Minimally working alpha. No functionality is tested, but it all seems to be working in manual tests. Use in a production environment at your own risk, and please open issues and feature requests.
+> Sufficient working beta. No functionality is tested, but it all seems to be working in manual tests. Use in a production environment at your own risk, and please open issues and feature requests.
 
 ## Installation
 
