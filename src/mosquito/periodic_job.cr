@@ -20,8 +20,8 @@ module Mosquito
         task = Mosquito::Task.new(job_name)
       end
 
-      macro run_every(minutes)
-        Mosquito::Base.register_job_interval \{{ @type.id }}, \{{ minutes }}
+      macro run_every(interval)
+        Mosquito::Base.register_job_interval \{{ @type.id }}, \{{ interval }}
       end
     end
   end

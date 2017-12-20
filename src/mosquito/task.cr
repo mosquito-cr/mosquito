@@ -1,8 +1,8 @@
 module Mosquito
   class Task
     getter type
-    getter enqueue_time : Time | Nil
-    getter id : String | Nil
+    getter enqueue_time : Time?
+    getter id : String?
     getter retry_count = 0
     getter job : Mosquito::Job
 
@@ -50,13 +50,13 @@ module Mosquito
     end
 
     def run
-      instance = Base.job_for_type(type).new
+      @job = instance = Base.job_for_type(type).new
 
       if instance.is_a? QueuedJob
         instance.vars_from(config)
       end
 
-      @job = instance
+      instance.task_id = id
 
       instance.run
 

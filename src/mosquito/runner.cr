@@ -5,19 +5,18 @@ module Mosquito
     include Logger
 
     # Minimum time in seconds to wait between checking for jobs in redis.
-    IDLE_WAIT = 15
+    IDLE_WAIT = 0.1
 
     def self.start
       new.run
     end
 
     getter queues
-    @last_run_epoch : Int64
 
     def initialize
       @queues = [] of Queue
-      @last_run_epoch = Int64.new(0)
       @start_time = 0_i64
+      @execution_timestamps = {} of Symbol => Time
     end
 
     def run
@@ -44,45 +43,41 @@ module Mosquito
       end
     end
 
+    private def run_at_most(*, every interval, label name, &block)
+      now = Time.now
+      last_execution = @execution_timestamps[name]? || Time.new(0)
+      delta = now - last_execution
+
+      if delta > interval
+        @execution_timestamps[name] = now
+        yield now
+      end
+    end
+
     private def fetch_queues
-      new_queues = Queue.list_queues.map { |name| Queue.new name }
-
-      if new_queues != @queues
-        if new_queues.any?
-          log "Queues: #{new_queues.map(&.name).join(", ")}"
-        end
-
-        @queues = new_queues
+      run_at_most every: 0.25.seconds, label: :fetch_queues do |t|
+        @queues = Queue.list_queues.map { |name| Queue.new name }
       end
     end
 
     private def enqueue_periodic_tasks
-      now = Time.now.epoch
-      # only enqueue tasks at most once a minute
-      return unless now - @last_run_epoch > 60
-      @last_run_epoch = now
-
-      # roughly the number of minutes since the epoch
-      moment = now / 60
-
-      Base.scheduled_tasks.each do |scheduled_task|
-        if moment % scheduled_task.interval.minutes == 0
-          job = scheduled_task.class.new
-          task = job.build_task
-          task.store
-          scheduled_task.class.queue.enqueue task
+      run_at_most every: 1.second, label: :enqueue_periodic_tasks do |now|
+        Base.scheduled_tasks.each do |scheduled_task|
+          scheduled_task.try_to_execute
         end
       end
     end
 
     private def enqueue_delayed_tasks
-      queues.each do |q|
-        overdue_tasks = q.dequeue_scheduled
-        next unless overdue_tasks.any?
-        log "Found #{overdue_tasks.size} delayed tasks"
+      run_at_most every: 1.second, label: :enqueue_delayed_tasks do |t|
+        queues.each do |q|
+          overdue_tasks = q.dequeue_scheduled
+          next unless overdue_tasks.any?
+          log "Found #{overdue_tasks.size} delayed tasks"
 
-        overdue_tasks.each do |task|
-          q.enqueue task
+          overdue_tasks.each do |task|
+            q.enqueue task
+          end
         end
       end
     end

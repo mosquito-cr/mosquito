@@ -9,11 +9,13 @@ module Mosquito
     end
 
     def print(message)
-      log "[#{self.class.name}] #{message}"
+      log "[#{self.class.name}-#{task_id}] #{message}"
     end
 
     getter executed = false
     getter succeeded = false
+
+    property task_id : String?
 
     def self.job_type : String
       ""

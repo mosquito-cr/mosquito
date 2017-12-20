@@ -32,8 +32,10 @@ module Mosquito
     end
 
     getter name
+    getter? empty : Bool
 
     def initialize(@name : String)
+      @empty = false
     end
 
     def enqueue(task : Task)
@@ -49,9 +51,13 @@ module Mosquito
     end
 
     def dequeue
-      task_id = Redis.instance.rpoplpush waiting_q, pending_q
-      return unless task_id
-      Task.retrieve task_id
+      return if empty?
+      if task_id = Redis.instance.rpoplpush waiting_q, pending_q
+        Task.retrieve task_id
+      else
+        @empty = true
+        nil
+      end
     end
 
     def reschedule(task : Task, execution_time)
