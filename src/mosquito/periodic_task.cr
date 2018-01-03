@@ -5,7 +5,7 @@ module Mosquito
     property last_executed_at : Time
 
     def initialize(@class, @interval)
-      @last_executed_at = Time.new(0)
+      @last_executed_at = Time.epoch 0
     end
 
     def try_to_execute : Nil

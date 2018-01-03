@@ -45,7 +45,7 @@ module Mosquito
 
     private def run_at_most(*, every interval, label name, &block)
       now = Time.now
-      last_execution = @execution_timestamps[name]? || Time.new(0)
+      last_execution = @execution_timestamps[name]? || Time.epoch 0
       delta = now - last_execution
 
       if delta > interval
