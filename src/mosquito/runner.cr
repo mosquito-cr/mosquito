@@ -2,8 +2,6 @@ require "benchmark"
 
 module Mosquito
   class Runner
-    include Logger
-
     # Minimum time in seconds to wait between checking for jobs in redis.
     IDLE_WAIT = 0.1
 
@@ -20,7 +18,7 @@ module Mosquito
     end
 
     def run
-      log "Mosquito is buzzing..."
+      Base.log "Mosquito is buzzing..."
 
       while true
         start_time
@@ -73,7 +71,7 @@ module Mosquito
         queues.each do |q|
           overdue_tasks = q.dequeue_scheduled
           next unless overdue_tasks.any?
-          log "Found #{overdue_tasks.size} delayed tasks"
+          Base.log "Found #{overdue_tasks.size} delayed tasks"
 
           overdue_tasks.each do |task|
             q.enqueue task
@@ -92,7 +90,7 @@ module Mosquito
       task = q.dequeue
       return unless task
 
-      log "Running task #{task} from #{q.name}"
+      Base.log "Running task #{task} from #{q.name}"
 
       bench = Benchmark.measure do
         task.run
@@ -101,7 +99,7 @@ module Mosquito
       took = "took #{bench.total} seconds"
 
       if task.succeeded?
-        log "task #{task} succeeded, #{took}"
+        Base.log "task #{task} succeeded, #{took}"
         q.forget task
         task.delete
       else
@@ -110,10 +108,10 @@ module Mosquito
         if task.rescheduleable?
           interval = task.reschedule_interval
           next_execution = Time.now + interval
-          log "#{message} rescheduling for #{next_execution} (#{interval})"
+          Base.log "#{message} rescheduling for #{next_execution} (#{interval})"
           q.reschedule task, next_execution
         else
-          log "#{message} cannot reschedule"
+          Base.log "#{message} cannot reschedule"
           q.banish task
         end
       end

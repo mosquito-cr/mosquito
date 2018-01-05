@@ -17,5 +17,13 @@ module Mosquito
     def self.register_job_interval(klass, interval : Time::Span)
       @@scheduled_tasks << PeriodicTask.new(klass, interval)
     end
+
+    def self.logger
+      @@logger ||= Logger.new(STDOUT)
+    end
+
+    def self.log(*messages)
+      logger.log(Logger::Severity::INFO, messages.join(" "))
+    end
   end
 end

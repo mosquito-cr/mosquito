@@ -2,14 +2,12 @@ require "./logger"
 
 module Mosquito
   abstract class Job
-    include Logger
-
     def puts(message)
       print "#{message}\n"
     end
 
     def print(message)
-      log "[#{self.class.name}-#{task_id}] #{message}"
+      Base.log "[#{self.class.name}-#{task_id}] #{message}"
     end
 
     getter executed = false
