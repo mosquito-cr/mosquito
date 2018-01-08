@@ -1,6 +1,6 @@
 # mosquito
 
-Mosquito is a generic background job runner written specifically for Crystal. Significant inspiration from the Ruby gem Sidekiq.
+Mosquito is a generic background job runner written specifically for Crystal. Significant inspiration from my experience with the successes and failings of the Ruby gem Sidekiq.
 
 Mosquito currently provides these features:
 - Delayed execution
@@ -19,9 +19,11 @@ Current Limitations:
 
 ## Project State
 
-2017-12-20
+Updated 2018-01-08
 
-> Sufficient working beta. No functionality is tested, but it all seems to be working in manual tests. Use in a production environment at your own risk, and please open issues and feature requests.
+> Sufficient working beta. No functionality is tested, but it all seems to be working in manual tests. Use in a production environment at your own risk, and please open issues and feature requests. 
+>
+> I'm using it in a production environment.
 
 ## Installation
 
@@ -110,6 +112,27 @@ Would produce this output:
 2017-11-06 17:22:15 -0700 - [PeriodicallyPutsJob] The time is now 2017-11-06 17:22:15 -0700 and the wizard is feeling political
 2017-11-06 17:22:15 -0700 - task periodically_puts_job<mosquito:task:1510014135000:987> succeeded, took 0.0 seconds
 ```
+
+## Integrating with Amber:
+
+And add this file to your `src/` directory:
+
+```crystal
+require "amber"
+require "mosquito"
+
+require "../config/application"
+
+require "./models/**"
+require "./mailers/**"
+require "./handlers/**"
+
+require "./jobs/**"
+
+Mosquito::Runner.start
+```
+
+Then simply `crystal run src/worker.cr`.
 
 ## Contributing
 
