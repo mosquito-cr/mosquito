@@ -12,10 +12,11 @@ Mosquito currently provides these features:
 - Dead letter queue of jobs which have failed too many times
 
 Current Limitations:
-- Periodic jobs can only be scheduled in minutes, and can only run as frequently as once a minute.
 - Job failure delay, maximum retry count, and several other variables cannot be easily configured.
 - Redis functions not all atomic. There is the potential for multiple instances or fibers running background jobs to interfere with each other, resulting in duplicate task executions. Missed executions are unlikely.
 - Visibility into the job queue is difficult and must be done through redis manually.
+
+![](https://cdn.shopify.com/s/files/1/0242/0179/products/amber1_1024x1024.png?v=1455409061)
 
 ## Project State
 
