@@ -1,4 +1,13 @@
 module Mosquito
+  # A Task is a unit of work which will be performed by a Job.
+  # Tasks know how to:
+  # - store and retrieve their data to and from the datastore
+  # - figure out what Job class they match to
+  # - build an instance of that Job class and pass off the config data
+  # - Ask the job to run
+  #
+  # Task data is called `config` and is persisted as a Hash in Redis under the key
+  # `mosquito:task:task_id`.
   class Task
     getter type
     getter enqueue_time : Time?
@@ -74,7 +83,7 @@ module Mosquito
     end
 
     def rescheduleable?
-      @job.is_a? QueuedJob && @retry_count < 5
+      @job.rescheduleable? && @retry_count < 5
     end
 
     def reschedule_interval

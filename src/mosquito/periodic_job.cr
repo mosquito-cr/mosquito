@@ -24,5 +24,9 @@ module Mosquito
         Mosquito::Base.register_job_interval \{{ @type.id }}, \{{ interval }}
       end
     end
+
+    def rescheduleable?
+      false
+    end
   end
 end

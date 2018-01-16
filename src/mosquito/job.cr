@@ -78,5 +78,9 @@ module Mosquito
       ! succeeded?
     end
 
+    # abstract, override if desired.
+    def rescheduleable?
+      true
+    end
   end
 end
