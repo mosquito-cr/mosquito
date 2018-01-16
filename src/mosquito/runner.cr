@@ -1,4 +1,5 @@
 require "benchmark"
+require "colorize"
 
 module Mosquito
   class Runner
@@ -90,28 +91,38 @@ module Mosquito
       task = q.dequeue
       return unless task
 
-      Base.log "Running task #{task} from #{q.name}"
+      Base.log "#{"Running".colorize.magenta} task #{task} from #{q.name}"
 
       bench = Benchmark.measure do
         task.run
       end
 
-      took = "took #{bench.total} seconds"
+      if bench.total > 0.1
+        time = "#{(bench.total).*(100).trunc./(100)}s".colorize.red
+      elsif bench.total > 0.001
+        time = "#{(bench.total * 1_000).trunc}ms".colorize.yellow
+      elsif bench.total > 0.000_001
+        time = "#{(bench.total * 100_000).trunc}µs".colorize.green
+      elsif bench.total > 0.000_000_001
+        time = "#{(bench.total * 1_000_000_000).trunc}ns".colorize.green
+      else
+        time = "no discernable time at all".colorize.green
+      end
 
       if task.succeeded?
-        Base.log "task #{task} succeeded, #{took}"
+        Base.log "#{"Success:".colorize.green} task #{task} finished and took #{time}"
         q.forget task
         task.delete
       else
-        message = "task #{task} failed, #{took}"
+        message = "#{"Failure:".colorize.red} task #{task} failed, taking #{time}"
 
         if task.rescheduleable?
           interval = task.reschedule_interval
           next_execution = Time.now + interval
-          Base.log "#{message} rescheduling for #{next_execution} (#{interval})"
+          Base.log "#{message} and #{"will run again".colorize.cyan} in #{interval} (at #{next_execution})"
           q.reschedule task, next_execution
         else
-          Base.log "#{message} cannot reschedule"
+          Base.log "#{message} and #{"cannot be rescheduled".colorize.yellow}"
           q.banish task
         end
       end

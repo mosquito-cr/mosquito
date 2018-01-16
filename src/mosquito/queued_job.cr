@@ -64,7 +64,7 @@ module Mosquito
                 if %object = \{{ parameter["name"] }}?
                     %object
                 else
-                  raise "No parameter named \{{ parameter["name"] }} provided to job"
+                  raise "Expected a parameter named \{{ parameter["name"] }} but found nil instead. The record may not exist in the database or the parameter may not have been provided when the job was enqueued."
                 end
               end
 
