@@ -41,7 +41,9 @@ module Mosquito
       @enqueue_time = time = Time.now
       epoch = time.epoch_ms.to_s
 
-      @id = task_id = redis_key epoch, rand(1000).to_s
+      unless task_id = @id
+        task_id = @id = redis_key epoch, rand(1000).to_s
+      end
 
       fields = config.dup
       fields["enqueue_time"] = epoch
@@ -66,7 +68,6 @@ module Mosquito
       end
 
       instance.task_id = id
-
       instance.run
 
       if failed?
