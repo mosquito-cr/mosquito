@@ -8,11 +8,7 @@ module Mosquito
   # - Jobs Rescue when a #perform method fails a task for any reason
   # - Jobs can be rescheduleable
   abstract class Job
-    def puts(message)
-      print "#{message}\n"
-    end
-
-    def print(message)
+    def log(message)
       Base.log "[#{self.class.name}-#{task_id}] #{message}"
     end
 
@@ -41,9 +37,9 @@ module Mosquito
     rescue JobFailed
       @succeeded = false
     rescue e
-      puts "Job failed! Raised #{e.class}: #{e.message}"
+      log "Job failed! Raised #{e.class}: #{e.message}"
       e.backtrace.each do |trace|
-        puts trace
+        log trace
       end
 
       @succeeded = false
@@ -51,7 +47,7 @@ module Mosquito
 
     # abstract, override in a Job descendant to do something productive
     def perform
-      puts "No job definition found for #{self.class.name}"
+      log "No job definition found for #{self.class.name}"
       fail
     end
 
