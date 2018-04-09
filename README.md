@@ -28,23 +28,22 @@ Updated 2018-04-09
 
 ## Installation
 
-See [the wiki](https://github.com/robacarp/mosquito/wiki/Installing-alongside-Amber)
+Add this to your application's `shard.yml`:
+
+```diff
+dependencies:
++  mosquito:
++    github: robacarp/mosquito
+```
+
+Further installation instructions are available for use with Amber as well as a vanilla crystal application:
+
+- [Installing with Amber](https://github.com/robacarp/mosquito/wiki/Installing-alongside-Amber)
+- [Adding to a vanilla crystal application](https://github.com/robacarp/mosquito/wiki/Using-mosquito-in-a-vanilla-crystal-project)
 
 ## Usage
 
-### Step 1: Require Mosquito in your application loader
-
-```crystal
-require "mosquito"
-
-# Your jobs folder
-require "jobs/*"
-
-# In a second application target, or behind some other switching or multi-fiber interface, run tasks:
-Mosquito::Runner.start
-```
-
-### Step 2: Define a queued job
+### Step 1: Define a queued job
 
 ```crystal
 class PutsJob < Mosquito::QueuedJob
@@ -56,10 +55,16 @@ class PutsJob < Mosquito::QueuedJob
 end
 ```
 
-### Step 3: Trigger that job
+### Step 2: Trigger that job
 
 ```crystal
-PutsJob.new(message: "Hello Background Job World!").enqueue
+PutsJob.new(message: "ohai background job").enqueue
+```
+
+### Step 3: Run your worker to process the job
+
+```text
+crystal run bin/worker.cr
 ```
 
 ### Success
@@ -105,27 +110,6 @@ Would produce this output:
 2017-11-06 17:22:15 -0700 - [PeriodicallyPutsJob] The time is now 2017-11-06 17:22:15 -0700 and the wizard is feeling political
 2017-11-06 17:22:15 -0700 - task periodically_puts_job<mosquito:task:1510014135000:987> succeeded, took 0.0 seconds
 ```
-
-## Integrating with Amber:
-
-And add this file to your `src/` directory:
-
-```crystal
-require "amber"
-require "mosquito"
-
-require "../config/application"
-
-require "./models/**"
-require "./mailers/**"
-require "./handlers/**"
-
-require "./jobs/**"
-
-Mosquito::Runner.start
-```
-
-Then simply `crystal run src/worker.cr`.
 
 ## Contributing
 
