@@ -4,7 +4,7 @@ Mosquito is a generic background job runner written specifically for Crystal. Si
 
 Mosquito currently provides these features:
 - Delayed execution
-- Scheduled execution
+- Scheduled / Periodic execution
 - Job Storage in Redis
 - Crystal hash style `?` methods for parameter getters which return nil instead of raise
 - Automatic rescheduling of failed jobs
@@ -80,7 +80,7 @@ crystal run bin/worker.cr
 
 ## Periodic Jobs
 
-Periodic jobs run according to a predefined period. Because the scheduler has no application context, they can have no inputs. By design, periodic jobs are meant to be self sufficient.
+Periodic jobs run according to a predefined period. 
 
 This periodic job:
 ```crystal
@@ -110,6 +110,8 @@ Would produce this output:
 2017-11-06 17:22:15 -0700 - [PeriodicallyPutsJob] The time is now 2017-11-06 17:22:15 -0700 and the wizard is feeling political
 2017-11-06 17:22:15 -0700 - task periodically_puts_job<mosquito:task:1510014135000:987> succeeded, took 0.0 seconds
 ```
+
+More information: [periodic jobs on the wiki](https://github.com/robacarp/mosquito/wiki/Periodic-Jobs)
 
 ## Contributing
 
