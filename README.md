@@ -20,7 +20,7 @@ Current Limitations:
 
 ## Project State
 
-Updated 2018-01-08
+Updated 2018-04-09
 
 > Sufficient working beta. No functionality is tested, but it all seems to be working in manual tests. Use in a production environment at your own risk, and please open issues and feature requests. 
 >
@@ -28,15 +28,7 @@ Updated 2018-01-08
 
 ## Installation
 
-Add this to your application's `shard.yml`:
-
-```diff
-dependencies:
-+  mosquito:
-+    github: robacarp/mosquito
-```
-
-and run `shards install` from your application root.
+See [the wiki](https://github.com/robacarp/mosquito/wiki/Installing-alongside-Amber)
 
 ## Usage
 
