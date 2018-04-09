@@ -71,12 +71,15 @@ crystal run bin/worker.cr
 
 ```
 > crystal run src/worker.cr
-2017-11-06 17:07:29 -0700 - Mosquito is buzzing...
-2017-11-06 17:07:51 -0700 - Queues: puts_job
-2017-11-06 17:07:51 -0700 - Running task puts_job<mosquito:task:1510013271686:246> from puts_job
-2017-11-06 17:07:51 -0700 - [PutsJob] ohai background job
-2017-11-06 17:07:51 -0700 - task puts_job<mosquito:task:1510013271686:246> succeeded, took 0.0 seconds
+2017-11-06 17:07:29 - Mosquito is buzzing...
+2017-11-06 17:07:51 - Running task puts_job<...> from puts_job
+2017-11-06 17:07:51 - [PutsJob] ohai background job
+2017-11-06 17:07:51 - task puts_job<...> succeeded, took 0.0 seconds
 ```
+
+[More information about queued jobs](https://github.com/robacarp/mosquito/wiki/Queued-jobs) in the wiki.
+
+------
 
 ## Periodic Jobs
 
@@ -96,19 +99,19 @@ end
 
 Would produce this output:
 ```crystal
-2017-11-06 17:20:13 -0700 - Mosquito is buzzing...
-2017-11-06 17:20:13 -0700 - Queues: periodically_puts_job
-2017-11-06 17:20:13 -0700 - Running task periodically_puts_job<mosquito:task:1510014013586:954> from periodically_puts_job
-2017-11-06 17:20:13 -0700 - [PeriodicallyPutsJob] The time is now 2017-11-06 17:20:13 -0700 and the wizard is feeling skeptical
-2017-11-06 17:20:13 -0700 - task periodically_puts_job<mosquito:task:1510014013586:954> succeeded, took 0.0 seconds
-2017-11-06 17:21:14 -0700 - Queues: periodically_puts_job
-2017-11-06 17:21:14 -0700 - Running task periodically_puts_job<mosquito:task:1510014074000:85> from periodically_puts_job
-2017-11-06 17:21:14 -0700 - [PeriodicallyPutsJob] The time is now 2017-11-06 17:21:14 -0700 and the wizard is feeling optimistic
-2017-11-06 17:21:14 -0700 - task periodically_puts_job<mosquito:task:1510014074000:85> succeeded, took 0.0 seconds
-2017-11-06 17:22:15 -0700 - Queues: periodically_puts_job
-2017-11-06 17:22:15 -0700 - Running task periodically_puts_job<mosquito:task:1510014135000:987> from periodically_puts_job
-2017-11-06 17:22:15 -0700 - [PeriodicallyPutsJob] The time is now 2017-11-06 17:22:15 -0700 and the wizard is feeling political
-2017-11-06 17:22:15 -0700 - task periodically_puts_job<mosquito:task:1510014135000:987> succeeded, took 0.0 seconds
+2017-11-06 17:20:13 - Mosquito is buzzing...
+2017-11-06 17:20:13 - Queues: periodically_puts_job
+2017-11-06 17:20:13 - Running task periodically_puts_job<...> from periodically_puts_job
+2017-11-06 17:20:13 - [PeriodicallyPutsJob] The time is now 2017-11-06 17:20:13 and the wizard is feeling skeptical
+2017-11-06 17:20:13 - task periodically_puts_job<...> succeeded, took 0.0 seconds
+2017-11-06 17:21:14 - Queues: periodically_puts_job
+2017-11-06 17:21:14 - Running task periodically_puts_job<...> from periodically_puts_job
+2017-11-06 17:21:14 - [PeriodicallyPutsJob] The time is now 2017-11-06 17:21:14 and the wizard is feeling optimistic
+2017-11-06 17:21:14 - task periodically_puts_job<...> succeeded, took 0.0 seconds
+2017-11-06 17:22:15 - Queues: periodically_puts_job
+2017-11-06 17:22:15 - Running task periodically_puts_job<...> from periodically_puts_job
+2017-11-06 17:22:15 - [PeriodicallyPutsJob] The time is now 2017-11-06 17:22:15 and the wizard is feeling political
+2017-11-06 17:22:15 - task periodically_puts_job<...> succeeded, took 0.0 seconds
 ```
 
 More information: [periodic jobs on the wiki](https://github.com/robacarp/mosquito/wiki/Periodic-Jobs)
