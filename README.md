@@ -116,6 +116,10 @@ Would produce this output:
 
 More information: [periodic jobs on the wiki](https://github.com/robacarp/mosquito/wiki/Periodic-Jobs)
 
+## Connecting to Redis
+
+Mosquito currently reads directly from the `REDIS_URL` environment variable to connect to redis. If no variable is set, it uses redis connection defaults to connect to redis on localhost. 
+
 ## Contributing
 
 Contributions are welcome. Please fork the repository, commit changes on a branch, and then open a pull request.
