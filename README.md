@@ -38,8 +38,8 @@ dependencies:
 
 Further installation instructions are available for use with Amber as well as a vanilla crystal application:
 
-- [Installing with Amber](https://github.com/robacarp/mosquito/wiki/Installing-alongside-Amber)
-- [Adding to a vanilla crystal application](https://github.com/robacarp/mosquito/wiki/Using-mosquito-in-a-vanilla-crystal-project)
+- [Installing with Amber](https://github.com/robacarp/mosquito/wiki/Usage:-Amber)
+- [Adding to a vanilla crystal application](https://github.com/robacarp/mosquito/wiki/Usage:-vanilla-crystal)
 
 ## Usage
 
