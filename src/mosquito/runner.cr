@@ -106,7 +106,7 @@ module Mosquito
       elsif bench.total > 0.000_000_001
         time = "#{(bench.total * 1_000_000_000).trunc}ns".colorize.green
       else
-        time = "no discernable time at all".colorize.green
+        time = "no discernible time at all".colorize.green
       end
 
       if task.succeeded?
