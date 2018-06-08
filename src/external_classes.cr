@@ -1,0 +1,1 @@
+class Granite::Base; end

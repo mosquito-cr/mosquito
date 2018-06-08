@@ -1,5 +1,5 @@
 module Mosquito
-  alias Model = Granite::ORM::Base
+  alias Model = Granite::Base
   alias Id = Int64 | Int32
 
   class Base
