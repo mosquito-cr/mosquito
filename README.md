@@ -1,4 +1,4 @@
-# mosquito
+<p align="center"><img src="logo/logotype_vertical.png" alt="mosquito" height="200px"></p>
 
 Mosquito is a generic background job runner written specifically for Crystal. Significant inspiration from my experience with the successes and failings of the Ruby gem Sidekiq.
 
