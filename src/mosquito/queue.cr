@@ -71,6 +71,7 @@ module Mosquito
 
       return [] of Task unless overdue_tasks.any?
 
+      # TODO should this push tasks back onto pending?
       overdue_tasks.map do |task_id|
         Redis.instance.zrem scheduled_q, task_id
         Task.retrieve task_id.as(String)
@@ -86,6 +87,7 @@ module Mosquito
       Redis.instance.lpush dead_q, task.id
     end
 
+    # TODO does this make sense?
     def length
       Redis.instance.llen redis_key(name)
     end

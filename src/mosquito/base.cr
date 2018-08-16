@@ -4,7 +4,9 @@ module Mosquito
 
   class Base
     @@mapping = {} of String => Mosquito::Job.class
+
     class_getter scheduled_tasks = [] of PeriodicTask
+    class_getter timetable = [] of PeriodicTask
 
     def self.register_job_mapping(string, klass)
       @@mapping[string] = klass
@@ -18,8 +20,16 @@ module Mosquito
       @@scheduled_tasks << PeriodicTask.new(klass, interval)
     end
 
+    def self.register_job(klass, *, to_run_at scheduled_time : Time)
+      position = @@timetable.index do
+      end
+    end
+
     def self.logger
       @@logger ||= Logger.new(STDOUT)
+    end
+
+    def self.logger=(@@logger : Logger | ::Logger)
     end
 
     def self.log(*messages)

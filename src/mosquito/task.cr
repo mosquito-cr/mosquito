@@ -78,8 +78,6 @@ module Mosquito
 
     def fail
       @retry_count += 1
-      # TODO does this incremenet the retry_count?
-      puts Redis.instance.hgetall id
       store
     end
 

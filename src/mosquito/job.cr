@@ -36,6 +36,8 @@ module Mosquito
       @succeeded = true
     rescue JobFailed
       @succeeded = false
+    rescue e : DoubleRun
+      raise e
     rescue e
       log "Job failed! Raised #{e.class}: #{e.message}"
       e.backtrace.each do |trace|

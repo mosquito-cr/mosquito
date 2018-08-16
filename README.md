@@ -20,9 +20,9 @@ Current Limitations:
 
 ## Project State
 
-Updated 2018-06-08
+Updated 2018-08-16
 
-> Sufficient working beta. No functionality is tested, but it all seems to be working in manual tests. Use in a production environment at your own risk, and please open issues and feature requests. 
+> Sufficient working beta. Some functionality is tested, but it all seems to be working in manual tests. Use in a production environment at your own risk, and please open issues and feature requests. 
 >
 > I'm using it in a production environment.
 
@@ -123,6 +123,14 @@ Mosquito currently reads directly from the `REDIS_URL` environment variable to c
 ## Contributing
 
 Contributions are welcome. Please fork the repository, commit changes on a branch, and then open a pull request.
+
+### Testing
+
+This repository uses [minitest](https://github.com/ysbaddaden/minitest.cr) for testing. As a result, `crystal spec` doesn't do anything helpful. Do this instead:
+
+```
+make test
+```
 
 ## Contributors
 

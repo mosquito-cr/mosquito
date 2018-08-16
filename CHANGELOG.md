@@ -1,3 +1,14 @@
+### 2018-08-16
+
+- Update to specify crystal 0.26
+- Add several tests
+- Add makefile
+
+### 2018-06-22
+
+- Update to specify crystal-redis 2.0 and crystal 0.25
+- Release version 0.2.0
+
 ### 2018-06-08
 
 - Breaking: Update Mosquito::Model type alias to match updates to Granite
