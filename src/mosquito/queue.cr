@@ -108,5 +108,9 @@ module Mosquito
     def ==(other : self)
       name == other.name
     end
+
+    def flush
+      Redis.instance.del waiting_q, pending_q, scheduled_q, dead_q
+    end
   end
 end

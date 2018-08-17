@@ -13,7 +13,6 @@ Mosquito currently provides these features:
 
 Current Limitations:
 - Job failure delay, maximum retry count, and several other variables cannot be easily configured.
-- Redis functions not all atomic. There is the potential for multiple instances or fibers running background jobs to interfere with each other, resulting in duplicate task executions. Missed executions are unlikely.
 - Visibility into the job queue is difficult and must be done through redis manually.
 
 ![](https://cdn.shopify.com/s/files/1/0242/0179/products/amber1_1024x1024.png?v=1455409061)
@@ -22,7 +21,11 @@ Current Limitations:
 
 Updated 2018-08-16
 
-> Sufficient working beta. Some functionality is tested, but it all seems to be working in manual tests. Use in a production environment at your own risk, and please open issues and feature requests. 
+> Sufficient working beta.
+>
+> Only some functionality is tested, but it all seems to be working in manual tests.
+>
+> Use in a production environment at your own risk, and please open issues and feature requests.
 >
 > I'm using it in a production environment.
 

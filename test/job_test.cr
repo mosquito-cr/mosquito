@@ -1,30 +1,5 @@
 require "./test_helper"
 
-class PassingJob < Mosquito::Job
-  def perform
-    true
-  end
-end
-
-class FailingJob < Mosquito::Job
-  def perform
-    if fail_with_exception
-      raise exception_message
-    else
-      fail
-    end
-  end
-
-  def exception_message
-    "Job failed"
-  end
-
-  property fail_with_exception = false
-end
-
-class NotImplementedJob < Mosquito::Job
-end
-
 describe Mosquito::Job do
   let(:passing_job) { PassingJob.new }
   let(:failing_job) { FailingJob.new }

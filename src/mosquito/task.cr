@@ -19,7 +19,11 @@ module Mosquito
 
     ID_PREFIX = {"mosquito", "task"}
 
-    def redis_key(*parts)
+    def redis_key
+      self.class.redis_key id
+    end
+
+    def self.redis_key(*parts)
       Redis.key ID_PREFIX, parts
     end
 
@@ -42,7 +46,7 @@ module Mosquito
       epoch = time.epoch_ms.to_s
 
       unless task_id = @id
-        task_id = @id = redis_key epoch, rand(1000).to_s
+        task_id = @id = Redis.key epoch, rand(1000).to_s
       end
 
       fields = config.dup
@@ -50,24 +54,28 @@ module Mosquito
       fields["type"] = type
       fields["retry_count"] = retry_count.to_s
 
-      Redis.instance.store_hash task_id, fields
+      Redis.instance.store_hash redis_key, fields
     end
 
     def delete
-      keys = Redis.instance.hkeys id
-      keys.each do |key|
-        Redis.instance.hdel id, key
-      end
+      Redis.instance.del redis_key
     end
 
-    def run
+    def build_job
+      return @job unless @job.class == NilJob
+
       @job = instance = Base.job_for_type(type).new
 
-      if instance.is_a? QueuedJob
-        instance.vars_from(config)
+      if instance.responds_to? :vars_from
+        instance.vars_from config
       end
 
       instance.task_id = id
+      instance
+    end
+
+    def run
+      instance = build_job
       instance.run
 
       if failed?
@@ -96,7 +104,7 @@ module Mosquito
     delegate :executed?, :succeeded?, :failed?, :failed, :rescheduled, to: @job
 
     def self.retrieve(id : String)
-      fields = Redis.instance.retrieve_hash id
+      fields = Redis.instance.retrieve_hash redis_key(id)
 
       return unless name = fields.delete "type"
       return unless timestamp = fields.delete "enqueue_time"
