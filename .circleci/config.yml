@@ -1,0 +1,12 @@
+---
+version: 2.0
+
+jobs:
+  build:
+    docker:
+      - image: crystallang/crystal:0.26.0
+      - image: redis:4.0.9
+    steps:
+      - checkout
+      - run: shards install
+      - run: make test
