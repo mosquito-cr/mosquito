@@ -37,7 +37,7 @@ Updated 2018-08-16
 
 ## Installation
 
-Add this to your application's `shard.yml`:
+Update your `shard.yml` to include mosquito:
 
 ```diff
 dependencies:
