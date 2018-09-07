@@ -4,5 +4,5 @@ all: test
 
 .PHONY: test
 test:
-	crystal run test/test_helper.cr test/*_test.cr test/**/*_test.cr
+	crystal run test/test_helper.cr test/**/*_test.cr
 

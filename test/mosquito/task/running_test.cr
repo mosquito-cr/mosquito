@@ -1,4 +1,4 @@
-require "../test_helper"
+require "../../test_helper"
 
 describe "task running" do
   it "uses the lookup table to build a job" do

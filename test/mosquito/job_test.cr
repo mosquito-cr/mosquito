@@ -1,4 +1,4 @@
-require "./test_helper"
+require "../test_helper"
 
 describe Mosquito::Job do
   let(:passing_job) { PassingJob.new }

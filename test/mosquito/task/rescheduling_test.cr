@@ -1,4 +1,4 @@
-require "../test_helper"
+require "../../test_helper"
 
 describe "task rescheduling" do
   @failing_task : Mosquito::Task?

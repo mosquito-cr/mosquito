@@ -1,4 +1,4 @@
-require "../test_helper"
+require "../../test_helper"
 
 describe "task storage" do
   let(:redis) { Mosquito::Redis.instance }
