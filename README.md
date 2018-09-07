@@ -141,6 +141,8 @@ This repository uses [minitest](https://github.com/ysbaddaden/minitest.cr) for t
 make test
 ```
 
+In lieu of `crystal spec` bells and whistles, Minitest provides a nice alternative to [running one test at a time instead of the whole suite](https://github.com/ysbaddaden/minitest.cr/pull/31).
+
 ## Contributors
 
 - [robacarp](https://github.com/robacarp) robacarp - creator, maintainer
