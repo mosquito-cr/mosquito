@@ -66,7 +66,12 @@ module Mosquito
                   if %object = {{ parameter["name"] }}?
                       %object
                   else
-                    raise "Expected a parameter named {{ parameter["name"] }} but found nil instead. The record may not exist in the database or the parameter may not have been provided when the job was enqueued."
+                    msg = <<-MSG
+                      Expected a parameter named {{ parameter["name"] }} but found nil.
+                      Should you be using `#{{ parameter["name"] }}?` instead?
+                      The record may not exist in the database or the parameter may not have been provided when the job was enqueued1
+                    MSG
+                    raise msg
                   end
                 end
 
