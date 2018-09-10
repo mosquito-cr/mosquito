@@ -25,15 +25,13 @@ Current Limitations:
 
 ## Project State
 
-Updated 2018-08-16
+Updated 2018-09-10
 
 > Sufficient working beta.
 >
-> Only some functionality is tested, but it all seems to be working in manual tests.
+> Most functionality is tested, and it all seems to be working in manual tests.
 >
 > Use in a production environment at your own risk, and please open issues and feature requests.
->
-> I'm using it in a production environment.
 
 ## Installation
 
@@ -56,7 +54,7 @@ Further installation instructions are available for use with Amber as well as a 
 
 ```crystal
 class PutsJob < Mosquito::QueuedJob
-  params(message : String | Nil)
+  params message : String
 
   def perform
     puts message
