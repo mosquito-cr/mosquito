@@ -12,119 +12,123 @@ module Mosquito
       end
 
       macro params(*parameters)
-        \{%
-          parsed_parameters = parameters.map do |parameter|
-            type = nil
-            simplified_type = nil
-            contains_nil = nil
+        {% verbatim do %}
 
-            if parameter.is_a? Assign
-              name = parameter.target
-              value = parameter.value
-            elsif parameter.is_a? TypeDeclaration
-              name = parameter.var
-              value = parameter.value
-              type = parameter.type
-            else
-              raise "Unable to generate for #{parameter}"
-            end
+          {%
+            parsed_parameters = parameters.map do |parameter|
+              type = nil
+              simplified_type = nil
+              contains_nil = nil
 
-            unless type
-              raise "Job parameter types must be specified explicitly"
-            end
-
-            simplified_type = if type.is_a? Union
-              if type.types.any? { |t| t.resolve == Nil }
-                contains_nil = true
+              if parameter.is_a? Assign
+                name = parameter.target
+                value = parameter.value
+              elsif parameter.is_a? TypeDeclaration
+                name = parameter.var
+                value = parameter.value
+                type = parameter.type
+              else
+                raise "Unable to generate for #{parameter}"
               end
 
-              without_nil = type.types.reject { |t| t.resolve == Nil }
-
-              if without_nil.size > 1
-                raise "Mosquito Job: Unable to generate a constructor for Union Types: #{without_nil}"
+              unless type
+                raise "Job parameter types must be specified explicitly"
               end
 
-              without_nil.first.resolve
+              simplified_type = if type.is_a? Union
+                if type.types.any? { |t| t.resolve == Nil }
+                  contains_nil = true
+                end
 
-            elsif type.is_a? Path
-              type.resolve
+                without_nil = type.types.reject { |t| t.resolve == Nil }
+
+                if without_nil.size > 1
+                  raise "Mosquito Job: Unable to generate a constructor for Union Types: #{without_nil}"
+                end
+
+                without_nil.first.resolve
+
+              elsif type.is_a? Path
+                type.resolve
+              end
+
+              unless contains_nil
+                raise "Job parameters must explicitly Union with Nil and only Nil. For example: #{name} : #{simplified_type} | Nil"
+              end
+
+              { name: name, value: value, type: type, simplified_type: simplified_type, contains_nil: contains_nil }
             end
+          %}
 
-            unless contains_nil
-              raise "Job parameters must explicitly Union with Nil and only Nil. For example: #{name} : #{simplified_type} | Nil"
-            end
+          {% for parameter in parsed_parameters %}
+             {% if parameter["contains_nil"] %}
+                def {{ parameter["name"] }} : {{ parameter["simplified_type"] }}
+                  if %object = {{ parameter["name"] }}?
+                      %object
+                  else
+                    raise "Expected a parameter named {{ parameter["name"] }} but found nil instead. The record may not exist in the database or the parameter may not have been provided when the job was enqueued."
+                  end
+                end
 
-            { name: name, value: value, type: type, simplified_type: simplified_type, contains_nil: contains_nil }
-          end
-        %}
-
-        \{% for parameter in parsed_parameters %}
-           \{% if parameter["contains_nil"] %}
-              def \{{ parameter["name"] }} : \{{ parameter["simplified_type"] }}
-                if %object = \{{ parameter["name"] }}?
+                def {{ parameter["name"] }}? : {{ parameter["simplified_type"] }} | Nil
+                  if %object = @{{ parameter["name"] }}
                     %object
-                else
-                  raise "Expected a parameter named \{{ parameter["name"] }} but found nil instead. The record may not exist in the database or the parameter may not have been provided when the job was enqueued."
+                  else
+                    nil
+                  end
                 end
-              end
+             {% end %}
+          {% end %}
 
-              def \{{ parameter["name"] }}? : \{{ parameter["simplified_type"] }} | Nil
-                if %object = @\{{ parameter["name"] }}
-                  %object
-                else
-                  nil
-                end
-              end
-           \{% end %}
-        \{% end %}
+          def initialize
+          end
 
-        def initialize
-        end
+          def initialize({{
+              parsed_parameters.map do |parameter|
+                assignment = "@#{parameter["name"]}"
+                assignment = assignment + " : #{parameter["type"]}" if parameter["type"]
+                assignment = assignment + " = #{parameter["value"]}" if parameter["value"]
+                assignment
+              end.join(", ").id
+              }})
+          end
 
-        def initialize(\{{
-            parsed_parameters.map do |parameter|
-              assignment = "@#{parameter["name"]}"
-              assignment = assignment + " : #{parameter["type"]}" if parameter["type"]
-              assignment = assignment + " = #{parameter["value"]}" if parameter["value"]
-              assignment
-            end.join(", ").id
-            }})
-        end
+          def vars_from(config : Hash(String, String))
+            {% for parameter in parsed_parameters %}
+               {% if parameter["simplified_type"] < Mosquito::Model %}
 
-        def vars_from(config : Hash(String, String))
-          \{% for parameter in parsed_parameters %}
-             \{% if parameter["simplified_type"] < Mosquito::Model %}
+                  if %model_id = config["{{ parameter["name"] }}_id"]?
+                    @{{ parameter["name"] }} = {{ parameter["simplified_type"] }}.find( %model_id.to_i )
+                  end
 
-                if %model_id = config["\{{ parameter["name"] }}_id"]?
-                  @\{{ parameter["name"] }} = \{{ parameter["simplified_type"] }}.find( %model_id.to_i )
-                end
+               {% elsif parameter["simplified_type"] == String %}
 
-             \{% elsif parameter["simplified_type"] == String %}
+                  @{{ parameter["name"] }} = config["{{ parameter["name"] }}"]?
 
-                @\{{ parameter["name"] }} = config["\{{ parameter["name"] }}"]?
+               {% end %}
+            {% end %}
+          end
 
-             \{% end %}
-          \{% end %}
-        end
+          def build_task
+            task = Mosquito::Task.new(job_name)
 
-        def build_task
-          task = Mosquito::Task.new(job_name)
+            {% for parameter in parsed_parameters %}
+               {% if parameter["simplified_type"] < Mosquito::Model %}
+                  if %model = {{ parameter["name"] }}
+                    task.config["{{ parameter["name"] }}_id"] = %model.id.to_s
+                  end
+               {% elsif parameter["simplified_type"] < Mosquito::Id %}
+                  task.config["{{ parameter["name"] }}"] = {{ parameter["name"] }}.to_s
+               {% elsif parameter["simplified_type"] < String || parameter["simplified_type"] == String %}
+                  task.config["{{ parameter["name"] }}"] = {{ parameter["name"] }}
+               {% end %}
+            {% end %}
 
-          \{% for parameter in parsed_parameters %}
-             \{% if parameter["simplified_type"] < Mosquito::Model %}
-                if %model = \{{ parameter["name"] }}
-                  task.config["\{{ parameter["name"] }}_id"] = %model.id.to_s
-                end
-             \{% elsif parameter["simplified_type"] < Mosquito::Id %}
-                task.config["\{{ parameter["name"] }}"] = \{{ parameter["name"] }}.to_s
-             \{% elsif parameter["simplified_type"] < String || parameter["simplified_type"] == String %}
-                task.config["\{{ parameter["name"] }}"] = \{{ parameter["name"] }}
-             \{% end %}
-          \{% end %}
+            task
+          end
 
-          task
-        end
-
+        {% debug() %}
+        {% end %}
       end
     end
 
