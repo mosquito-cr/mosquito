@@ -1,4 +1,5 @@
 require "./logger"
+require "./serializers/*"
 
 module Mosquito
   # A Job is a definition for work to be performed.
@@ -8,6 +9,8 @@ module Mosquito
   # - Jobs Rescue when a #perform method fails a task for any reason
   # - Jobs can be rescheduleable
   abstract class Job
+    include Mosquito::Serializers::Primitives
+
     def log(message)
       Base.log "[#{self.class.name}-#{task_id}] #{message}"
     end

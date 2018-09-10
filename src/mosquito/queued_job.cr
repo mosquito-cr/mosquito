@@ -56,7 +56,9 @@ module Mosquito
                 raise "Job parameters must explicitly Union with Nil and only Nil. For example: #{name} : #{simplified_type} | Nil"
               end
 
-              { name: name, value: value, type: type, simplified_type: simplified_type, contains_nil: contains_nil }
+              method_suffix = simplified_type.stringify.underscore.gsub(/::/,"__").id
+
+              { name: name, value: value, type: type, simplified_type: simplified_type, method_suffix: method_suffix }
             end
           %}
 
@@ -66,7 +68,12 @@ module Mosquito
                   if %object = {{ parameter["name"] }}?
                       %object
                   else
-                    raise "Expected a parameter named {{ parameter["name"] }} but found nil instead. The record may not exist in the database or the parameter may not have been provided when the job was enqueued."
+                    msg = <<-MSG
+                      Expected a parameter named {{ parameter["name"] }} but found nil.
+                      Should you be using `#{{ parameter["name"] }}?` instead?
+                      The record may not exist in the database or the parameter may not have been provided when the job was enqueued1
+                    MSG
+                    raise msg
                   end
                 end
 
@@ -95,17 +102,7 @@ module Mosquito
 
           def vars_from(config : Hash(String, String))
             {% for parameter in parsed_parameters %}
-               {% if parameter["simplified_type"] < Mosquito::Model %}
-
-                  if %model_id = config["{{ parameter["name"] }}_id"]?
-                    @{{ parameter["name"] }} = {{ parameter["simplified_type"] }}.find( %model_id.to_i )
-                  end
-
-               {% elsif parameter["simplified_type"] == String %}
-
-                  @{{ parameter["name"] }} = config["{{ parameter["name"] }}"]?
-
-               {% end %}
+              @{{ parameter["name"] }} = deserialize_{{ parameter["method_suffix"] }}(config["{{ parameter["name"] }}"])
             {% end %}
           end
 
@@ -113,21 +110,11 @@ module Mosquito
             task = Mosquito::Task.new(job_name)
 
             {% for parameter in parsed_parameters %}
-               {% if parameter["simplified_type"] < Mosquito::Model %}
-                  if %model = {{ parameter["name"] }}
-                    task.config["{{ parameter["name"] }}_id"] = %model.id.to_s
-                  end
-               {% elsif parameter["simplified_type"] < Mosquito::Id %}
-                  task.config["{{ parameter["name"] }}"] = {{ parameter["name"] }}.to_s
-               {% elsif parameter["simplified_type"] < String || parameter["simplified_type"] == String %}
-                  task.config["{{ parameter["name"] }}"] = {{ parameter["name"] }}
-               {% end %}
+              task.config["{{ parameter["name"] }}"] = serialize_{{ parameter["method_suffix"] }}({{ parameter["name"] }})
             {% end %}
 
             task
           end
-
-        {% debug() %}
         {% end %}
       end
     end
