@@ -1,4 +1,4 @@
-module Mosquito::Serializers
+module Mosquito::Serializers::Primitives
   def serialize_string(str : String) : String
     str
   end
