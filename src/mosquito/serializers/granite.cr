@@ -4,7 +4,7 @@ module Mosquito::Serializers::Granite
       model.id.to_s
     end
 
-    def deserialize_{{ klass.stringify.underscore.id }}(raw : String) : {{ klass.id }}
+    def deserialize_{{ klass.stringify.underscore.id }}(raw : String) : {{ klass.id }}?
       id = raw.to_i
       {{ klass.id }}.find id
     end

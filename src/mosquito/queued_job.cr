@@ -18,7 +18,6 @@ module Mosquito
             parsed_parameters = parameters.map do |parameter|
               type = nil
               simplified_type = nil
-              contains_nil = nil
 
               if parameter.is_a? Assign
                 name = parameter.target
@@ -28,61 +27,46 @@ module Mosquito
                 value = parameter.value
                 type = parameter.type
               else
-                raise "Unable to generate for #{parameter}"
+                raise "Mosquito Job: Unable to generate parameter for #{parameter}"
               end
 
               unless type
-                raise "Job parameter types must be specified explicitly"
+                raise "Mosquito Job: parameter types must be specified explicitly"
               end
 
-              simplified_type = if type.is_a? Union
-                if type.types.any? { |t| t.resolve == Nil }
-                  contains_nil = true
-                end
-
-                without_nil = type.types.reject { |t| t.resolve == Nil }
-
-                if without_nil.size > 1
-                  raise "Mosquito Job: Unable to generate a constructor for Union Types: #{without_nil}"
-                end
-
-                without_nil.first.resolve
-
+              if type.is_a? Union
+                raise "Mosquito Job: Unable to generate a constructor for Union Types: #{types}"
               elsif type.is_a? Path
-                type.resolve
+                simplified_type = type.resolve
               end
 
-              unless contains_nil
-                raise "Job parameters must explicitly Union with Nil and only Nil. For example: #{name} : #{simplified_type} | Nil"
-              end
-
-              { name: name, value: value, type: type, simplified_type: simplified_type, contains_nil: contains_nil }
+              { name: name, value: value, type: type, simplified_type: simplified_type}
             end
           %}
 
           {% for parameter in parsed_parameters %}
-             {% if parameter["contains_nil"] %}
-                def {{ parameter["name"] }} : {{ parameter["simplified_type"] }}
-                  if %object = {{ parameter["name"] }}?
-                      %object
-                  else
-                    msg = <<-MSG
-                      Expected a parameter named {{ parameter["name"] }} but found nil.
-                      Should you be using `#{{ parameter["name"] }}?` instead?
-                      The record may not exist in the database or the parameter may not have been provided when the job was enqueued1
-                    MSG
-                    raise msg
-                  end
-                end
+              @{{ parameter["name"] }} : {{ parameter["simplified_type"] }}?
 
-                def {{ parameter["name"] }}? : {{ parameter["simplified_type"] }} | Nil
-                  if %object = @{{ parameter["name"] }}
+              def {{ parameter["name"] }} : {{ parameter["simplified_type"] }}
+                if %object = {{ parameter["name"] }}?
                     %object
-                  else
-                    nil
-                  end
+                else
+                  msg = <<-MSG
+                    Expected a parameter named {{ parameter["name"] }} but found nil.
+                    The parameter may not have been provided when the job was enqueued.
+                    Should you be using `#{{ parameter["name"] }}?` instead?
+                  MSG
+                  raise msg
                 end
-             {% end %}
+              end
+
+              def {{ parameter["name"] }}? : {{ parameter["simplified_type"] }} | Nil
+                if %object = @{{ parameter["name"] }}
+                  %object
+                else
+                  nil
+                end
+              end
           {% end %}
 
           def initialize
