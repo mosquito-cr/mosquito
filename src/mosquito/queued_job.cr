@@ -95,17 +95,7 @@ module Mosquito
 
           def vars_from(config : Hash(String, String))
             {% for parameter in parsed_parameters %}
-               {% if parameter["simplified_type"] < Mosquito::Model %}
-
-                  if %model_id = config["{{ parameter["name"] }}_id"]?
-                    @{{ parameter["name"] }} = {{ parameter["simplified_type"] }}.find( %model_id.to_i )
-                  end
-
-               {% elsif parameter["simplified_type"] == String %}
-
-                  @{{ parameter["name"] }} = config["{{ parameter["name"] }}"]?
-
-               {% end %}
+              @{{ parameter["name"] }} = deserialize_{{ parameter["simplified_type"].stringify.underscore.id }}(config["{{ parameter["name"] }}"])
             {% end %}
           end
 
@@ -113,21 +103,11 @@ module Mosquito
             task = Mosquito::Task.new(job_name)
 
             {% for parameter in parsed_parameters %}
-               {% if parameter["simplified_type"] < Mosquito::Model %}
-                  if %model = {{ parameter["name"] }}
-                    task.config["{{ parameter["name"] }}_id"] = %model.id.to_s
-                  end
-               {% elsif parameter["simplified_type"] < Mosquito::Id %}
-                  task.config["{{ parameter["name"] }}"] = {{ parameter["name"] }}.to_s
-               {% elsif parameter["simplified_type"] < String || parameter["simplified_type"] == String %}
-                  task.config["{{ parameter["name"] }}"] = {{ parameter["name"] }}
-               {% end %}
+              task.config["{{ parameter["name"] }}"] = serialize_{{ parameter["simplified_type"].stringify.underscore.id }}({{ parameter["name"] }})
             {% end %}
 
             task
           end
-
-        {% debug() %}
         {% end %}
       end
     end
