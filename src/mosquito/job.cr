@@ -66,7 +66,7 @@ module Mosquito
       redis.hincrby q, "executed", 1
       config = redis.retrieve_hash q
       return if config["limit"].blank? && config["period"].blank?
-      redis.hset q, "executed", 0 if Time.utc_now.epoch > (Time.epoch(config["last_executed"].to_i64) + config["period"].to_i.seconds).epoch
+      redis.hset q, "executed", 0 if !config["last_executed"].to_i64.zero? && Time.utc_now.epoch > (Time.epoch(config["last_executed"].to_i64) + config["period"].to_i.seconds).epoch
 
       if config["executed"].to_i == config["limit"].to_i
         next_batch = (Time.utc_now + config["period"].to_i.seconds)
