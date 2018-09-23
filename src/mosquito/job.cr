@@ -11,6 +11,8 @@ module Mosquito
   abstract class Job
     include Mosquito::Serializers::Primitives
 
+    class_getter config : Hash(String, String) = {"limit" => "", "period" => "", "executed" => "0", "next_batch" => "0", "last_executed" => "0"}
+
     def log(message)
       Base.log "[#{self.class.name}-#{task_id}] #{message}"
     end
@@ -19,6 +21,11 @@ module Mosquito
     getter succeeded = false
 
     property task_id : String?
+
+    macro throttle(limit, period)
+      @@config["limit"] = {{limit.stringify}}
+      @@config["period"] = {{period.stringify}}
+    end
 
     def self.job_type : String
       ""
@@ -36,7 +43,6 @@ module Mosquito
       raise DoubleRun.new if executed
       @executed = true
       perform
-      @succeeded = true
     rescue JobFailed
       @succeeded = false
     rescue e : DoubleRun
@@ -48,6 +54,27 @@ module Mosquito
       end
 
       @succeeded = false
+    else
+      increment
+      @succeeded = true
+    end
+
+    # Handles throttling logic
+    def increment : Nil
+      redis = Redis.instance
+      q = self.class.queue.config_q
+      redis.hincrby q, "executed", 1
+      config = redis.retrieve_hash q
+      return if config["limit"].blank? && config["period"].blank?
+      redis.hset q, "executed", 0 if Time.utc_now.epoch > (Time.epoch(config["last_executed"].to_i64) + config["period"].to_i.seconds).epoch
+
+      if config["executed"].to_i == config["limit"].to_i
+        next_batch = (Time.utc_now + config["period"].to_i.seconds)
+        redis.hset q, "executed", 0
+        redis.hset q, "next_batch", next_batch.epoch
+        log "#{"Execution limit reached".colorize.yellow} #{"next_batch".colorize.cyan} in #{config["period"].to_i.seconds} (at #{next_batch})"
+      end
+      redis.hset q, "last_executed", Time.utc_now.epoch
     end
 
     # abstract, override in a Job descendant to do something productive
@@ -76,7 +103,7 @@ module Mosquito
 
     # Did the job run and fail?
     def failed?
-      ! succeeded?
+      !succeeded?
     end
 
     # abstract, override if desired.

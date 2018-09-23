@@ -76,11 +76,13 @@ module Mosquito
   #
   class Queue
     ID_PREFIX = {"mosquito"}
+    QUEUES    = %w(waiting scheduled pending dead config)
 
-    WAITING   = "queue"
-    PENDING   = "pending"
-    SCHEDULED = "scheduled"
-    DEAD      = "dead"
+    {% for q in QUEUES %}
+      def {{q.id}}_q
+        redis_key {{q}}, name
+      end
+    {% end %}
 
     def self.redis_key(*parts)
       Redis.key ID_PREFIX, parts
@@ -88,26 +90,6 @@ module Mosquito
 
     def redis_key(*parts)
       self.class.redis_key *parts
-    end
-
-    # Waiting tasks need to be executed as soon as possible.
-    def waiting_q
-      redis_key WAITING, name
-    end
-
-    # Pending tasks are those which are currently running
-    def pending_q
-      redis_key PENDING, name
-    end
-
-    # Scheduled tasks are executed some time in the future
-    def scheduled_q
-      redis_key SCHEDULED, name
-    end
-
-    # Dead tasks are those which have failed out of retries
-    def dead_q
-      redis_key DEAD, name
     end
 
     getter name
@@ -129,8 +111,10 @@ module Mosquito
       Redis.instance.zadd scheduled_q, execute_time.to_unix_ms, task.id
     end
 
-    def dequeue
+    def dequeue : Task?
       return if empty?
+      q_config = Redis.instance.retrieve_hash config_q
+      return if q_config["next_batch"].to_i64 > Time.utc_now.epoch
       if task_id = Redis.instance.rpoplpush waiting_q, pending_q
         Task.retrieve task_id
       else
@@ -172,7 +156,7 @@ module Mosquito
     end
 
     def self.list_queues : Array(String)
-      search_queue_prefixes = [WAITING, SCHEDULED]
+      search_queue_prefixes = QUEUES.first(2)
 
       search_queue_prefixes.map do |prefix|
         long_names = Redis.instance.keys redis_key(prefix, "*")

@@ -34,6 +34,30 @@ module Mosquito
 
     private def set_start_time
       @start_time = Time.now.to_unix
+
+      Base.log "Mosquito is buzzing..."
+
+      set_config
+
+      loop do
+        start_time
+        fetch_queues
+        enqueue_periodic_tasks
+        enqueue_delayed_tasks
+        dequeue_and_run_tasks
+        idle_wait
+      end
+    end
+
+    private def set_config
+      redis = Redis.instance
+      Base.mapping.each do |k, job|
+        redis.store_hash(job.queue.config_q, job.config) if redis.exists(job.queue.config_q).zero?
+      end
+    end
+
+    private def start_time
+      @start_time = Time.now.epoch
     end
 
     private def idle_wait
