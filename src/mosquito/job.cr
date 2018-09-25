@@ -11,7 +11,7 @@ module Mosquito
   abstract class Job
     include Mosquito::Serializers::Primitives
 
-    class_getter config : Hash(String, String) = {"limit" => "", "period" => "", "executed" => "0", "next_batch" => "0", "last_executed" => "0"}
+    class_getter config : Hash(String, String) = {"limit" => "0", "period" => "0", "executed" => "0", "next_batch" => "0", "last_executed" => "0"}
 
     def log(message)
       Base.log "[#{self.class.name}-#{task_id}] #{message}"
@@ -99,7 +99,7 @@ module Mosquito
       q = self.class.queue.config_q
       redis.hincrby q, "executed", 1
       config = redis.retrieve_hash q
-      return if config["limit"].blank? && config["period"].blank?
+      return if config["limit"].to_i.zero? && config["period"].to_i.zero?
 
       if config["executed"].to_i == config["limit"].to_i
         next_batch = (Time.utc_now + config["period"].to_i.seconds)
