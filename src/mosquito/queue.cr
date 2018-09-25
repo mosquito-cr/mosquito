@@ -116,6 +116,7 @@ module Mosquito
       q_config = Redis.instance.retrieve_hash config_q
       return if q_config["next_batch"].to_i64 > Time.utc_now.epoch
       if task_id = Redis.instance.rpoplpush waiting_q, pending_q
+        Redis.instance.hset config_q, "executed", 0 if Time.utc_now.epoch > (Time.epoch(q_config["last_executed"].to_i64) + q_config["period"].to_i.seconds).epoch
         Task.retrieve task_id
       else
         @empty = true

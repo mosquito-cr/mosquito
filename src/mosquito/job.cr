@@ -59,24 +59,6 @@ module Mosquito
       @succeeded = true
     end
 
-    # Handles throttling logic
-    def increment : Nil
-      redis = Redis.instance
-      q = self.class.queue.config_q
-      redis.hincrby q, "executed", 1
-      config = redis.retrieve_hash q
-      return if config["limit"].blank? && config["period"].blank?
-      redis.hset q, "executed", 0 if !config["last_executed"].to_i64.zero? && Time.utc_now.epoch > (Time.epoch(config["last_executed"].to_i64) + config["period"].to_i.seconds).epoch
-
-      if config["executed"].to_i == config["limit"].to_i
-        next_batch = (Time.utc_now + config["period"].to_i.seconds)
-        redis.hset q, "executed", 0
-        redis.hset q, "next_batch", next_batch.epoch
-        log "#{"Execution limit reached".colorize.yellow} #{"next_batch".colorize.cyan} in #{config["period"].to_i.seconds} (at #{next_batch})"
-      end
-      redis.hset q, "last_executed", Time.utc_now.epoch
-    end
-
     # abstract, override in a Job descendant to do something productive
     def perform
       log "No job definition found for #{self.class.name}"
@@ -109,6 +91,23 @@ module Mosquito
     # abstract, override if desired.
     def rescheduleable?
       true
+    end
+
+    # Handles throttling logic
+    private def increment : Nil
+      redis = Redis.instance
+      q = self.class.queue.config_q
+      redis.hincrby q, "executed", 1
+      config = redis.retrieve_hash q
+      return if config["limit"].blank? && config["period"].blank?
+
+      if config["executed"].to_i == config["limit"].to_i
+        next_batch = (Time.utc_now + config["period"].to_i.seconds)
+        redis.hset q, "executed", 0
+        redis.hset q, "next_batch", next_batch.epoch
+        log "#{"Execution limit reached".colorize.yellow} #{"next_batch".colorize.cyan} in #{config["period"].to_i.seconds} (at #{next_batch})"
+      end
+      redis.hset q, "last_executed", Time.utc_now.epoch
     end
   end
 end
