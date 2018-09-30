@@ -7,7 +7,12 @@ module Mosquito
     IDLE_WAIT = 0.1
 
     def self.start
-      new.run
+      Base.log "Mosquito is buzzing..."
+      instance = new
+
+      while true
+        instance.run
+      end
     end
 
     getter queues
@@ -19,16 +24,12 @@ module Mosquito
     end
 
     def run
-      Base.log "Mosquito is buzzing..."
-
-      while true
-        start_time
-        fetch_queues
-        enqueue_periodic_tasks
-        enqueue_delayed_tasks
-        dequeue_and_run_tasks
-        idle_wait
-      end
+      start_time
+      fetch_queues
+      enqueue_periodic_tasks
+      enqueue_delayed_tasks
+      dequeue_and_run_tasks
+      idle_wait
     end
 
     private def start_time
