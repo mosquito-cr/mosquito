@@ -15,18 +15,22 @@ module Mosquito
       self.class.redis_key *parts
     end
 
+    # Waiting tasks need to be executed as soon as possible.
     def waiting_q
       redis_key WAITING, name
     end
 
+    # Pending tasks are those which are currently running
     def pending_q
       redis_key PENDING, name
     end
 
+    # Scheduled tasks are executed some time in the future
     def scheduled_q
       redis_key SCHEDULED, name
     end
 
+    # Dead tasks are those which have failed out of retries
     def dead_q
       redis_key DEAD, name
     end

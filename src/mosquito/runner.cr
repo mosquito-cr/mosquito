@@ -15,7 +15,7 @@ module Mosquito
       end
     end
 
-    getter queues
+    getter queues, start_time
 
     def initialize
       @queues = [] of Queue
@@ -24,7 +24,7 @@ module Mosquito
     end
 
     def run
-      start_time
+      set_start_time
       fetch_queues
       enqueue_periodic_tasks
       enqueue_delayed_tasks
@@ -32,7 +32,7 @@ module Mosquito
       idle_wait
     end
 
-    private def start_time
+    private def set_start_time
       @start_time = Time.now.epoch
     end
 
@@ -48,7 +48,7 @@ module Mosquito
       last_execution = @execution_timestamps[name]? || Time.epoch 0
       delta = now - last_execution
 
-      if delta > interval
+      if delta >= interval
         @execution_timestamps[name] = now
         yield now
       end
