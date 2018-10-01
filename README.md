@@ -25,11 +25,9 @@ Current Limitations:
 
 ## Project State
 
-Updated 2018-09-10
+Updated 2018-10-01
 
 > Sufficient working beta.
->
-> Most functionality is tested, and it all seems to be working in manual tests.
 >
 > Use in a production environment at your own risk, and please open issues and feature requests.
 
