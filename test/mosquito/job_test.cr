@@ -34,7 +34,7 @@ describe Mosquito::Job do
     failing_job.run
     assert failing_job.failed?
 
-    assert logs.includes? failing_job.exception_message
+    assert_includes logs, failing_job.exception_message
   end
 
   it "marks success=false when #fail-ed" do
@@ -48,7 +48,7 @@ describe Mosquito::Job do
     not_implemented_job.run
     assert not_implemented_job.failed?
 
-    assert logs.includes? "No job definition found"
+    assert_includes logs, "No job definition found"
   end
 
   it "raises DoubleRun if it's already been executed" do

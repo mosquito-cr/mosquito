@@ -10,14 +10,14 @@ describe Mosquito::Base do
   end
 
   it "keeps a list of scheduled tasks" do
-    Base.with_bare_base_class do
+    Base.bare_mapping do
       Base.register_job_interval TestJobs::Periodic, 1.minute
       assert_equal TestJobs::Periodic, Base.scheduled_tasks.first.class
     end
   end
 
   it "correctly maps job classes from type strings" do
-    Base.with_bare_base_class do
+    Base.bare_mapping do
       Base.register_job_mapping "fizzbuzz", TestJobs::Queued
       assert_equal TestJobs::Queued, Base.job_for_type "fizzbuzz"
     end
@@ -30,7 +30,7 @@ describe Mosquito::Base do
   it "allows overriding the logger" do
     my_logger = ::Logger.new(nil)
 
-    Base.with_bare_base_class do
+    Base.protect_logger do
       Base.logger = my_logger
       assert_same my_logger, Base.logger
     end

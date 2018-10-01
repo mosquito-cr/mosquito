@@ -1,13 +1,53 @@
 # A global place for global mocks
 
-class PassingJob < Mosquito::Job
+module PerformanceCounter
   def perform
+    self.class.performed!
+  end
+
+  macro included
+    class_getter performances = 0
+
+    def self.performed!
+      @@performances += 1
+    end
+
+    def self.reset_performance_counter!
+      @@performances = 0
+    end
+  end
+end
+
+module Mosquito
+  module TestJobs
+    class Periodic < PeriodicJob
+      include PerformanceCounter
+    end
+
+    class Queued < QueuedJob
+      include PerformanceCounter
+      params()
+    end
+  end
+end
+
+class PassingJob < Mosquito::QueuedJob
+  include PerformanceCounter
+  params()
+
+  def perform
+    super
     true
   end
 end
 
-class FailingJob < Mosquito::Job
+class FailingJob < Mosquito::QueuedJob
+  include PerformanceCounter
+  params()
+
   def perform
+    super
+
     if fail_with_exception
       raise exception_message
     else
@@ -26,18 +66,7 @@ class NotImplementedJob < Mosquito::Job
 end
 
 class JobWithPerformanceCounter < Mosquito::Job
-  def perform
-    self.class.performed!
-  end
-
-  class_getter performances = 0
-  def self.performed!
-    @@performances += 1
-  end
-
-  def self.reset_performance_counter!
-    @@performances = 0
-  end
+  include PerformanceCounter
 end
 
 class JobWithConfig < Mosquito::Job
