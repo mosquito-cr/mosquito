@@ -3,6 +3,9 @@ class PeriodicallyPuts < Mosquito::PeriodicJob
 
   def perform
     log "Hello from PeriodicallyPuts"
+
+    # For integration testing
+    Mosquito::Redis.instance.incr self.class.name.underscore
   end
 end
 

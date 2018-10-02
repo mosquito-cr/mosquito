@@ -2,20 +2,19 @@ class CustomSerializersJob < Mosquito::QueuedJob
   params count : Int32
 
   def perform
-    count.times do
-      log "ohai"
-    end
+    log "deserialized: #{count}"
+
+    # For integration testing
+    Mosquito::Redis.instance.incr self.class.name.underscore
   end
 
   def deserialize_int32(raw : String) : Int32
-    log "using custom serialization"
+    log "using custom serialization: #{raw}"
 
-    if raw
-      raw.to_i32
-    else
-      1
-    end
+    raw.to_i32 * 10
   end
 end
 
 CustomSerializersJob.new(3).enqueue
+CustomSerializersJob.new(12).enqueue
+CustomSerializersJob.new(525_600).enqueue
