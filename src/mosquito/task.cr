@@ -15,6 +15,8 @@ module Mosquito
     getter retry_count = 0
     getter job : Mosquito::Job
 
+    getter runtime = 0.0_f64
+
     property config
 
     ID_PREFIX = {"mosquito", "task"}
@@ -76,7 +78,10 @@ module Mosquito
 
     def run
       instance = build_job
-      instance.run
+
+      @runtime = Benchmark.measure do
+        instance.run
+      end.total
 
       if failed?
         @retry_count += 1

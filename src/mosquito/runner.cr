@@ -86,42 +86,69 @@ module Mosquito
 
     private def dequeue_and_run_tasks
       queues.each do |q|
-        run_next_task q
-      end
-    end
+        if task = q.dequeue
+          Base.log start_message(task, q)
+          task.run
 
-    private def run_next_task(q : Queue)
-      task = q.dequeue
-      return unless task
+          if task.succeeded?
+            Base.log success_message(task)
+            q.forget task
+            task.delete
+          else
+            if task.rescheduleable?
+              Base.log failure_message(task)
+              q.reschedule task, task.reschedule_interval.from_now
+            else
+              Base.log fatal_message(task)
+              q.banish task
+            end
+          end
 
-      Base.log "#{"Running".colorize.magenta} task #{task} from #{q.name}"
-
-      bench = Benchmark.measure do
-        task.run
-      end
-
-      time = present_delta_t bench.total
-
-      if task.succeeded?
-        Base.log "#{"Success:".colorize.green} task #{task} finished and took #{time}"
-        q.forget task
-        task.delete
-      else
-        message = "#{"Failure:".colorize.red} task #{task} failed, taking #{time}"
-
-        if task.rescheduleable?
-          interval = task.reschedule_interval
-          next_execution = Time.now + interval
-          Base.log "#{message} and #{"will run again".colorize.cyan} in #{interval} (at #{next_execution})"
-          q.reschedule task, next_execution
-        else
-          Base.log "#{message} and #{"cannot be rescheduled".colorize.yellow}"
-          q.banish task
         end
       end
     end
 
-    private def present_delta_t(t)
+    private def start_message(task : Task, q : Queue)
+      String.build do |s|
+        s << "Running".colorize.magenta
+        s << " task #{task}"
+        s << " from #{q.name}"
+      end
+    end
+
+    private def success_message(task : Task)
+      String.build do |s|
+        s << "Success:".colorize.green
+        s << " task #{task} finished and took "
+        s << present_time task.runtime
+      end
+    end
+
+    private def failure_message(task : Task)
+      String.build do |s|
+        s << "Failure:".colorize.red
+        s << "task #{task} failed, taking "
+        s << present_time task.runtime
+        s << " and "
+        s << "will run again".colorize.cyan
+
+        interval = task.reschedule_interval
+        next_execution = Time.now + interval
+        s << " in #{interval} (at #{next_execution})"
+      end
+    end
+
+    private def fatal_message(task : Task)
+      String.build do |s|
+        s << "Failure:".colorize.red
+        s << " task #{task} failed, taking "
+        s << present_time task.runtime
+        s << " and "
+        s << "cannot be rescheduled".colorize.yellow
+      end
+    end
+
+    private def present_time(t)
       if t > 0.1
         "#{t.*(100).trunc./(100)}s".colorize.red
       elsif t > 0.001

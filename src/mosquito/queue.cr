@@ -125,7 +125,7 @@ module Mosquito
       Redis.instance.zadd scheduled_q, execute_time.epoch_ms, task.id
     end
 
-    def dequeue
+    def dequeue : Task?
       return if empty?
       if task_id = Redis.instance.rpoplpush waiting_q, pending_q
         Task.retrieve task_id
