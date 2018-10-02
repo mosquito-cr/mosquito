@@ -51,4 +51,8 @@ describe "Mosquito::Runner#enqueue_delayed_tasks" do
       assert_equal 0, queued_tasks.size
     end
   end
+
+  it "wont execute more than it should" do
+    skip
+  end
 end

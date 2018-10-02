@@ -52,4 +52,7 @@ describe "Mosquito::Runner#run_next_task" do
     skip
   end
 
+  it "wont execute more than it should" do
+    skip
+  end
 end

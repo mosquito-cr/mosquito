@@ -22,4 +22,8 @@ describe "Mosquito::Runner#enqueue_periodic_tasks" do
       end
     end
   end
+
+  it "wont execute more than it should" do
+    skip
+  end
 end

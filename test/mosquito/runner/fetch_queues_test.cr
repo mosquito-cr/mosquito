@@ -17,4 +17,8 @@ describe "Mosquito::Runner#fetch_queues" do
 
     assert_equal %w|test1 test2 test3|, runner.queues.map(&.name)
   end
+
+  it "wont execute more than it should" do
+    skip
+  end
 end

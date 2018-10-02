@@ -54,30 +54,32 @@ module Mosquito
       end
     end
 
-    private def fetch_queues
-      run_at_most every: 0.25.seconds, label: :fetch_queues do |t|
-        @queues = Queue.list_queues.map { |name| Queue.new name }
-      end
-    end
-
-    private def enqueue_periodic_tasks
-      run_at_most every: 1.second, label: :enqueue_periodic_tasks do |now|
-        Base.scheduled_tasks.each do |scheduled_task|
-          scheduled_task.try_to_execute
+    macro throttled_def(name, run_every, &block)
+      private def {{ name.id }}
+        run_at_most every: {{ run_every.id }}, label: :{{ name.id }} do
+          {{ yield }}
         end
       end
     end
 
-    private def enqueue_delayed_tasks
-      run_at_most every: 1.second, label: :enqueue_delayed_tasks do |t|
-        queues.each do |q|
-          overdue_tasks = q.dequeue_scheduled
-          next unless overdue_tasks.any?
-          Base.log "Found #{overdue_tasks.size} delayed tasks"
+    throttled_def fetch_queues, 0.25.seconds do
+      @queues = Queue.list_queues.map { |name| Queue.new name }
+    end
 
-          overdue_tasks.each do |task|
-            q.enqueue task
-          end
+    throttled_def enqueue_periodic_tasks, 1.second do
+      Base.scheduled_tasks.each do |scheduled_task|
+        scheduled_task.try_to_execute
+      end
+    end
+
+    throttled_def enqueue_delayed_tasks, 1.second do
+      queues.each do |q|
+        overdue_tasks = q.dequeue_scheduled
+        next unless overdue_tasks.any?
+        Base.log "Found #{overdue_tasks.size} delayed tasks"
+
+        overdue_tasks.each do |task|
+          q.enqueue task
         end
       end
     end
@@ -98,17 +100,7 @@ module Mosquito
         task.run
       end
 
-      if bench.total > 0.1
-        time = "#{(bench.total).*(100).trunc./(100)}s".colorize.red
-      elsif bench.total > 0.001
-        time = "#{(bench.total * 1_000).trunc}ms".colorize.yellow
-      elsif bench.total > 0.000_001
-        time = "#{(bench.total * 100_000).trunc}µs".colorize.green
-      elsif bench.total > 0.000_000_001
-        time = "#{(bench.total * 1_000_000_000).trunc}ns".colorize.green
-      else
-        time = "no discernible time at all".colorize.green
-      end
+      time = present_delta_t bench.total
 
       if task.succeeded?
         Base.log "#{"Success:".colorize.green} task #{task} finished and took #{time}"
@@ -126,6 +118,20 @@ module Mosquito
           Base.log "#{message} and #{"cannot be rescheduled".colorize.yellow}"
           q.banish task
         end
+      end
+    end
+
+    private def present_delta_t(t)
+      if t > 0.1
+        "#{t.*(100).trunc./(100)}s".colorize.red
+      elsif t > 0.001
+        "#{(t * 1_000).trunc}ms".colorize.yellow
+      elsif t > 0.000_001
+        "#{(t * 100_000).trunc}µs".colorize.green
+      elsif t > 0.000_000_001
+        "#{(t * 1_000_000_000).trunc}ns".colorize.green
+      else
+        "no discernible time at all".colorize.green
       end
     end
   end
