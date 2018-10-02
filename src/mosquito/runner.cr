@@ -43,20 +43,14 @@ module Mosquito
       end
     end
 
-    private def run_at_most(*, every interval, label name, &block)
-      now = Time.now
-      last_execution = @execution_timestamps[name]? || Time.epoch 0
-      delta = now - last_execution
-
-      if delta >= interval
-        @execution_timestamps[name] = now
-        yield now
-      end
-    end
-
     macro throttled_def(name, run_every, &block)
       private def {{ name.id }}
-        run_at_most every: {{ run_every.id }}, label: :{{ name.id }} do
+        now = Time.now
+        last_execution = @execution_timestamps[:{{ name.id }}]? || Time.epoch 0
+        delta = now - last_execution
+
+        if delta >= {{ run_every.id }}
+          @execution_timestamps[:{{ name.id }}] = now
           {{ yield }}
         end
       end
