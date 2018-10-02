@@ -73,23 +73,23 @@ module Mosquito
     end
 
     # Did the job execute?
-    def executed?
+    def executed? : Bool
       @executed
     end
 
     # Did the job run and succeed?
-    def succeeded?
+    def succeeded? : Bool
       raise "Job hasn't been executed yet" unless @executed
       @succeeded
     end
 
     # Did the job run and fail?
-    def failed?
+    def failed? : Bool
       !succeeded?
     end
 
     # abstract, override if desired.
-    def rescheduleable?
+    def rescheduleable? : Bool
       true
     end
 

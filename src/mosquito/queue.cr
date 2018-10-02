@@ -93,9 +93,11 @@ module Mosquito
     end
 
     getter name
+    getter config : Hash(String, String)
     getter? empty : Bool
 
     def initialize(@name : String)
+      @config = get_config
       @empty = false
     end
 
@@ -113,10 +115,8 @@ module Mosquito
 
     def dequeue : Task?
       return if empty?
-      q_config = Redis.instance.retrieve_hash config_q
-      return if q_config["next_batch"].to_i64 > Time.utc_now.epoch
+      return if rate_limited?
       if task_id = Redis.instance.rpoplpush waiting_q, pending_q
-        Redis.instance.hset config_q, "executed", 0 if Time.utc_now.epoch > (Time.epoch(q_config["last_executed"].to_i64) + q_config["period"].to_i.seconds).epoch
         Task.retrieve task_id
       else
         @empty = true
@@ -152,7 +152,7 @@ module Mosquito
     end
 
     # TODO does this make sense?
-    def length
+    def length : Int32
       Redis.instance.llen redis_key(name)
     end
 
@@ -169,12 +169,36 @@ module Mosquito
       end.uniq.flatten
     end
 
-    def ==(other : self)
+    def ==(other : self) : Bool
       name == other.name
     end
 
     def flush
       Redis.instance.del waiting_q, pending_q, scheduled_q, dead_q
+    end
+
+    # Determines if a task needs to be throttled and not dequeued
+    def rate_limited? : Bool
+      # Get the latest config for the queue
+      @config = get_config
+
+      # Return if throttleing is not needed
+      return false if @config["limit"].to_i.zero? && @config["period"].to_i.zero?
+
+      # If the last time a job was executed was more than now + period.seconds ago, reset executed back to 0
+      # This handles executions not in same time frame
+      # Which otherwise would cause throttling to kick in once executed == limit even if the executions were hours apart with a 60 sec period
+      if Time.utc_now.epoch > (Time.epoch(@config["last_executed"].to_i64) + @config["period"].to_i.seconds).epoch
+        @config["executed"] = "0"
+        Redis.instance.store_hash config_q, @config
+      end
+
+      # Throttle the job if the next_batch is in the future
+      @config["next_batch"].to_i64 > Time.utc_now.epoch
+    end
+
+    def get_config : Hash(String, String)
+      Redis.instance.retrieve_hash config_q
     end
   end
 end
