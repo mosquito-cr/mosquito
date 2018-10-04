@@ -50,7 +50,7 @@ module Mosquito
   #              Task#3  t=7:Task#2
   #
   #  ---------------------------------
-  #  Time=6: Task suceeds. Nothing is executing.
+  #  Time=6: Task succeeds. Nothing is executing.
   #
   #    Waiting  Pending  Scheduled     Dead
   #                      t=7:Task#2
@@ -93,11 +93,9 @@ module Mosquito
     end
 
     getter name
-    getter config : Hash(String, String)
     getter? empty : Bool
 
     def initialize(@name : String)
-      @config = get_config
       @empty = false
     end
 
@@ -180,21 +178,22 @@ module Mosquito
     # Determines if a task needs to be throttled and not dequeued
     def rate_limited? : Bool
       # Get the latest config for the queue
-      @config = get_config
+      config = get_config
 
       # Return if throttleing is not needed
-      return false if @config["limit"].to_i.zero? && @config["period"].to_i.zero?
+      return false if config["limit"].to_i.zero? && config["period"].to_i.zero?
 
       # If the last time a job was executed was more than now + period.seconds ago, reset executed back to 0
       # This handles executions not in same time frame
       # Which otherwise would cause throttling to kick in once executed == limit even if the executions were hours apart with a 60 sec period
-      if Time.utc_now.epoch > (Time.epoch(@config["last_executed"].to_i64) + @config["period"].to_i.seconds).epoch
-        @config["executed"] = "0"
-        Redis.instance.store_hash config_q, @config
+      if Time.utc_now.epoch > (Time.epoch(config["last_executed"].to_i64) + config["period"].to_i.seconds).epoch
+        config["executed"] = "0"
+        Redis.instance.store_hash config_q, config
+        return false
       end
 
       # Throttle the job if the next_batch is in the future
-      @config["next_batch"].to_i64 > Time.utc_now.epoch
+      config["next_batch"].to_i64 > Time.utc_now.epoch
     end
 
     def get_config : Hash(String, String)
