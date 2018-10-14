@@ -49,7 +49,7 @@ module Mosquito
       end
     end
 
-    private def set_config
+    private def self.set_config
       redis = Redis.instance
       Base.mapping.each do |k, job|
         redis.store_hash(job.queue.config_q, job.config) if redis.exists(job.queue.config_q).zero?
