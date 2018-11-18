@@ -186,14 +186,14 @@ module Mosquito
       # If the last time a job was executed was more than now + period.seconds ago, reset executed back to 0
       # This handles executions not in same time frame
       # Which otherwise would cause throttling to kick in once executed == limit even if the executions were hours apart with a 60 sec period
-      if Time.utc_now.epoch > (Time.epoch(config["last_executed"].to_i64) + config["period"].to_i.seconds).epoch
+      if Time.utc_now.to_unix > (Time.unix(config["last_executed"].to_i64) + config["period"].to_i.seconds).to_unix
         config["executed"] = "0"
         Redis.instance.store_hash config_q, config
         return false
       end
 
       # Throttle the job if the next_batch is in the future
-      config["next_batch"].to_i64 > Time.utc_now.epoch
+      config["next_batch"].to_i64 > Time.utc_now.to_unix
     end
 
     def get_config : Hash(String, String)

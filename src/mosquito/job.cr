@@ -104,10 +104,10 @@ module Mosquito
       if config["executed"].to_i == config["limit"].to_i
         next_batch = (Time.utc_now + config["period"].to_i.seconds)
         redis.hset q, "executed", 0
-        redis.hset q, "next_batch", next_batch.epoch
+        redis.hset q, "next_batch", next_batch.to_unix
         log "#{"Execution limit reached".colorize.yellow} #{"next_batch".colorize.cyan} in #{config["period"].to_i.seconds} (at #{next_batch})"
       end
-      redis.hset q, "last_executed", Time.utc_now.epoch
+      redis.hset q, "last_executed", Time.utc_now.to_unix
     end
   end
 end
