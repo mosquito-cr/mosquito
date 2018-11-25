@@ -44,7 +44,7 @@ describe Queue do
 
   it "can enqueue a task with a relative time" do
     offset = 3.seconds
-    timestamp = offset.from_now.epoch_ms
+    timestamp = offset.from_now.to_unix_ms
     test_queue.enqueue task, in: offset
     stored_time = redis.zscore test_queue.scheduled_q, task.id
 
@@ -55,7 +55,7 @@ describe Queue do
     timestamp = 3.seconds.from_now
     test_queue.enqueue task, at: timestamp
     stored_time = redis.zscore test_queue.scheduled_q, task.id
-    assert_equal timestamp.epoch_ms, stored_time.not_nil!.to_i64
+    assert_equal timestamp.to_unix_ms, stored_time.not_nil!.to_i64
   end
 
   it "moves a task from waiting to pending on dequeue" do
@@ -96,8 +96,8 @@ describe Queue do
   it "dequeues tasks which have been scheduled for a time that has passed" do
     task1 = task
     task2 = Mosquito::Task.new("mock_task").tap do |task|
-              task.store
-            end
+      task.store
+    end
 
     past = 1.minute.ago
     future = 1.minute.from_now
@@ -130,6 +130,6 @@ describe "Queue class methods" do
     redis.set "mosquito:queue:test2", 1
     redis.set "mosquito:scheduled:test3", 1
 
-    assert_equal ["test1","test2","test3"], Mosquito::Queue.list_queues.sort
+    assert_equal ["test1", "test2", "test3"], Mosquito::Queue.list_queues.sort
   end
 end

@@ -35,7 +35,7 @@ module Mosquito
       @type : String,
       @enqueue_time : Time | Nil,
       @id : String | Nil,
-      @retry_count : Int32,
+      @retry_count : Int32
     )
       @config = {} of String => String
       @job = NilJob.new
@@ -43,7 +43,7 @@ module Mosquito
 
     def store
       @enqueue_time = time = Time.now
-      epoch = time.epoch_ms.to_s
+      epoch = time.to_unix_ms.to_s
 
       unless task_id = @id
         task_id = @id = Redis.key epoch, rand(1000).to_s
@@ -110,7 +110,7 @@ module Mosquito
       return unless timestamp = fields.delete "enqueue_time"
       retry_count = (fields.delete("retry_count") || 0).to_i
 
-      instance = new(name, Time.epoch_ms(timestamp.to_i64), id, retry_count)
+      instance = new(name, Time.unix_ms(timestamp.to_i64), id, retry_count)
       instance.config = fields
 
       instance

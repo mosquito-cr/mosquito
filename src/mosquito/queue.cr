@@ -77,10 +77,10 @@ module Mosquito
   class Queue
     ID_PREFIX = {"mosquito"}
 
-    WAITING = "queue"
-    PENDING = "pending"
+    WAITING   = "queue"
+    PENDING   = "pending"
     SCHEDULED = "scheduled"
-    DEAD = "dead"
+    DEAD      = "dead"
 
     def self.redis_key(*parts)
       Redis.key ID_PREFIX, parts
@@ -126,7 +126,7 @@ module Mosquito
     end
 
     def enqueue(task : Task, at execute_time : Time)
-      Redis.instance.zadd scheduled_q, execute_time.epoch_ms, task.id
+      Redis.instance.zadd scheduled_q, execute_time.to_unix_ms, task.id
     end
 
     def dequeue
@@ -146,7 +146,7 @@ module Mosquito
 
     def dequeue_scheduled : Array(Task)
       time = Time.now
-      overdue_tasks = Redis.instance.zrangebyscore scheduled_q, 0, time.epoch_ms
+      overdue_tasks = Redis.instance.zrangebyscore scheduled_q, 0, time.to_unix_ms
 
       return [] of Task unless overdue_tasks.any?
 

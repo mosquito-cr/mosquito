@@ -7,7 +7,7 @@ describe "Mosquito::Runner#set_start_time" do
     Timecop.freeze Time.now do
       assert_equal 0, runner.start_time
       runner.run :start_time
-      assert_equal Time.now.epoch, runner.start_time
+      assert_equal Time.now.to_unix, runner.start_time
     end
   end
 end

@@ -33,11 +33,11 @@ module Mosquito
     end
 
     private def set_start_time
-      @start_time = Time.now.epoch
+      @start_time = Time.now.to_unix
     end
 
     private def idle_wait
-      delta = Time.now.epoch - @start_time
+      delta = Time.now.to_unix - @start_time
       if delta < IDLE_WAIT
         sleep(IDLE_WAIT - delta)
       end
@@ -45,7 +45,7 @@ module Mosquito
 
     private def run_at_most(*, every interval, label name, &block)
       now = Time.now
-      last_execution = @execution_timestamps[name]? || Time.epoch 0
+      last_execution = @execution_timestamps[name]? || Time.unix 0
       delta = now - last_execution
 
       if delta >= interval

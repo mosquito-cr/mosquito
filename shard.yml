@@ -4,20 +4,19 @@ version: 0.2.1
 authors:
   - Robert L Carpenter <robert@robacarp.com>
 
-crystal: 0.26.0
+crystal: 0.27.0
 
 license: MIT
 
 dependencies:
   redis:
     github: stefanwille/crystal-redis
-    version: ~> 2.0.0
+    version: ~> 2.1.1
 
 development_dependencies:
   minitest:
     github: ysbaddaden/minitest.cr
+    version: 0.4.2
 
-    # allows for minitest/focus
-    commit: f68a06356b51803dad5942d99cb2a3e2bdad4880
   timecop:
     github: TobiasGSmollett/timecop.cr
