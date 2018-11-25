@@ -15,6 +15,6 @@ describe "Mosquito::Runner#fetch_queues" do
       runner.run :fetch_queues
     end
 
-    assert_equal %w|test1 test2 test3|, runner.queues.map(&.name)
+    assert_equal %w|test1 test2 test3|, runner.queues.map(&.name).sort
   end
 end
