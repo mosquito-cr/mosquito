@@ -18,7 +18,7 @@ describe "Mosquito::Runner#enqueue_periodic_tasks" do
         task_metadata = redis.retrieve_hash "mosquito:task:#{last_task}"
 
         assert_equal queue_name, task_metadata["type"]?
-        assert_in_delta enqueue_time, task_metadata["enqueue_time"]
+        assert_in_delta enqueue_time, task_metadata["enqueue_time"], 1.0
       end
     end
   end
