@@ -1,6 +1,7 @@
+require "../src/mosquito"
+
 Mosquito::Redis.instance.flushall
 
-require "../src/mosquito"
 require "./jobs/*"
 
 def expect_run_count(klass, expected)

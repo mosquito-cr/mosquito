@@ -1,6 +1,5 @@
 require "minitest"
 require "minitest/focus"
-require "minitest/autorun"
 
 require "timecop"
 Timecop.safe_mode = true
@@ -11,3 +10,4 @@ require "../mosquito"
 require "./helpers/*"
 
 Mosquito::Redis.instance.flushall
+require "minitest/autorun"
