@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.0
+### 2018-11-25
+- Update to crystal 0.27, thanks @blacksmoke16
+
 ## 0.2.1
 ### 2018-10-01
 - Logo contributed by @psikoz
