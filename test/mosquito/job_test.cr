@@ -21,6 +21,8 @@ describe Mosquito::Job do
   it "run sets #executed? and #succeeded?" do
     refute passing_job.executed?
 
+    Mosquito::Redis.instance.store_hash(passing_job.class.queue.config_q, {"limit" => "0", "period" => "0", "executed" => "0", "next_batch" => "0", "last_executed" => "0"})
+
     passing_job.run
 
     assert passing_job.executed?
@@ -52,6 +54,7 @@ describe Mosquito::Job do
   end
 
   it "raises DoubleRun if it's already been executed" do
+    Mosquito::Redis.instance.store_hash(passing_job.class.queue.config_q, {"limit" => "0", "period" => "0", "executed" => "0", "next_batch" => "0", "last_executed" => "0"})
     passing_job.run
     assert_raises Mosquito::DoubleRun do
       passing_job.run

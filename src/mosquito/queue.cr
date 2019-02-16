@@ -181,7 +181,7 @@ module Mosquito
       config = get_config
 
       # Return if throttleing is not needed
-      return false if config["limit"].to_i.zero? && config["period"].to_i.zero?
+      return false if config["limit"] == "0" && config["period"] == "0"
 
       # If the last time a job was executed was more than now + period.seconds ago, reset executed back to 0
       # This handles executions not in same time frame
@@ -196,7 +196,7 @@ module Mosquito
       config["next_batch"].to_i64 > Time.utc_now.to_unix
     end
 
-    def get_config : Hash(String, String)
+    private def get_config : Hash(String, String)
       Redis.instance.retrieve_hash config_q
     end
   end

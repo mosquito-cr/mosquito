@@ -10,6 +10,7 @@ describe "Mosquito::Runner#run_next_task" do
 
   def run_task(job)
     job.reset_performance_counter!
+    Mosquito::Redis.instance.store_hash(job.queue.config_q, {"limit" => "0", "period" => "0", "executed" => "0", "next_batch" => "0", "last_executed" => "0"})
     job.new.enqueue
 
     runner.run :fetch_queues
@@ -51,5 +52,4 @@ describe "Mosquito::Runner#run_next_task" do
   it "doesnt reschedule a job that cant be rescheduled" do
     skip
   end
-
 end

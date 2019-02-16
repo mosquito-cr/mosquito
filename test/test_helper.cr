@@ -10,4 +10,5 @@ require "../mosquito"
 require "./helpers/*"
 
 Mosquito::Redis.instance.flushall
+
 require "minitest/autorun"

@@ -7,6 +7,7 @@ describe Queue do
   let(:test_queue) do
     Mosquito::Queue.new(name).tap do |queue|
       queue.flush
+      Mosquito::Redis.instance.store_hash(queue.config_q, {"limit" => "0", "period" => "0", "executed" => "0", "next_batch" => "0", "last_executed" => "0"})
       queue
     end
   end
@@ -25,7 +26,7 @@ describe Queue do
   end
 
   it "builds redis keys for waiting q" do
-    assert_equal "mosquito:queue:#{name}", test_queue.waiting_q
+    assert_equal "mosquito:waiting:#{name}", test_queue.waiting_q
   end
 
   it "builds redis keys for scheduled q" do
@@ -126,8 +127,8 @@ describe "Queue class methods" do
   it "can get a list of available queues" do
     # create evidence of some queues
     redis.flushdb
-    redis.set "mosquito:queue:test1", 1
-    redis.set "mosquito:queue:test2", 1
+    redis.set "mosquito:waiting:test1", 1
+    redis.set "mosquito:waiting:test2", 1
     redis.set "mosquito:scheduled:test3", 1
 
     assert_equal ["test1", "test2", "test3"], Mosquito::Queue.list_queues.sort
