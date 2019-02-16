@@ -99,9 +99,9 @@ module Mosquito
       q = self.class.queue.config_q
       redis.hincrby q, "executed", 1
       config = redis.retrieve_hash q
-      return if config["limit"].to_i.zero? && config["period"].to_i.zero?
+      return if config["limit"] == "0" && config["period"] == "0"
 
-      if config["executed"].to_i == config["limit"].to_i
+      if config["executed"] == config["limit"]
         next_batch = (Time.utc_now + config["period"].to_i.seconds)
         redis.hset q, "executed", 0
         redis.hset q, "next_batch", next_batch.to_unix

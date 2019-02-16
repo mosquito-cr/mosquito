@@ -41,6 +41,18 @@ class PassingJob < Mosquito::QueuedJob
   end
 end
 
+class ThrottledJob < Mosquito::QueuedJob
+  include PerformanceCounter
+  params()
+
+  throttle limit: 5, period: 10
+
+  def perform
+    super
+    true
+  end
+end
+
 class FailingJob < Mosquito::QueuedJob
   include PerformanceCounter
   params()
