@@ -3,8 +3,7 @@ module Mosquito
   alias Id = Int64 | Int32
 
   class Base
-    @@mapping = {} of String => Mosquito::Job.class
-
+    class_getter mapping = {} of String => Mosquito::Job.class
     class_getter scheduled_tasks = [] of PeriodicTask
     class_getter timetable = [] of PeriodicTask
 

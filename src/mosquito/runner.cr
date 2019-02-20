@@ -10,6 +10,8 @@ module Mosquito
       Base.log "Mosquito is buzzing..."
       instance = new
 
+      set_config
+
       while true
         instance.run
       end
@@ -30,6 +32,13 @@ module Mosquito
       enqueue_delayed_tasks
       dequeue_and_run_tasks
       idle_wait
+    end
+
+    private def self.set_config
+      redis = Redis.instance
+      Base.mapping.each do |k, job|
+        redis.store_hash(job.queue.config_q, job.config)
+      end
     end
 
     private def set_start_time

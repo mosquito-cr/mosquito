@@ -13,7 +13,7 @@ describe "Mosquito::Runner#enqueue_periodic_tasks" do
         enqueue_time = Time.now.to_unix_ms
         runner.run :enqueue
 
-        queued_tasks = redis.lrange "mosquito:queue:#{queue_name}", 0, -1
+        queued_tasks = redis.lrange "mosquito:waiting:#{queue_name}", 0, -1
         last_task = queued_tasks.last
         task_metadata = redis.retrieve_hash "mosquito:task:#{last_task}"
 

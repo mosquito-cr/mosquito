@@ -5,6 +5,7 @@ describe "Mosquito::Runner#enqueue_delayed_tasks" do
   let(:queue_name) { "mosquito::test_jobs::queued" }
 
   @enqueue_time : Time?
+
   def enqueue_time
     @enqueue_time ||= Time.now
   end
@@ -29,7 +30,7 @@ describe "Mosquito::Runner#enqueue_delayed_tasks" do
         runner.run :enqueue
       end
 
-      queued_tasks = redis.lrange "mosquito:queue:#{queue_name}", 0, -1
+      queued_tasks = redis.lrange "mosquito:waiting:#{queue_name}", 0, -1
       last_task = queued_tasks.last
       task_metadata = redis.retrieve_hash "mosquito:task:#{last_task}"
 
@@ -47,7 +48,7 @@ describe "Mosquito::Runner#enqueue_delayed_tasks" do
         runner.run :enqueue
       end
 
-      queued_tasks = redis.lrange "mosquito:queue:#{queue_name}", 0, -1
+      queued_tasks = redis.lrange "mosquito:waiting:#{queue_name}", 0, -1
       assert_equal 0, queued_tasks.size
     end
   end

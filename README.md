@@ -16,6 +16,7 @@ Mosquito currently provides these features:
 - Automatic rescheduling of failed jobs
 - Progressively increasing delay of failed jobs
 - Dead letter queue of jobs which have failed too many times
+- Rate limited jobs
 
 Current Limitations:
 - Job failure delay, maximum retry count, and several other variables cannot be easily configured.
@@ -120,6 +121,24 @@ Would produce this output:
 ```
 
 More information: [periodic jobs on the wiki](https://github.com/robacarp/mosquito/wiki/Periodic-Jobs)
+
+## Throttling Jobs
+
+Jobs can be throttled to limit the number of messages that get executed within a given period of time.  For example, if 10 messages were enqueued for `ThrottledJob` at one time; 5 would be executed immediately, then pause for a minute, then execute the last 5.  
+
+```crystal
+class ThrottledJob < Mosquito::QueuedJob
+  params message : String
+  throttle limit: 5, period: 60
+
+  def perform
+    puts message
+  end
+end
+```
+
+
+
 
 ## Connecting to Redis
 

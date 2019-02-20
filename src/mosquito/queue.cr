@@ -50,7 +50,7 @@ module Mosquito
   #              Task#3  t=7:Task#2
   #
   #  ---------------------------------
-  #  Time=6: Task suceeds. Nothing is executing.
+  #  Time=6: Task succeeds. Nothing is executing.
   #
   #    Waiting  Pending  Scheduled     Dead
   #                      t=7:Task#2
@@ -76,11 +76,13 @@ module Mosquito
   #
   class Queue
     ID_PREFIX = {"mosquito"}
+    QUEUES    = %w(waiting scheduled pending dead config)
 
-    WAITING   = "queue"
-    PENDING   = "pending"
-    SCHEDULED = "scheduled"
-    DEAD      = "dead"
+    {% for q in QUEUES %}
+      def {{q.id}}_q
+        redis_key {{q}}, name
+      end
+    {% end %}
 
     def self.redis_key(*parts)
       Redis.key ID_PREFIX, parts
@@ -88,26 +90,6 @@ module Mosquito
 
     def redis_key(*parts)
       self.class.redis_key *parts
-    end
-
-    # Waiting tasks need to be executed as soon as possible.
-    def waiting_q
-      redis_key WAITING, name
-    end
-
-    # Pending tasks are those which are currently running
-    def pending_q
-      redis_key PENDING, name
-    end
-
-    # Scheduled tasks are executed some time in the future
-    def scheduled_q
-      redis_key SCHEDULED, name
-    end
-
-    # Dead tasks are those which have failed out of retries
-    def dead_q
-      redis_key DEAD, name
     end
 
     getter name
@@ -129,8 +111,9 @@ module Mosquito
       Redis.instance.zadd scheduled_q, execute_time.to_unix_ms, task.id
     end
 
-    def dequeue
+    def dequeue : Task?
       return if empty?
+      return if rate_limited?
       if task_id = Redis.instance.rpoplpush waiting_q, pending_q
         Task.retrieve task_id
       else
@@ -167,12 +150,12 @@ module Mosquito
     end
 
     # TODO does this make sense?
-    def length
+    def length : Int32
       Redis.instance.llen redis_key(name)
     end
 
     def self.list_queues : Array(String)
-      search_queue_prefixes = [WAITING, SCHEDULED]
+      search_queue_prefixes = QUEUES.first(2)
 
       search_queue_prefixes.map do |prefix|
         long_names = Redis.instance.keys redis_key(prefix, "*")
@@ -184,12 +167,37 @@ module Mosquito
       end.uniq.flatten
     end
 
-    def ==(other : self)
+    def ==(other : self) : Bool
       name == other.name
     end
 
     def flush
       Redis.instance.del waiting_q, pending_q, scheduled_q, dead_q
+    end
+
+    # Determines if a task needs to be throttled and not dequeued
+    def rate_limited? : Bool
+      # Get the latest config for the queue
+      config = get_config
+
+      # Return if throttleing is not needed
+      return false if config["limit"] == "0" && config["period"] == "0"
+
+      # If the last time a job was executed was more than now + period.seconds ago, reset executed back to 0
+      # This handles executions not in same time frame
+      # Which otherwise would cause throttling to kick in once executed == limit even if the executions were hours apart with a 60 sec period
+      if Time.utc_now.to_unix > (Time.unix(config["last_executed"].to_i64) + config["period"].to_i.seconds).to_unix
+        config["executed"] = "0"
+        Redis.instance.store_hash config_q, config
+        return false
+      end
+
+      # Throttle the job if the next_batch is in the future
+      config["next_batch"].to_i64 > Time.utc_now.to_unix
+    end
+
+    private def get_config : Hash(String, String)
+      Redis.instance.retrieve_hash config_q
     end
   end
 end
