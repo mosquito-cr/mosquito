@@ -26,7 +26,7 @@ Current Limitations:
 
 ## Project State
 
-Updated 2018-10-01
+Updated 2019-04-26
 
 > Sufficient working beta.
 >
