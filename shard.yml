@@ -1,8 +1,8 @@
 name: mosquito
-version: 0.3.0
+version: 0.4.0
 
 authors:
-  - Robert L Carpenter <robert@robacarp.com>
+  - robacarp
 
 crystal: 0.28.0
 

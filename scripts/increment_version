@@ -1,0 +1,44 @@
+#!/usr/bin/env crystal
+
+require "yaml"
+require "option_parser"
+
+shard_yml = "shard.yml"
+
+to_increment = "none"
+
+OptionParser.parse! do |p|
+  p.banner = "Usage: $0 -i <field>"
+  p.on("-i field", "--increment=field", "Specifies the field to increment") do |name|
+    destination = name
+  end
+  p.on("-h", "--help", "Show this help") { STDERR.puts p }
+  p.invalid_option do |flag|
+    STDERR.puts "ERROR: #{flag} is not a valid option."
+    STDERR.puts p
+    exit(1)
+  end
+end
+
+document = File.read shard_yml
+parsed = YAML.parse document
+version = parsed["version"].as_s
+
+major, minor, patch = version.split('.').map(&.to_i)
+
+case to_increment
+when "major"
+  major += 1
+  minor = 0
+  patch = 0
+when "minor"
+  minor += 1
+  patch = 0
+when "patch"
+  patch += 1
+else
+  STDERR.puts "No field to increment specified" if to_increment == "none"
+end
+
+parsed["version"] = "#{major}.#{minor}.#{patch}"
+pp parsed.to_yaml

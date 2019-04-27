@@ -1,0 +1,8 @@
+#!/bin/bash
+
+version=$(
+  grep -e '^version' shard.yml \
+    | awk '{print "v"$2}'
+)
+
+git tag $version
