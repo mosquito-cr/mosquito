@@ -35,7 +35,7 @@ module Mosquito
               end
 
               if type.is_a? Union
-                raise "Mosquito Job: Unable to generate a constructor for Union Types: #{types}"
+                raise "Mosquito Job: Unable to generate a constructor for Union Types: #{type}"
               elsif type.is_a? Path
                 simplified_type = type.resolve
               end
