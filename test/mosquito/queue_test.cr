@@ -135,7 +135,7 @@ describe Queue do
 
     describe "when it has less executions than limit" do
       it "should not be rate_limited" do
-        time = Time.utc_now.to_unix
+        time = Time.utc.to_unix
 
         Mosquito::Redis.instance.store_hash(throttled_queue.config_q, {"limit" => "5", "period" => "15", "executed" => "2", "next_batch" => "0", "last_executed" => "#{time}"})
 
@@ -146,7 +146,7 @@ describe Queue do
 
     describe "when it is at its limit" do
       it "should be rate_limited" do
-        time = Time.utc_now.to_unix
+        time = Time.utc.to_unix
 
         Mosquito::Redis.instance.store_hash(throttled_queue.config_q, {"limit" => "5", "period" => "15", "executed" => "5", "next_batch" => "#{time + 15}", "last_executed" => "#{time}"})
 
@@ -158,7 +158,7 @@ describe Queue do
     describe "when it is at its limit but execution was longer than period seconds ago" do
       it "should not be rate_limited" do
         # Simulate the queue being at its limit but the last execution was an hour ago.
-        last_executed = Time.utc_now.to_unix - 1.hour.to_i
+        last_executed = Time.utc.to_unix - 1.hour.to_i
 
         Mosquito::Redis.instance.store_hash(throttled_queue.config_q, {"limit" => "5", "period" => "15", "executed" => "5", "next_batch" => "0", "last_executed" => "#{last_executed}"})
 

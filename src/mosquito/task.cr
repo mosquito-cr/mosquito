@@ -42,7 +42,7 @@ module Mosquito
     end
 
     def store
-      @enqueue_time = time = Time.now
+      @enqueue_time = time = Time.utc
       epoch = time.to_unix_ms.to_s
 
       unless task_id = @id

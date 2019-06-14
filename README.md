@@ -2,7 +2,7 @@
 <img src="logo/logotype_horizontal.svg" alt="mosquito">
 
 [![CircleCI](https://img.shields.io/circleci/project/github/robacarp/mosquito/master.svg?logo=circleci&label=Circle%20CI&style=for-the-badge)](https://circleci.com/gh/robacarp/mosquito)
-[![Crystal Version](https://img.shields.io/badge/crystal-0.28-blue.svg?longCache=true&style=for-the-badge)](https://crystal-lang.org/)
+[![Crystal Version](https://img.shields.io/badge/crystal-0.29-blueviolet.svg?longCache=true&style=for-the-badge)](https://crystal-lang.org/)
 [![GitHub](https://img.shields.io/github/license/robacarp/mosquito.svg?style=for-the-badge)](https://tldrlegal.com/license/mit-license)
 
 
@@ -98,7 +98,7 @@ class PeriodicallyPutsJob < Mosquito::PeriodicJob
 
   def perform
     emotions = %w{happy sad angry optimistic political skeptical epuhoric}
-    puts "The time is now #{Time.now} and the wizard is feeling #{emotions.sample}"
+    puts "The time is now #{Time.local} and the wizard is feeling #{emotions.sample}"
   end
 end
 ```

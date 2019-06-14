@@ -102,12 +102,12 @@ module Mosquito
       return if config["limit"] == "0" && config["period"] == "0"
 
       if config["executed"] == config["limit"]
-        next_batch = (Time.utc_now + config["period"].to_i.seconds)
+        next_batch = (Time.utc + config["period"].to_i.seconds)
         redis.hset q, "executed", 0
         redis.hset q, "next_batch", next_batch.to_unix
         log "#{"Execution limit reached".colorize.yellow} #{"next_batch".colorize.cyan} in #{config["period"].to_i.seconds} (at #{next_batch})"
       end
-      redis.hset q, "last_executed", Time.utc_now.to_unix
+      redis.hset q, "last_executed", Time.utc.to_unix
     end
   end
 end

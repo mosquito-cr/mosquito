@@ -1,10 +1,10 @@
 name: mosquito
-version: 0.4.0
+version: 0.5.0
 
 authors:
   - robacarp
 
-crystal: 0.28.0
+crystal: 0.29.0
 
 license: MIT
 
@@ -20,4 +20,4 @@ development_dependencies:
 
   timecop:
     github: crystal-community/timecop.cr
-    version: ~> 0.2.0
+    version: ~> 0.3.0

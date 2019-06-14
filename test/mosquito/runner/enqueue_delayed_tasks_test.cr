@@ -7,7 +7,7 @@ describe "Mosquito::Runner#enqueue_delayed_tasks" do
   @enqueue_time : Time?
 
   def enqueue_time
-    @enqueue_time ||= Time.now
+    @enqueue_time ||= Time.utc
   end
 
   def enqueue_task
