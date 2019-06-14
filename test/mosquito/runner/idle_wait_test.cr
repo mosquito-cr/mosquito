@@ -7,9 +7,9 @@ describe "Mosquito::Runner#idle_wait" do
   it "idles correctly" do
     runner.run :start_time
 
-    start = Time.now
+    start = Time.local
     runner.run :idle
-    finish = Time.now
+    finish = Time.local
 
     subsecond = (finish - start).milliseconds / 1000.0
 

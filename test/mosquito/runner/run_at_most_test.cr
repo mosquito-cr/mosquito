@@ -17,7 +17,7 @@ describe "Mosquito::Runner#run_at_most" do
 
   it "allows throttled blocks to run only after enough time has passed" do
     count = 0
-    moment = Time.now
+    moment = Time.utc
     runner
     incrementy = ->() do
       runner.yield_once_a_second do

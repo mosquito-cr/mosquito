@@ -42,18 +42,18 @@ module Mosquito
     end
 
     private def set_start_time
-      @start_time = Time.now.to_unix
+      @start_time = Time.utc.to_unix
     end
 
     private def idle_wait
-      delta = Time.now.to_unix - @start_time
+      delta = Time.utc.to_unix - @start_time
       if delta < IDLE_WAIT
         sleep(IDLE_WAIT - delta)
       end
     end
 
     private def run_at_most(*, every interval, label name, &block)
-      now = Time.now
+      now = Time.utc
       last_execution = @execution_timestamps[name]? || Time.unix 0
       delta = now - last_execution
 
@@ -128,7 +128,7 @@ module Mosquito
 
         if task.rescheduleable?
           interval = task.reschedule_interval
-          next_execution = Time.now + interval
+          next_execution = Time.utc + interval
           Base.log "#{message} and #{"will run again".colorize.cyan} in #{interval} (at #{next_execution})"
           q.reschedule task, next_execution
         else

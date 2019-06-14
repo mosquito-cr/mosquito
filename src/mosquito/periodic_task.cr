@@ -9,7 +9,7 @@ module Mosquito
     end
 
     def try_to_execute : Nil
-      now = Time.now
+      now = Time.utc
 
       if now - last_executed_at >= interval
         execute

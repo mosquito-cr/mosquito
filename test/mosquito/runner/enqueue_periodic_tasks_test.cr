@@ -10,7 +10,7 @@ describe "Mosquito::Runner#enqueue_periodic_tasks" do
         Mosquito::Base.register_job_mapping queue_name, Mosquito::TestJobs::Periodic
         Mosquito::Base.register_job_interval Mosquito::TestJobs::Periodic, interval: 1.second
 
-        enqueue_time = Time.now.to_unix_ms
+        enqueue_time = Time.utc.to_unix_ms
         runner.run :enqueue
 
         queued_tasks = redis.lrange "mosquito:waiting:#{queue_name}", 0, -1
