@@ -11,7 +11,7 @@ license: MIT
 dependencies:
   redis:
     github: stefanwille/crystal-redis
-    version: ~> 2.1.1
+    version: ~> 2.3.0
 
 development_dependencies:
   minitest:
