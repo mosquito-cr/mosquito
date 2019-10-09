@@ -4,8 +4,8 @@ version: 2.0
 jobs:
   build:
     docker:
-      - image: crystallang/crystal:0.29.0
-      - image: redis:4.0.9
+      - image: crystallang/crystal:0.31.1
+      - image: redis:4.0.14
     steps:
       - checkout
       - run: shards install
