@@ -6,7 +6,7 @@ describe "task storage" do
   let(:config) {
     {
       "year" => "1752",
-      "name" => "the year september lost 12 days"
+      "name" => "the year september lost 12 days",
     }
   }
 

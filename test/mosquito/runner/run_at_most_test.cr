@@ -19,7 +19,7 @@ describe "Mosquito::Runner#run_at_most" do
     count = 0
     moment = Time.utc
     runner
-    incrementy = ->() do
+    incrementy = ->do
       runner.yield_once_a_second do
         count += 1
       end

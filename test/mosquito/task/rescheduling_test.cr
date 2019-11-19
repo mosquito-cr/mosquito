@@ -9,7 +9,7 @@ describe "task rescheduling" do
       1 => 2,
       2 => 8,
       3 => 18,
-      4 => 32
+      4 => 32,
     }
 
     intervals.each do |count, delay|
@@ -20,7 +20,7 @@ describe "task rescheduling" do
   end
 
   it "prevents rescheduling a job too many times" do
-    run_task = -> do
+    run_task = ->do
       task = Mosquito::Task.retrieve(failing_task.id.not_nil!).not_nil!
       task.run
       task

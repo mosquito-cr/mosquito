@@ -1,3 +1,5 @@
+require "habitat"
+
 module Mosquito
   alias Model = Granite::Base
   alias Id = Int64 | Int32
@@ -46,5 +48,17 @@ module Mosquito
     def self.log(*messages)
       logger.log(Logger::Severity::INFO, messages.join(" "))
     end
+
+    Habitat.create do
+      setting redis_url : String
+
+      # Optionally add examples to settings that appear in error messages
+      # when the value is not set.
+      #
+      # Use `String#dump` when you want the example to be wrapped in quotes
+      setting redis_url : String, example: "redis://localhost:6379"
+    end
+
+    Habitat.raise_if_missing_settings!
   end
 end

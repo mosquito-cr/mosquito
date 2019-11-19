@@ -8,7 +8,6 @@ module Mosquito
       @@mapping = {} of String => Job.class
 
       yield
-
     ensure
       @@mapping = mapping unless mapping.nil?
       @@scheduled_tasks = scheduled_tasks unless scheduled_tasks.nil?
@@ -19,10 +18,8 @@ module Mosquito
       @@logger = Logger.new(STDOUT)
 
       yield
-
     ensure
       @@logger = logger unless logger.nil?
     end
   end
 end
-

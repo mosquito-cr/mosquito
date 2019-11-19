@@ -4,7 +4,7 @@ describe Mosquito::Redis do
   let(:data) {
     {
       "question" => "unknown",
-      "answer" => "forty-two"
+      "answer"   => "forty-two",
     }
   }
 

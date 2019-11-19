@@ -1,10 +1,10 @@
 name: mosquito
-version: 0.5.0
+version: 0.6.0
 
 authors:
   - robacarp
 
-crystal: 0.29.0
+crystal: 0.31.0
 
 license: MIT
 
@@ -12,6 +12,8 @@ dependencies:
   redis:
     github: stefanwille/crystal-redis
     version: ~> 2.1.1
+  habitat:
+    github: luckyframework/habitat
 
 development_dependencies:
   minitest:

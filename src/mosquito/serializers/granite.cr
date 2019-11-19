@@ -1,7 +1,7 @@
 module Mosquito::Serializers::Granite
   macro serialize_granite_model(klass)
     {%
-     method_suffix = klass.stringify.underscore.gsub(/::/,"__").id
+      method_suffix = klass.stringify.underscore.gsub(/::/, "__").id
     %}
     def serialize_{{ method_suffix }}(model : {{ klass.id }}) : String
       model.id.to_s
