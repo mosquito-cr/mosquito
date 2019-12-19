@@ -4,14 +4,14 @@ version: 0.6.0
 authors:
   - robacarp
 
-crystal: 0.31.1
+crystal: 0.32.1
 
 license: MIT
 
 dependencies:
   redis:
     github: stefanwille/crystal-redis
-    version: ~> 2.2.0
+    version: ~> 2.5.0
 
 development_dependencies:
   minitest:
