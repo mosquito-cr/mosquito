@@ -4,7 +4,7 @@ require "colorize"
 module Mosquito
   class Runner
     # Minimum time in seconds to wait between checking for jobs in redis.
-    IDLE_WAIT = 0.1
+    class_property idle_wait : Float64 = 0.1
 
     def self.start
       Base.log "Mosquito is buzzing..."
@@ -45,10 +45,18 @@ module Mosquito
       @start_time = Time.utc.to_unix
     end
 
+    def self.idle_wait=(idle_wait : Number)
+      @@idle_wait = idle_wait.to_f64
+    end
+
+    def self.idle_wait=(idle_wait : Time::Span)
+      @@idle_wait = idle_wait.total_seconds
+    end
+
     private def idle_wait
       delta = Time.utc.to_unix - @start_time
-      if delta < IDLE_WAIT
-        sleep(IDLE_WAIT - delta)
+      if delta < @@idle_wait
+        sleep(@@idle_wait - delta)
       end
     end
 
