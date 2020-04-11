@@ -11,13 +11,13 @@ license: MIT
 dependencies:
   redis:
     github: stefanwille/crystal-redis
-    version: ~> 2.5.0
+    version: ~> 2.6.0
 
 development_dependencies:
   minitest:
     github: ysbaddaden/minitest.cr
-    version: ~> 0.5.0
+    version: ~> 0.5.1
 
   timecop:
     github: crystal-community/timecop.cr
-    version: ~> 0.3.0
+    version: ~> 0.4.0
