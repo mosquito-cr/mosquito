@@ -58,7 +58,7 @@ describe Queue do
     test_queue.enqueue task, in: offset
     stored_time = redis.zscore test_queue.scheduled_q, task.id
 
-    assert_in_delta stored_time.not_nil!, timestamp, 1
+    assert_in_delta stored_time.not_nil!, timestamp, 2
   end
 
   it "can enqueue a task at a specific time" do
