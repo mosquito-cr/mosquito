@@ -22,21 +22,4 @@ describe Mosquito::Base do
       assert_equal TestJobs::Queued, Base.job_for_type "fizzbuzz"
     end
   end
-
-  it "provides a logger" do
-    assert_instance_of ::Logger, Base.logger
-  end
-
-  it "allows overriding the logger" do
-    my_logger = ::Logger.new(nil)
-
-    Base.protect_logger do
-      Base.logger = my_logger
-      assert_same my_logger, Base.logger
-    end
-  end
-
-  it "responds to #log" do
-    Base.log("yolo")
-  end
 end

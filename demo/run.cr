@@ -1,5 +1,7 @@
 require "../src/mosquito"
 
+Log.builder.bind "*", :info, Log::IOBackend.new
+
 Mosquito::Redis.instance.flushall
 
 require "./jobs/*"

@@ -7,7 +7,7 @@ module Mosquito
     class_property idle_wait : Float64 = 0.1
 
     def self.start
-      Base.log "Mosquito is buzzing..."
+      Log.info { "Mosquito is buzzing..." }
       instance = new
 
       set_config
@@ -90,7 +90,7 @@ module Mosquito
         queues.each do |q|
           overdue_tasks = q.dequeue_scheduled
           next unless overdue_tasks.any?
-          Base.log "Found #{overdue_tasks.size} delayed tasks"
+          Log.info { "Found #{overdue_tasks.size} delayed tasks" }
 
           overdue_tasks.each do |task|
             q.enqueue task
@@ -109,7 +109,7 @@ module Mosquito
       task = q.dequeue
       return unless task
 
-      Base.log "#{"Running".colorize.magenta} task #{task} from #{q.name}"
+      Log.info { "#{"Running".colorize.magenta} task #{task} from #{q.name}" }
 
       bench = Benchmark.measure do
         task.run
@@ -128,7 +128,7 @@ module Mosquito
       end
 
       if task.succeeded?
-        Base.log "#{"Success:".colorize.green} task #{task} finished and took #{time}"
+        Log.info { "#{"Success:".colorize.green} task #{task} finished and took #{time}" }
         q.forget task
         task.delete
       else
@@ -137,10 +137,10 @@ module Mosquito
         if task.rescheduleable?
           interval = task.reschedule_interval
           next_execution = Time.utc + interval
-          Base.log "#{message} and #{"will run again".colorize.cyan} in #{interval} (at #{next_execution})"
+          Log.warn { "#{message} and #{"will run again".colorize.cyan} in #{interval} (at #{next_execution})" }
           q.reschedule task, next_execution
         else
-          Base.log "#{message} and #{"cannot be rescheduled".colorize.yellow}"
+          Log.warn { "#{message} and #{"cannot be rescheduled".colorize.yellow}" }
           q.banish task
         end
       end

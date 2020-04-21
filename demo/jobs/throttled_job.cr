@@ -4,7 +4,7 @@ class ThrottledJob < Mosquito::QueuedJob
   throttle limit: 3, period: 10
 
   def perform
-    log "throttled #{value}"
+    log "throttled job: #{value}"
 
     # For integration testing
     Mosquito::Redis.instance.incr self.class.name.underscore

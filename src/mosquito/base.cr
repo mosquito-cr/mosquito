@@ -35,16 +35,5 @@ module Mosquito
       position = @@timetable.index do
       end
     end
-
-    def self.logger
-      @@logger ||= Logger.new(STDOUT)
-    end
-
-    def self.logger=(@@logger : Logger | ::Logger)
-    end
-
-    def self.log(*messages)
-      logger.log(Logger::Severity::INFO, messages.join(" "))
-    end
   end
 end
