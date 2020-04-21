@@ -2,9 +2,8 @@
 <img src="logo/logotype_horizontal.svg" alt="mosquito">
 
 [![CircleCI](https://img.shields.io/circleci/project/github/robacarp/mosquito/master.svg?logo=circleci&label=Circle%20CI&style=for-the-badge)](https://circleci.com/gh/robacarp/mosquito)
-[![Crystal Version](https://img.shields.io/badge/crystal-0.32-blueviolet.svg?longCache=true&style=for-the-badge)](https://crystal-lang.org/)
+[![Crystal Version](https://img.shields.io/badge/crystal-0.34-blueviolet.svg?longCache=true&style=for-the-badge)](https://crystal-lang.org/)
 [![GitHub](https://img.shields.io/github/license/robacarp/mosquito.svg?style=for-the-badge)](https://tldrlegal.com/license/mit-license)
-
 
 Mosquito is a generic background job runner written specifically for Crystal. Significant inspiration from my experience with the successes and failings of the Ruby gem Sidekiq.
 
@@ -26,7 +25,7 @@ Current Limitations:
 
 ## Project State
 
-Updated 2019-04-26
+Updated 2020-04-21
 
 > Sufficient working beta.
 >
