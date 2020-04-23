@@ -1,4 +1,4 @@
-require "./logger"
+require "./log"
 require "./serializers/*"
 
 module Mosquito
@@ -9,12 +9,14 @@ module Mosquito
   # - Jobs Rescue when a #perform method fails a task for any reason
   # - Jobs can be rescheduleable
   abstract class Job
+    Log = Mosquito::Log.for(self)
+
     include Mosquito::Serializers::Primitives
 
     class_getter config : Hash(String, String) = {"limit" => "0", "period" => "0", "executed" => "0", "next_batch" => "0", "last_executed" => "0"}
 
     def log(message)
-      Base.log "[#{self.class.name}-#{task_id}] #{message}"
+      Log.for(self.class).info { message }
     end
 
     getter executed = false
