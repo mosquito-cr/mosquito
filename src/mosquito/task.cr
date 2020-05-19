@@ -57,8 +57,12 @@ module Mosquito
       Redis.instance.store_hash redis_key, fields
     end
 
-    def delete
-      Redis.instance.del redis_key
+    def delete(in ttl = 0)
+      if (ttl > 0)
+        Redis.instance.expire redis_key, ttl
+      else
+        Redis.instance.del redis_key
+      end
     end
 
     def build_job

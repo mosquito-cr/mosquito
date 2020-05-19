@@ -6,11 +6,24 @@ describe "Mosquito::Runner#run_next_task" do
   def register_mappings
     Mosquito::Base.register_job_mapping "mosquito::test_jobs::queued", Mosquito::TestJobs::Queued
     Mosquito::Base.register_job_mapping "failing_job", FailingJob
+    Mosquito::Base.register_job_mapping "non_reschedulable_failing_job", NonReschedulableFailingJob
+  end
+
+  def default_job_config(job)
+    Mosquito::Redis.instance.store_hash(job.queue.config_q, {
+      "limit" => "0",
+      "period" => "0",
+      "executed" => "0",
+      "next_batch" => "0",
+      "last_executed" => "0"
+    })
   end
 
   def run_task(job)
     job.reset_performance_counter!
-    Mosquito::Redis.instance.store_hash(job.queue.config_q, {"limit" => "0", "period" => "0", "executed" => "0", "next_batch" => "0", "last_executed" => "0"})
+
+    default_job_config job
+
     job.new.enqueue
 
     runner.run :fetch_queues
@@ -50,6 +63,65 @@ describe "Mosquito::Runner#run_next_task" do
   end
 
   it "doesnt reschedule a job that cant be rescheduled" do
-    skip
+    vanilla do
+      register_mappings
+
+      run_task NonReschedulableFailingJob
+
+      runner.run :fetch_queues
+      runner.run :run
+
+      assert_includes logs, "cannot be rescheduled"
+    end
   end
+
+  it "schedules deletion of a task that hard failed" do
+    vanilla do
+      register_mappings
+
+      # Manually building and enqueuing the task so we have a
+      # local copy of the task to query redis with.
+      # Logic from QueuedJob#enqueue.
+      job = NonReschedulableFailingJob.new
+      default_job_config NonReschedulableFailingJob
+      task = job.build_task
+      task.store
+      NonReschedulableFailingJob.queue.enqueue task
+
+      runner.run :fetch_queues
+      runner.run :run
+
+      ttl = Mosquito::Redis.instance.ttl task.redis_key
+      assert_equal runner.class.failed_job_ttl, ttl
+    end
+  end
+
+  it "purges a successful task from redis" do
+    vanilla do
+      register_mappings
+      clear_logs
+
+      # Manually building and enqueuing the task so we have a
+      # local copy of the task to query redis with.
+      # Logic from QueuedJob#enqueue.
+
+      job = Mosquito::TestJobs::Queued.new
+      default_job_config Mosquito::TestJobs::Queued
+      task = job.build_task
+      task.store
+      Mosquito::TestJobs::Queued.queue.enqueue task
+
+      runner.run :fetch_queues
+      runner.run :run
+
+      assert_includes logs, "Success"
+
+      Mosquito::TestJobs::Queued.queue.enqueue task
+      ttl = Mosquito::Redis.instance.ttl task.redis_key
+      assert_equal runner.class.successful_job_ttl, ttl
+
+    end
+  end
+
+
 end

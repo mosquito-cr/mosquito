@@ -40,4 +40,11 @@ describe "task storage" do
     saved_config = redis.retrieve_hash task.redis_key
     assert_empty saved_config
   end
+
+  it "can set a timed delete on a task" do
+    ttl = 10
+    task.delete(in: ttl)
+    set_ttl = redis.ttl task.redis_key
+    assert_equal ttl, set_ttl
+  end
 end
