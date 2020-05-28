@@ -25,11 +25,13 @@ Current Limitations:
 
 ## Project State
 
-Updated 2020-04-21
+Updated 2020-05-28
 
-> Sufficient working beta.
+> Stable.
 >
-> Use in a production environment at your own risk, and please open issues and feature requests.
+> A few projects are using Mosquito in production, and it seems to be going okay.
+>
+> If you're using Mosquito, please get in touch.
 
 ## Installation
 
