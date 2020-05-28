@@ -159,4 +159,4 @@ In lieu of `crystal spec` bells and whistles, Minitest provides a nice alternati
 
 ## Contributors
 
-- [robacarp](https://github.com/robacarp) robacarp - creator, maintainer
+- [robacarp](https://github.com/robacarp) creator, maintainer
