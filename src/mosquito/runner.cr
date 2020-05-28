@@ -5,6 +5,8 @@ module Mosquito
   class Runner
     # Minimum time in seconds to wait between checking for jobs in redis.
     class_property idle_wait : Float64 = 0.1
+    class_property successful_job_ttl = 1
+    class_property failed_job_ttl = 86400
 
     def self.start
       Log.info { "Mosquito is buzzing..." }
@@ -130,7 +132,8 @@ module Mosquito
       if task.succeeded?
         Log.info { "#{"Success:".colorize.green} task #{task} finished and took #{time}" }
         q.forget task
-        task.delete
+        task.delete in: self.class.successful_job_ttl
+
       else
         message = "#{"Failure:".colorize.red} task #{task} failed, taking #{time}"
 
@@ -142,6 +145,7 @@ module Mosquito
         else
           Log.warn { "#{message} and #{"cannot be rescheduled".colorize.yellow}" }
           q.banish task
+          task.delete in: self.class.failed_job_ttl
         end
       end
     end

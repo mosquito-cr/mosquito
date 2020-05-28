@@ -74,6 +74,20 @@ class FailingJob < Mosquito::QueuedJob
   property fail_with_exception = false
 end
 
+class NonReschedulableFailingJob < Mosquito::QueuedJob
+  include PerformanceCounter
+  params()
+
+  def perform
+    super
+    fail
+  end
+
+  def rescheduleable?
+    false
+  end
+end
+
 class NotImplementedJob < Mosquito::Job
 end
 
@@ -95,6 +109,7 @@ end
 Mosquito::Base.register_job_mapping "job_with_config", JobWithConfig
 Mosquito::Base.register_job_mapping "job_with_performance_counter", JobWithPerformanceCounter
 Mosquito::Base.register_job_mapping "failing_job", FailingJob
+Mosquito::Base.register_job_mapping "non_reschedulable_failing_job", FailingJob
 
 def task_config
   {
