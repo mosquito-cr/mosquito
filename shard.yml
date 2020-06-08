@@ -12,6 +12,9 @@ dependencies:
   redis:
     github: stefanwille/crystal-redis
     version: ~> 2.6.0
+  habitat:
+    github: luckyframework/habitat
+    version: ~> 0.4.3
 
 development_dependencies:
   minitest:

@@ -27,14 +27,12 @@ module Mosquito
       end
     end
 
-    class_property connection_url : String? = ENV["REDIS_URL"]?
-
     def self.instance
       @@instance ||= new
     end
 
-    def initialize(url = nil)
-      url ||= @@connection_url
+    def initialize
+      url = Mosquito.settings.redis_url
       @connection = ::Redis.new(url: url)
     end
 
