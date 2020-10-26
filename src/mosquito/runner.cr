@@ -22,6 +22,7 @@ module Mosquito
     getter queues, start_time
 
     def initialize
+      Mosquito.validate_settings
       @queues = [] of Queue
       @start_time = 0_i64
       @execution_timestamps = {} of Symbol => Time

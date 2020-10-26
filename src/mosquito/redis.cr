@@ -32,8 +32,9 @@ module Mosquito
     end
 
     def initialize
-      url = Mosquito.settings.redis_url
-      @connection = ::Redis.new(url: url)
+      Mosquito.validate_settings
+
+      @connection = ::Redis.new url: Mosquito.settings.redis_url
     end
 
     def self.key(*parts)
