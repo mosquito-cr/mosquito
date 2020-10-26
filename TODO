@@ -1,3 +1,0 @@
--- Queue --
-- Remove the concept of "Queue.empty?" - it's not correctly implemented and seems like bitrot from a previous design
-- The notion of bundling up "more than one queue" into a single thing called "queue" is confusing. Is there a better way to represent this?

@@ -53,6 +53,7 @@ Further installation instructions are available for use with Amber as well as a 
 ### Step 1: Define a queued job
 
 ```crystal
+# src/jobs/puts_job.cr
 class PutsJob < Mosquito::QueuedJob
   params message : String
 
@@ -65,13 +66,24 @@ end
 ### Step 2: Trigger that job
 
 ```crystal
+# src/<somewher>/<somefile>.cr
 PutsJob.new(message: "ohai background job").enqueue
 ```
 
 ### Step 3: Run your worker to process the job
 
+```crystal
+# src/worker.cr
+
+Mosquito.configure do |settings|
+  settings.redis_url = ENV["REDIS_URL"]
+end
+
+Mosquito::Runner.start
+```
+
 ```text
-crystal run bin/worker.cr
+crystal run src/worker.cr
 ```
 
 ### Success
@@ -143,7 +155,14 @@ end
 
 ## Connecting to Redis
 
-Mosquito currently reads directly from the `REDIS_URL` environment variable to connect to redis. If no variable is set, it uses redis connection defaults to connect to redis on localhost. 
+Mosquito uses [Redis](https://redis.io/) to schedule jobs and store metadata about those jobs. Conventionally, redis connections are configured by an environment variable. To pass that configuration to Mosqito, 
+
+```crystal
+Mosquito.configure do |settings|
+  settings.redis_url = ENV["REDIS_URL"]
+end
+```
+
 
 ## Contributing
 
