@@ -4,9 +4,12 @@ require "minitest/focus"
 require "timecop"
 Timecop.safe_mode = true
 
-ENV["REDIS_URL"] = "redis://127.0.0.1:6379/3"
-
 require "../src/mosquito"
+
+Mosquito.configure do |settings|
+  settings.redis_url = "redis://localhost:6379/3"
+end
+
 require "./helpers/*"
 
 Mosquito::Redis.instance.flushall
