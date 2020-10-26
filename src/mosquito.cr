@@ -36,6 +36,15 @@ module Mosquito
 
   Habitat.create do
     setting redis_url : String = Mosquito.default_redis_url
+    setting idle_wait : Float64 = 0.1
+    setting successful_job_ttl : Int32 = 1
+    setting failed_job_ttl : Int32 = 86400
+  end
+
+  class HabitatSettings
+    def self.idle_wait=(time_span : Time::Span)
+      @@idle_wait = time_span.total_seconds
+    end
   end
 
   @@settings_validated = false

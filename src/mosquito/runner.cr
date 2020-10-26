@@ -4,9 +4,13 @@ require "colorize"
 module Mosquito
   class Runner
     # Minimum time in seconds to wait between checking for jobs in redis.
-    class_property idle_wait : Float64 = 0.1
-    class_property successful_job_ttl = 1
-    class_property failed_job_ttl = 86400
+    property idle_wait : Float64
+
+    # How long a job config is persisted after success
+    property successful_job_ttl : Int32
+
+    # How long a job config is persisted after failure
+    property failed_job_ttl : Int32
 
     def self.start
       Log.info { "Mosquito is buzzing..." }
@@ -23,6 +27,11 @@ module Mosquito
 
     def initialize
       Mosquito.validate_settings
+
+      @idle_wait = Mosquito.settings.idle_wait
+      @successful_job_ttl = Mosquito.settings.successful_job_ttl
+      @failed_job_ttl = Mosquito.settings.failed_job_ttl
+
       @queues = [] of Queue
       @start_time = 0_i64
       @execution_timestamps = {} of Symbol => Time
@@ -34,7 +43,7 @@ module Mosquito
       enqueue_periodic_tasks
       enqueue_delayed_tasks
       dequeue_and_run_tasks
-      idle_wait
+      idle
     end
 
     private def self.set_config
@@ -48,18 +57,16 @@ module Mosquito
       @start_time = Time.utc.to_unix
     end
 
-    def self.idle_wait=(idle_wait : Number)
-      @@idle_wait = idle_wait.to_f64
     end
 
-    def self.idle_wait=(idle_wait : Time::Span)
-      @@idle_wait = idle_wait.total_seconds
+    def idle_wait=(time_span : Time::Span)
+      idle_wait = time_span.total_seconds
     end
 
-    private def idle_wait
+    private def idle
       delta = Time.utc.to_unix - @start_time
-      if delta < @@idle_wait
-        sleep(@@idle_wait - delta)
+      if delta < idle_wait
+        sleep(idle_wait - delta)
       end
     end
 
@@ -133,7 +140,7 @@ module Mosquito
       if task.succeeded?
         Log.info { "#{"Success:".colorize.green} task #{task} finished and took #{time}" }
         q.forget task
-        task.delete in: self.class.successful_job_ttl
+        task.delete in: successful_job_ttl
 
       else
         message = "#{"Failure:".colorize.red} task #{task} failed, taking #{time}"
@@ -146,7 +153,7 @@ module Mosquito
         else
           Log.warn { "#{message} and #{"cannot be rescheduled".colorize.yellow}" }
           q.banish task
-          task.delete in: self.class.failed_job_ttl
+          task.delete in: failed_job_ttl
         end
       end
     end

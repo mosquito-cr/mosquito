@@ -92,7 +92,7 @@ describe "Mosquito::Runner#run_next_task" do
       runner.run :run
 
       ttl = Mosquito::Redis.instance.ttl task.redis_key
-      assert_equal runner.class.failed_job_ttl, ttl
+      assert_equal runner.failed_job_ttl, ttl
     end
   end
 
@@ -118,7 +118,7 @@ describe "Mosquito::Runner#run_next_task" do
 
       Mosquito::TestJobs::Queued.queue.enqueue task
       ttl = Mosquito::Redis.instance.ttl task.redis_key
-      assert_equal runner.class.successful_job_ttl, ttl
+      assert_equal runner.successful_job_ttl, ttl
 
     end
   end
