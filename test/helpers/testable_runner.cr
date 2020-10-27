@@ -11,7 +11,7 @@ class Mosquito::TestableRunner < Mosquito::Runner
     when :run
       dequeue_and_run_tasks
     when :idle
-      idle_wait
+      idle
     else
       raise "No testing proxy for #{what}"
     end
