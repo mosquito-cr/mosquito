@@ -69,7 +69,7 @@ module Mosquito
     end
 
     def idle_wait=(time_span : Time::Span)
-      idle_wait = time_span.total_seconds
+      self.idle_wait = time_span.total_seconds
     end
 
     private def idle

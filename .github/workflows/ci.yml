@@ -1,0 +1,25 @@
+name: Test and Demo
+on:
+  pull_request:
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    container:
+      image: crystallang/crystal:latest
+
+    services:
+      redis:
+        image: redis
+
+    env:
+      REDIS_URL: redis://redis:6379/1
+
+    steps:
+    - uses: actions/checkout@v2
+    - run: printenv
+    - run: crystal --version
+    - run: shards install
+    - run: make test
+    - run: make demo

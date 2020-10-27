@@ -3,6 +3,7 @@ require "../../test_helper"
 describe "Mosquito::Runner#idle_wait" do
   let(:runner) { Mosquito::TestableRunner.new }
 
+  # these both have a false failure rate of about 1 in 1000 (0.1%).
   it "idles correctly" do
     runner.run :start_time
 
@@ -10,9 +11,7 @@ describe "Mosquito::Runner#idle_wait" do
       runner.run :idle
     end
 
-    subsecond = elapsed_time.total_seconds
-
-    assert_in_delta(Mosquito.settings.idle_wait, subsecond, delta: 0.1)
+    assert_in_delta(runner.idle_wait, elapsed_time.total_seconds, delta: 0.02)
   end
 
   it "sets idle_wait correctly" do
@@ -24,8 +23,6 @@ describe "Mosquito::Runner#idle_wait" do
       runner.run :idle
     end
 
-    two_seconds = elapsed_time.total_seconds
-
-    assert_in_delta(Mosquito.settings.idle_wait, two_seconds, delta: 0.1)
+    assert_in_delta(runner.idle_wait, elapsed_time.total_seconds, delta: 0.02)
   end
 end
