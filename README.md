@@ -1,7 +1,7 @@
 
 <img src="logo/logotype_horizontal.svg" alt="mosquito">
 
-[![CircleCI](https://img.shields.io/circleci/project/github/robacarp/mosquito/master.svg?logo=circleci&label=Circle%20CI&style=for-the-badge)](https://circleci.com/gh/robacarp/mosquito)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/robacarp/mosquito/Test%20and%20Demo?style=for-the-badge)
 [![Crystal Version](https://img.shields.io/badge/crystal-0.35.1-blueviolet.svg?longCache=true&style=for-the-badge)](https://crystal-lang.org/)
 [![GitHub](https://img.shields.io/github/license/robacarp/mosquito.svg?style=for-the-badge)](https://tldrlegal.com/license/mit-license)
 
