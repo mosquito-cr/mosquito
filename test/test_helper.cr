@@ -1,6 +1,9 @@
 require "minitest"
 require "minitest/focus"
 
+require "log"
+Log.setup :fatal
+
 require "timecop"
 Timecop.safe_mode = true
 
