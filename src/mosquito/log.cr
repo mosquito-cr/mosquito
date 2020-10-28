@@ -1,5 +1,5 @@
 require "log"
 
 module Mosquito
-  Log = ::Log.for "mosquito"
+  Log = ::Log.for self
 end
