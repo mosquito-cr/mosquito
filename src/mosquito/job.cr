@@ -16,7 +16,7 @@ module Mosquito
     class_getter config : Hash(String, String) = {"limit" => "0", "period" => "0", "executed" => "0", "next_batch" => "0", "last_executed" => "0"}
 
     def log(message)
-      Log.for(self.class).info { message }
+      Log.info { message }
     end
 
     getter executed = false
