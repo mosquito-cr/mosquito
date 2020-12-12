@@ -134,14 +134,14 @@ module Mosquito
         task.run
       end
 
-      if bench.total > 0.1
-        time = "#{(bench.total).*(100).trunc./(100)}s".colorize.red
-      elsif bench.total > 0.001
-        time = "#{(bench.total * 1_000).trunc}ms".colorize.yellow
-      elsif bench.total > 0.000_001
-        time = "#{(bench.total * 100_000).trunc}µs".colorize.green
-      elsif bench.total > 0.000_000_001
-        time = "#{(bench.total * 1_000_000_000).trunc}ns".colorize.green
+      if bench.real > 0.1
+        time = "#{(bench.real).*(100).trunc./(100)}s".colorize.red
+      elsif bench.real > 0.001
+        time = "#{(bench.real * 1_000).trunc}ms".colorize.yellow
+      elsif bench.real > 0.000_001
+        time = "#{(bench.real * 100_000).trunc}µs".colorize.green
+      elsif bench.real > 0.000_000_001
+        time = "#{(bench.real * 1_000_000_000).trunc}ns".colorize.green
       else
         time = "no discernible time at all".colorize.green
       end
