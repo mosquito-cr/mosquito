@@ -123,5 +123,12 @@ describe "Mosquito::Runner#run_next_task" do
     end
   end
 
-
+  it "measures task time correctly" do
+    [ 0.05.seconds, 0.5.seconds, 1.second, 2.seconds ].each do |interval|
+      elapsed_time = Time.measure do
+        runner.run { sleep interval }
+      end
+      assert_in_delta(interval, elapsed_time.total_seconds, delta: 0.02)
+    end
+  end
 end
