@@ -1,4 +1,3 @@
-require "benchmark"
 require "colorize"
 
 module Mosquito
@@ -130,18 +129,18 @@ module Mosquito
 
       Log.info { "#{"Running".colorize.magenta} task #{task} from #{q.name}" }
 
-      bench = Benchmark.measure do
+      bench = Time.measure do
         task.run
-      end
+      end.total_seconds
 
-      if bench.total > 0.1
-        time = "#{(bench.total).*(100).trunc./(100)}s".colorize.red
-      elsif bench.total > 0.001
-        time = "#{(bench.total * 1_000).trunc}ms".colorize.yellow
-      elsif bench.total > 0.000_001
-        time = "#{(bench.total * 100_000).trunc}µs".colorize.green
-      elsif bench.total > 0.000_000_001
-        time = "#{(bench.total * 1_000_000_000).trunc}ns".colorize.green
+      if bench > 0.1
+        time = "#{(bench).*(100).trunc./(100)}s".colorize.red
+      elsif bench > 0.001
+        time = "#{(bench * 1_000).trunc}ms".colorize.yellow
+      elsif bench > 0.000_001
+        time = "#{(bench * 100_000).trunc}µs".colorize.green
+      elsif bench > 0.000_000_001
+        time = "#{(bench * 1_000_000_000).trunc}ns".colorize.green
       else
         time = "no discernible time at all".colorize.green
       end

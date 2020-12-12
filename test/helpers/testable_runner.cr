@@ -17,6 +17,10 @@ class Mosquito::TestableRunner < Mosquito::Runner
     end
   end
 
+  def run(&block)
+    block.call
+  end
+
   def yield_once_a_second(&block)
     run_at_most every: 1.second, label: :testing do |t|
       yield
