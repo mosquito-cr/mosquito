@@ -56,7 +56,7 @@ module Mosquito
                   msg = <<-MSG
                     Expected a parameter named {{ parameter["name"] }} but found nil.
                     The parameter may not have been provided when the job was enqueued.
-                    Should you be using `#{{ parameter["name"] }}?` instead?
+                    Should you be using `{{ parameter["name"] }}` instead?
                   MSG
                   raise msg
                 end
