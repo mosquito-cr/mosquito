@@ -27,6 +27,14 @@ module Mosquito::Serializers::Primitives
     raw[0]
   end
 
+  def serialize_uuid(uuid : UUID) : String
+    uuid.to_s
+  end
+
+  def deserialize_uuid(raw : String) : UUID
+    UUID.new raw
+  end
+
   {% begin %}
     {%
        primitives = [
