@@ -1,9 +1,9 @@
 
 <img src="logo/logotype_horizontal.svg" alt="mosquito">
 
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/robacarp/mosquito/Test%20and%20Demo?style=for-the-badge)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/mosquito-cr/mosquito/Test%20and%20Demo?style=for-the-badge)
 [![Crystal Version](https://img.shields.io/badge/crystal-0.36.1-blueviolet.svg?longCache=true&style=for-the-badge)](https://crystal-lang.org/)
-[![GitHub](https://img.shields.io/github/license/robacarp/mosquito.svg?style=for-the-badge)](https://tldrlegal.com/license/mit-license)
+[![GitHub](https://img.shields.io/github/license/mosquito-cr/mosquito.svg?style=for-the-badge)](https://tldrlegal.com/license/mit-license)
 
 Mosquito is a generic background job runner written specifically for Crystal. Significant inspiration from my experience with the successes and failings of the Ruby gem Sidekiq.
 
@@ -40,13 +40,13 @@ Update your `shard.yml` to include mosquito:
 ```diff
 dependencies:
 +  mosquito:
-+    github: robacarp/mosquito
++    github: mosquito-cr/mosquito
 ```
 
 Further installation instructions are available for use with Amber as well as a vanilla crystal application:
 
-- [Installing with Amber](https://github.com/robacarp/mosquito/wiki/Usage:-Amber)
-- [Adding to a vanilla crystal application](https://github.com/robacarp/mosquito/wiki/Usage:-vanilla-crystal)
+- [Installing with Amber](https://github.com/mosquito-cr/mosquito/wiki/Usage:-Amber)
+- [Adding to a vanilla crystal application](https://github.com/mosquito-cr/mosquito/wiki/Usage:-vanilla-crystal)
 
 ## Usage
 
@@ -96,7 +96,7 @@ crystal run src/worker.cr
 2017-11-06 17:07:51 - task puts_job<...> succeeded, took 0.0 seconds
 ```
 
-[More information about queued jobs](https://github.com/robacarp/mosquito/wiki/Queued-jobs) in the wiki.
+[More information about queued jobs](https://github.com/mosquito-cr/mosquito/wiki/Queued-jobs) in the wiki.
 
 ------
 
@@ -133,7 +133,7 @@ Would produce this output:
 2017-11-06 17:22:15 - task periodically_puts_job<...> succeeded, took 0.0 seconds
 ```
 
-More information: [periodic jobs on the wiki](https://github.com/robacarp/mosquito/wiki/Periodic-Jobs)
+More information: [periodic jobs on the wiki](https://github.com/mosquito-cr/mosquito/wiki/Periodic-Jobs)
 
 ## Throttling Jobs
 

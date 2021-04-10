@@ -33,7 +33,7 @@ module Mosquito
         settings.redis_url = (ENV["REDIS_TLS_URL"]? || ENV["REDIS_URL"]? || "redis://localhost:6379")
       end
 
-      See Also: https://github.com/robacarp/mosquito#connecting-to-redis
+      See Also: https://github.com/mosquito-cr/mosquito#connecting-to-redis
       error
 
       raise message

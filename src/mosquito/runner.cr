@@ -63,7 +63,7 @@ module Mosquito
 
       Idle Wait Time is configured using the configuration block.
 
-      See: https://github.com/robacarp/mosquito/wiki/Advanced-Runner-Configuration
+      See: https://github.com/mosquito-cr/mosquito/wiki/Advanced-Runner-Configuration
       error
     end
 
