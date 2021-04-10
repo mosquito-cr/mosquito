@@ -12,12 +12,3 @@ describe "mosquito version numbers" do
     end
   end
 end
-
-describe "crystal version numbers" do
-  it "matches" do
-    version_file_contents = File.read(".crystal-version").strip
-    File.open("shard.yml") do |file|
-      assert_equal version_file_contents, YAML.parse(file)["crystal"].as_s
-    end
-  end
-end

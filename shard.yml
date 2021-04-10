@@ -1,26 +1,26 @@
 name: mosquito
-version: 0.10.0
+version: 0.11.0
 
 authors:
   - robacarp
 
-crystal: '1.0.0'
+crystal: '>= 0.36.1, < 2.0.0'
 
 license: MIT
 
 dependencies:
   redis:
     github: stefanwille/crystal-redis
-    version: ~> 2.6.0
+    version: ~> 2.7.0
   habitat:
     github: luckyframework/habitat
-    version: ~> 0.4.4
+    version: ~> 0.4.7
 
 development_dependencies:
   minitest:
     github: ysbaddaden/minitest.cr
-    version: ~> 0.5.1
+    version: ~> 1.0.0
 
   timecop:
     github: crystal-community/timecop.cr
-    version: ~> 0.4.0
+    version: ~> 0.4.1

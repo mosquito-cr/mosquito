@@ -52,6 +52,7 @@ describe Queue do
     assert_includes waiting_tasks, task.id
   end
 
+  # todo: brittle test
   it "can enqueue a task with a relative time" do
     offset = 3.seconds
     timestamp = offset.from_now.to_unix_ms
