@@ -5,7 +5,7 @@
 [![Crystal Version](https://img.shields.io/badge/crystal-0.36.1-blueviolet.svg?longCache=true&style=for-the-badge)](https://crystal-lang.org/)
 [![GitHub](https://img.shields.io/github/license/mosquito-cr/mosquito.svg?style=for-the-badge)](https://tldrlegal.com/license/mit-license)
 
-Mosquito is a generic background job runner written specifically for Crystal. Significant inspiration from my experience with the successes and failings of the Ruby gem Sidekiq.
+Mosquito is a generic background job runner written specifically for Crystal. Significant inspiration from experience with the successes and failings of the Ruby gems: Resque and Sidekiq.
 
 Mosquito currently provides these features:
 - Delayed execution
@@ -25,13 +25,11 @@ Current Limitations:
 
 ## Project State
 
-Updated 2020-10-26
+The Mosquito project is stable. A few projects are using Mosquito in production, and it's going okay.
 
-> Stable.
->
-> A few projects are using Mosquito in production, and it's going okay.
->
-> If you're using Mosquito, please get in touch.
+There are some features which would be nice to have, but what is here is both tried and tested.
+
+If you're using Mosquito, please [get in touch](https://github.com/mosquito-cr/mosquito/discussions) on the Discussion board or [on Crystal chat](https://crystal-lang.org/community/) with any questions, feature suggestions, or feedback.
 
 ## Installation
 
