@@ -11,6 +11,7 @@ module Mosquito
     setting failed_job_ttl : Int32 = 86400
 
     setting run_cron_scheduler : Bool = true
+    setting run_from : Array(String) = [] of String
   end
 
   class HabitatSettings
