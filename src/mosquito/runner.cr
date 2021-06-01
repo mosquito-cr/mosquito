@@ -96,6 +96,7 @@ module Mosquito
     end
 
     private def enqueue_periodic_tasks
+      return unless Mosquito.settings.run_cron_scheduler
       run_at_most every: 1.second, label: :enqueue_periodic_tasks do |now|
         Base.scheduled_tasks.each do |scheduled_task|
           scheduled_task.try_to_execute
