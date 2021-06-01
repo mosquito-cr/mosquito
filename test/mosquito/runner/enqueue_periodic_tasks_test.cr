@@ -22,4 +22,21 @@ describe "Mosquito::Runner#enqueue_periodic_tasks" do
       end
     end
   end
+
+  it "doesn't enqueue periodic tasks when disabled" do
+    Mosquito::Base.bare_mapping do
+      with_fresh_redis do |redis|
+        queue_name = "mosquito::test_jobs::periodic"
+        Mosquito::Base.register_job_mapping queue_name, Mosquito::TestJobs::Periodic
+        Mosquito::Base.register_job_interval Mosquito::TestJobs::Periodic, interval: 1.second
+
+        Mosquito.temp_config(run_cron_scheduler: false) do
+          runner.run :enqueue
+        end
+
+        queued_tasks = redis.lrange "mosquito:waiting:#{queue_name}", 0, -1
+        assert queued_tasks.size == 0
+      end
+    end
+  end
 end

@@ -9,6 +9,8 @@ module Mosquito
     setting idle_wait : Float64 = 0.1
     setting successful_job_ttl : Int32 = 1
     setting failed_job_ttl : Int32 = 86400
+
+    setting run_cron_scheduler : Bool = true
   end
 
   class HabitatSettings
