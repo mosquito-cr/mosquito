@@ -91,7 +91,16 @@ module Mosquito
 
     private def fetch_queues
       run_at_most every: 0.25.seconds, label: :fetch_queues do |t|
-        @queues = Queue.list_queues.map { |name| Queue.new name }
+        candidate_queues = Queue.list_queues.map { |name| Queue.new name }
+        @queues = filter_queues(candidate_queues)
+      end
+    end
+
+    private def filter_queues(present_queues : Array(Mosquito::Queue))
+      permitted_queues = Mosquito.settings.run_from
+      return present_queues if permitted_queues.empty?
+      present_queues.select do |queue|
+        permitted_queues.includes? queue.name
       end
     end
 
