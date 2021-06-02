@@ -99,7 +99,7 @@ module Mosquito
     private def filter_queues(present_queues : Array(Mosquito::Queue))
       permitted_queues = Mosquito.settings.run_from
       return present_queues if permitted_queues.empty?
-      present_queues.select do |queue|
+      present_queues.select! do |queue|
         permitted_queues.includes? queue.name
       end
     end
