@@ -8,6 +8,10 @@ crystal: '>= 0.36.1, < 2.0.0'
 
 license: MIT
 
+targets:
+  demo:
+    main: demo/run.cr
+
 dependencies:
   redis:
     github: stefanwille/crystal-redis

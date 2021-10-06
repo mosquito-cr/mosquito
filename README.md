@@ -2,7 +2,7 @@
 <img src="logo/logotype_horizontal.svg" alt="mosquito">
 
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/mosquito-cr/mosquito/Test%20and%20Demo?style=for-the-badge)
-[![Crystal Version](https://img.shields.io/badge/crystal-0.36.1-blueviolet.svg?longCache=true&style=for-the-badge)](https://crystal-lang.org/)
+[![Crystal Version](https://img.shields.io/badge/crystal-1.1.1-blueviolet.svg?longCache=true&style=for-the-badge)](https://crystal-lang.org/)
 [![GitHub](https://img.shields.io/github/license/mosquito-cr/mosquito.svg?style=for-the-badge)](https://tldrlegal.com/license/mit-license)
 
 Mosquito is a generic background job runner written specifically for Crystal. Significant inspiration from experience with the successes and failings of the Ruby gems: Resque and Sidekiq.
@@ -41,8 +41,9 @@ dependencies:
 +    github: mosquito-cr/mosquito
 ```
 
-Further installation instructions are available for use with Amber as well as a vanilla crystal application:
+Further installation instructions are available for use with web frameworks as well as a vanilla crystal application:
 
+- [Installing with Lucky](https://github.com/mosquito-cr/mosquito/wiki/Usage:-Lucky)
 - [Installing with Amber](https://github.com/mosquito-cr/mosquito/wiki/Usage:-Amber)
 - [Adding to a vanilla crystal application](https://github.com/mosquito-cr/mosquito/wiki/Usage:-vanilla-crystal)
 
@@ -175,7 +176,3 @@ make test
 ```
 
 In lieu of `crystal spec` bells and whistles, Minitest provides a nice alternative to [running one test at a time instead of the whole suite](https://github.com/ysbaddaden/minitest.cr/pull/31).
-
-## Contributors
-
-- [robacarp](https://github.com/robacarp) creator, maintainer
