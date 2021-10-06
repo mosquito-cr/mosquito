@@ -2,7 +2,7 @@ require "colorize"
 
 module Mosquito
   class Runner
-    # Minimum time in seconds to wait between checking for jobs in redis.
+    # Minimum time in seconds to wait between checking for jobs.
     property idle_wait : Float64
 
     # How long a job config is persisted after success
@@ -46,9 +46,8 @@ module Mosquito
     end
 
     private def self.set_config
-      redis = Redis.instance
       Base.mapping.each do |k, job|
-        redis.store_hash(job.queue.config_q, job.config)
+        Mosquito.backend.store_job_config(job)
       end
     end
 

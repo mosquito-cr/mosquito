@@ -1,6 +1,15 @@
 require "redis"
 
 module Mosquito
+  class RedisBackend
+    include Mosquito::Backend
+
+
+    def store_job_config(job : Mosquito::Job.class) : Nil
+      Redis.instance.store_hash(job.queue.config_q, job.config)
+    end
+  end
+
   class Redis
     class KeyBuilder
       KEY_SEPERATOR = ":"

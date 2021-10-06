@@ -12,6 +12,7 @@ module Mosquito
 
     setting run_cron_scheduler : Bool = true
     setting run_from : Array(String) = [] of String
+    setting backend : Mosquito::Backend = Mosquito::RedisBackend.new
   end
 
   class HabitatSettings
@@ -41,5 +42,9 @@ module Mosquito
 
       raise message
     end
+  end
+
+  def self.backend
+    settings.backend
   end
 end
