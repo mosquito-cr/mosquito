@@ -1,7 +1,7 @@
 module Mosquito
   # A named Queue.
   #
-  # Named Queues exist in Redis and have 4 ordered lists: waiting, pending, scheduled, and dead.
+  # Named Queues exist and have 4 ordered lists: waiting, pending, scheduled, and dead.
   #
   # - The Waiting list is for jobs which need to be executed as soon as possible.
   # - The Pending list is for jobs which are currently being executed.
@@ -100,7 +100,7 @@ module Mosquito
     end
 
     def enqueue(task : Task)
-      Redis.instance.lpush waiting_q, task.id
+      Mosquito.backend.enqueue name, task
     end
 
     def enqueue(task : Task, in interval : Time::Span)

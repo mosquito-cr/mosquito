@@ -4,9 +4,26 @@ module Mosquito
   class RedisBackend
     include Mosquito::Backend
 
+    ID_PREFIX = {"mosquito"}
+    QUEUES    = %w(waiting scheduled pending dead config)
+
+    {% for q in QUEUES %}
+      def {{q.id}}_q(name : String)
+        redis_key ID_PREFIX, {{q}}, name
+      end
+    {% end %}
+
+    def redis_key(*parts)
+      Redis.key *parts
+    end
+
 
     def store_job_config(job : Mosquito::Job.class) : Nil
       Redis.instance.store_hash(job.queue.config_q, job.config)
+    end
+
+    def enqueue(queue_name : String, task : Task)
+      Redis.instance.lpush waiting_q(queue_name), task.id
     end
   end
 
