@@ -108,7 +108,7 @@ module Mosquito
     end
 
     def enqueue(task : Task, at execute_time : Time)
-      Redis.instance.zadd scheduled_q, execute_time.to_unix_ms, task.id
+      Mosquito.backend.schedule name, task, execute_time
     end
 
     def dequeue : Task?

@@ -9,5 +9,6 @@ module Mosquito
 
     # from queue.cr
     abstract def enqueue(queue_name : String, task : Task)
+    abstract def schedule(queue_name : String, task : Task, at scheduled_time : Time)
   end
 end

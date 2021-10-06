@@ -25,6 +25,10 @@ module Mosquito
     def enqueue(queue_name : String, task : Task)
       Redis.instance.lpush waiting_q(queue_name), task.id
     end
+
+    def schedule(queue_name : String, task : Task, at scheduled_time : Time)
+      Redis.instance.zadd scheduled_q(queue_name), scheduled_time.to_unix_ms, task.id
+    end
   end
 
   class Redis
