@@ -114,8 +114,8 @@ module Mosquito
     def dequeue : Task?
       return if empty?
       return if rate_limited?
-      if task_id = Redis.instance.rpoplpush waiting_q, pending_q
-        Task.retrieve task_id
+      if task = Mosquito.backend.dequeue name
+        task
       else
         @empty = true
         nil
@@ -123,21 +123,13 @@ module Mosquito
     end
 
     def reschedule(task : Task, execution_time)
-      Redis.instance.lrem pending_q, 0, task.id
+      Mosquito.backend.finish name, task
       enqueue(task, at: execution_time)
     end
 
     def dequeue_scheduled : Array(Task)
-      time = Time.utc
-      overdue_tasks = Redis.instance.zrangebyscore scheduled_q, 0, time.to_unix_ms
-
-      return [] of Task unless overdue_tasks.any?
-
       # TODO should this push tasks back onto pending?
-      overdue_tasks.map do |task_id|
-        Redis.instance.zrem scheduled_q, task_id
-        Task.retrieve task_id.as(String)
-      end.compact
+      Mosquito.backend.deschedule name
     end
 
     def forget(task : Task)
