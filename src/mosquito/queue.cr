@@ -133,12 +133,12 @@ module Mosquito
     end
 
     def forget(task : Task)
-      Redis.instance.lrem pending_q, 0, task.id
+      Mosquito.backend.finish name, task
     end
 
     def banish(task : Task)
-      Redis.instance.lrem pending_q, 0, task.id
-      Redis.instance.lpush dead_q, task.id
+      Mosquito.backend.finish name, task
+      Mosquito.backend.terminate name, task
     end
 
     # TODO does this make sense?
@@ -164,7 +164,7 @@ module Mosquito
     end
 
     def flush
-      Redis.instance.del waiting_q, pending_q, scheduled_q, dead_q
+      Mosquito.backend.flush name
     end
 
     # Determines if a task needs to be throttled and not dequeued

@@ -12,5 +12,8 @@ module Mosquito
     abstract def dequeue(queue_name : String) : Task?
     abstract def schedule(queue_name : String, task : Task, at scheduled_time : Time)
     abstract def deschedule(queue_name : String) : Array(Task)
+    abstract def finish(queue_name : String, task : Task) # should this be called succeed?
+    abstract def terminate(queue_name : String, task : Task) # should this be called fail?
+    abstract def flush(queue_name : String)
   end
 end
