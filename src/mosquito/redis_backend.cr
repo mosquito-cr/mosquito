@@ -1,11 +1,10 @@
-
 module Mosquito
   class RedisBackend < Mosquito::Backend
-    QUEUES    = %w(waiting scheduled pending dead config)
+    QUEUES = %w(waiting scheduled pending dead config)
 
     {% for q in QUEUES %}
       def {{q.id}}_q
-        Mosquito.backend.key {{q}}, name
+        key {{q}}, name
       end
     {% end %}
 
@@ -37,9 +36,9 @@ module Mosquito
       search_queue_prefixes = QUEUES.first(2)
 
       search_queue_prefixes.map do |search_queue|
-        key = Mosquito.backend.key( search_queue, "*")
+        key = key search_queue, "*"
         long_names = Redis.instance.keys key
-        queue_prefix = Mosquito.backend.key(search_queue) + ":"
+        queue_prefix = key(search_queue) + ":"
 
         long_names.map(&.to_s).map do |long_name|
           long_name.sub(queue_prefix, "")
@@ -91,7 +90,7 @@ module Mosquito
     end
 
     def size : Int32
-      Redis.instance.llen Mosquito.backend.key(name)
+      Redis.instance.llen key(name)
     end
   end
 end

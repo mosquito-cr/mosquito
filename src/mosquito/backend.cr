@@ -10,6 +10,10 @@ module Mosquito
       KeyBuilder.build KEY_PREFIX, *parts
     end
 
+    def key(*parts)
+      self.class.key *parts
+    end
+
     private getter name : String
 
     def initialize(@name : String)
