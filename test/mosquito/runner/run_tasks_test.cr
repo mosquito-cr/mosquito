@@ -10,7 +10,7 @@ describe "Mosquito::Runner#run_next_task" do
   end
 
   def default_job_config(job)
-    Mosquito::Redis.instance.store_hash(job.queue.config_q, {
+    Mosquito::Redis.instance.store_hash(job.queue.config_key, {
       "limit" => "0",
       "period" => "0",
       "executed" => "0",

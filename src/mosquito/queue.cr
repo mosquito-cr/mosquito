@@ -76,29 +76,15 @@ module Mosquito
   #
   class Queue
     ID_PREFIX = {"mosquito"}
-    QUEUES    = %w(waiting scheduled pending dead config)
 
-    {% for q in QUEUES %}
-      def {{q.id}}_q
-        redis_key {{q}}, name
-      end
-    {% end %}
-
-    def self.redis_key(*parts)
-      Redis.key ID_PREFIX, parts
-    end
-
-    def redis_key(*parts)
-      self.class.redis_key *parts
-    end
-
-    getter name
+    getter name, config_key
     getter? empty : Bool
     property backend : Mosquito::Backend
 
     def initialize(@name : String)
       @empty = false
       @backend = Mosquito.backend.named name
+      @config_key = @name
     end
 
     def enqueue(task : Task)
@@ -169,7 +155,7 @@ module Mosquito
       # Which otherwise would cause throttling to kick in once executed == limit even if the executions were hours apart with a 60 sec period
       if Time.utc.to_unix > (Time.unix(config["last_executed"].to_i64) + config["period"].to_i.seconds).to_unix
         config["executed"] = "0"
-        Mosquito.backend.store config_q, config
+        Mosquito.backend.store config_key, config
         return false
       end
 
@@ -178,7 +164,7 @@ module Mosquito
     end
 
     private def get_config : Hash(String, String)
-      Mosquito.backend.retrieve config_q
+      Mosquito.backend.retrieve config_key
     end
   end
 end

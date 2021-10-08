@@ -123,7 +123,7 @@ def create_task(type = "job_with_config", config = task_config)
     task.config = config
     task.store
     if job = task.job
-      Mosquito::Redis.instance.store_hash(job.class.queue.config_q, {"limit" => "0", "period" => "0", "executed" => "0", "next_batch" => "0", "last_executed" => "0"})
+      Mosquito::Redis.instance.store_hash(job.class.queue.config_key, {"limit" => "0", "period" => "0", "executed" => "0", "next_batch" => "0", "last_executed" => "0"})
     end
   end
 end

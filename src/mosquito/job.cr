@@ -98,18 +98,18 @@ module Mosquito
     # Handles throttling logic
     private def increment : Nil
       redis = Redis.instance
-      q = self.class.queue.config_q
-      redis.hincrby q, "executed", 1
-      config = redis.retrieve_hash q
+      config_key = self.class.queue.config_key
+      redis.hincrby config_key, "executed", 1
+      config = redis.retrieve_hash config_key
       return if config["limit"] == "0" && config["period"] == "0"
 
       if config["executed"] == config["limit"]
         next_batch = (Time.utc + config["period"].to_i.seconds)
-        redis.hset q, "executed", 0
-        redis.hset q, "next_batch", next_batch.to_unix
+        redis.hset config_key, "executed", 0
+        redis.hset config_key, "next_batch", next_batch.to_unix
         log "#{"Execution limit reached".colorize.yellow} #{"next_batch".colorize.cyan} in #{config["period"].to_i.seconds} (at #{next_batch})"
       end
-      redis.hset q, "last_executed", Time.utc.to_unix
+      redis.hset config_key, "last_executed", Time.utc.to_unix
     end
   end
 end

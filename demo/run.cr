@@ -18,7 +18,7 @@ def expect_run_count(klass, expected)
 end
 
 def expect_executed_count(klass, expected)
-  config = Mosquito::Redis.instance.retrieve_hash(klass.queue.config_q)
+  config = Mosquito::Redis.instance.retrieve_hash(klass.queue.config_key)
   if config["executed"] != expected
     raise "Expected #{klass.name} to have config.executed == #{expected}.  But got #{config["executed"]}"
   else
