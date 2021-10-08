@@ -17,8 +17,10 @@ module Mosquito
           part.to_a.each do |e|
             id << build e
           end
+        when Number
+          id << part.to_s
         else
-          id << "invalid_key_part"
+          raise "#{part.class} is not a keyable type"
         end
       end
 
