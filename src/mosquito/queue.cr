@@ -148,19 +148,6 @@ module Mosquito
       backend.size
     end
 
-    def self.list_queues : Array(String)
-      search_queue_prefixes = QUEUES.first(2)
-
-      search_queue_prefixes.map do |prefix|
-        long_names = Redis.instance.keys redis_key(prefix, "*")
-        queue_prefix = redis_key(prefix) + ":"
-
-        long_names.map(&.to_s).map do |long_name|
-          long_name.sub(queue_prefix, "")
-        end
-      end.uniq.flatten
-    end
-
     def ==(other : self) : Bool
       name == other.name
     end

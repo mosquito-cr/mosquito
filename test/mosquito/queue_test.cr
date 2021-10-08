@@ -187,6 +187,6 @@ describe "Queue class methods" do
     redis.set "mosquito:waiting:test2", 1
     redis.set "mosquito:scheduled:test3", 1
 
-    assert_equal ["test1", "test2", "test3"], Mosquito::Queue.list_queues.sort
+    assert_equal ["test1", "test2", "test3"], Mosquito.backend.list_queues.sort
   end
 end

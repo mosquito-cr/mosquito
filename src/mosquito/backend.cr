@@ -16,6 +16,7 @@ module Mosquito
       # from queue.cr
       abstract def store(key : String, value : Hash(String, String)) : Nil
       abstract def retrieve(key : String) : Hash(String, String)
+      abstract def list_queues : Array(String)
     end
 
     macro inherited

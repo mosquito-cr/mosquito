@@ -24,6 +24,20 @@ module Mosquito
       Redis.instance.retrieve_hash key
     end
 
+    def self.list_queues : Array(String)
+      search_queue_prefixes = QUEUES.first(2)
+
+      search_queue_prefixes.map do |search_queue|
+        key = Redis.key(ID_PREFIX, search_queue, "*")
+        long_names = Redis.instance.keys key
+        queue_prefix = Redis.key(ID_PREFIX, search_queue) + ":"
+
+        long_names.map(&.to_s).map do |long_name|
+          long_name.sub(queue_prefix, "")
+        end
+      end.uniq.flatten
+    end
+
     def schedule(task : Task, at scheduled_time : Time)
       Redis.instance.zadd scheduled_q, scheduled_time.to_unix_ms, task.id
     end

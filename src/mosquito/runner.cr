@@ -90,7 +90,7 @@ module Mosquito
 
     private def fetch_queues
       run_at_most every: 0.25.seconds, label: :fetch_queues do |t|
-        candidate_queues = Queue.list_queues.map { |name| Queue.new name }
+        candidate_queues = Mosquito.backend.list_queues.map { |name| Queue.new name }
         @queues = filter_queues(candidate_queues)
       end
     end
