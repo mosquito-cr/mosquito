@@ -10,7 +10,7 @@ describe "Mosquito::Runner#run_next_task" do
   end
 
   def default_job_config(job)
-    Mosquito::Redis.instance.store_hash(job.queue.config_key, {
+    Mosquito.backend.store(job.queue.config_key, {
       "limit" => "0",
       "period" => "0",
       "executed" => "0",
@@ -80,7 +80,7 @@ describe "Mosquito::Runner#run_next_task" do
       register_mappings
 
       # Manually building and enqueuing the task so we have a
-      # local copy of the task to query redis with.
+      # local copy of the task to query the backend with.
       # Logic from QueuedJob#enqueue.
       job = NonReschedulableFailingJob.new
       default_job_config NonReschedulableFailingJob
@@ -91,18 +91,18 @@ describe "Mosquito::Runner#run_next_task" do
       runner.run :fetch_queues
       runner.run :run
 
-      ttl = Mosquito::Redis.instance.ttl task.redis_key
+      ttl = Mosquito.backend.ttl task.config_key
       assert_equal runner.failed_job_ttl, ttl
     end
   end
 
-  it "purges a successful task from redis" do
+  it "purges a successful task from the backend" do
     vanilla do
       register_mappings
       clear_logs
 
       # Manually building and enqueuing the task so we have a
-      # local copy of the task to query redis with.
+      # local copy of the task to query the backend with.
       # Logic from QueuedJob#enqueue.
 
       job = Mosquito::TestJobs::Queued.new
@@ -117,7 +117,7 @@ describe "Mosquito::Runner#run_next_task" do
       assert_includes logs, "Success"
 
       Mosquito::TestJobs::Queued.queue.enqueue task
-      ttl = Mosquito::Redis.instance.ttl task.redis_key
+      ttl = Mosquito.backend.ttl task.config_key
       assert_equal runner.successful_job_ttl, ttl
 
     end

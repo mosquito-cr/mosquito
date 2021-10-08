@@ -1,12 +1,11 @@
 
 module Mosquito
   class RedisBackend < Mosquito::Backend
-    ID_PREFIX = {"mosquito"}
     QUEUES    = %w(waiting scheduled pending dead config)
 
     {% for q in QUEUES %}
       def {{q.id}}_q
-        Redis.key ID_PREFIX, {{q}}, name
+        Mosquito.backend.key {{q}}, name
       end
     {% end %}
 
@@ -22,13 +21,25 @@ module Mosquito
       Redis.instance.retrieve_hash key
     end
 
+    def self.delete(key : String, in ttl = 0) : Nil
+      if (ttl > 0)
+        Redis.instance.expire key, ttl
+      else
+        Redis.instance.del key
+      end
+    end
+
+    def self.ttl(key : String) : Int64
+      Mosquito::Redis.instance.ttl key
+    end
+
     def self.list_queues : Array(String)
       search_queue_prefixes = QUEUES.first(2)
 
       search_queue_prefixes.map do |search_queue|
-        key = Redis.key(ID_PREFIX, search_queue, "*")
+        key = Mosquito.backend.key( search_queue, "*")
         long_names = Redis.instance.keys key
-        queue_prefix = Redis.key(ID_PREFIX, search_queue) + ":"
+        queue_prefix = Mosquito.backend.key(search_queue) + ":"
 
         long_names.map(&.to_s).map do |long_name|
           long_name.sub(queue_prefix, "")
@@ -80,7 +91,7 @@ module Mosquito
     end
 
     def size : Int32
-      Redis.instance.llen Redis.key(name)
+      Redis.instance.llen Mosquito.backend.key(name)
     end
   end
 end

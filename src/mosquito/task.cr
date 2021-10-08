@@ -6,7 +6,7 @@ module Mosquito
   # - build an instance of that Job class and pass off the config data
   # - Ask the job to run
   #
-  # Task data is called `config` and is persisted as a Hash in Redis under the key
+  # Task data is called `config` and is persisted in the backend under the key
   # `mosquito:task:task_id`.
   class Task
     getter type
@@ -17,14 +17,14 @@ module Mosquito
 
     property config
 
-    ID_PREFIX = {"mosquito", "task"}
+    CONFIG_KEY_PREFIX = "task"
 
-    def redis_key
-      self.class.redis_key id
+    def config_key
+      self.class.config_key id
     end
 
-    def self.redis_key(*parts)
-      Redis.key ID_PREFIX, parts
+    def self.config_key(*parts)
+      Mosquito.backend.key CONFIG_KEY_PREFIX, parts
     end
 
     def self.new(type : String)
@@ -46,7 +46,7 @@ module Mosquito
       epoch = time.to_unix_ms.to_s
 
       unless task_id = @id
-        task_id = @id = Redis.key epoch, rand(1000).to_s
+        task_id = @id = Mosquito.backend.key epoch, rand(1000)
       end
 
       fields = config.dup
@@ -54,15 +54,11 @@ module Mosquito
       fields["type"] = type
       fields["retry_count"] = retry_count.to_s
 
-      Redis.instance.store_hash redis_key, fields
+      Mosquito.backend.store config_key, fields
     end
 
     def delete(in ttl = 0)
-      if (ttl > 0)
-        Redis.instance.expire redis_key, ttl
-      else
-        Redis.instance.del redis_key
-      end
+      Mosquito.backend.delete config_key, ttl
     end
 
     def build_job
@@ -108,7 +104,7 @@ module Mosquito
     delegate :executed?, :succeeded?, :failed?, :failed, :rescheduled, to: @job
 
     def self.retrieve(id : String)
-      fields = Redis.instance.retrieve_hash redis_key(id)
+      fields = Mosquito.backend.retrieve config_key(id)
 
       return unless name = fields.delete "type"
       return unless timestamp = fields.delete "enqueue_time"

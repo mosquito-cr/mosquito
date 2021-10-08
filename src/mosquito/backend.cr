@@ -1,7 +1,13 @@
 module Mosquito
   abstract class Backend
+    KEY_PREFIX = {"mosquito"}
+
     def self.named(name)
       new(name)
+    end
+
+    def self.key(*parts)
+      KeyBuilder.build KEY_PREFIX, *parts
     end
 
     private getter name : String
@@ -17,6 +23,9 @@ module Mosquito
       abstract def store(key : String, value : Hash(String, String)) : Nil
       abstract def retrieve(key : String) : Hash(String, String)
       abstract def list_queues : Array(String)
+
+      # from task.cr
+      abstract def delete(key : String, in ttl = 0) : Nil
     end
 
     macro inherited

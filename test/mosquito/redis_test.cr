@@ -24,16 +24,4 @@ describe Mosquito::Redis do
 
     assert_equal data, result
   end
-
-  it "can build a key with two strings" do
-    assert_equal "one:two", Mosquito::Redis.key("one", "two")
-  end
-
-  it "can build a key with an array" do
-    assert_equal "one:two", Mosquito::Redis.key(["one", "two"])
-  end
-
-  it "can build a key with a tuple" do
-    assert_equal "one:two", Mosquito::Redis.key(*{"one", "two"})
-  end
 end
