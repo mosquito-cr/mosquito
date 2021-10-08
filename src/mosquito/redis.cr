@@ -42,11 +42,11 @@ module Mosquito
     end
 
     def store_hash(name : String, hash : Hash(String, String))
-      hset(name, hash)
+      hset name, hash
     end
 
     def retrieve_hash(name : String) : Hash(String, String)
-      hgetall(name)
+      hgetall name
     end
 
     forward_missing_to @connection
