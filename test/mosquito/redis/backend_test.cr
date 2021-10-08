@@ -3,17 +3,19 @@ require "../../test_helper"
 describe Mosquito::RedisBackend do
   let(:redis) { Mosquito::Redis.instance }
   let(:name) { "test" }
-  let(:backend) { Mosquito::RedisBackend.named name }
+
+  getter(backend : Mosquito::Backend) {
+    Mosquito::RedisBackend.named(name)
+  }
 
   it "can get a list of available queues" do
     # create evidence of some queues
-    with_fresh_redis do
-      redis.set "mosquito:waiting:test1", 1
-      redis.set "mosquito:waiting:test2", 1
-      redis.set "mosquito:scheduled:test3", 1
+    redis.flushall
+    redis.set "mosquito:waiting:test1", 1
+    redis.set "mosquito:waiting:test2", 1
+    redis.set "mosquito:scheduled:test3", 1
 
-      assert_equal ["test1", "test2", "test3"], Mosquito::RedisBackend.list_queues.sort
-    end
+    assert_equal ["test1", "test2", "test3"], Mosquito::RedisBackend.list_queues.sort
   end
 
   it "builds redis keys for pending q" do
