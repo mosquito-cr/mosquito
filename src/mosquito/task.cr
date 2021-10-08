@@ -10,8 +10,8 @@ module Mosquito
   # `mosquito:task:task_id`.
   class Task
     getter type
-    getter enqueue_time : Time?
-    getter id : String?
+    getter enqueue_time : Time
+    getter id : String
     getter retry_count = 0
     getter job : Mosquito::Job
 
@@ -27,30 +27,24 @@ module Mosquito
       Mosquito.backend.key CONFIG_KEY_PREFIX, parts
     end
 
-    def self.new(type : String)
-      new(type, nil, nil, 0)
+    def initialize(type : String)
+      new type
     end
 
-    private def initialize(
+    def initialize(
       @type : String,
-      @enqueue_time : Time | Nil,
-      @id : String | Nil,
-      @retry_count : Int32
+      @enqueue_time : Time = Time.utc,
+      id : String? = nil,
+      @retry_count : Int32 = 0
     )
+      @id = id || Mosquito.backend.key(@enqueue_time.to_unix_ms.to_s, rand(1000))
       @config = {} of String => String
       @job = NilJob.new
     end
 
     def store
-      @enqueue_time = time = Time.utc
-      epoch = time.to_unix_ms.to_s
-
-      unless task_id = @id
-        task_id = @id = Mosquito.backend.key epoch, rand(1000)
-      end
-
       fields = config.dup
-      fields["enqueue_time"] = epoch
+      fields["enqueue_time"] = enqueue_time.to_unix_ms.to_s
       fields["type"] = type
       fields["retry_count"] = retry_count.to_s
 
