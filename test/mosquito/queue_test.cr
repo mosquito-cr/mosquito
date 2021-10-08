@@ -7,7 +7,7 @@ describe Queue do
   let(:throttled_queue) do
     Mosquito::Queue.new(name).tap do |queue|
       queue.flush
-      Mosquito::Redis.instance.store_hash(queue.config_key, {"limit" => "0", "period" => "0", "executed" => "0", "next_batch" => "0", "last_executed" => "0"})
+      queue.set_config({"limit" => "0", "period" => "0", "executed" => "0", "next_batch" => "0", "last_executed" => "0"})
       queue
     end
   end
@@ -16,25 +16,27 @@ describe Queue do
   let(:test_queue) do
     Mosquito::Queue.new(name).tap do |queue|
       queue.flush
-      Mosquito::Redis.instance.store_hash(queue.config_key, {"limit" => "0", "period" => "0", "executed" => "0", "next_batch" => "0", "last_executed" => "0"})
+      queue.set_config({"limit" => "0", "period" => "0", "executed" => "0", "next_batch" => "0", "last_executed" => "0"})
       queue
     end
   end
 
   @task : Mosquito::Task?
   let(:task) do
-    Mosquito::Task.new("mock_task").tap do |task|
-      task.store
-    end
+    Mosquito::Task.new("mock_task").tap(&.store)
   end
 
-  let(:redis) { Mosquito::Redis.instance }
+  let(:backend) do
+    Mosquito::RedisBackend.named("test")
+  end
 
-  # it "can enqueue a task for immediate processing" do
-  #   test_queue.enqueue task
-  #   waiting_tasks = redis.lrange test_queue.waiting_q, 0, -1
-  #   assert_includes waiting_tasks, task.id
-  # end
+  it "can enqueue a task for immediate processing" do
+    with_fresh_redis do
+      test_queue.enqueue task
+      task_ids = backend.waiting_queue
+      assert_includes task_ids, task.id
+    end
+  end
 
   # # todo: brittle test
   # it "can enqueue a task with a relative time" do
@@ -114,7 +116,7 @@ describe Queue do
     describe "when it has not ran yet" do
       it "should not be rate_limited" do
         refute throttled_queue.rate_limited?
-        assert_equal Mosquito::Redis.instance.retrieve_hash(throttled_queue.config_key), {"limit" => "0", "period" => "0", "executed" => "0", "next_batch" => "0", "last_executed" => "0"}
+        assert_equal throttled_queue.get_config, {"limit" => "0", "period" => "0", "executed" => "0", "next_batch" => "0", "last_executed" => "0"}
       end
     end
 
@@ -125,7 +127,7 @@ describe Queue do
         Mosquito::Redis.instance.store_hash(throttled_queue.config_key, {"limit" => "5", "period" => "15", "executed" => "2", "next_batch" => "0", "last_executed" => "#{time}"})
 
         refute throttled_queue.rate_limited?
-        assert_match Mosquito::Redis.instance.retrieve_hash(throttled_queue.config_key)["executed"], "2"
+        assert_match throttled_queue.get_config["executed"], "2"
       end
     end
 
@@ -136,7 +138,7 @@ describe Queue do
         Mosquito::Redis.instance.store_hash(throttled_queue.config_key, {"limit" => "5", "period" => "15", "executed" => "5", "next_batch" => "#{time + 15}", "last_executed" => "#{time}"})
 
         assert throttled_queue.rate_limited?
-        assert_match Mosquito::Redis.instance.retrieve_hash(throttled_queue.config_key)["executed"], "5"
+        assert_match throttled_queue.get_config["executed"], "5"
       end
     end
 
@@ -145,13 +147,13 @@ describe Queue do
         # Simulate the queue being at its limit but the last execution was an hour ago.
         last_executed = Time.utc.to_unix - 1.hour.to_i
 
-        Mosquito::Redis.instance.store_hash(throttled_queue.config_key, {"limit" => "5", "period" => "15", "executed" => "5", "next_batch" => "0", "last_executed" => "#{last_executed}"})
+        throttled_queue.set_config({"limit" => "5", "period" => "15", "executed" => "5", "next_batch" => "0", "last_executed" => "#{last_executed}"})
 
         # Should not be limited since the period is only 15 seconds.
         refute throttled_queue.rate_limited?
 
         # Should have its executed set back to 0
-        assert_match Mosquito::Redis.instance.retrieve_hash(throttled_queue.config_key)["executed"], "0"
+        assert_match throttled_queue.get_config["executed"], "0"
       end
     end
   end
