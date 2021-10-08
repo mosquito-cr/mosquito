@@ -46,6 +46,10 @@ module Mosquito
       end.uniq.flatten
     end
 
+    def self.flush : Nil
+      Redis.instance.flushall
+    end
+
     def schedule(task : Task, at scheduled_time : Time)
       Redis.instance.zadd scheduled_q, scheduled_time.to_unix_ms, task.id
     end

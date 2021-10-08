@@ -30,10 +30,20 @@ module Mosquito
 
       # from task.cr
       abstract def delete(key : String, in ttl = 0) : Nil
+
+      abstract def flush : Nil
     end
 
     macro inherited
       extend ClassMethods
+    end
+
+    def store(key : String, value : Hash(String, String)) : Nil
+      self.class.store key, value
+    end
+
+    def retrieve(key : String) : Hash(String, String)
+      self.class.retrieve key
     end
 
     # from queue.cr
