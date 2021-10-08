@@ -1,19 +1,35 @@
 module Mosquito
-  module Backend
-    def self.instance
-      @@instance ||= new
+  abstract class Backend
+    def self.named(name)
+      new(name)
     end
 
-    # from runner.cr
-    abstract def store_job_config(job : Mosquito::Job.class) : Nil
+    private getter name : String
+
+    def initialize(@name : String)
+    end
+
+    module ClassMethods
+      # from runner.cr
+      abstract def store_job_config(job : Mosquito::Job.class) : Nil
+
+      # from queue.cr
+      abstract def store(key : String, value : Hash(String, String)) : Nil
+      abstract def retrieve(key : String) : Hash(String, String)
+    end
+
+    macro inherited
+      extend ClassMethods
+    end
 
     # from queue.cr
-    abstract def enqueue(queue_name : String, task : Task)
-    abstract def dequeue(queue_name : String) : Task?
-    abstract def schedule(queue_name : String, task : Task, at scheduled_time : Time)
-    abstract def deschedule(queue_name : String) : Array(Task)
-    abstract def finish(queue_name : String, task : Task) # should this be called succeed?
-    abstract def terminate(queue_name : String, task : Task) # should this be called fail?
-    abstract def flush(queue_name : String)
+    abstract def enqueue(task : Task)
+    abstract def dequeue : Task?
+    abstract def schedule(task : Task, at scheduled_time : Time)
+    abstract def deschedule : Array(Task)
+    abstract def finish(task : Task) # should this be called succeed?
+    abstract def terminate(task : Task) # should this be called fail?
+    abstract def flush : Nil
+    abstract def size : Int32
   end
 end

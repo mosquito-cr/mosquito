@@ -94,13 +94,15 @@ module Mosquito
 
     getter name
     getter? empty : Bool
+    property backend : Mosquito::Backend
 
     def initialize(@name : String)
       @empty = false
+      @backend = Mosquito.backend.named name
     end
 
     def enqueue(task : Task)
-      Mosquito.backend.enqueue name, task
+      backend.enqueue task
     end
 
     def enqueue(task : Task, in interval : Time::Span)
@@ -108,13 +110,14 @@ module Mosquito
     end
 
     def enqueue(task : Task, at execute_time : Time)
-      Mosquito.backend.schedule name, task, execute_time
+      backend.schedule task, execute_time
     end
 
     def dequeue : Task?
       return if empty?
       return if rate_limited?
-      if task = Mosquito.backend.dequeue name
+
+      if task = backend.dequeue
         task
       else
         @empty = true
@@ -123,27 +126,26 @@ module Mosquito
     end
 
     def reschedule(task : Task, execution_time)
-      Mosquito.backend.finish name, task
+      backend.finish task
       enqueue(task, at: execution_time)
     end
 
     def dequeue_scheduled : Array(Task)
       # TODO should this push tasks back onto pending?
-      Mosquito.backend.deschedule name
+      backend.deschedule
     end
 
     def forget(task : Task)
-      Mosquito.backend.finish name, task
+      backend.finish task
     end
 
     def banish(task : Task)
-      Mosquito.backend.finish name, task
-      Mosquito.backend.terminate name, task
+      backend.finish task
+      backend.terminate task
     end
 
-    # TODO does this make sense?
     def length : Int32
-      Redis.instance.llen redis_key(name)
+      backend.size
     end
 
     def self.list_queues : Array(String)
@@ -164,7 +166,7 @@ module Mosquito
     end
 
     def flush
-      Mosquito.backend.flush name
+      backend.flush
     end
 
     # Determines if a task needs to be throttled and not dequeued
@@ -180,7 +182,7 @@ module Mosquito
       # Which otherwise would cause throttling to kick in once executed == limit even if the executions were hours apart with a 60 sec period
       if Time.utc.to_unix > (Time.unix(config["last_executed"].to_i64) + config["period"].to_i.seconds).to_unix
         config["executed"] = "0"
-        Redis.instance.store_hash config_q, config
+        Mosquito.backend.store config_q, config
         return false
       end
 
@@ -189,7 +191,7 @@ module Mosquito
     end
 
     private def get_config : Hash(String, String)
-      Redis.instance.retrieve_hash config_q
+      Mosquito.backend.retrieve config_q
     end
   end
 end

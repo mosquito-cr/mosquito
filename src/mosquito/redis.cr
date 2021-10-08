@@ -1,68 +1,74 @@
 require "redis"
 
 module Mosquito
-  class RedisBackend
-    include Mosquito::Backend
+  class RedisBackend < Mosquito::Backend
 
     ID_PREFIX = {"mosquito"}
     QUEUES    = %w(waiting scheduled pending dead config)
 
     {% for q in QUEUES %}
-      def {{q.id}}_q(name : String)
-        redis_key ID_PREFIX, {{q}}, name
+      def {{q.id}}_q
+        Redis.key ID_PREFIX, {{q}}, name
       end
     {% end %}
 
-    def redis_key(*parts)
-      Redis.key *parts
+    def self.store_job_config(job : Mosquito::Job.class) : Nil
+      Redis.instance.store_hash job.queue.config_q, job.config
     end
 
-
-    def store_job_config(job : Mosquito::Job.class) : Nil
-      Redis.instance.store_hash(job.queue.config_q, job.config)
+    def self.store(key : String, value : Hash(String, String)) : Nil
+      Redis.instance.store_hash key, value
     end
 
-    def schedule(queue_name : String, task : Task, at scheduled_time : Time)
-      Redis.instance.zadd scheduled_q(queue_name), scheduled_time.to_unix_ms, task.id
+    def self.retrieve(key : String) : Hash(String, String)
+      Redis.instance.retrieve_hash key
     end
 
-    def deschedule(queue_name : String) : Array(Task)
+    def schedule(task : Task, at scheduled_time : Time)
+      Redis.instance.zadd scheduled_q, scheduled_time.to_unix_ms, task.id
+    end
+
+    def deschedule : Array(Task)
       time = Time.utc
-      overdue_tasks = Redis.instance.zrangebyscore scheduled_q(queue_name), 0, time.to_unix_ms
+      overdue_tasks = Redis.instance.zrangebyscore scheduled_q, 0, time.to_unix_ms
 
       return [] of Task unless overdue_tasks.any?
 
       overdue_tasks.map do |task_id|
-        Redis.instance.zrem scheduled_q(queue_name), task_id
+        Redis.instance.zrem scheduled_q, task_id
         Task.retrieve task_id.as(String)
       end.compact
     end
 
-    def enqueue(queue_name : String, task : Task)
-      Redis.instance.lpush waiting_q(queue_name), task.id
+    def enqueue(task : Task)
+      Redis.instance.lpush waiting_q, task.id
     end
 
-    def dequeue(queue_name : String) : Task?
-      if id = Redis.instance.rpoplpush waiting_q(queue_name), pending_q(queue_name)
+    def dequeue : Task?
+      if id = Redis.instance.rpoplpush waiting_q, pending_q
         Task.retrieve id
       end
     end
 
-    def finish(queue_name : String, task : Task)
-      Redis.instance.lrem pending_q(queue_name), 0, task.id
+    def finish(task : Task)
+      Redis.instance.lrem pending_q, 0, task.id
     end
 
-    def terminate(queue_name : String, task : Task)
-      Redis.instance.lpush dead_q(queue_name), task.id
+    def terminate(task : Task)
+      Redis.instance.lpush dead_q, task.id
     end
 
-    def flush(queue_name : String)
+    def flush : Nil
       Redis.instance.del(
-        waiting_q(queue_name),
-        pending_q(queue_name),
-        scheduled_q(queue_name),
-        dead_q(queue_name)
+        waiting_q,
+        pending_q,
+        scheduled_q,
+        dead_q
       )
+    end
+
+    def size : Int32
+      Redis.instance.llen Redis.key(name)
     end
   end
 
