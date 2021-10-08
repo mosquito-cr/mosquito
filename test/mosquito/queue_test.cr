@@ -1,24 +1,10 @@
 require "../test_helper"
 
 describe Queue do
-  let(:name) { "test" }
+  let(:name) { "test#{rand(1000)}" }
 
-  @throttled_queue : Mosquito::Queue?
-  let(:throttled_queue) do
-    Mosquito::Queue.new(name).tap do |queue|
-      queue.flush
-      queue.set_config({"limit" => "0", "period" => "0", "executed" => "0", "next_batch" => "0", "last_executed" => "0"})
-      queue
-    end
-  end
-
-  @test_queue : Mosquito::Queue?
   let(:test_queue) do
-    Mosquito::Queue.new(name).tap do |queue|
-      queue.flush
-      queue.set_config({"limit" => "0", "period" => "0", "executed" => "0", "next_batch" => "0", "last_executed" => "0"})
-      queue
-    end
+    Mosquito::Queue.new(name)
   end
 
   @task : Mosquito::Task?
@@ -27,7 +13,7 @@ describe Queue do
   end
 
   let(:backend) do
-    Mosquito::RedisBackend.named("test")
+    Mosquito::RedisBackend.named name
   end
 
   it "can enqueue a task for immediate processing" do
@@ -103,10 +89,12 @@ describe Queue do
       task.store
     end
 
-    past = 1.minute.ago
-    future = 1.minute.from_now
-    test_queue.enqueue task1, at: past
-    test_queue.enqueue task2, at: future
+    Timecop.freeze(Time.utc) do
+      past = 1.minute.ago
+      future = 1.minute.from_now
+      test_queue.enqueue task1, at: past
+      test_queue.enqueue task2, at: future
+    end
 
     # check to make sure only task1 was dequeued
     overdue_tasks = test_queue.dequeue_scheduled
@@ -122,8 +110,8 @@ describe Queue do
   describe "#rate_limited?" do
     describe "when it has not ran yet" do
       it "should not be rate_limited" do
-        refute throttled_queue.rate_limited?
-        assert_equal throttled_queue.get_config, {"limit" => "0", "period" => "0", "executed" => "0", "next_batch" => "0", "last_executed" => "0"}
+        refute test_queue.rate_limited?
+        assert_equal test_queue.get_config, Mosquito::Queue.default_config
       end
     end
 
@@ -131,10 +119,10 @@ describe Queue do
       it "should not be rate_limited" do
         time = Time.utc.to_unix
 
-        Mosquito::Redis.instance.store_hash(throttled_queue.config_key, {"limit" => "5", "period" => "15", "executed" => "2", "next_batch" => "0", "last_executed" => "#{time}"})
+        Mosquito::Redis.instance.store_hash(test_queue.config_key, {"limit" => "5", "period" => "15", "executed" => "2", "next_batch" => "0", "last_executed" => "#{time}"})
 
-        refute throttled_queue.rate_limited?
-        assert_match throttled_queue.get_config["executed"], "2"
+        refute test_queue.rate_limited?
+        assert_match test_queue.get_config["executed"], "2"
       end
     end
 
@@ -142,10 +130,10 @@ describe Queue do
       it "should be rate_limited" do
         time = Time.utc.to_unix
 
-        Mosquito::Redis.instance.store_hash(throttled_queue.config_key, {"limit" => "5", "period" => "15", "executed" => "5", "next_batch" => "#{time + 15}", "last_executed" => "#{time}"})
+        Mosquito::Redis.instance.store_hash(test_queue.config_key, {"limit" => "5", "period" => "15", "executed" => "5", "next_batch" => "#{time + 15}", "last_executed" => "#{time}"})
 
-        assert throttled_queue.rate_limited?
-        assert_match throttled_queue.get_config["executed"], "5"
+        assert test_queue.rate_limited?
+        assert_match test_queue.get_config["executed"], "5"
       end
     end
 
@@ -154,13 +142,13 @@ describe Queue do
         # Simulate the queue being at its limit but the last execution was an hour ago.
         last_executed = Time.utc.to_unix - 1.hour.to_i
 
-        throttled_queue.set_config({"limit" => "5", "period" => "15", "executed" => "5", "next_batch" => "0", "last_executed" => "#{last_executed}"})
+        test_queue.set_config({"limit" => "5", "period" => "15", "executed" => "5", "next_batch" => "0", "last_executed" => "#{last_executed}"})
 
         # Should not be limited since the period is only 15 seconds.
-        refute throttled_queue.rate_limited?
+        refute test_queue.rate_limited?
 
         # Should have its executed set back to 0
-        assert_match throttled_queue.get_config["executed"], "0"
+        assert_match test_queue.get_config["executed"], "0"
       end
     end
   end

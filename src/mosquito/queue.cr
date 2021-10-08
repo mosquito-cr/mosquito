@@ -75,8 +75,6 @@ module Mosquito
   # ```
   #
   class Queue
-    ID_PREFIX = {"mosquito"}
-
     getter name, config_key
     getter? empty : Bool
     property backend : Mosquito::Backend
@@ -117,7 +115,6 @@ module Mosquito
     end
 
     def dequeue_scheduled : Array(Task)
-      # TODO should this push tasks back onto pending?
       backend.deschedule
     end
 
@@ -142,8 +139,18 @@ module Mosquito
       backend.flush
     end
 
+    def self.default_config
+      {
+        "limit" => "0",
+        "period" => "0",
+        "executed" => "0",
+        "next_batch" => "0",
+        "last_executed" => "0"
+      }
+    end
+
     def get_config : Hash(String, String)
-      Mosquito.backend.retrieve config_key
+      self.class.default_config.merge Mosquito.backend.retrieve config_key
     end
 
     def set_config(config : Hash(String, String))
