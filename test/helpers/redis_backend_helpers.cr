@@ -1,11 +1,24 @@
 module Mosquito
   class RedisBackend < Mosquito::Backend
-    {% for name in QUEUES %}
-      def {{name.id}}_queue : Array(String)
-        stuff = Redis.instance.zrange({{name.id}}_q, 0, -1)
-        pp stuff
-        stuff.map(&.to_s)
+    {% for name in ["waiting", "scheduled", "pending", "dead"] %}
+      def dump_{{name.id}}_q : Array(String)
+        key = {{name.id}}_q
+        type = Redis.instance.type key
+
+        if type == "list"
+          Redis.instance.lrange(key, 0, -1).map(&.as(String))
+        elsif type == "zset"
+          Redis.instance.zrange(key, 0, -1).map(&.as(String))
+        elsif type == "none"
+          [] of String
+        else
+          raise "don't know how to dump a #{type} for {{name.id}}"
+        end
       end
     {% end %}
+
+    def scheduled_task_time(task : Task)
+      Redis.instance.zscore scheduled_q, task.id
+    end
   end
 end
