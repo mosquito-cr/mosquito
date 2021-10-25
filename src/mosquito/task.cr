@@ -24,7 +24,7 @@ module Mosquito
     end
 
     def self.config_key(*parts)
-      Mosquito.backend.key CONFIG_KEY_PREFIX, parts
+      Mosquito.backend.build_key CONFIG_KEY_PREFIX, parts
     end
 
     def initialize(type : String)
@@ -37,7 +37,8 @@ module Mosquito
       id : String? = nil,
       @retry_count : Int32 = 0
     )
-      @id = id || Mosquito.backend.key(@enqueue_time.to_unix_ms.to_s, rand(1000))
+
+      @id = id || KeyBuilder.build @enqueue_time.to_unix_ms.to_s, rand(1000)
       @config = {} of String => String
       @job = NilJob.new
     end

@@ -4,7 +4,7 @@ module Mosquito
 
     {% for q in QUEUES %}
       def {{q.id}}_q
-        key {{q}}, name
+        build_key {{q}}, name
       end
     {% end %}
 
@@ -36,9 +36,9 @@ module Mosquito
       search_queue_prefixes = QUEUES.first(2)
 
       search_queue_prefixes.map do |search_queue|
-        key = key search_queue, "*"
+        key = build_key search_queue, "*"
         long_names = Redis.instance.keys key
-        queue_prefix = key(search_queue) + ":"
+        queue_prefix = build_key(search_queue) + ":"
 
         long_names.map(&.to_s).map do |long_name|
           long_name.sub(queue_prefix, "")
@@ -94,7 +94,7 @@ module Mosquito
     end
 
     def size : Int32
-      Redis.instance.llen key(name)
+      Redis.instance.llen build_key(name)
     end
   end
 end

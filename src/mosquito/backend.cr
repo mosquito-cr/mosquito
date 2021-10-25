@@ -6,12 +6,12 @@ module Mosquito
       new(name)
     end
 
-    def self.key(*parts)
+    def self.build_key(*parts)
       KeyBuilder.build KEY_PREFIX, *parts
     end
 
-    def key(*parts)
-      self.class.key *parts
+    def build_key(*parts)
+      self.class.build_key *parts
     end
 
     private getter name : String

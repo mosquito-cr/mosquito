@@ -7,18 +7,23 @@ describe "Mosquito::Runner#enqueue_delayed_tasks" do
   getter(enqueue_time)  { Time.utc }
   getter(backend)       { queue.backend }
 
-  it "enqueues a delayed task when it's ready", focus: true do
+  def enqueue_task : Task
+    Mosquito::Base.register_job_mapping queue.name, Mosquito::TestJobs::Queued
+
+    task = Task.new "blah"
+
+    Timecop.freeze enqueue_time do |t|
+      task = test_job.enqueue in: 3.seconds
+    end
+
+    assert_includes queue.backend.dump_scheduled_q, task.id
+    runner.run :fetch_queues
+    task
+  end
+
+  it "enqueues a delayed task when it's ready" do
     clean_slate do
-      Mosquito::Base.register_job_mapping queue.name, Mosquito::TestJobs::Queued
-
-      task_id = ""
-      Timecop.freeze enqueue_time do |t|
-        task = test_job.enqueue in: 3.seconds
-        task_id = task.id
-      end
-
-      runner.run :fetch_queues
-
+      task = enqueue_task
       run_time = enqueue_time + 3.seconds
 
       Timecop.freeze run_time do |t|
@@ -26,7 +31,7 @@ describe "Mosquito::Runner#enqueue_delayed_tasks" do
       end
 
       queued_tasks = queue.backend.dump_waiting_q
-      assert_includes queued_tasks, task_id
+      assert_includes queued_tasks, task.id
 
       last_task = queued_tasks.last
       task_metadata = queue.backend.retrieve Task.config_key(last_task)
@@ -36,8 +41,8 @@ describe "Mosquito::Runner#enqueue_delayed_tasks" do
   end
 
   it "doesn't enqueue tasks that arent ready yet" do
-    vanilla do |redis|
-      enqueue_task
+    clean_slate do
+      task = enqueue_task
 
       check_time = enqueue_time + 2.999.seconds
 
@@ -45,7 +50,9 @@ describe "Mosquito::Runner#enqueue_delayed_tasks" do
         runner.run :enqueue
       end
 
-      queued_tasks = redis.lrange "mosquito:waiting:#{queue_name}", 0, -1
+      queued_tasks = queue.backend.dump_waiting_q
+
+      # does not deschedule and enqueue anything
       assert_equal 0, queued_tasks.size
     end
   end
