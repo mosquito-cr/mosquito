@@ -99,7 +99,7 @@ module Mosquito
 
     def dequeue : Task?
       return if empty?
-      return if rate_limited?
+      # return if rate_limited?
 
       if task = backend.dequeue
         task
@@ -158,24 +158,24 @@ module Mosquito
     end
 
     # Determines if a task needs to be throttled and not dequeued
-    def rate_limited? : Bool
-      # Get the latest config for the queue
-      config = get_config
+    # def rate_limited? : Bool
+    #   # Get the latest config for the queue
+    #   config = get_config
 
-      # Return if throttleing is not needed
-      return false if config["limit"] == "0" && config["period"] == "0"
+    #   # Return if throttleing is not needed
+    #   return false if config["limit"] == "0" && config["period"] == "0"
 
-      # If the last time a job was executed was more than now + period.seconds ago, reset executed back to 0
-      # This handles executions not in same time frame
-      # Which otherwise would cause throttling to kick in once executed == limit even if the executions were hours apart with a 60 sec period
-      if Time.utc.to_unix > (Time.unix(config["last_executed"].to_i64) + config["period"].to_i.seconds).to_unix
-        config["executed"] = "0"
-        set_config config
-        return false
-      end
+    #   # If the last time a job was executed was more than now + period.seconds ago, reset executed back to 0
+    #   # This handles executions not in same time frame
+    #   # Which otherwise would cause throttling to kick in once executed == limit even if the executions were hours apart with a 60 sec period
+    #   if Time.utc.to_unix > (Time.unix(config["last_executed"].to_i64) + config["period"].to_i.seconds).to_unix
+    #     config["executed"] = "0"
+    #     set_config config
+    #     return false
+    #   end
 
-      # Throttle the job if the next_batch is in the future
-      config["next_batch"].to_i64 > Time.utc.to_unix
-    end
+    #   # Throttle the job if the next_batch is in the future
+    #   config["next_batch"].to_i64 > Time.utc.to_unix
+    # end
   end
 end
