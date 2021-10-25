@@ -17,7 +17,7 @@ describe Queue do
   end
 
   it "can enqueue a task for immediate processing" do
-    with_fresh_redis do
+    clean_slate do
       test_queue.enqueue task
       task_ids = backend.dump_waiting_q
       assert_includes task_ids, task.id
@@ -26,7 +26,7 @@ describe Queue do
 
   it "can enqueue a task with a relative time" do
     Timecop.freeze(Time.utc) do
-      with_fresh_redis do
+      clean_slate do
         offset = 3.seconds
         timestamp = offset.from_now.to_unix_ms
         test_queue.enqueue task, in: offset
@@ -39,7 +39,7 @@ describe Queue do
 
   it "can enqueue a task at a specific time" do
     Timecop.freeze(Time.utc) do
-      with_fresh_redis do
+      clean_slate do
         timestamp = 3.seconds.from_now
         test_queue.enqueue task, at: timestamp
         stored_time = backend.scheduled_task_time task

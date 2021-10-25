@@ -31,7 +31,7 @@ describe "Mosquito::Runner#run_next_task" do
   end
 
   it "runs a task" do
-    vanilla do
+    clean_slate do
       register_mappings
 
       run_task Mosquito::TestJobs::Queued
@@ -40,7 +40,7 @@ describe "Mosquito::Runner#run_next_task" do
   end
 
   it "logs a success message" do
-    vanilla do
+    clean_slate do
       register_mappings
 
       clear_logs
@@ -50,7 +50,7 @@ describe "Mosquito::Runner#run_next_task" do
   end
 
   it "logs a failure message" do
-    vanilla do
+    clean_slate do
       register_mappings
       clear_logs
       run_task FailingJob
@@ -63,7 +63,7 @@ describe "Mosquito::Runner#run_next_task" do
   end
 
   it "doesnt reschedule a job that cant be rescheduled" do
-    vanilla do
+    clean_slate do
       register_mappings
 
       run_task NonReschedulableFailingJob
@@ -76,7 +76,7 @@ describe "Mosquito::Runner#run_next_task" do
   end
 
   it "schedules deletion of a task that hard failed" do
-    vanilla do
+    clean_slate do
       register_mappings
 
       # Manually building and enqueuing the task so we have a
@@ -97,7 +97,7 @@ describe "Mosquito::Runner#run_next_task" do
   end
 
   it "purges a successful task from the backend" do
-    vanilla do
+    clean_slate do
       register_mappings
       clear_logs
 
