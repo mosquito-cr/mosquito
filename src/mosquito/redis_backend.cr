@@ -9,15 +9,15 @@ module Mosquito
     {% end %}
 
     def self.store_job_config(job : Mosquito::Job.class) : Nil
-      Redis.instance.store_hash job.queue.config_key, job.config
+      Redis.instance.hset job.queue.config_key, job.config
     end
 
     def self.store(key : String, value : Hash(String, String)) : Nil
-      Redis.instance.store_hash key, value
+      Redis.instance.hset key, value
     end
 
     def self.retrieve(key : String) : Hash(String, String)
-      Redis.instance.retrieve_hash key
+      Redis.instance.hgetall key
     end
 
     def self.delete(key : String, in ttl = 0) : Nil

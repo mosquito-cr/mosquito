@@ -13,14 +13,11 @@ module Mosquito
     end
 
     @[Deprecated]
-    def self.key(*parts)
-      KeyBuilder.build *parts
-    end
-
     def store_hash(name : String, hash : Hash(String, String))
       hset name, hash
     end
 
+    @[Deprecated]
     def retrieve_hash(name : String) : Hash(String, String)
       hgetall name
     end

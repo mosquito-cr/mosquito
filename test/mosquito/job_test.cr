@@ -1,12 +1,7 @@
 require "../test_helper"
 
 describe Mosquito::Job do
-  @passing_job : Mosquito::Job?
-  let(:passing_job) do
-    passing_job = PassingJob.new
-    Mosquito::Redis.instance.store_hash(passing_job.class.queue.config_key, {"limit" => "0", "period" => "0", "executed" => "0", "next_batch" => "0", "last_executed" => "0"})
-    passing_job
-  end
+  let(:passing_job) { PassingJob.new }
 
   # @throttled_job : Mosquito::Job?
   # let(:throttled_job) do
@@ -73,8 +68,8 @@ describe Mosquito::Job do
 
   describe "#increment" do
     it "should just increment executed if the job is not rate limited" do
-      passing_job.run
       skip
+      passing_job.run
       # assert_equal Mosquito::Redis.instance.retrieve_hash(passing_job.class.queue.config_key), {"limit" => "0", "period" => "0", "executed" => "1", "next_batch" => "0", "last_executed" => "0"}
     end
 
