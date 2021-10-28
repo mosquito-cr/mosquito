@@ -1,6 +1,6 @@
 module Mosquito
   class RedisBackend < Mosquito::Backend
-    QUEUES = %w(waiting scheduled pending dead config)
+    QUEUES = %w(waiting scheduled pending dead)
 
     {% for q in QUEUES %}
       def {{q.id}}_q
@@ -9,21 +9,22 @@ module Mosquito
     {% end %}
 
     def self.store(key : String, value : Hash(String, String)) : Nil
-      Redis.instance.hset key, value
+      Mosquito::Redis.instance.hset key, value
     end
 
     def self.retrieve(key : String) : Hash(String, String)
-      Redis.instance.hgetall key
+      Mosquito::Redis.instance.hgetall key
     end
 
     def self.delete(key : String, in ttl = 0) : Nil
       if (ttl > 0)
-        Redis.instance.expire key, ttl
+        Mosquito::Redis.instance.expire key, ttl
       else
-        Redis.instance.del key
+        Mosquito::Redis.instance.del key
       end
     end
 
+    @[Deprecated]
     def self.ttl(key : String) : Int64
       Mosquito::Redis.instance.ttl key
     end
@@ -33,7 +34,7 @@ module Mosquito
 
       search_queue_prefixes.map do |search_queue|
         key = build_key search_queue, "*"
-        long_names = Redis.instance.keys key
+        long_names = Mosquito::Redis.instance.keys key
         queue_prefix = build_key(search_queue) + ":"
 
         long_names.map(&.to_s).map do |long_name|
@@ -42,46 +43,47 @@ module Mosquito
       end.uniq.flatten
     end
 
+    # is this even a good idea?
     def self.flush : Nil
-      Redis.instance.flushall
+      Mosquito::Redis.instance.flushall
     end
 
     def schedule(task : Task, at scheduled_time : Time)
-      Redis.instance.zadd scheduled_q, scheduled_time.to_unix_ms, task.id
+      Mosquito::Redis.instance.zadd scheduled_q, scheduled_time.to_unix_ms, task.id
     end
 
     def deschedule : Array(Task)
       time = Time.utc
-      overdue_tasks = Redis.instance.zrangebyscore scheduled_q, 0, time.to_unix_ms
+      overdue_tasks = Mosquito::Redis.instance.zrangebyscore scheduled_q, 0, time.to_unix_ms
 
       return [] of Task unless overdue_tasks.any?
 
       overdue_tasks.compact_map do |task_id|
-        Redis.instance.zrem scheduled_q, task_id
+        Mosquito::Redis.instance.zrem scheduled_q, task_id
         Task.retrieve task_id.as(String)
       end
     end
 
     def enqueue(task : Task)
-      Redis.instance.lpush waiting_q, task.id
+      Mosquito::Redis.instance.lpush waiting_q, task.id
     end
 
     def dequeue : Task?
-      if id = Redis.instance.rpoplpush waiting_q, pending_q
+      if id = Mosquito::Redis.instance.rpoplpush waiting_q, pending_q
         Task.retrieve id
       end
     end
 
     def finish(task : Task)
-      Redis.instance.lrem pending_q, 0, task.id
+      Mosquito::Redis.instance.lrem pending_q, 0, task.id
     end
 
     def terminate(task : Task)
-      Redis.instance.lpush dead_q, task.id
+      Mosquito::Redis.instance.lpush dead_q, task.id
     end
 
     def flush : Nil
-      Redis.instance.del(
+      Mosquito::Redis.instance.del(
         waiting_q,
         pending_q,
         scheduled_q,
@@ -90,7 +92,7 @@ module Mosquito
     end
 
     def size : Int32
-      Redis.instance.llen build_key(name)
+      Mosquito::Redis.instance.llen build_key(name)
     end
   end
 end

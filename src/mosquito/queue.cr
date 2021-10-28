@@ -99,7 +99,6 @@ module Mosquito
 
     def dequeue : Task?
       return if empty?
-      # return if rate_limited?
 
       if task = backend.dequeue
         task
