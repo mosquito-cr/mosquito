@@ -2,7 +2,6 @@ require "../test_helper"
 
 describe Mosquito::Job do
   let(:passing_job) { PassingJob.new }
-
   let(:failing_job) { FailingJob.new }
   let(:not_implemented_job) { NotImplementedJob.new }
 
@@ -57,5 +56,13 @@ describe Mosquito::Job do
     assert_raises Mosquito::DoubleRun do
       passing_job.run
     end
+  end
+
+  it "fetches the default queue" do
+    skip
+  end
+
+  it "fetches the named queue" do
+    skip
   end
 end

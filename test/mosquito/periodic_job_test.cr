@@ -20,4 +20,8 @@ describe Mosquito::PeriodicJob do
   it "registers in job mapping" do
     assert_equal TestJobs::Periodic, Base.job_for_type(TestJobs::Periodic.job_type)
   end
+
+  it "schedules itself for an interval" do
+    skip
+  end
 end
