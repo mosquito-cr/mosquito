@@ -1,5 +1,5 @@
 module Mosquito
-  class PeriodicTask
+  class PeriodicJobRun
     property class : Mosquito::PeriodicJob.class
     property interval : Time::Span
     property last_executed_at : Time
@@ -19,9 +19,9 @@ module Mosquito
 
     def execute
       job = @class.new
-      task = job.build_task
-      task.store
-      @class.queue.enqueue task
+      job_run = job.build_run
+      job_run.store
+      @class.queue.enqueue job_run
     end
   end
 end

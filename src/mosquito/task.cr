@@ -1,14 +1,14 @@
 module Mosquito
-  # A Task is a unit of work which will be performed by a Job.
-  # Tasks know how to:
+  # A Run is a unit of work which will be performed by a Job.
+  # Runs know how to:
   # - store and retrieve their data to and from the datastore
   # - figure out what Job class they match to
   # - build an instance of that Job class and pass off the config data
   # - Ask the job to run
   #
-  # Task data is called `config` and is persisted in the backend under the key
-  # `mosquito:task:task_id`.
-  class Task
+  # Run data is called `config` and is persisted in the backend under the key
+  # `mosquito:task:run_id`.
+  class JobRun
     getter type
     getter enqueue_time : Time
     getter id : String
@@ -65,7 +65,7 @@ module Mosquito
         instance.vars_from config
       end
 
-      instance.task_id = id
+      instance.run_id = id
       instance
     end
 

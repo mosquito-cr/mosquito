@@ -3,11 +3,11 @@ require "./serializers/*"
 
 module Mosquito
   # A Job is a definition for work to be performed.
-  # Jobs are pieces of code which run a Task.
+  # Jobs are pieces of code which can be Run.
   #
-  # - Jobs prevent double execution of a job for a task
-  # - Jobs Rescue when a #perform method fails a task for any reason
-  # - Jobs can be rescheduleable
+  # - Jobs prevent double execution of for a run
+  # - Jobs Rescue when a #perform method fails a job-run for any reason
+  # - Jobs can be rescheduleable when they fail
   abstract class Job
     Log = Mosquito::Log.for(self)
 
@@ -22,7 +22,7 @@ module Mosquito
     getter executed = false
     getter succeeded = false
 
-    property task_id : String?
+    property run_id : String?
 
     # macro throttle(limit, period)
     #   @@config["limit"] = {{limit.stringify}}
