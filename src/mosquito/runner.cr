@@ -15,8 +15,6 @@ module Mosquito
       Log.info { "Mosquito is buzzing..." }
       instance = new
 
-      set_config
-
       while true
         instance.run
       end
@@ -43,12 +41,6 @@ module Mosquito
       enqueue_delayed_tasks
       dequeue_and_run_tasks
       idle
-    end
-
-    private def self.set_config
-      Base.mapping.each do |k, job|
-        Mosquito.backend.store_job_config(job)
-      end
     end
 
     private def set_start_time

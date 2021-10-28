@@ -138,44 +138,5 @@ module Mosquito
     def flush
       backend.flush
     end
-
-    def self.default_config
-      {
-        "limit" => "0",
-        "period" => "0",
-        "executed" => "0",
-        "next_batch" => "0",
-        "last_executed" => "0"
-      }
-    end
-
-    def get_config : Hash(String, String)
-      self.class.default_config.merge Mosquito.backend.retrieve config_key
-    end
-
-    def set_config(config : Hash(String, String))
-      Mosquito.backend.store config_key, config
-    end
-
-    # Determines if a task needs to be throttled and not dequeued
-    # def rate_limited? : Bool
-    #   # Get the latest config for the queue
-    #   config = get_config
-
-    #   # Return if throttleing is not needed
-    #   return false if config["limit"] == "0" && config["period"] == "0"
-
-    #   # If the last time a job was executed was more than now + period.seconds ago, reset executed back to 0
-    #   # This handles executions not in same time frame
-    #   # Which otherwise would cause throttling to kick in once executed == limit even if the executions were hours apart with a 60 sec period
-    #   if Time.utc.to_unix > (Time.unix(config["last_executed"].to_i64) + config["period"].to_i.seconds).to_unix
-    #     config["executed"] = "0"
-    #     set_config config
-    #     return false
-    #   end
-
-    #   # Throttle the job if the next_batch is in the future
-    #   config["next_batch"].to_i64 > Time.utc.to_unix
-    # end
   end
 end

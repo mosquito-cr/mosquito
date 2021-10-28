@@ -8,10 +8,6 @@ module Mosquito
       end
     {% end %}
 
-    def self.store_job_config(job : Mosquito::Job.class) : Nil
-      Redis.instance.hset job.queue.config_key, job.config
-    end
-
     def self.store(key : String, value : Hash(String, String)) : Nil
       Redis.instance.hset key, value
     end

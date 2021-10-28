@@ -41,18 +41,6 @@ class PassingJob < Mosquito::QueuedJob
   end
 end
 
-# class ThrottledJob < Mosquito::QueuedJob
-#   include PerformanceCounter
-#   params()
-# 
-#   throttle limit: 5, period: 10
-# 
-#   def perform
-#     super
-#     true
-#   end
-# end
-
 class FailingJob < Mosquito::QueuedJob
   include PerformanceCounter
   params()
@@ -122,8 +110,5 @@ def create_task(type = "job_with_config", config = task_config)
   Mosquito::Task.new(type).tap do |task|
     task.config = config
     task.store
-    if job = task.job
-      Mosquito::Redis.instance.store_hash(job.class.queue.config_key, {"limit" => "0", "period" => "0", "executed" => "0", "next_batch" => "0", "last_executed" => "0"})
-    end
   end
 end

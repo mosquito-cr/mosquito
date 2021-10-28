@@ -20,9 +20,6 @@ module Mosquito
     end
 
     module ClassMethods
-      # from runner.cr
-      abstract def store_job_config(job : Mosquito::Job.class) : Nil
-
       # from queue.cr
       abstract def store(key : String, value : Hash(String, String)) : Nil
       abstract def retrieve(key : String) : Hash(String, String)
