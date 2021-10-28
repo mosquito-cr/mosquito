@@ -56,10 +56,10 @@ module Mosquito
 
       return [] of Task unless overdue_tasks.any?
 
-      overdue_tasks.map do |task_id|
+      overdue_tasks.compact_map do |task_id|
         Redis.instance.zrem scheduled_q, task_id
         Task.retrieve task_id.as(String)
-      end.compact
+      end
     end
 
     def enqueue(task : Task)
