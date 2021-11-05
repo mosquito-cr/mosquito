@@ -2,6 +2,7 @@ require "../../test_helper"
 
 describe "Mosquito::Runner#run_next_task" do
   let(:runner) { Mosquito::TestableRunner.new }
+  getter backend : Mosquito::Backend { Mosquito.backend.named "test" }
 
   def register_mappings
     Mosquito::Base.register_job_mapping "mosquito::test_jobs::queued", Mosquito::TestJobs::Queued
@@ -91,7 +92,7 @@ describe "Mosquito::Runner#run_next_task" do
       runner.run :fetch_queues
       runner.run :run
 
-      ttl = Mosquito.backend.ttl task.config_key
+      ttl = backend.expires_in task.config_key
       assert_equal runner.failed_job_ttl, ttl
     end
   end
@@ -117,7 +118,7 @@ describe "Mosquito::Runner#run_next_task" do
       assert_includes logs, "Success"
 
       Mosquito::TestJobs::Queued.queue.enqueue task
-      ttl = Mosquito.backend.ttl task.config_key
+      ttl = Mosquito.backend.expires_in task.config_key
       assert_equal runner.successful_job_ttl, ttl
 
     end

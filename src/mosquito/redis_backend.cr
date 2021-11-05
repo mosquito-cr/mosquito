@@ -34,8 +34,7 @@ module Mosquito
       end
     end
 
-    @[Deprecated]
-    def self.ttl(key : String) : Int64
+    def self.expires_in(key : String) : Int64
       redis.ttl key
     end
 

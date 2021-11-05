@@ -27,6 +27,7 @@ module Mosquito
 
       # from task.cr
       abstract def delete(key : String, in ttl = 0) : Nil
+      abstract def expires_in(key : String) : Int64
 
       abstract def flush : Nil
     end
@@ -41,6 +42,10 @@ module Mosquito
 
     def retrieve(key : String) : Hash(String, String)
       self.class.retrieve key
+    end
+
+    def expires_in(key : String) : Int64
+      self.class.expires_in key
     end
 
     # from queue.cr

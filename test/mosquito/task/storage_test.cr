@@ -44,7 +44,7 @@ describe "task storage" do
   it "can set a timed delete on a task" do
     ttl = 10
     task.delete(in: ttl)
-    set_ttl = redis.ttl task.config_key
+    set_ttl = backend.expires_in task.config_key
     assert_equal ttl, set_ttl
   end
 end
