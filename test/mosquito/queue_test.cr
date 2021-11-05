@@ -24,7 +24,16 @@ describe Queue do
 
   describe "flush" do
     it "purges all of the queue entries" do
-      skip
+      tasks = (1..4).map do
+        Mosquito::Task.new("mock_task").tap do |task|
+          task.store
+          test_queue.enqueue task
+        end
+      end
+
+      assert_equal tasks.size, test_queue.size
+      test_queue.flush
+      assert_equal 0, test_queue.size
     end
   end
 

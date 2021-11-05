@@ -126,7 +126,12 @@ module Mosquito
       backend.terminate task
     end
 
-    def length : Int32
+    def size : Int64
+      backend.size
+    end
+
+    @[Deprecated("see #size")]
+    def length : Int64
       backend.size
     end
 

@@ -100,8 +100,10 @@ module Mosquito
       )
     end
 
-    def size : Int32
-      redis.llen build_key(name)
+    def size : Int64
+      [waiting_q, pending_q, scheduled_q, dead_q]
+        .map {|key| redis.llen key }
+        .reduce(&.+)
     end
   end
 end
