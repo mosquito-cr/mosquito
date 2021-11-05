@@ -18,7 +18,8 @@ describe Queue do
 
   describe "config_key" do
     it "defaults to name" do
-      skip
+      name = "random_name"
+      assert_equal name, Mosquito::Queue.new(name).config_key
     end
   end
 
