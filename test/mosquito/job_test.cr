@@ -59,10 +59,10 @@ describe Mosquito::Job do
   end
 
   it "fetches the default queue" do
-    skip
+    assert_equal "passing_job", PassingJob.queue.name
   end
 
   it "fetches the named queue" do
-    skip
+    assert_equal "default", NilJob.queue.name
   end
 end
