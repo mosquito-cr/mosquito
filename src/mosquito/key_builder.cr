@@ -7,6 +7,8 @@ module Mosquito
 
       parts.each do |part|
         case part
+        when Symbol
+          id << build part.to_s
         when String
           id << part
         when Array
