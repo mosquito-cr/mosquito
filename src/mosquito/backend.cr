@@ -49,9 +49,9 @@ module Mosquito
     end
 
     # from queue.cr
-    abstract def enqueue(task : Task)
+    abstract def enqueue(task : Task) : Task
     abstract def dequeue : Task?
-    abstract def schedule(task : Task, at scheduled_time : Time)
+    abstract def schedule(task : Task, at scheduled_time : Time) : Task
     abstract def deschedule : Array(Task)
     abstract def finish(task : Task) # should this be called succeed?
     abstract def terminate(task : Task) # should this be called fail?

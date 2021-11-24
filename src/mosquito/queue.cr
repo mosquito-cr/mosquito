@@ -85,15 +85,15 @@ module Mosquito
       @config_key = @name
     end
 
-    def enqueue(task : Task)
+    def enqueue(task : Task) : Task
       backend.enqueue task
     end
 
-    def enqueue(task : Task, in interval : Time::Span)
+    def enqueue(task : Task, in interval : Time::Span) : Task
       enqueue task, at: interval.from_now
     end
 
-    def enqueue(task : Task, at execute_time : Time)
+    def enqueue(task : Task, at execute_time : Time) : Task
       backend.schedule task, execute_time
     end
 

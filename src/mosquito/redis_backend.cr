@@ -57,8 +57,9 @@ module Mosquito
       redis.flushall
     end
 
-    def schedule(task : Task, at scheduled_time : Time)
+    def schedule(task : Task, at scheduled_time : Time) : Task
       redis.zadd scheduled_q, scheduled_time.to_unix_ms, task.id
+      task
     end
 
     def deschedule : Array(Task)
@@ -73,8 +74,9 @@ module Mosquito
       end
     end
 
-    def enqueue(task : Task)
+    def enqueue(task : Task) : Task
       redis.lpush waiting_q, task.id
+      task
     end
 
     def dequeue : Task?
