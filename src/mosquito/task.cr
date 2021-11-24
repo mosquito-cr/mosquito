@@ -114,5 +114,9 @@ module Mosquito
     def to_s(io : IO)
       "#{type}<#{id}>".to_s(io)
     end
+
+    def ==(other : self)
+      id == self.id
+    end
   end
 end

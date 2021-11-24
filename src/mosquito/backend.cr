@@ -45,6 +45,10 @@ module Mosquito
       self.class.retrieve key
     end
 
+    def delete(key : String, in ttl = 0) : Nil
+      self.class.delete key
+    end
+
     def expires_in(key : String) : Int64
       self.class.expires_in key
     end
