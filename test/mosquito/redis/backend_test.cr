@@ -254,4 +254,36 @@ describe Mosquito::RedisBackend do
     end
   end
 
+  describe "size" do
+    it "returns the size of the named q" do
+      clean_slate do
+        task = job.build_task
+        task.store
+
+        redis.lpush "mosquito:waiting:#{backend_name}", "waiting_item"
+        redis.lpush "mosquito:pending:#{backend_name}", "pending_item"
+        redis.zadd "mosquito:scheduled:#{backend_name}", 1, "scheduled_item"
+        redis.lpush "mosquito:dead:#{backend_name}", "dead_item"
+
+        assert_equal 4, backend.size
+      end
+    end
+
+    it "returns the size of the named q (without the dead_q)" do
+      clean_slate do
+        task = job.build_task
+        task.store
+
+        redis.lpush "mosquito:waiting:#{backend_name}", "waiting_item"
+        redis.lpush "mosquito:pending:#{backend_name}", "pending_item"
+        redis.lpush "mosquito:pending:#{backend_name}", "pending_item2"
+        redis.zadd "mosquito:scheduled:#{backend_name}", 1, "scheduled_item"
+        redis.lpush "mosquito:dead:#{backend_name}", "dead_item"
+        redis.lpush "mosquito:dead:#{backend_name}", "dead_item2"
+
+        assert_equal 4, backend.size(include_dead: false)
+      end
+    end
+  end
+
 end

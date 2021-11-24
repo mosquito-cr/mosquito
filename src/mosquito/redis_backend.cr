@@ -102,10 +102,16 @@ module Mosquito
       )
     end
 
-    def size : Int64
-      [waiting_q, pending_q, scheduled_q, dead_q]
+    def size(include_dead = true) : Int64
+      queues = [waiting_q, pending_q]
+      queues << dead_q if include_dead
+
+      queue_size = queues
         .map {|key| redis.llen key }
-        .reduce(&.+)
+        .reduce { |sum, i| sum + i }
+
+      scheduled_size = redis.zcount scheduled_q, 0, "+inf"
+      queue_size + scheduled_size
     end
   end
 end

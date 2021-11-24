@@ -61,6 +61,6 @@ module Mosquito
     abstract def finish(task : Task) # should this be called succeed?
     abstract def terminate(task : Task) # should this be called fail?
     abstract def flush : Nil
-    abstract def size : Int64
+    abstract def size(include_dead : Bool = true) : Int64
   end
 end
