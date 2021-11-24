@@ -16,7 +16,8 @@ module Mosquito
 
     private getter name : String
 
-    def initialize(@name : String)
+    def initialize(name : String | Symbol)
+      @name = name.to_s
     end
 
     module ClassMethods
