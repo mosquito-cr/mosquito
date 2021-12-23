@@ -42,20 +42,11 @@ module Mosquito
     end
 
     def store_hash(name : String, hash : Hash(String, String))
-      hash.each do |key, value|
-        hset(name, key, value)
-      end
+      hset(name, hash)
     end
 
     def retrieve_hash(name : String) : Hash(String, String)
-      data = hgetall(name)
-      hash = {} of String => String
-
-      data.each_slice(2) do |slice|
-        hash[slice[0].to_s] = slice[1].to_s
-      end
-
-      hash
+      hgetall(name)
     end
 
     forward_missing_to @connection
