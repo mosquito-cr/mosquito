@@ -12,6 +12,9 @@ targets:
   demo:
     main: demo/run.cr
 
+  mosquito:
+    main: src/mosquito.cr
+
 dependencies:
   redis:
     github: stefanwille/crystal-redis

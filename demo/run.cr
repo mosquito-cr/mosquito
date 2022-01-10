@@ -18,7 +18,7 @@ def expect_run_count(klass, expected)
 end
 
 def expect_executed_count(klass, expected)
-  config = Mosquito::Redis.instance.retrieve_hash(klass.queue.config_q)
+  config = Mosquito::Redis.instance.retrieve_hash(klass.queue.config_key)
   if config["executed"] != expected
     raise "Expected #{klass.name} to have config.executed == #{expected}.  But got #{config["executed"]}"
   else
@@ -39,6 +39,3 @@ puts "Checking integration test flags..."
 expect_run_count(PeriodicallyPuts, 7)
 expect_run_count(QueuedJob, 1)
 expect_run_count(CustomSerializersJob, 3)
-
-expect_run_count(ThrottledJob, 9)
-expect_executed_count(ThrottledJob, "0")

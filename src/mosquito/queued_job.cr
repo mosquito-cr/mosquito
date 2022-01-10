@@ -103,22 +103,25 @@ module Mosquito
       end
     end
 
-    def enqueue
-      task = build_task
-      task.store
-      self.class.queue.enqueue task
+    def enqueue : Task
+      build_task.tap do |task|
+        task.store
+        self.class.queue.enqueue task
+      end
     end
 
-    def enqueue(in delay_interval : Time::Span)
-      task = build_task
-      task.store
-      self.class.queue.enqueue task, in: delay_interval
+    def enqueue(in delay_interval : Time::Span) : Task
+      build_task.tap do |task|
+        task.store
+        self.class.queue.enqueue task, in: delay_interval
+      end
     end
 
-    def enqueue(at execute_time : Time)
-      task = build_task
-      task.store
-      self.class.queue.enqueue task, at: execute_time
+    def enqueue(at execute_time : Time) : Task
+      build_task.tap do |task|
+        task.store
+        self.class.queue.enqueue task, at: execute_time
+      end
     end
   end
 end

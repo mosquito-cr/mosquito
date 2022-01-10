@@ -1,42 +1,44 @@
 require "../../test_helper"
 
 describe "Mosquito::Runner#enqueue_periodic_tasks" do
-  let(:runner) { Mosquito::TestableRunner.new }
+  getter(queue : Queue) { test_job.class.queue }
+  getter(test_job)      { Mosquito::TestJobs::Periodic.new }
+  getter(runner)        { Mosquito::TestableRunner.new }
 
-  it "enqueues a scheduled task" do
-    Mosquito::Base.bare_mapping do
-      with_fresh_redis do |redis|
-        queue_name = "mosquito::test_jobs::periodic"
-        Mosquito::Base.register_job_mapping queue_name, Mosquito::TestJobs::Periodic
-        Mosquito::Base.register_job_interval Mosquito::TestJobs::Periodic, interval: 1.second
+  def setup
+    Mosquito::Base.register_job_mapping queue.name, Mosquito::TestJobs::Periodic
+    Mosquito::Base.register_job_interval Mosquito::TestJobs::Periodic, interval: 1.second
+  end
 
-        enqueue_time = Time.utc.to_unix_ms
+  it "enqueues a scheduled task at the appropriate time" do
+    clean_slate do
+      setup
+      enqueue_time = Time.utc
+
+      Timecop.freeze(enqueue_time) do
         runner.run :enqueue
-
-        queued_tasks = redis.lrange "mosquito:waiting:#{queue_name}", 0, -1
-        last_task = queued_tasks.last
-        task_metadata = redis.retrieve_hash "mosquito:task:#{last_task}"
-
-        assert_equal queue_name, task_metadata["type"]?
-        assert_in_delta enqueue_time, task_metadata["enqueue_time"], 1.0
       end
+
+      queued_tasks = queue.backend.dump_waiting_q
+      assert queued_tasks.size >= 1
+
+      last_task = queued_tasks.last
+      task_metadata = queue.backend.retrieve Task.config_key(last_task)
+
+      assert_equal enqueue_time.to_unix_ms.to_s, task_metadata["enqueue_time"]
     end
   end
 
   it "doesn't enqueue periodic tasks when disabled" do
-    Mosquito::Base.bare_mapping do
-      with_fresh_redis do |redis|
-        queue_name = "mosquito::test_jobs::periodic"
-        Mosquito::Base.register_job_mapping queue_name, Mosquito::TestJobs::Periodic
-        Mosquito::Base.register_job_interval Mosquito::TestJobs::Periodic, interval: 1.second
+    clean_slate do
+      setup
 
-        Mosquito.temp_config(run_cron_scheduler: false) do
-          runner.run :enqueue
-        end
-
-        queued_tasks = redis.lrange "mosquito:waiting:#{queue_name}", 0, -1
-        assert queued_tasks.size == 0
+      Mosquito.temp_config(run_cron_scheduler: false) do
+        runner.run :enqueue
       end
+
+      queued_tasks = queue.backend.dump_waiting_q
+      assert_equal 0, queued_tasks.size
     end
   end
 end
