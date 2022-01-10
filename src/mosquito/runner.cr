@@ -47,21 +47,6 @@ module Mosquito
       @start_time = Time.utc.to_unix
     end
 
-    # Message to be removed after version 0.12.0
-    def self.idle_wait=(idle_wait)
-      raise <<-error
-      Mosquito runner Idle Wait Time is no longer configured via Mosquito::Runner.idle_wait=(n).
-
-      Idle Wait Time is configured using the configuration block.
-
-      See: https://github.com/mosquito-cr/mosquito/wiki/Advanced-Runner-Configuration
-      error
-    end
-
-    def idle_wait=(time_span : Time::Span)
-      self.idle_wait = time_span.total_seconds
-    end
-
     private def idle
       delta = Time.utc.to_unix - @start_time
       if delta < idle_wait
