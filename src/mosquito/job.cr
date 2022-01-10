@@ -13,8 +13,6 @@ module Mosquito
 
     include Mosquito::Serializers::Primitives
 
-    class_getter config : Hash(String, String) = {"limit" => "0", "period" => "0", "executed" => "0", "next_batch" => "0", "last_executed" => "0"}
-
     def log(message)
       Log.info { message }
     end
@@ -23,11 +21,6 @@ module Mosquito
     getter succeeded = false
 
     property task_id : String?
-
-    macro throttle(limit, period)
-      @@config["limit"] = {{limit.stringify}}
-      @@config["period"] = {{period.stringify}}
-    end
 
     def self.job_type : String
       ""
@@ -57,7 +50,6 @@ module Mosquito
 
       @succeeded = false
     else
-      increment
       @succeeded = true
     end
 
@@ -93,23 +85,6 @@ module Mosquito
     # abstract, override if desired.
     def rescheduleable? : Bool
       true
-    end
-
-    # Handles throttling logic
-    private def increment : Nil
-      redis = Redis.instance
-      q = self.class.queue.config_q
-      redis.hincrby q, "executed", 1
-      config = redis.retrieve_hash q
-      return if config["limit"] == "0" && config["period"] == "0"
-
-      if config["executed"] == config["limit"]
-        next_batch = (Time.utc + config["period"].to_i.seconds)
-        redis.hset q, "executed", 0
-        redis.hset q, "next_batch", next_batch.to_unix
-        log "#{"Execution limit reached".colorize.yellow} #{"next_batch".colorize.cyan} in #{config["period"].to_i.seconds} (at #{next_batch})"
-      end
-      redis.hset q, "last_executed", Time.utc.to_unix
     end
   end
 end

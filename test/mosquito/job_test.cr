@@ -1,20 +1,7 @@
 require "../test_helper"
 
 describe Mosquito::Job do
-  @passing_job : Mosquito::Job?
-  let(:passing_job) do
-    passing_job = PassingJob.new
-    Mosquito::Redis.instance.store_hash(passing_job.class.queue.config_q, {"limit" => "0", "period" => "0", "executed" => "0", "next_batch" => "0", "last_executed" => "0"})
-    passing_job
-  end
-
-  @throttled_job : Mosquito::Job?
-  let(:throttled_job) do
-    throttled_job = ThrottledJob.new
-    Mosquito::Redis.instance.store_hash(throttled_job.class.queue.config_q, {"limit" => "6", "period" => "10", "executed" => "0", "next_batch" => "0", "last_executed" => "0"})
-    throttled_job
-  end
-
+  let(:passing_job) { PassingJob.new }
   let(:failing_job) { FailingJob.new }
   let(:not_implemented_job) { NotImplementedJob.new }
 
@@ -71,26 +58,11 @@ describe Mosquito::Job do
     end
   end
 
-  describe "#increment" do
-    it "should just increment executed if the job is not rate limited" do
-      passing_job.run
-      assert_equal Mosquito::Redis.instance.retrieve_hash(passing_job.class.queue.config_q), {"limit" => "0", "period" => "0", "executed" => "1", "next_batch" => "0", "last_executed" => "0"}
-    end
+  it "fetches the default queue" do
+    assert_equal "passing_job", PassingJob.queue.name
+  end
 
-    it "should increment executed and update last_executed when ran" do
-      Timecop.freeze(Time.unix(1500000000)) do
-        throttled_job.run
-        assert_equal Mosquito::Redis.instance.retrieve_hash(throttled_job.class.queue.config_q), {"limit" => "6", "period" => "10", "executed" => "1", "next_batch" => "0", "last_executed" => "1500000000"}
-      end
-    end
-
-    it "should reset execution count and update last_executed/next_batch when executed equals limit" do
-      Mosquito::Redis.instance.store_hash(throttled_job.class.queue.config_q, {"limit" => "6", "period" => "10", "executed" => "5", "next_batch" => "0", "last_executed" => "0"})
-
-      Timecop.freeze(Time.unix(1500000000)) do
-        throttled_job.run
-        assert_equal Mosquito::Redis.instance.retrieve_hash(throttled_job.class.queue.config_q), {"limit" => "6", "period" => "10", "executed" => "0", "next_batch" => "1500000010", "last_executed" => "1500000000"}
-      end
-    end
+  it "fetches the named queue" do
+    assert_equal "default", NilJob.queue.name
   end
 end
