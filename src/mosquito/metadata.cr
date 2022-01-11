@@ -5,7 +5,7 @@ module Mosquito
   # Each read or write incurs a round trip to the backend.
   class Metadata
     property root_key : String
-    getter readonly : Bool
+    getter? readonly : Bool
 
     def initialize(@root_key : String, @readonly = false)
     end
@@ -19,20 +19,18 @@ module Mosquito
     end
 
     def []=(key : String, value : String)
-      raise RuntimeError.new("Cannot write to metadata, readonly=true") if readonly
+      raise RuntimeError.new("Cannot write to metadata, readonly=true") if readonly?
       Mosquito.backend.set root_key, key, value
     end
 
     def increment(key)
-      raise RuntimeError.new("Cannot write to metadata, readonly=true") if readonly
+      raise RuntimeError.new("Cannot write to metadata, readonly=true") if readonly?
       Mosquito.backend.increment root_key, key
     end
 
     def decrement(key)
-      raise RuntimeError.new("Cannot write to metadata, readonly=true") if readonly
+      raise RuntimeError.new("Cannot write to metadata, readonly=true") if readonly?
       Mosquito.backend.increment root_key, key, by: -1
     end
-
-    def readonly? ; readonly ; end
   end
 end
