@@ -18,6 +18,10 @@ module PerformanceCounter
   end
 end
 
+class JobWithPerformanceCounter < Mosquito::Job
+  include PerformanceCounter
+end
+
 module Mosquito
   module TestJobs
     class Periodic < PeriodicJob
@@ -27,6 +31,12 @@ module Mosquito
     class Queued < QueuedJob
       include PerformanceCounter
       params()
+    end
+
+    class CustomRescheduleIntervalJob < ::JobWithPerformanceCounter
+      def reschedule_interval(retry_count)
+        4.seconds
+      end
     end
   end
 end
@@ -77,10 +87,6 @@ class NonReschedulableFailingJob < Mosquito::QueuedJob
 end
 
 class NotImplementedJob < Mosquito::Job
-end
-
-class JobWithPerformanceCounter < Mosquito::Job
-  include PerformanceCounter
 end
 
 class JobWithConfig < Mosquito::Job
