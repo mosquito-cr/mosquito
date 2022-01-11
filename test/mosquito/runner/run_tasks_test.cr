@@ -5,7 +5,7 @@ describe "Mosquito::Runner#run_next_task" do
   getter backend : Mosquito::Backend { Mosquito.backend.named "test" }
 
   def register_mappings
-    Mosquito::Base.register_job_mapping "mosquito::test_jobs::queued", Mosquito::TestJobs::Queued
+    Mosquito::Base.register_job_mapping "queued_test_job", QueuedTestJob
     Mosquito::Base.register_job_mapping "failing_job", FailingJob
     Mosquito::Base.register_job_mapping "non_reschedulable_failing_job", NonReschedulableFailingJob
   end
@@ -35,8 +35,8 @@ describe "Mosquito::Runner#run_next_task" do
     clean_slate do
       register_mappings
 
-      run_task Mosquito::TestJobs::Queued
-      assert_equal 1, Mosquito::TestJobs::Queued.performances
+      run_task QueuedTestJob
+      assert_equal 1, QueuedTestJob.performances
     end
   end
 
@@ -45,7 +45,7 @@ describe "Mosquito::Runner#run_next_task" do
       register_mappings
 
       clear_logs
-      run_task Mosquito::TestJobs::Queued
+      run_task QueuedTestJob
       assert_includes logs, "Success"
     end
   end
@@ -106,18 +106,18 @@ describe "Mosquito::Runner#run_next_task" do
       # local copy of the task to query the backend with.
       # Logic from QueuedJob#enqueue.
 
-      job = Mosquito::TestJobs::Queued.new
-      default_job_config Mosquito::TestJobs::Queued
+      job = QueuedTestJob.new
+      default_job_config QueuedTestJob
       task = job.build_task
       task.store
-      Mosquito::TestJobs::Queued.queue.enqueue task
+      QueuedTestJob.queue.enqueue task
 
       runner.run :fetch_queues
       runner.run :run
 
       assert_includes logs, "Success"
 
-      Mosquito::TestJobs::Queued.queue.enqueue task
+      QueuedTestJob.queue.enqueue task
       ttl = Mosquito.backend.expires_in task.config_key
       assert_equal runner.successful_job_ttl, ttl
 
