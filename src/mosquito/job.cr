@@ -83,8 +83,30 @@ module Mosquito
     end
 
     # abstract, override if desired.
+    #
+    # True if this job is rescheduleable, false if not.
     def rescheduleable? : Bool
       true
     end
+
+    # abstract, override if desired.
+    #
+    # For a given retry count, is this job rescheduleable?
+    def rescheduleable?(retry_count : Int32) : Bool
+      rescheduleable? && retry_count < 5
+    end
+
+    # abstract, override if desired.
+    #
+    # For a given retry count, how long should the delay between
+    # job attempts be?
+    def reschedule_interval(retry_count : Int32) : Time::Span
+      2.seconds * (retry_count ** 2)
+      # retry 1 = 2 minutes
+      #       2 = 8
+      #       3 = 18
+      #       4 = 32
+    end
+
   end
 end

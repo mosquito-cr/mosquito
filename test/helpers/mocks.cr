@@ -28,6 +28,12 @@ module Mosquito
       include PerformanceCounter
       params()
     end
+
+    class CustomRescheduleIntervalJob < JobWithPerformanceCounter
+      def reschedule_interval(retry_count)
+        4.seconds
+      end
+    end
   end
 end
 

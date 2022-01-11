@@ -85,15 +85,11 @@ module Mosquito
     end
 
     def rescheduleable?
-      @job.rescheduleable? && @retry_count < 5
+      job.rescheduleable? @retry_count
     end
 
     def reschedule_interval
-      2.seconds * (@retry_count ** 2)
-      # retry 1 = 2 minutes
-      #       2 = 8
-      #       3 = 18
-      #       4 = 32
+      job.reschedule_interval @retry_count
     end
 
     delegate :executed?, :succeeded?, :failed?, :failed, :rescheduled, to: @job
