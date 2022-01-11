@@ -3,9 +3,7 @@ class CustomSerializersJob < Mosquito::QueuedJob
 
   def perform
     log "deserialized: #{count}"
-
-    # For integration testing
-    Mosquito::Redis.instance.incr self.class.name.underscore
+    metadata.increment "run_count"
   end
 
   def deserialize_int32(raw : String) : Int32
