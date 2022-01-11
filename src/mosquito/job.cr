@@ -130,5 +130,18 @@ module Mosquito
       #       4 = 32
     end
 
+    def metadata : Metadata
+      @metadata ||= begin
+        Metadata.new self.class.metadata_key
+      end
+    end
+
+    def self.metadata : Metadata
+      Metadata.new metadata_key, readonly: true
+    end
+
+    def self.metadata_key
+      Mosquito.backend.build_key "job_metadata", self.name.underscore
+    end
   end
 end
