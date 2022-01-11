@@ -5,7 +5,7 @@ class PeriodicallyPuts < Mosquito::PeriodicJob
     log "Hello from PeriodicallyPuts"
 
     # For integration testing
-    Mosquito::Redis.instance.incr self.class.name.underscore
+    metadata.increment "run_count"
   end
 end
 

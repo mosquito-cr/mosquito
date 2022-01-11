@@ -9,20 +9,11 @@ Mosquito::Redis.instance.flushall
 require "./jobs/*"
 
 def expect_run_count(klass, expected)
-  actual = Mosquito::Redis.instance.get klass.name.underscore
-  if expected.to_s != actual
-    raise "Expected #{klass.name} to have performed #{expected} times but instead it was performed #{actual} times."
+  metadata = klass.metadata.to_h
+  if (run_count = metadata["run_count"].to_i) != expected
+    raise "Expected #{klass.name} to have run_count == #{expected}.  But got #{run_count}"
   else
-    puts "#{klass.name} executed correctly."
-  end
-end
-
-def expect_executed_count(klass, expected)
-  config = Mosquito::Redis.instance.retrieve_hash(klass.queue.config_key)
-  if config["executed"] != expected
-    raise "Expected #{klass.name} to have config.executed == #{expected}.  But got #{config["executed"]}"
-  else
-    puts "#{klass.name} was throttled correctly."
+    puts "#{klass.name} was executed correctly."
   end
 end
 

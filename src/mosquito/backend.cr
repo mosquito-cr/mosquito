@@ -30,6 +30,11 @@ module Mosquito
       abstract def delete(key : String, in ttl = 0) : Nil
       abstract def expires_in(key : String) : Int64
 
+      abstract def get(key : String, field : String) : String?
+      abstract def set(key : String, field : String, value : String) : String
+      abstract def increment(key : String, field : String) : Int64
+      abstract def increment(key : String, field : String, by value : Int32) : Int64
+
       abstract def flush : Nil
     end
 
