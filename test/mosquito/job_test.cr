@@ -93,6 +93,36 @@ describe Mosquito::Job do
     end
   end
 
+  describe "metadata" do
+    it "returns a metadata instance" do
+      assert_instance_of Mosquito::Metadata, passing_job.metadata
+    end
+
+    it "is a memoized instance" do
+      one = passing_job.metadata
+      two = passing_job.metadata
+
+      assert_same one, two
+    end
+  end
+
+  describe "self.metadata" do
+    it "returns a metadata instance" do
+      assert PassingJob.metadata.is_a?(Mosquito::Metadata)
+    end
+
+    it "is readonly" do
+      metadata = PassingJob.metadata
+      assert metadata.readonly?
+    end
+  end
+
+  describe "self.metadata_key" do
+    it "includes the class name" do
+      assert_includes PassingJob.metadata_key, "passing_job"
+    end
+  end
+
   describe "before_hooks" do
     it "should execute hooks" do
       clear_logs

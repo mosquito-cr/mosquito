@@ -34,6 +34,23 @@ module Mosquito
       end
     end
 
+    def self.get(key : String, field : String) : String?
+      redis.hget key, field
+    end
+
+    def self.set(key : String, field : String, value : String) : String
+      redis.hset key, field, value
+      value
+    end
+
+    def self.increment(key : String, field : String) : Int64
+      increment key, field, by: 1
+    end
+
+    def self.increment(key : String, field : String, by value : Int32) : Int64
+      redis.hincrby key, field, value
+    end
+
     def self.expires_in(key : String) : Int64
       redis.ttl key
     end
