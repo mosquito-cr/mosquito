@@ -7,7 +7,7 @@ describe Mosquito::RedisBackend do
   let(:location) { "location-#{rand(1000)}" }
   let(:sample_data) { { "test" => "#{rand(1000)}" } }
 
-  let(:job) { TestJobs::Queued.new }
+  let(:job) { QueuedTestJob.new }
 
   describe "queue_names" do
     it "builds a waiting queue" do

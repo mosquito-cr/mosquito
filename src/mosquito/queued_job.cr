@@ -1,8 +1,12 @@
 module Mosquito
   abstract class QueuedJob < Job
     macro inherited
-      macro job_name
-        "\{{ @type.id }}".underscore.downcase
+      def self.job_name
+        "{{ @type.id }}".underscore.downcase
+      end
+
+      def job_name
+        self.class.job_name
       end
 
       Mosquito::Base.register_job_mapping job_name, {{ @type.id }}

@@ -1,9 +1,8 @@
 require "../test_helper"
 
 describe Mosquito::QueuedJob do
-  let(:name) { "test#{rand(1000)}" }
-  let(:job) { TestJobs::Queued.new }
-  let(:queue) { TestJobs::Queued.queue }
+  getter(job : QueuedTestJob) { QueuedTestJob.new }
+  getter(queue : Queue) { QueuedTestJob.queue }
 
   describe "enqueue" do
     it "enqueues" do

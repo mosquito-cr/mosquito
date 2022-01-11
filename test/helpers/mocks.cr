@@ -22,36 +22,24 @@ class JobWithPerformanceCounter < Mosquito::Job
   include PerformanceCounter
 end
 
-module Mosquito
-  module TestJobs
-    class Periodic < PeriodicJob
-      include PerformanceCounter
-    end
-
-    class Queued < QueuedJob
-      include PerformanceCounter
-      params()
-    end
-
-    class CustomRescheduleIntervalJob < ::JobWithPerformanceCounter
-      def reschedule_interval(retry_count)
-        4.seconds
-      end
-    end
-  end
+class PeriodicTestJob < Mosquito::PeriodicJob
+  include PerformanceCounter
 end
 
-class PassingJob < Mosquito::QueuedJob
+class QueuedTestJob < Mosquito::QueuedJob
   include PerformanceCounter
   params()
+end
 
+class PassingJob < QueuedTestJob
   def perform
     super
     true
   end
 end
 
-class FailingJob < Mosquito::QueuedJob
+class FailingJob < QueuedTestJob
+  property fail_with_exception = false
   include PerformanceCounter
   params()
 
@@ -68,19 +56,15 @@ class FailingJob < Mosquito::QueuedJob
   def exception_message
     "Job failed"
   end
-
-  property fail_with_exception = false
 end
 
-class NonReschedulableFailingJob < Mosquito::QueuedJob
-  include PerformanceCounter
-  params()
-
-  def perform
-    super
-    fail
+class CustomRescheduleIntervalJob < PassingJob
+  def reschedule_interval(retry_count)
+    4.seconds
   end
+end
 
+class NonReschedulableFailingJob < FailingJob
   def rescheduleable?
     false
   end
@@ -89,10 +73,7 @@ end
 class NotImplementedJob < Mosquito::Job
 end
 
-class JobWithConfig < Mosquito::Job
-  def perform
-  end
-
+class JobWithConfig < PassingJob
   getter config = {} of String => String
 
   def vars_from(config : Hash(String, String))
@@ -103,7 +84,7 @@ end
 Mosquito::Base.register_job_mapping "job_with_config", JobWithConfig
 Mosquito::Base.register_job_mapping "job_with_performance_counter", JobWithPerformanceCounter
 Mosquito::Base.register_job_mapping "failing_job", FailingJob
-Mosquito::Base.register_job_mapping "non_reschedulable_failing_job", FailingJob
+Mosquito::Base.register_job_mapping "non_reschedulable_failing_job", NonReschedulableFailingJob
 
 def task_config
   {

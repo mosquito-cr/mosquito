@@ -5,7 +5,7 @@ describe Mosquito::PeriodicTask do
 
   it "tries to execute but fails before the interval has passed" do
     now = Time.utc
-    task = PeriodicTask.new TestJobs::Periodic, interval
+    task = PeriodicTask.new PeriodicTestJob, interval
     task.last_executed_at = now
 
     Timecop.freeze(now + 1.minute) do
@@ -16,7 +16,7 @@ describe Mosquito::PeriodicTask do
 
   it "executes" do
     now = Time.utc
-    task = PeriodicTask.new TestJobs::Periodic, interval
+    task = PeriodicTask.new PeriodicTestJob, interval
     task.last_executed_at = now
 
     Timecop.freeze(now + interval) do
