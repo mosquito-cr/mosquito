@@ -65,4 +65,28 @@ describe Mosquito::Job do
   it "fetches the named queue" do
     assert_equal "default", NilJob.queue.name
   end
+
+  describe "reschedule interval" do
+    it "calculates reschedule interval correctly" do
+      intervals = {
+        1 => 2,
+        2 => 8,
+        3 => 18,
+        4 => 32
+      }
+
+      intervals.each do |count, delay|
+        assert_equal delay.seconds, passing_job.reschedule_interval(count)
+      end
+    end
+
+
+    it "allows overriding the reschedule interval" do
+      intervals = 1..4
+
+      intervals.each do |count|
+        assert_equal 4.seconds, Mosquito::TestJobs::CustomRescheduleIntervalJob.new.reschedule_interval(count)
+      end
+    end
+  end
 end
