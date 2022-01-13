@@ -42,6 +42,8 @@ module Mosquito
     end
 
     def run
+      before_hook
+
       raise DoubleRun.new if executed
       @executed = true
       perform
@@ -59,6 +61,26 @@ module Mosquito
     else
       increment
       @succeeded = true
+    end
+
+    def before_hook
+      # intentionally left blank
+    end
+
+    def retry_later
+      fail
+    end
+
+    macro before(&block)
+      def before_hook
+        {% if @type.methods.map(&.name).includes?(:before_hook.id) %}
+          previous_def
+        {% else %}
+          super
+        {% end %}
+
+        {{ yield }}
+      end
     end
 
     # abstract, override in a Job descendant to do something productive
