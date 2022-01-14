@@ -111,9 +111,8 @@ module Mosquito
       @executed
     end
 
-    # Did the job run and succeed?
+    # Did the job succeed?
     def succeeded? : Bool
-      raise "Job hasn't been executed yet" unless @executed
       @succeeded
     end
 
