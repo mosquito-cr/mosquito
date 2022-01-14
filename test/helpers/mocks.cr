@@ -106,6 +106,31 @@ class JobWithConfig < Mosquito::Job
   end
 end
 
+class JobWithBeforeHook < Mosquito::QueuedJob
+  params(should_fail : Bool)
+
+  before do
+    log "Before Hook Executed"
+  end
+
+  before do
+    log "2nd Before Hook Executed"
+    fail if should_fail
+  end
+
+  def perform
+    log "Perform Executed"
+  end
+end
+
+class EchoJob < Mosquito::QueuedJob
+  params text : String
+
+  def perform
+    log text
+  end
+end
+
 Mosquito::Base.register_job_mapping "job_with_config", JobWithConfig
 Mosquito::Base.register_job_mapping "job_with_performance_counter", JobWithPerformanceCounter
 Mosquito::Base.register_job_mapping "failing_job", FailingJob

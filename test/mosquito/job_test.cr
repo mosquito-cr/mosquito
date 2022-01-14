@@ -15,6 +15,11 @@ describe Mosquito::Job do
     throttled_job
   end
 
+  getter(hooked_job : JobWithBeforeHook) {
+    Mosquito::Redis.instance.store_hash(JobWithBeforeHook.queue.config_q, {"limit" => "0", "period" => "0", "executed" => "0", "next_batch" => "0", "last_executed" => "0"})
+    JobWithBeforeHook.new
+  }
+
   let(:failing_job) { FailingJob.new }
   let(:not_implemented_job) { NotImplementedJob.new }
 
@@ -91,6 +96,27 @@ describe Mosquito::Job do
         throttled_job.run
         assert_equal Mosquito::Redis.instance.retrieve_hash(throttled_job.class.queue.config_q), {"limit" => "6", "period" => "10", "executed" => "0", "next_batch" => "1500000010", "last_executed" => "1500000000"}
       end
+    end
+  end
+
+  describe "before_hooks" do
+    it "should execute hooks" do
+      clear_logs
+      hooked_job.should_fail = false
+      hooked_job.run
+      assert_includes logs, "Before Hook Executed"
+      assert_includes logs, "2nd Before Hook Executed"
+      assert_includes logs, "Perform Executed"
+    end
+
+    it "should not exec when a before hook fails the job" do
+      clear_logs
+      hooked_job.should_fail = true
+      hooked_job.run
+
+      assert_includes logs, "Before Hook Executed"
+      assert_includes logs, "2nd Before Hook Executed"
+      refute_includes logs, "Perform Executed"
     end
   end
 end
