@@ -50,7 +50,7 @@ module Mosquito
               @{{ parameter["name"] }} : {{ parameter["simplified_type"] }}?
 
               def {{ parameter["name"] }} : {{ parameter["simplified_type"] }}
-                if %object = {{ parameter["name"] }}?
+                if ! (%object = {{ parameter["name"] }}?).nil?
                     %object
                 else
                   msg = <<-MSG
@@ -62,12 +62,12 @@ module Mosquito
                 end
               end
 
+              def {{ parameter["name"] }}=(value : {{parameter["simplified_type"]}}) : {{parameter["simplified_type"]}}
+                @{{ parameter["name"] }} = value
+              end
+
               def {{ parameter["name"] }}? : {{ parameter["simplified_type"] }} | Nil
-                if %object = @{{ parameter["name"] }}
-                  %object
-                else
-                  nil
-                end
+                @{{ parameter["name"] }}
               end
           {% end %}
 
