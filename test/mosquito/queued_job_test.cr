@@ -39,7 +39,7 @@ describe Mosquito::QueuedJob do
 
     it "can have a boolean false passed as a parameter (and it's not assumed to be a nil)" do
       clear_logs
-      JobWithBeforeHook.new(false).perform
+      JobWithHooks.new(false).perform
       assert_includes logs, "Perform Executed"
     end
   end

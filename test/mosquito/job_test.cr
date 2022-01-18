@@ -6,7 +6,6 @@ describe Mosquito::Job do
   let(:not_implemented_job) { NotImplementedJob.new }
 
   let(:throttled_job) { ThrottledJob.new }
-  let(:hooked_job) { JobWithBeforeHook.new }
 
   it "raises when asked if #succeeded? before execution" do
     exception = assert_raises do
@@ -15,6 +14,7 @@ describe Mosquito::Job do
 
     assert_match /hasn't been executed/, exception.message
   end
+  let(:hooked_job) { JobWithHooks.new }
 
   it "run captures JobFailed and marks sucess=false" do
     failing_job.run
@@ -140,6 +140,26 @@ describe Mosquito::Job do
 
       assert_includes logs, "Before Hook Executed"
       assert_includes logs, "2nd Before Hook Executed"
+      refute_includes logs, "Perform Executed"
+    end
+  end
+
+  describe "after_hooks" do
+    it "should execute `after` hooks" do
+      clear_logs
+      hooked_job.should_fail = false
+      hooked_job.run
+      assert_includes logs, "After Hook Executed"
+      assert_includes logs, "2nd After Hook Executed"
+      assert_includes logs, "Perform Executed"
+    end
+
+    it "should run the `after` hooks even if a job fails" do
+      clear_logs
+      hooked_job.should_fail = true
+      hooked_job.run
+      assert_includes logs, "After Hook Executed"
+      assert_includes logs, "2nd After Hook Executed"
       refute_includes logs, "Perform Executed"
     end
   end

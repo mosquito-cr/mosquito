@@ -81,16 +81,24 @@ class JobWithConfig < PassingJob
   end
 end
 
-class JobWithBeforeHook < Mosquito::QueuedJob
+class JobWithHooks < Mosquito::QueuedJob
   params(should_fail : Bool)
 
   before do
     log "Before Hook Executed"
   end
 
+  after do
+    log "After Hook Executed"
+  end
+
   before do
     log "2nd Before Hook Executed"
     fail if should_fail
+  end
+
+  after do
+    log "2nd After Hook Executed"
   end
 
   def perform
