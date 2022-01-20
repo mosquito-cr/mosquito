@@ -17,6 +17,19 @@ describe Mosquito::Metadata do
     end
   end
 
+  it "increments with a configurable amount" do
+    clean_slate do
+      store.increment field
+      value = store[field]?.not_nil!
+      assert_equal "1", value
+
+      delta = 2
+      store.increment field, by: delta
+      new_value = store[field]?.not_nil!
+      assert_equal delta, (new_value.to_i - value.to_i)
+    end
+  end
+
   it "decrements" do
     clean_slate do
       store.decrement field
