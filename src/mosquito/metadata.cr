@@ -28,6 +28,11 @@ module Mosquito
       Mosquito.backend.increment root_key, key
     end
 
+    def increment(key, by increment : Int32)
+      raise RuntimeError.new("Cannot write to metadata, readonly=true") if readonly?
+      Mosquito.backend.increment root_key, key, by: increment
+    end
+
     def decrement(key)
       raise RuntimeError.new("Cannot write to metadata, readonly=true") if readonly?
       Mosquito.backend.increment root_key, key, by: -1
