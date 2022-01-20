@@ -82,7 +82,7 @@ module Mosquito
               parsed_parameters.map do |parameter|
                 assignment = "@#{parameter["name"]}"
                 assignment = assignment + " : #{parameter["type"]}" if parameter["type"]
-                assignment = assignment + " = #{parameter["value"]}" if parameter["value"]
+                assignment = assignment + " = #{parameter["value"]}" unless parameter["value"].is_a? Nop
                 assignment
               end.join(", ").id
               }})
