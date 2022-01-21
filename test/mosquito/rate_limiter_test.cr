@@ -51,10 +51,10 @@ describe Mosquito::RateLimiter do
     it "increments the count when a job is run" do
       clean_slate do
         RateLimitedJob.new.run
-        count = RateLimitedJob.rate_limit_data["run_count"]?.not_nil!.to_i
+        count = RateLimitedJob.metadata["run_count"]?.not_nil!.to_i
 
         RateLimitedJob.new.run
-        new_count = RateLimitedJob.rate_limit_data["run_count"]?.not_nil!.to_i
+        new_count = RateLimitedJob.metadata["run_count"]?.not_nil!.to_i
         assert_equal 1, new_count - count
       end
     end
@@ -62,10 +62,10 @@ describe Mosquito::RateLimiter do
     it "doesnt increment the count when a job is not run" do
       clean_slate do
         RateLimitedJob.new(should_fail: false).run
-        count = RateLimitedJob.rate_limit_data["run_count"]?.not_nil!.to_i
+        count = RateLimitedJob.metadata["run_count"]?.not_nil!.to_i
 
         RateLimitedJob.new(should_fail: true).run
-        new_count = RateLimitedJob.rate_limit_data["run_count"]?.not_nil!.to_i
+        new_count = RateLimitedJob.metadata["run_count"]?.not_nil!.to_i
         assert_equal count, new_count
       end
     end
@@ -74,32 +74,36 @@ describe Mosquito::RateLimiter do
       clean_slate do
         delta = 2
         RateLimitedJob.new.run
-        count = RateLimitedJob.rate_limit_data["run_count"]?.not_nil!.to_i
+        count = RateLimitedJob.metadata["run_count"]?.not_nil!.to_i
 
         RateLimitedJob.new(increment: delta).run
-        new_count = RateLimitedJob.rate_limit_data["run_count"]?.not_nil!.to_i
+        new_count = RateLimitedJob.metadata["run_count"]?.not_nil!.to_i
         assert_equal delta, new_count - count
       end
     end
 
     it "resets the count when the window is over" do
       clean_slate do
-        metadata = RateLimitedJob.rate_limit_data
+        metadata = RateLimitedJob.metadata
         metadata["run_count"] = "45"
         metadata["window_start"] = Time::UNIX_EPOCH.to_unix.to_s
         RateLimitedJob.new.run
-        count = RateLimitedJob.rate_limit_data["run_count"]?
+        count = RateLimitedJob.metadata["run_count"]?
         assert_equal "1", count
       end
     end
 
     it "counts multiple jobs with the same key in the same bucket" do
       clean_slate do
+        metadata = RateLimitedJob.metadata
+        metadata["window_start"] = Time.utc.to_unix.to_s
+
         RateLimitedJob.new.run
-        count = RateLimitedJob.rate_limit_data["run_count"]?.not_nil!.to_i
+        count = RateLimitedJob.metadata["run_count"]?.not_nil!.to_i
 
         SecondRateLimitedJob.new.run
-        new_count = RateLimitedJob.rate_limit_data["run_count"]?.not_nil!.to_i
+        new_count = RateLimitedJob.metadata["run_count"]?.not_nil!.to_i
+
         assert_equal RateLimitedJob.rate_limit_key, SecondRateLimitedJob.rate_limit_key
         assert_equal 1, new_count - count
       end
@@ -108,7 +112,7 @@ describe Mosquito::RateLimiter do
 
   describe "job preempting" do
     it "doesnt prevent excution if the rate limit count is less than zero" do
-      metadata = RateLimitedJob.rate_limit_data
+      metadata = RateLimitedJob.metadata
       metadata["run_count"] = "-1"
       metadata["window_start"] = Time.utc.to_unix.to_s
       job = RateLimitedJob.new
@@ -117,7 +121,7 @@ describe Mosquito::RateLimiter do
     end
 
     it "prevents a job from executing when the limit is reached" do
-      metadata = RateLimitedJob.rate_limit_data
+      metadata = RateLimitedJob.metadata
       metadata["run_count"] = Int32::MAX.to_s
       metadata["window_start"] = Time.utc.to_unix.to_s
       job = RateLimitedJob.new
@@ -126,7 +130,7 @@ describe Mosquito::RateLimiter do
     end
 
     it "allows a job to execute when the limit hasn't been reached" do
-      metadata = RateLimitedJob.rate_limit_data
+      metadata = RateLimitedJob.metadata
       metadata["window_start"] = Time.utc.to_unix.to_s
       metadata["run_count"] = "3"
       job = RateLimitedJob.new
@@ -135,7 +139,7 @@ describe Mosquito::RateLimiter do
     end
 
     it "allows a job to execute when the limit has been reached but the window is over" do
-      metadata = RateLimitedJob.rate_limit_data
+      metadata = RateLimitedJob.metadata
       metadata["run_count"] = Int32::MAX.to_s
       metadata["window_start"] = Time::UNIX_EPOCH.to_unix.to_s
       job = RateLimitedJob.new
