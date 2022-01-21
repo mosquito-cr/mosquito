@@ -21,11 +21,40 @@ module Mosquito::RateLimiter
       @@rate_limit_increment = increment
     end
 
-    # Storage hash for rate limit data.
-    def rate_limit_data : Metadata
+    # Statistics about the rate limiter, including both the configuration
+    # parameters and the run counts.
+    def rate_limit_stats : NamedTuple
+      meta = metadata
+
+      window_start = if window_start_ = meta["window_start"]?
+        Time.unix window_start_.to_i
+      else
+        Time::UNIX_EPOCH
+      end
+
+      run_count = if run_count_ = meta["run_count"]?
+        run_count_.to_i
+      else
+        0
+      end
+
+      {
+        interval: @@rate_limit_interval,
+        key: @@rate_limit_key,
+        increment: @@rate_limit_increment,
+        limit: @@rate_limit_ceiling,
+        window_start: window_start,
+        run_count: run_count
+      }
+    end
+
+    # Provides an instance of the metadata store used to track rate limit
+    # stats.
+    def metadata : Metadata
       Metadata.new @@rate_limit_key
     end
 
+    # Resolves the key used to index the metadata store for this test.
     def rate_limit_key
       @@rate_limit_key
     end
@@ -49,10 +78,11 @@ module Mosquito::RateLimiter
     end
   end
 
+  @rl_metadata : Metadata?
+
   # Storage hash for rate limit data.
-  @rate_limit_data : Metadata?
-  def rate_limit_data : Metadata
-    @rate_limit_data ||= self.class.rate_limit_data
+  def metadata : Metadata
+    @rl_metadata ||= self.class.metadata
   end
 
   # Should this job be cancelled?
@@ -65,14 +95,14 @@ module Mosquito::RateLimiter
 
   # Has the run count exceeded the ceiling for the current window?
   def maxed_rate_for_window? : Bool
-    run_count = rate_limit_data["run_count"]?.try &.to_i
+    run_count = metadata["run_count"]?.try &.to_i
     run_count ||= 0
     run_count >= @@rate_limit_ceiling
   end
 
   # Calculates the start of the rate limit window.
   def window_start : Time?
-    if start_time = rate_limit_data["window_start"]?.try(&.to_i)
+    if start_time = metadata["window_start"]?.try(&.to_i)
       Time.unix start_time
     end
   end
@@ -95,14 +125,14 @@ module Mosquito::RateLimiter
     started_window = window_start || Time::UNIX_EPOCH
     now = Time.utc
     if (now - started_window) > @@rate_limit_interval
-      rate_limit_data["window_start"] = now.to_unix.to_s
-      rate_limit_data["run_count"] = "0"
+      metadata["window_start"] = now.to_unix.to_s
+      metadata["run_count"] = "0"
     end
   end
 
   # Increments the run counter.
   def increment_run_count : Nil
-    rate_limit_data.increment "run_count", by: increment_run_count_by
+    metadata.increment "run_count", by: increment_run_count_by
   end
 
   # How much the run counter should be incremented by.
