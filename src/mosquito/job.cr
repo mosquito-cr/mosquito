@@ -53,9 +53,15 @@ module Mosquito
       @succeeded = false
     else
       @succeeded = true
+    ensure
+      after_hook
     end
 
     def before_hook
+      # intentionally left blank
+    end
+
+    def after_hook
       # intentionally left blank
     end
 
@@ -66,6 +72,18 @@ module Mosquito
     macro before(&block)
       def before_hook
         {% if @type.methods.map(&.name).includes?(:before_hook.id) %}
+          previous_def
+        {% else %}
+          super
+        {% end %}
+
+        {{ yield }}
+      end
+    end
+
+    macro after(&block)
+      def after_hook
+        {% if @type.methods.map(&.name).includes?(:after_hook.id) %}
           previous_def
         {% else %}
           super
