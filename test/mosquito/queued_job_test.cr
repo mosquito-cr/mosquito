@@ -3,8 +3,8 @@ require "../test_helper"
 describe Mosquito::QueuedJob do
   let(:runner) { Mosquito::TestableRunner.new }
   let(:name) { "test#{rand(1000)}" }
-  let(:job) { TestJobs::Queued.new }
-  let(:queue) { TestJobs::Queued.queue }
+  getter(job : QueuedTestJob) { QueuedTestJob.new }
+  getter(queue : Queue) { QueuedTestJob.queue }
 
   describe "enqueue" do
     it "enqueues" do
@@ -46,7 +46,7 @@ describe Mosquito::QueuedJob do
     end
 
     it "can be omitted" do
-      vanilla do
+      clean_slate do
         Mosquito::Base.register_job_mapping "job_with_no_params", JobWithNoParams
 
         clear_logs
