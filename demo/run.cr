@@ -30,3 +30,4 @@ puts "Checking integration test flags..."
 expect_run_count(PeriodicallyPuts, 7)
 expect_run_count(QueuedJob, 1)
 expect_run_count(CustomSerializersJob, 3)
+expect_run_count(RateLimitedJob, 3)

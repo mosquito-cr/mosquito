@@ -73,7 +73,7 @@ module Mosquito
       instance = build_job
       instance.run
 
-      if failed?
+      if executed? && failed?
         @retry_count += 1
         store
       end

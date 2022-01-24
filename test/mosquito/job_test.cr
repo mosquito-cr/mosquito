@@ -6,14 +6,6 @@ describe Mosquito::Job do
   let(:not_implemented_job) { NotImplementedJob.new }
 
   let(:throttled_job) { ThrottledJob.new }
-
-  it "raises when asked if #succeeded? before execution" do
-    exception = assert_raises do
-      passing_job.succeeded?
-    end
-
-    assert_match /hasn't been executed/, exception.message
-  end
   let(:hooked_job) { JobWithHooks.new }
 
   it "run captures JobFailed and marks sucess=false" do
