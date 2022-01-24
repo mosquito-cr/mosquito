@@ -28,7 +28,6 @@ describe Mosquito::PeriodicJob do
       clear_logs
       Mosquito::Base.register_job_mapping MonthlyJob.queue.name, MonthlyJob
       Mosquito::Base.register_job_interval MonthlyJob, interval: 1.month
-      default_job_config MonthlyJob
 
       enqueue_time = Time.utc.to_unix_ms
       runner.run :enqueue
@@ -37,6 +36,15 @@ describe Mosquito::PeriodicJob do
       runner.run :run
       MonthlyJob.queue
       assert_includes logs, "monthly task ran"
+    end
+  end
+
+  it "schedules itself for an interval" do
+    clean_slate do
+      TestJobs::Periodic.run_every 2.minutes
+      scheduled_task = Base.scheduled_tasks.first
+      assert_equal TestJobs::Periodic, scheduled_task.class
+      assert_equal 2.minutes, scheduled_task.interval
     end
   end
 end

@@ -1,5 +1,7 @@
 module Mosquito
   class Base
+    # Testing wedge which wipes out the Task mapping for the
+    # duration of the block.
     def self.bare_mapping(&block)
       scheduled_tasks = @@scheduled_tasks
       @@scheduled_tasks = [] of PeriodicTask

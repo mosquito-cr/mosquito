@@ -2,7 +2,7 @@ SHELL=/bin/bash
 
 .PHONY: all
 all: test
-	crystal build -p src/mosquito.cr -o bin/mosquito
+	shards build
 
 
 tests:=$(shell find ./test -iname "*_test.cr")
