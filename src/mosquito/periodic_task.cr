@@ -1,7 +1,7 @@
 module Mosquito
   class PeriodicTask
     property class : Mosquito::PeriodicJob.class
-    property interval : Time::Span
+    property interval : Time::Span | Time::MonthSpan
     property last_executed_at : Time
 
     def initialize(@class, @interval)
@@ -11,7 +11,7 @@ module Mosquito
     def try_to_execute : Nil
       now = Time.utc
 
-      if now - last_executed_at >= interval
+      if last_executed_at + interval <= now
         execute
         @last_executed_at = now
       end

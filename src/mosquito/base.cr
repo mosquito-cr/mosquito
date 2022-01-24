@@ -27,7 +27,7 @@ module Mosquito
       raise KeyError.new(error)
     end
 
-    def self.register_job_interval(klass, interval : Time::Span)
+    def self.register_job_interval(klass, interval : Time::Span | Time::MonthSpan)
       @@scheduled_tasks << PeriodicTask.new(klass, interval)
     end
 
