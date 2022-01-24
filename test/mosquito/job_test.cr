@@ -88,7 +88,7 @@ describe Mosquito::Job do
       intervals = 1..4
 
       intervals.each do |count|
-        assert_equal 4.seconds, Mosquito::TestJobs::CustomRescheduleIntervalJob.new.reschedule_interval(count)
+        assert_equal 4.seconds, CustomRescheduleIntervalJob.new.reschedule_interval(count)
       end
     end
   end

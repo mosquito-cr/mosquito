@@ -2,12 +2,12 @@ require "../../test_helper"
 
 describe "Mosquito::Runner#enqueue_periodic_tasks" do
   getter(queue : Queue) { test_job.class.queue }
-  getter(test_job)      { Mosquito::TestJobs::Periodic.new }
+  getter(test_job)      { PeriodicTestJob.new }
   getter(runner)        { Mosquito::TestableRunner.new }
 
   def setup
-    Mosquito::Base.register_job_mapping queue.name, Mosquito::TestJobs::Periodic
-    Mosquito::Base.register_job_interval Mosquito::TestJobs::Periodic, interval: 1.second
+    Mosquito::Base.register_job_mapping queue.name, PeriodicTestJob
+    Mosquito::Base.register_job_interval PeriodicTestJob, interval: 1.second
   end
 
   it "enqueues a scheduled task at the appropriate time" do

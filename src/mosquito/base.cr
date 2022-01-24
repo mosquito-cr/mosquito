@@ -15,7 +15,7 @@ module Mosquito
       @@mapping[type]
     rescue e : KeyError
       error = <<-TEXT
-      Could not find a job class for type #{type}, perhaps you forgot to register it?
+      Could not find a job class for type "#{type}", perhaps you forgot to register it?
 
       Current known types are:
 

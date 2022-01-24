@@ -2,13 +2,13 @@ require "../../test_helper"
 
 describe "Mosquito::Runner#enqueue_delayed_tasks" do
   getter(queue : Queue) { test_job.class.queue }
-  getter(test_job)      { Mosquito::TestJobs::Queued.new }
+  getter(test_job)      { QueuedTestJob.new }
   getter(runner)        { Mosquito::TestableRunner.new }
   getter(enqueue_time)  { Time.utc }
   getter(backend)       { queue.backend }
 
   def enqueue_task : Task
-    Mosquito::Base.register_job_mapping queue.name, Mosquito::TestJobs::Queued
+    Mosquito::Base.register_job_mapping queue.name, QueuedTestJob
 
     task = Task.new "blah"
 
