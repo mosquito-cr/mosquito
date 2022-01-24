@@ -137,6 +137,14 @@ class EchoJob < Mosquito::QueuedJob
   end
 end
 
+class MonthlyJob < Mosquito::PeriodicJob
+  run_every 1.month
+
+  def perform
+    log "monthly task ran"
+  end
+end
+
 Mosquito::Base.register_job_mapping "job_with_config", JobWithConfig
 Mosquito::Base.register_job_mapping "job_with_performance_counter", JobWithPerformanceCounter
 Mosquito::Base.register_job_mapping "failing_job", FailingJob
