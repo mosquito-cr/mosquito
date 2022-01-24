@@ -128,6 +128,38 @@ class MonthlyJob < Mosquito::PeriodicJob
   end
 end
 
+class RateLimitedJob < Mosquito::QueuedJob
+  include Mosquito::RateLimiter
+
+  throttle key: "rate_limit", limit: Int32::MAX
+
+  params should_fail : Bool = false, increment : Int32 = 1
+
+  before do
+    log "Before Hook Executed"
+    fail if should_fail
+  end
+
+  def perform
+    log "Performed"
+  end
+
+  def increment_run_count_by
+    increment
+  end
+end
+
+class SecondRateLimitedJob < Mosquito::QueuedJob
+  include Mosquito::RateLimiter
+
+  throttle key: "rate_limit", limit: Int32::MAX
+
+  params()
+
+  def perform
+  end
+end
+
 Mosquito::Base.register_job_mapping "job_with_config", JobWithConfig
 Mosquito::Base.register_job_mapping "job_with_performance_counter", JobWithPerformanceCounter
 Mosquito::Base.register_job_mapping "failing_job", FailingJob

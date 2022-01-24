@@ -37,5 +37,7 @@ module Mosquito
       raise RuntimeError.new("Cannot write to metadata, readonly=true") if readonly?
       Mosquito.backend.increment root_key, key, by: -1
     end
+
+    delegate to_s, inspect, to: to_h
   end
 end
