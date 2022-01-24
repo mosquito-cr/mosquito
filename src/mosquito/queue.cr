@@ -1,7 +1,7 @@
 module Mosquito
   # A named Queue.
   #
-  # Named Queues exist in Redis and have 4 ordered lists: waiting, pending, scheduled, and dead.
+  # Named Queues exist and have 4 ordered lists: waiting, pending, scheduled, and dead.
   #
   # - The Waiting list is for jobs which need to be executed as soon as possible.
   # - The Pending list is for jobs which are currently being executed.
@@ -75,47 +75,33 @@ module Mosquito
   # ```
   #
   class Queue
-    ID_PREFIX = {"mosquito"}
-    QUEUES    = %w(waiting scheduled pending dead config)
-
-    {% for q in QUEUES %}
-      def {{q.id}}_q
-        redis_key {{q}}, name
-      end
-    {% end %}
-
-    def self.redis_key(*parts)
-      Redis.key ID_PREFIX, parts
-    end
-
-    def redis_key(*parts)
-      self.class.redis_key *parts
-    end
-
-    getter name
+    getter name, config_key
     getter? empty : Bool
+    property backend : Mosquito::Backend
 
     def initialize(@name : String)
       @empty = false
+      @backend = Mosquito.backend.named name
+      @config_key = @name
     end
 
-    def enqueue(task : Task)
-      Redis.instance.lpush waiting_q, task.id
+    def enqueue(task : Task) : Task
+      backend.enqueue task
     end
 
-    def enqueue(task : Task, in interval : Time::Span)
+    def enqueue(task : Task, in interval : Time::Span) : Task
       enqueue task, at: interval.from_now
     end
 
-    def enqueue(task : Task, at execute_time : Time)
-      Redis.instance.zadd scheduled_q, execute_time.to_unix_ms, task.id
+    def enqueue(task : Task, at execute_time : Time) : Task
+      backend.schedule task, execute_time
     end
 
     def dequeue : Task?
       return if empty?
-      return if rate_limited?
-      if task_id = Redis.instance.rpoplpush waiting_q, pending_q
-        Task.retrieve task_id
+
+      if task = backend.dequeue
+        task
       else
         @empty = true
         nil
@@ -123,48 +109,30 @@ module Mosquito
     end
 
     def reschedule(task : Task, execution_time)
-      Redis.instance.lrem pending_q, 0, task.id
+      backend.finish task
       enqueue(task, at: execution_time)
     end
 
     def dequeue_scheduled : Array(Task)
-      time = Time.utc
-      overdue_tasks = Redis.instance.zrangebyscore scheduled_q, 0, time.to_unix_ms
-
-      return [] of Task unless overdue_tasks.any?
-
-      # TODO should this push tasks back onto pending?
-      overdue_tasks.map do |task_id|
-        Redis.instance.zrem scheduled_q, task_id
-        Task.retrieve task_id.as(String)
-      end.compact
+      backend.deschedule
     end
 
     def forget(task : Task)
-      Redis.instance.lrem pending_q, 0, task.id
+      backend.finish task
     end
 
     def banish(task : Task)
-      Redis.instance.lrem pending_q, 0, task.id
-      Redis.instance.lpush dead_q, task.id
+      backend.finish task
+      backend.terminate task
     end
 
-    # TODO does this make sense?
-    def length : Int32
-      Redis.instance.llen redis_key(name)
+    def size : Int64
+      backend.size
     end
 
-    def self.list_queues : Array(String)
-      search_queue_prefixes = QUEUES.first(2)
-
-      search_queue_prefixes.map do |prefix|
-        long_names = Redis.instance.keys redis_key(prefix, "*")
-        queue_prefix = redis_key(prefix) + ":"
-
-        long_names.map(&.to_s).map do |long_name|
-          long_name.sub(queue_prefix, "")
-        end
-      end.uniq.flatten
+    @[Deprecated("see #size")]
+    def length : Int64
+      backend.size
     end
 
     def ==(other : self) : Bool
@@ -172,32 +140,7 @@ module Mosquito
     end
 
     def flush
-      Redis.instance.del waiting_q, pending_q, scheduled_q, dead_q
-    end
-
-    # Determines if a task needs to be throttled and not dequeued
-    def rate_limited? : Bool
-      # Get the latest config for the queue
-      config = get_config
-
-      # Return if throttleing is not needed
-      return false if config["limit"] == "0" && config["period"] == "0"
-
-      # If the last time a job was executed was more than now + period.seconds ago, reset executed back to 0
-      # This handles executions not in same time frame
-      # Which otherwise would cause throttling to kick in once executed == limit even if the executions were hours apart with a 60 sec period
-      if Time.utc.to_unix > (Time.unix(config["last_executed"].to_i64) + config["period"].to_i.seconds).to_unix
-        config["executed"] = "0"
-        Redis.instance.store_hash config_q, config
-        return false
-      end
-
-      # Throttle the job if the next_batch is in the future
-      config["next_batch"].to_i64 > Time.utc.to_unix
-    end
-
-    private def get_config : Hash(String, String)
-      Redis.instance.retrieve_hash config_q
+      backend.flush
     end
   end
 end

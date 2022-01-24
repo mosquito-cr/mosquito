@@ -1,46 +1,48 @@
 require "../../test_helper"
 
 describe "Mosquito::Runner#enqueue_delayed_tasks" do
-  let(:runner) { Mosquito::TestableRunner.new }
-  let(:queue_name) { "mosquito::test_jobs::queued" }
+  getter(queue : Queue) { test_job.class.queue }
+  getter(test_job)      { Mosquito::TestJobs::Queued.new }
+  getter(runner)        { Mosquito::TestableRunner.new }
+  getter(enqueue_time)  { Time.utc }
+  getter(backend)       { queue.backend }
 
-  @enqueue_time : Time?
+  def enqueue_task : Task
+    Mosquito::Base.register_job_mapping queue.name, Mosquito::TestJobs::Queued
 
-  def enqueue_time
-    @enqueue_time ||= Time.utc
-  end
-
-  def enqueue_task
-    Mosquito::Base.register_job_mapping queue_name, Mosquito::TestJobs::Queued
+    task = Task.new "blah"
 
     Timecop.freeze enqueue_time do |t|
-      Mosquito::TestJobs::Queued.new.enqueue in: 3.seconds
+      task = test_job.enqueue in: 3.seconds
     end
 
+    assert_includes queue.backend.dump_scheduled_q, task.id
     runner.run :fetch_queues
+    task
   end
 
   it "enqueues a delayed task when it's ready" do
-    vanilla do |redis|
-      enqueue_task
-
+    clean_slate do
+      task = enqueue_task
       run_time = enqueue_time + 3.seconds
 
       Timecop.freeze run_time do |t|
         runner.run :enqueue
       end
 
-      queued_tasks = redis.lrange "mosquito:waiting:#{queue_name}", 0, -1
-      last_task = queued_tasks.last
-      task_metadata = redis.retrieve_hash "mosquito:task:#{last_task}"
+      queued_tasks = queue.backend.dump_waiting_q
+      assert_includes queued_tasks, task.id
 
-      assert_equal queue_name, task_metadata["type"]?
+      last_task = queued_tasks.last
+      task_metadata = queue.backend.retrieve Task.config_key(last_task)
+
+      assert_equal queue.name, task_metadata["type"]?
     end
   end
 
   it "doesn't enqueue tasks that arent ready yet" do
-    vanilla do |redis|
-      enqueue_task
+    clean_slate do
+      task = enqueue_task
 
       check_time = enqueue_time + 2.999.seconds
 
@@ -48,7 +50,9 @@ describe "Mosquito::Runner#enqueue_delayed_tasks" do
         runner.run :enqueue
       end
 
-      queued_tasks = redis.lrange "mosquito:waiting:#{queue_name}", 0, -1
+      queued_tasks = queue.backend.dump_waiting_q
+
+      # does not deschedule and enqueue anything
       assert_equal 0, queued_tasks.size
     end
   end

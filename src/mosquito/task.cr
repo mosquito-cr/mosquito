@@ -6,63 +6,54 @@ module Mosquito
   # - build an instance of that Job class and pass off the config data
   # - Ask the job to run
   #
-  # Task data is called `config` and is persisted as a Hash in Redis under the key
+  # Task data is called `config` and is persisted in the backend under the key
   # `mosquito:task:task_id`.
   class Task
     getter type
-    getter enqueue_time : Time?
-    getter id : String?
+    getter enqueue_time : Time
+    getter id : String
     getter retry_count = 0
     getter job : Mosquito::Job
 
     property config
 
-    ID_PREFIX = {"mosquito", "task"}
+    CONFIG_KEY_PREFIX = "task"
 
-    def redis_key
-      self.class.redis_key id
+    def config_key
+      self.class.config_key id
     end
 
-    def self.redis_key(*parts)
-      Redis.key ID_PREFIX, parts
+    def self.config_key(*parts)
+      Mosquito.backend.build_key CONFIG_KEY_PREFIX, parts
     end
 
-    def self.new(type : String)
-      new(type, nil, nil, 0)
+    def initialize(type : String)
+      new type
     end
 
-    private def initialize(
+    def initialize(
       @type : String,
-      @enqueue_time : Time | Nil,
-      @id : String | Nil,
-      @retry_count : Int32
+      @enqueue_time : Time = Time.utc,
+      id : String? = nil,
+      @retry_count : Int32 = 0
     )
+
+      @id = id || KeyBuilder.build @enqueue_time.to_unix_ms.to_s, rand(1000)
       @config = {} of String => String
       @job = NilJob.new
     end
 
     def store
-      @enqueue_time = time = Time.utc
-      epoch = time.to_unix_ms.to_s
-
-      unless task_id = @id
-        task_id = @id = Redis.key epoch, rand(1000).to_s
-      end
-
       fields = config.dup
-      fields["enqueue_time"] = epoch
+      fields["enqueue_time"] = enqueue_time.to_unix_ms.to_s
       fields["type"] = type
       fields["retry_count"] = retry_count.to_s
 
-      Redis.instance.store_hash redis_key, fields
+      Mosquito.backend.store config_key, fields
     end
 
     def delete(in ttl = 0)
-      if (ttl > 0)
-        Redis.instance.expire redis_key, ttl
-      else
-        Redis.instance.del redis_key
-      end
+      Mosquito.backend.delete config_key, ttl
     end
 
     def build_job
@@ -108,7 +99,7 @@ module Mosquito
     delegate :executed?, :succeeded?, :failed?, :failed, :rescheduled, to: @job
 
     def self.retrieve(id : String)
-      fields = Redis.instance.retrieve_hash redis_key(id)
+      fields = Mosquito.backend.retrieve config_key(id)
 
       return unless name = fields.delete "type"
       return unless timestamp = fields.delete "enqueue_time"
@@ -122,6 +113,10 @@ module Mosquito
 
     def to_s(io : IO)
       "#{type}<#{id}>".to_s(io)
+    end
+
+    def ==(other : self)
+      id == self.id
     end
   end
 end
