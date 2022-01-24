@@ -11,6 +11,10 @@ module Mosquito
         job_name
       end
 
+      def build_task
+        Mosquito::Task.new job_name
+      end
+
       macro params(*parameters)
         {% verbatim do %}
 

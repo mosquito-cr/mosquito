@@ -106,6 +106,12 @@ class JobWithConfig < Mosquito::Job
   end
 end
 
+class JobWithNoParams < Mosquito::QueuedJob
+  def perform
+    log "no param job performed"
+  end
+end
+
 class JobWithBeforeHook < Mosquito::QueuedJob
   params(should_fail : Bool)
 
