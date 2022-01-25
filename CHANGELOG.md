@@ -1,40 +1,109 @@
 # Changelog
 
-## 0.3.0
-### 2018-11-25
-- Update to crystal 0.27, thanks @blacksmoke16
 
-## 0.2.1
-### 2018-10-01
-- Logo contributed by @psikoz
-- Add several more automated tests
-- Add configuration for CI : `make test demo` will run all acceptance criteria
-- Add demo section
-- Release version 0.2.1
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+## [0.11.2] - 2022-01-25
+### Fixed
+- #66 Jobs with no parameters can now be enqueued without specifying an empty `params()`.
+- #65 PeriodicJobs can now specify their run period in months.
 
-### 2018-08-16
-- Update to specify crystal 0.26
-- Add several tests
-- Add makefile
+### Notes
+The v0 major version is now bugfix-only. Please update to v1.0. v0 will be supported as long as it's feasible to do so.
 
-## 0.2.0
-### 2018-06-22
-- Update to specify crystal-redis 2.0 and crystal 0.25
-- Release version 0.2.0
+## [0.11.1] - 2022-01-17
+### Added
+- Jobs can now specify `before` hooks, which can abort before the perform is triggered.
+- The Cron scheduler for periodic jobs can now be disabled via Mosquito.configure#run_cron_scheduler
+- The list of queues which are watched by the runner can now be configured via Mosquito.configure#run_from.
 
-## 0.1.1
-### 2018-06-08
-- Breaking: Update Mosquito::Model type alias to match updates to Granite
-- Misc typo fixes and flexibility upgrades
-- Update Crystal specification 0.23.1 -> .24.2
-- Correctly specify and sync version numbers from shard.yml / version.cr / git tag
-- Release version 0.1.1
+### Updated
+- Redis shard 2.8.0, removes hash shims which are no longer needed. Thanks @jwoertink.
 
-### 2018-01-16
-- Use configurable Logger instead of writing directly to stdout
-- Job classes can now disable rescheduling on failure
-- Log output is now colorized and formatted to be read by human eyes
+## [0.11.0] - 2021-04-10
+Proforma release for Crystal 1.0.
+
+## [0.10.0] - 2021-02-15
+### Added
+- UUID serializer helpers.
+
+### Updated
+- Switches from Benchmark.measure to Time.measure, thanks @anapsix.
+- Runner.idle_wait is now configured via Mosquito.configure instead of directly on Mosquito::Runner.
+
+## [0.9.0] - 2020-10-26
+### Added
+- Allows redis connection string to be specified via config option, thanks @watzon.
+
+### Deprecated
+- Connecting to redis via implicit REDIS_URL parameter is deprecated, thanks @watzon.
+
+## [0.8.0] - 2020-05-28
+### Fixed
+- (Breaking) Dead tasks which have failed and expired are now cleaned up with a Redis TTL. See Pull #48.
+
+## [0.7.0] - 2020-05-05
+### Added
+- ability to configure Runner.idle_wait period, thanks @mamantoha.
+
+### Updated
+- Point to Crystal 0.34.0, thanks @alex-lairan.
+
+### Changed
+- Replaces `Logger` with the more flexible `Log`.
+
+## [0.6.0] - 2019-12-19
+### Updated
+- Point to Crystal 0.31.1, 0.32.1.
+- Redis version, thanks @nsuchy.
+
+## [0.5.0] - 2019-06-14
+### Fixed
+- Issue #26 Unresolved local var error, thanks @blacksmoke16.
+
+## [0.4.0] - 2019-04-26
+### Added
+- Throttling logic, thanks @blacksmoke16.
+
+## [0.3.0] - 2018-11-25
+### Updated
+- Point to crystal 0.27, thanks @blacksmoke16.
+
+### Fixed
+- Brittle/intermittently failing tests.
+
+## [0.2.1] - 2018-10-01
+
+### Added
+- Logo, contributed by @psikoz.
+- configuration for CI : `make test demo` will run all acceptance criteria.
+- demo section.
+- makefile.
+
+### Updated
+- specify crystal 0.26.
+- simplify macro logic in QueuedJob.
+
+## [0.2.0] - 2018-06-22
+### Updated
+- Specify crystal-redis 2.0 and crystal 0.25.
+
+## [0.1.1] - 2018-06-08
+
+### Added
+- Job classes can now disable rescheduling on failure.
+
+### Updated
+- Readme.
+- Misc typo fixes and flexibility upgrades.
+- Update Crystal specification 0.23.1 -> .24.2.
+- Correctly specify and sync version numbers from shard.yml / version.cr / git tag.
+- Use configurable Logger instead of writing directly to stdout.
+- Log output is now colorized and formatted to be read by human eyes.
+
+### Changed
+- Breaking: Update Mosquito::Model type alias to match updates to Granite.
+
+### Fixed
 - BUG: task id was mutating on each save, causing weird logging when tasks reschedule.
-
-### 2017-12
 - PERFORMANCE: adding IDLE_WAIT to prevent slamming redis when the queues are empty. Smarter querying of the queues for work.
