@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 - Runner.idle_wait configuration is deprecated. Instead use Mosquito.configure#idle_wait.
+- Built in serializer for Granite models, and the Model type alias. See Serializers in the documentation if the functionality is necessary.
 
 ### Fixed
 - Boolean false can now be specified as the default value for a parameter: `params(name = false)`
