@@ -3,6 +3,23 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [1.0.0] - PENDING RELEASE
+### Added
+- Jobs can now specify their retry/reschedule logic with the #rescheduleable? and #reschedule_interval methods.
+- Job metadata storage engine.
+- Jobs can now specify `after` hooks.
+
+### Changed
+- The storage backend is now implemented via interface, allowing alternate backends to be implemented.
+- The rate limiting functionality is now implemented in a module, `Mosquito::RateLimiter`. See pull #77 for migration details.
+
+### Removed
+- Runner.idle_wait configuration is deprecated. Instead use Mosquito.configure#idle_wait.
+
+### Fixed
+- Boolean false can now be specified as the default value for a parameter: `params(name = false)`
+
 ## [0.11.2] - 2022-01-25
 ### Fixed
 - #66 Jobs with no parameters can now be enqueued without specifying an empty `params()`.
