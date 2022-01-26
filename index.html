@@ -212,13 +212,12 @@
 <p><img src="https://img.shields.io/github/workflow/status/mosquito-cr/mosquito/Test%20and%20Demo?style=for-the-badge" alt="GitHub Workflow Status" />
 <a href="https://crystal-lang.org/"><img src="https://img.shields.io/badge/crystal-1.1.1-blueviolet.svg?longCache=true&amp;style=for-the-badge" alt="Crystal Version" /></a>
 <a href="https://tldrlegal.com/license/mit-license"><img src="https://img.shields.io/github/license/mosquito-cr/mosquito.svg?style=for-the-badge" alt="GitHub" /></a></p>
-<p>Mosquito is a generic background job runner written specifically for Crystal. Significant inspiration from experience with the successes and failings of the Ruby gems: Resque and Sidekiq.</p>
+<p>Mosquito is a generic background job runner written primarily for Crystal. Significant inspiration from experience with the successes and failings many Ruby gems in this vein.</p>
 <p>Mosquito currently provides these features:</p>
 <ul>
 <li>Delayed execution</li>
 <li>Scheduled / Periodic execution</li>
 <li>Job Storage in Redis</li>
-<li>Crystal hash style <code>?</code> methods for parameter getters which return nil instead of raise</li>
 <li>Automatic rescheduling of failed jobs</li>
 <li>Progressively increasing delay of failed jobs</li>
 <li>Dead letter queue of jobs which have failed too many times</li>
@@ -226,7 +225,6 @@
 </ul>
 <p>Current Limitations:</p>
 <ul>
-<li>Job failure delay, maximum retry count, and several other variables cannot be easily configured.</li>
 <li>Visibility into the job queue is difficult and must be done through redis manually.</li>
 </ul>
 <p><img src="https://mosquito-cr.github.io/images/amber-mosquito.png" alt="" /></p>
@@ -235,7 +233,7 @@
     <use href="#octicon-link"/>
   </svg>
 </a>Project State</h2>
-<p>The Mosquito project is stable. A few projects are using Mosquito in production, and it's going okay.</p>
+<p>The Mosquito project is stable. A few folks are using Mosquito in production, and it's going okay.</p>
 <p>There are some features which would be nice to have, but what is here is both tried and tested.</p>
 <p>If you're using Mosquito, please <a href="https://github.com/mosquito-cr/mosquito/discussions">get in touch</a> on the Discussion board or <a href="https://crystal-lang.org/community/">on Crystal chat</a> with any questions, feature suggestions, or feedback.</p>
 <h2><a id="installation" class="anchor" href="#installation">
