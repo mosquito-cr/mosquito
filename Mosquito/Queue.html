@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Crystal Docs 1.2.2">
+<meta name="crystal_docs.project_version" content="master">
+<meta name="crystal_docs.project_name" content="mosquito">
+
+
+
+<link href="../css/style.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="../js/doc.js"></script>
+
+  <meta name="repository-name" content="mosquito">
+  <title>Mosquito::Queue - mosquito master</title>
+  <script type="text/javascript">
+    CrystalDocs.base_path = "../";
+  </script>
+</head>
+<body>
+
+<svg class="hidden">
+  <symbol id="octicon-link" viewBox="0 0 16 16">
+    <path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path>
+  </symbol>
+</svg>
+<div class="sidebar">
+  <div class="sidebar-header">
+    <div class="search-box">
+      <input type="search" class="search-input" placeholder="Search..." spellcheck="false" aria-label="Search">
+    </div>
+
+    <div class="project-summary">
+      <h1 class="project-name">
+        <a href="../index.html">
+          mosquito
+        </a>
+      </h1>
+
+      <span class="project-version">
+        master
+      </span>
+    </div>
+  </div>
+
+  <div class="search-results hidden">
+    <ul class="search-list"></ul>
+  </div>
+
+  <div class="types-list">
+    <ul>
+  
+  <li class="parent open current" data-id="mosquito/Mosquito" data-name="mosquito">
+      <a href="../Mosquito.html">Mosquito</a>
+      
+        <ul>
+  
+  <li class="parent " data-id="mosquito/Mosquito/Backend" data-name="mosquito::backend">
+      <a href="../Mosquito/Backend.html">Backend</a>
+      
+        <ul>
+  
+  <li class=" " data-id="mosquito/Mosquito/Backend/ClassMethods" data-name="mosquito::backend::classmethods">
+      <a href="../Mosquito/Backend/ClassMethods.html">ClassMethods</a>
+      
+    </li>
+  
+</ul>
+
+      
+    </li>
+  
+  <li class=" " data-id="mosquito/Mosquito/Base" data-name="mosquito::base">
+      <a href="../Mosquito/Base.html">Base</a>
+      
+    </li>
+  
+  <li class=" " data-id="mosquito/Mosquito/DoubleRun" data-name="mosquito::doublerun">
+      <a href="../Mosquito/DoubleRun.html">DoubleRun</a>
+      
+    </li>
+  
+  <li class=" " data-id="mosquito/Mosquito/HabitatSettings" data-name="mosquito::habitatsettings">
+      <a href="../Mosquito/HabitatSettings.html">HabitatSettings</a>
+      
+    </li>
+  
+  <li class=" " data-id="mosquito/Mosquito/Id" data-name="mosquito::id">
+      <a href="../Mosquito/Id.html">Id</a>
+      
+    </li>
+  
+  <li class=" " data-id="mosquito/Mosquito/IrretrievableParameter" data-name="mosquito::irretrievableparameter">
+      <a href="../Mosquito/IrretrievableParameter.html">IrretrievableParameter</a>
+      
+    </li>
+  
+  <li class=" " data-id="mosquito/Mosquito/Job" data-name="mosquito::job">
+      <a href="../Mosquito/Job.html">Job</a>
+      
+    </li>
+  
+  <li class=" " data-id="mosquito/Mosquito/JobFailed" data-name="mosquito::jobfailed">
+      <a href="../Mosquito/JobFailed.html">JobFailed</a>
+      
+    </li>
+  
+  <li class=" " data-id="mosquito/Mosquito/KeyBuilder" data-name="mosquito::keybuilder">
+      <a href="../Mosquito/KeyBuilder.html">KeyBuilder</a>
+      
+    </li>
+  
+  <li class=" " data-id="mosquito/Mosquito/Metadata" data-name="mosquito::metadata">
+      <a href="../Mosquito/Metadata.html">Metadata</a>
+      
+    </li>
+  
+  <li class=" " data-id="mosquito/Mosquito/NilJob" data-name="mosquito::niljob">
+      <a href="../Mosquito/NilJob.html">NilJob</a>
+      
+    </li>
+  
+  <li class=" " data-id="mosquito/Mosquito/PeriodicJob" data-name="mosquito::periodicjob">
+      <a href="../Mosquito/PeriodicJob.html">PeriodicJob</a>
+      
+    </li>
+  
+  <li class=" " data-id="mosquito/Mosquito/PeriodicTask" data-name="mosquito::periodictask">
+      <a href="../Mosquito/PeriodicTask.html">PeriodicTask</a>
+      
+    </li>
+  
+  <li class=" current" data-id="mosquito/Mosquito/Queue" data-name="mosquito::queue">
+      <a href="../Mosquito/Queue.html">Queue</a>
+      
+    </li>
+  
+  <li class=" " data-id="mosquito/Mosquito/QueuedJob" data-name="mosquito::queuedjob">
+      <a href="../Mosquito/QueuedJob.html">QueuedJob</a>
+      
+    </li>
+  
+  <li class="parent " data-id="mosquito/Mosquito/RateLimiter" data-name="mosquito::ratelimiter">
+      <a href="../Mosquito/RateLimiter.html">RateLimiter</a>
+      
+        <ul>
+  
+  <li class=" " data-id="mosquito/Mosquito/RateLimiter/ClassMethods" data-name="mosquito::ratelimiter::classmethods">
+      <a href="../Mosquito/RateLimiter/ClassMethods.html">ClassMethods</a>
+      
+    </li>
+  
+</ul>
+
+      
+    </li>
+  
+  <li class=" " data-id="mosquito/Mosquito/Redis" data-name="mosquito::redis">
+      <a href="../Mosquito/Redis.html">Redis</a>
+      
+    </li>
+  
+  <li class=" " data-id="mosquito/Mosquito/RedisBackend" data-name="mosquito::redisbackend">
+      <a href="../Mosquito/RedisBackend.html">RedisBackend</a>
+      
+    </li>
+  
+  <li class=" " data-id="mosquito/Mosquito/Runner" data-name="mosquito::runner">
+      <a href="../Mosquito/Runner.html">Runner</a>
+      
+    </li>
+  
+  <li class=" " data-id="mosquito/Mosquito/ScheduledJob" data-name="mosquito::scheduledjob">
+      <a href="../Mosquito/ScheduledJob.html">ScheduledJob</a>
+      
+    </li>
+  
+  <li class="parent " data-id="mosquito/Mosquito/Serializers" data-name="mosquito::serializers">
+      <a href="../Mosquito/Serializers.html">Serializers</a>
+      
+        <ul>
+  
+  <li class=" " data-id="mosquito/Mosquito/Serializers/Primitives" data-name="mosquito::serializers::primitives">
+      <a href="../Mosquito/Serializers/Primitives.html">Primitives</a>
+      
+    </li>
+  
+</ul>
+
+      
+    </li>
+  
+  <li class=" " data-id="mosquito/Mosquito/Task" data-name="mosquito::task">
+      <a href="../Mosquito/Task.html">Task</a>
+      
+    </li>
+  
+</ul>
+
+      
+    </li>
+  
+</ul>
+
+  </div>
+</div>
+
+
+<div class="main-content">
+<h1 class="type-name">
+
+  <span class="kind">class</span> Mosquito::Queue
+
+</h1>
+
+
+  <ul class="superclass-hierarchy"><li class="superclass"><a href="../Mosquito/Queue.html">Mosquito::Queue</a></li><li class="superclass">Reference</li><li class="superclass">Object</li></ul>
+
+
+
+
+  <h2>
+    <a id="overview" class="anchor" href="#overview">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Overview
+  </h2>
+
+  <p>A named Queue.</p>
+<p>Named Queues exist and have 4 ordered lists: waiting, pending, scheduled, and dead.</p>
+<ul>
+<li>The Waiting list is for jobs which need to be executed as soon as possible.</li>
+<li>The Pending list is for jobs which are currently being executed.</li>
+<li>The Scheduled list is indexed by execution time and holds jobs which need to be executed at a later time.</li>
+<li>The Dead list is for jobs which have been retried too many times and are no longer viable.</li>
+</ul>
+<p>A task is represented in a queue by its id.</p>
+<p>A task flows through the queues in this manner:</p>
+<pre><code class="language-text"> Time=0: Task does not exist yet, lists are empty
+
+   Waiting  Pending  Scheduled    Dead
+
+ ---------------------------------
+ Time=1: Task is enqueued
+
+   Waiting  Pending  Scheduled    Dead
+    Task#1
+
+ ---------------------------------
+ Time=2: Task begins running. Task is moved to pending and executed
+
+   Waiting  Pending  Scheduled    Dead
+             Task#1
+
+ ---------------------------------
+ Time=3: Tasks are Enqueued.
+
+   Waiting  Pending  Scheduled    Dead
+    Task#2   Task#1
+    Task#3
+
+ ---------------------------------
+ Time=4: Task succeeds, next task begins.
+
+   Waiting  Pending  Scheduled    Dead
+    Task#3   Task#2
+
+ ---------------------------------
+ Time=5: Task fails and is scheduled for later, next task begins.
+
+   Waiting  Pending  Scheduled     Dead
+             Task#3  t=7:Task#2
+
+ ---------------------------------
+ Time=6: Task succeeds. Nothing is executing.
+
+   Waiting  Pending  Scheduled     Dead
+                     t=7:Task#2
+
+ ---------------------------------
+ Time=7: Scheduled task is due and is moved to waiting. Nothing is executing.
+
+   Waiting  Pending  Scheduled     Dead
+    Task#2
+
+ ---------------------------------
+ Time=8: Task begins executing (for the second time).
+
+   Waiting  Pending  Scheduled     Dead
+             Task#2
+
+ ---------------------------------
+ Time=9: Task finished successfully. No more tasks present.
+
+   Waiting  Pending  Scheduled     Dead
+</code></pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2>
+    <a id="defined-in" class="anchor" href="#defined-in">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Defined in:
+  </h2>
+  
+    
+      <a href="https://github.com/mosquito-cr/mosquito/blob/329bd7c4b7b7367121c9f26aa5774981471e5637/src/mosquito/queue.cr#L77" target="_blank">
+        mosquito/queue.cr
+      </a>
+    
+    <br/>
+  
+
+
+
+
+
+  <h2>
+    <a id="constructors" class="anchor" href="#constructors">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Constructors
+  </h2>
+  <ul class="list-summary">
+    
+      <li class="entry-summary">
+        <a href="#new%28name%3AString%29-class-method" class="signature"><strong>.new</strong>(name : String)</a>
+        
+      </li>
+    
+  </ul>
+
+
+
+
+
+  <h2>
+    <a id="instance-method-summary" class="anchor" href="#instance-method-summary">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Instance Method Summary
+  </h2>
+  <ul class="list-summary">
+    
+      <li class="entry-summary">
+        <a href="#%3D%3D%28other%3Aself%29%3ABool-instance-method" class="signature"><strong>#==</strong>(other : <span class="k">self</span>) : Bool</a>
+        
+          <div class="summary"><p>Returns <code>true</code> if this reference is the same as <em>other</em>.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#backend%3AMosquito%3A%3ABackend-instance-method" class="signature"><strong>#backend</strong> : Mosquito::Backend</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#backend%3D%28backend%3AMosquito%3A%3ABackend%29-instance-method" class="signature"><strong>#backend=</strong>(backend : Mosquito::Backend)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#banish%28task%3ATask%29-instance-method" class="signature"><strong>#banish</strong>(task : Task)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#config_key%3AString-instance-method" class="signature"><strong>#config_key</strong> : String</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#dequeue%3ATask%3F-instance-method" class="signature"><strong>#dequeue</strong> : Task?</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#dequeue_scheduled%3AArray%28Task%29-instance-method" class="signature"><strong>#dequeue_scheduled</strong> : Array(Task)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#empty%3F%3ABool-instance-method" class="signature"><strong>#empty?</strong> : Bool</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#enqueue%28task%3ATask%2Cininterval%3ATime%3A%3ASpan%29%3ATask-instance-method" class="signature"><strong>#enqueue</strong>(task : Task, in interval : Time::Span) : Task</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#enqueue%28task%3ATask%2Catexecute_time%3ATime%29%3ATask-instance-method" class="signature"><strong>#enqueue</strong>(task : Task, at execute_time : Time) : Task</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#enqueue%28task%3ATask%29%3ATask-instance-method" class="signature"><strong>#enqueue</strong>(task : Task) : Task</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#flush-instance-method" class="signature"><strong>#flush</strong></a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#forget%28task%3ATask%29-instance-method" class="signature"><strong>#forget</strong>(task : Task)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#length%3AInt64-instance-method" class="signature"><strong>#length</strong> : Int64</a>
+        
+          <div class="summary"><p><span class="flag red">DEPRECATED</span>  see #size</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#name%3AString-instance-method" class="signature"><strong>#name</strong> : String</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#reschedule%28task%3ATask%2Cexecution_time%29-instance-method" class="signature"><strong>#reschedule</strong>(task : Task, execution_time)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#size%3AInt64-instance-method" class="signature"><strong>#size</strong> : Int64</a>
+        
+      </li>
+    
+  </ul>
+
+
+
+
+
+<div class="methods-inherited">
+  
+    
+
+
+    
+
+
+    
+
+
+  
+    
+
+
+    
+
+
+    
+
+
+  
+</div>
+
+
+  <h2>
+    <a id="constructor-detail" class="anchor" href="#constructor-detail">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Constructor Detail
+  </h2>
+  
+    <div class="entry-detail" id="new(name:String)-class-method">
+      <div class="signature">
+        
+        def self.<strong>new</strong>(name : String)
+
+        <a class="method-permalink" href="#new%28name%3AString%29-class-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/329bd7c4b7b7367121c9f26aa5774981471e5637/src/mosquito/queue.cr#L82" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+
+
+
+
+
+  <h2>
+    <a id="instance-method-detail" class="anchor" href="#instance-method-detail">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Instance Method Detail
+  </h2>
+  
+    <div class="entry-detail" id="==(other:self):Bool-instance-method">
+      <div class="signature">
+        
+        def <strong>==</strong>(other : <span class="k">self</span>) : Bool
+
+        <a class="method-permalink" href="#%3D%3D%28other%3Aself%29%3ABool-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+            <div class="doc-inherited">
+              Description copied from class Reference
+            </div>
+          
+          <p>Returns <code>true</code> if this reference is the same as <em>other</em>. Invokes <code>same?</code>.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/329bd7c4b7b7367121c9f26aa5774981471e5637/src/mosquito/queue.cr#L138" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="backend:Mosquito::Backend-instance-method">
+      <div class="signature">
+        
+        def <strong>backend</strong> : <a href="../Mosquito/Backend.html">Mosquito::Backend</a>
+
+        <a class="method-permalink" href="#backend%3AMosquito%3A%3ABackend-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/329bd7c4b7b7367121c9f26aa5774981471e5637/src/mosquito/queue.cr#L80" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="backend=(backend:Mosquito::Backend)-instance-method">
+      <div class="signature">
+        
+        def <strong>backend=</strong>(backend : <a href="../Mosquito/Backend.html">Mosquito::Backend</a>)
+
+        <a class="method-permalink" href="#backend%3D%28backend%3AMosquito%3A%3ABackend%29-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/329bd7c4b7b7367121c9f26aa5774981471e5637/src/mosquito/queue.cr#L80" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="banish(task:Task)-instance-method">
+      <div class="signature">
+        
+        def <strong>banish</strong>(task : <a href="../Mosquito/Task.html">Task</a>)
+
+        <a class="method-permalink" href="#banish%28task%3ATask%29-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/329bd7c4b7b7367121c9f26aa5774981471e5637/src/mosquito/queue.cr#L124" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="config_key:String-instance-method">
+      <div class="signature">
+        
+        def <strong>config_key</strong> : String
+
+        <a class="method-permalink" href="#config_key%3AString-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/329bd7c4b7b7367121c9f26aa5774981471e5637/src/mosquito/queue.cr#L78" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="dequeue:Task?-instance-method">
+      <div class="signature">
+        
+        def <strong>dequeue</strong> : <a href="../Mosquito/Task.html">Task</a>?
+
+        <a class="method-permalink" href="#dequeue%3ATask%3F-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/329bd7c4b7b7367121c9f26aa5774981471e5637/src/mosquito/queue.cr#L100" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="dequeue_scheduled:Array(Task)-instance-method">
+      <div class="signature">
+        
+        def <strong>dequeue_scheduled</strong> : Array(<a href="../Mosquito/Task.html">Task</a>)
+
+        <a class="method-permalink" href="#dequeue_scheduled%3AArray%28Task%29-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/329bd7c4b7b7367121c9f26aa5774981471e5637/src/mosquito/queue.cr#L116" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="empty?:Bool-instance-method">
+      <div class="signature">
+        
+        def <strong>empty?</strong> : Bool
+
+        <a class="method-permalink" href="#empty%3F%3ABool-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/329bd7c4b7b7367121c9f26aa5774981471e5637/src/mosquito/queue.cr#L79" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="enqueue(task:Task,ininterval:Time::Span):Task-instance-method">
+      <div class="signature">
+        
+        def <strong>enqueue</strong>(task : <a href="../Mosquito/Task.html">Task</a>, in interval : Time::Span) : <a href="../Mosquito/Task.html">Task</a>
+
+        <a class="method-permalink" href="#enqueue%28task%3ATask%2Cininterval%3ATime%3A%3ASpan%29%3ATask-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/329bd7c4b7b7367121c9f26aa5774981471e5637/src/mosquito/queue.cr#L92" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="enqueue(task:Task,atexecute_time:Time):Task-instance-method">
+      <div class="signature">
+        
+        def <strong>enqueue</strong>(task : <a href="../Mosquito/Task.html">Task</a>, at execute_time : Time) : <a href="../Mosquito/Task.html">Task</a>
+
+        <a class="method-permalink" href="#enqueue%28task%3ATask%2Catexecute_time%3ATime%29%3ATask-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/329bd7c4b7b7367121c9f26aa5774981471e5637/src/mosquito/queue.cr#L96" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="enqueue(task:Task):Task-instance-method">
+      <div class="signature">
+        
+        def <strong>enqueue</strong>(task : <a href="../Mosquito/Task.html">Task</a>) : <a href="../Mosquito/Task.html">Task</a>
+
+        <a class="method-permalink" href="#enqueue%28task%3ATask%29%3ATask-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/329bd7c4b7b7367121c9f26aa5774981471e5637/src/mosquito/queue.cr#L88" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="flush-instance-method">
+      <div class="signature">
+        
+        def <strong>flush</strong>
+
+        <a class="method-permalink" href="#flush-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/329bd7c4b7b7367121c9f26aa5774981471e5637/src/mosquito/queue.cr#L142" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="forget(task:Task)-instance-method">
+      <div class="signature">
+        
+        def <strong>forget</strong>(task : <a href="../Mosquito/Task.html">Task</a>)
+
+        <a class="method-permalink" href="#forget%28task%3ATask%29-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/329bd7c4b7b7367121c9f26aa5774981471e5637/src/mosquito/queue.cr#L120" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="length:Int64-instance-method">
+      <div class="signature">
+        
+        def <strong>length</strong> : Int64
+
+        <a class="method-permalink" href="#length%3AInt64-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p><span class="flag red">DEPRECATED</span>  see #size</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/329bd7c4b7b7367121c9f26aa5774981471e5637/src/mosquito/queue.cr#L134" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="name:String-instance-method">
+      <div class="signature">
+        
+        def <strong>name</strong> : String
+
+        <a class="method-permalink" href="#name%3AString-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/329bd7c4b7b7367121c9f26aa5774981471e5637/src/mosquito/queue.cr#L78" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="reschedule(task:Task,execution_time)-instance-method">
+      <div class="signature">
+        
+        def <strong>reschedule</strong>(task : <a href="../Mosquito/Task.html">Task</a>, execution_time)
+
+        <a class="method-permalink" href="#reschedule%28task%3ATask%2Cexecution_time%29-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/329bd7c4b7b7367121c9f26aa5774981471e5637/src/mosquito/queue.cr#L111" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="size:Int64-instance-method">
+      <div class="signature">
+        
+        def <strong>size</strong> : Int64
+
+        <a class="method-permalink" href="#size%3AInt64-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/329bd7c4b7b7367121c9f26aa5774981471e5637/src/mosquito/queue.cr#L129" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+
+
+
+
+</div>
+
+</body>
+</html>
