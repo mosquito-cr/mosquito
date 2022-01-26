@@ -1,0 +1,26 @@
+name: Build Docs
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    name: Running Docs
+    runs-on: ubuntu-latest
+
+    container:
+      image: crystallang/crystal:latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: crystal-lang/install-crystal@v1
+    - run: crystal --version
+    - run: shards install
+    - run: crystal docs
+
+    - name: Deploy
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./docs
