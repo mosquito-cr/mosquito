@@ -1,31 +1,27 @@
-
 <img src="logo/logotype_horizontal.svg" alt="mosquito">
 
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/mosquito-cr/mosquito/Test%20and%20Demo?style=for-the-badge)
-[![Crystal Version](https://img.shields.io/badge/crystal-1.1.1-blueviolet.svg?longCache=true&style=for-the-badge)](https://crystal-lang.org/)
 [![GitHub](https://img.shields.io/github/license/mosquito-cr/mosquito.svg?style=for-the-badge)](https://tldrlegal.com/license/mit-license)
 
-Mosquito is a generic background job runner written specifically for Crystal. Significant inspiration from experience with the successes and failings of the Ruby gems: Resque and Sidekiq.
+Mosquito is a generic background job runner written primarily for Crystal. Significant inspiration from experience with the successes and failings many Ruby gems in this vein.
 
 Mosquito currently provides these features:
 - Delayed execution
 - Scheduled / Periodic execution
 - Job Storage in Redis
-- Crystal hash style `?` methods for parameter getters which return nil instead of raise
 - Automatic rescheduling of failed jobs
 - Progressively increasing delay of failed jobs
 - Dead letter queue of jobs which have failed too many times
 - Rate limited jobs
 
 Current Limitations:
-- Job failure delay, maximum retry count, and several other variables cannot be easily configured.
 - Visibility into the job queue is difficult and must be done through redis manually.
 
-![](https://cdn.shopify.com/s/files/1/0242/0179/products/amber1_1024x1024.png?v=1455409061)
+![](https://mosquito-cr.github.io/images/amber-mosquito.png)
 
 ## Project State
 
-The Mosquito project is stable. A few projects are using Mosquito in production, and it's going okay.
+The Mosquito project is stable. A few folks are using Mosquito in production, and it's going okay.
 
 There are some features which would be nice to have, but what is here is both tried and tested.
 
@@ -136,7 +132,7 @@ More information: [periodic jobs on the wiki](https://github.com/mosquito-cr/mos
 
 ## Throttling Jobs
 
-Jobs can be throttled to limit the number of messages that get executed within a given period of time.  For example, if 10 messages were enqueued for `ThrottledJob` at one time; 5 would be executed immediately, then pause for a minute, then execute the last 5.  
+Jobs can be throttled to limit the number of messages that get executed within a given period of time.  For example, if 10 messages were enqueued for `ThrottledJob` at one time; 5 would be executed immediately, then pause for a minute, then execute the last 5.
 
 ```crystal
 class ThrottledJob < Mosquito::QueuedJob
@@ -150,11 +146,9 @@ end
 ```
 
 
-
-
 ## Connecting to Redis
 
-Mosquito uses [Redis](https://redis.io/) to schedule jobs and store metadata about those jobs. Conventionally, redis connections are configured by an environment variable. To pass that configuration to Mosqito, 
+Mosquito uses [Redis](https://redis.io/) to schedule jobs and store metadata about those jobs. Conventionally, redis connections are configured by an environment variable. To pass that configuration to Mosqito,
 
 ```crystal
 Mosquito.configure do |settings|
