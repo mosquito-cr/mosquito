@@ -17,7 +17,7 @@ Mosquito currently provides these features:
 Current Limitations:
 - Visibility into the job queue is difficult and must be done through redis manually.
 
-![](https://mosquito-cr.github.io/images/amber-mosquito.png)
+![](https://mosquito-cr.github.io/images/amber-mosquito-small.png)
 
 ## Project State
 
