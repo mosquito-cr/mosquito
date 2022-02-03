@@ -244,12 +244,6 @@
 <pre><code class="language-diff">dependencies:
 +  mosquito:
 +    github: mosquito-cr/mosquito</code></pre>
-<p>Further installation instructions are available for use with web frameworks as well as a vanilla crystal application:</p>
-<ul>
-<li><a href="https://github.com/mosquito-cr/mosquito/wiki/Usage:-Lucky">Installing with Lucky</a></li>
-<li><a href="https://github.com/mosquito-cr/mosquito/wiki/Usage:-Amber">Installing with Amber</a></li>
-<li><a href="https://github.com/mosquito-cr/mosquito/wiki/Usage:-vanilla-crystal">Adding to a vanilla crystal application</a></li>
-</ul>
 <h2><a id="usage" class="anchor" href="#usage">
   <svg class="octicon-link" aria-hidden="true">
     <use href="#octicon-link"/>
@@ -298,14 +292,14 @@
 2017-11-06 17:07:51 - Running task puts_job&lt;...&gt; from puts_job
 2017-11-06 17:07:51 - [PutsJob] ohai background job
 2017-11-06 17:07:51 - task puts_job&lt;...&gt; succeeded, took 0.0 seconds</code></pre>
-<p><a href="https://github.com/mosquito-cr/mosquito/wiki/Queued-jobs">More information about queued jobs</a> in the wiki.</p>
+<p><a href="https://mosquito-cr.github.io/manual/index.html#queued-jobs">More information about queued jobs</a> in the manual.</p>
 <hr />
 <h2><a id="periodic-jobs" class="anchor" href="#periodic-jobs">
   <svg class="octicon-link" aria-hidden="true">
     <use href="#octicon-link"/>
   </svg>
 </a>Periodic Jobs</h2>
-<p>Periodic jobs run according to a predefined period.</p>
+<p>Periodic jobs run according to a predefined period -- once an hour, etc.</p>
 <p>This periodic job:</p>
 <pre><code class="language-crystal"><span class="k">class</span> <span class="t">PeriodicallyPutsJob</span> <span class="o">&lt;</span> <span class="t">Mosquito</span><span class="t">::</span><span class="t">PeriodicJob</span>
   run_every <span class="n">1</span>.minute
@@ -329,30 +323,13 @@
 2017-11-06 17:22:15 - Running task periodically_puts_job&lt;...&gt; from periodically_puts_job
 2017-11-06 17:22:15 - [PeriodicallyPutsJob] The time is now 2017-11-06 17:22:15 and the wizard is feeling political
 2017-11-06 17:22:15 - task periodically_puts_job&lt;...&gt; succeeded, took 0.0 seconds</code></pre>
-<p>More information: <a href="https://github.com/mosquito-cr/mosquito/wiki/Periodic-Jobs">periodic jobs on the wiki</a></p>
-<h2><a id="throttling-jobs" class="anchor" href="#throttling-jobs">
+<p><a href="https://mosquito-cr.github.io/manual/index.html#periodic-jobs">More information on periodic jobs</a> in the manual.</p>
+<h2><a id="advanced-usage" class="anchor" href="#advanced-usage">
   <svg class="octicon-link" aria-hidden="true">
     <use href="#octicon-link"/>
   </svg>
-</a>Throttling Jobs</h2>
-<p>Jobs can be throttled to limit the number of messages that get executed within a given period of time.  For example, if 10 messages were enqueued for <code>ThrottledJob</code> at one time; 5 would be executed immediately, then pause for a minute, then execute the last 5.</p>
-<pre><code class="language-crystal"><span class="k">class</span> <span class="t">ThrottledJob</span> <span class="o">&lt;</span> <span class="t">Mosquito</span><span class="t">::</span><span class="t">QueuedJob</span>
-  params message : <span class="t">String</span>
-  throttle limit: <span class="n">5</span>, period: <span class="n">60</span>
-
-  <span class="k">def</span> <span class="m">perform</span>
-    puts message
-  <span class="k">end</span>
-<span class="k">end</span></code></pre>
-<h2><a id="connecting-to-redis" class="anchor" href="#connecting-to-redis">
-  <svg class="octicon-link" aria-hidden="true">
-    <use href="#octicon-link"/>
-  </svg>
-</a>Connecting to Redis</h2>
-<p>Mosquito uses <a href="https://redis.io/">Redis</a> to schedule jobs and store metadata about those jobs. Conventionally, redis connections are configured by an environment variable. To pass that configuration to Mosqito,</p>
-<pre><code class="language-crystal"><span class="t">Mosquito</span>.configure <span class="k">do</span> <span class="o">|</span>settings<span class="o">|</span>
-  settings.redis_url <span class="o">=</span> <span class="t">ENV</span>[<span class="s">&quot;REDIS_URL&quot;</span>]
-<span class="k">end</span></code></pre>
+</a>Advanced usage</h2>
+<p>For more advanced topics, including <a href="https://mosquito-cr.github.io/manual/lucky_framework.html">use with Lucky Framework</a>, <a href="https://mosquito-cr.github.io/manual/rate_limiting.html">throttling or rate limiting</a>, check out the <a href="https://mosquito-cr.github.io/manual">full manual</a>.</p>
 <h2><a id="contributing" class="anchor" href="#contributing">
   <svg class="octicon-link" aria-hidden="true">
     <use href="#octicon-link"/>
