@@ -133,6 +133,12 @@ For more advanced topics, including [use with Lucky Framework](https://mosquito-
 
 Contributions are welcome. Please fork the repository, commit changes on a branch, and then open a pull request.
 
+### Crystal Versions
+
+Mosquito aims to be compatible with the latest Crystal release, and the [latest patch for all post-1.0 minor crystal versions](https://github.com/mosquito-cr/mosquito/blob/master/.github/workflows/ci.yml#L17).
+
+For development purposes [you're encouraged to stay in sync with `.tool-versions`](https://github.com/mosquito-cr/mosquito/blob/master/.tool-versions).
+
 ### Testing
 
 This repository uses [minitest](https://github.com/ysbaddaden/minitest.cr) for testing. As a result, `crystal spec` doesn't do anything helpful. Do this instead:
