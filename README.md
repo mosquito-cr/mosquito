@@ -3,6 +3,8 @@
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/mosquito-cr/mosquito/Test%20and%20Demo?style=for-the-badge)
 [![GitHub](https://img.shields.io/github/license/mosquito-cr/mosquito.svg?style=for-the-badge)](https://tldrlegal.com/license/mit-license)
 
+<img src="https://mosquito-cr.github.io/images/amber-mosquito-small.png" align="right">
+
 Mosquito is a generic background job runner written primarily for Crystal. Significant inspiration from experience with the successes and failings many Ruby gems in this vein.
 
 Mosquito currently provides these features:
@@ -17,7 +19,6 @@ Mosquito currently provides these features:
 Current Limitations:
 - Visibility into the job queue is difficult and must be done through redis manually.
 
-![](https://mosquito-cr.github.io/images/amber-mosquito-small.png)
 
 ## Project State
 
