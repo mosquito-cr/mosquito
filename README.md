@@ -38,12 +38,6 @@ dependencies:
 +    github: mosquito-cr/mosquito
 ```
 
-Further installation instructions are available for use with web frameworks as well as a vanilla crystal application:
-
-- [Installing with Lucky](https://github.com/mosquito-cr/mosquito/wiki/Usage:-Lucky)
-- [Installing with Amber](https://github.com/mosquito-cr/mosquito/wiki/Usage:-Amber)
-- [Adding to a vanilla crystal application](https://github.com/mosquito-cr/mosquito/wiki/Usage:-vanilla-crystal)
-
 ## Usage
 
 ### Step 1: Define a queued job
@@ -92,13 +86,13 @@ crystal run src/worker.cr
 2017-11-06 17:07:51 - task puts_job<...> succeeded, took 0.0 seconds
 ```
 
-[More information about queued jobs](https://github.com/mosquito-cr/mosquito/wiki/Queued-jobs) in the wiki.
+[More information about queued jobs](https://mosquito-cr.github.io/manual/index.html#queued-jobs) in the manual.
 
 ------
 
 ## Periodic Jobs
 
-Periodic jobs run according to a predefined period. 
+Periodic jobs run according to a predefined period -- once an hour, etc.
 
 This periodic job:
 ```crystal
@@ -129,34 +123,11 @@ Would produce this output:
 2017-11-06 17:22:15 - task periodically_puts_job<...> succeeded, took 0.0 seconds
 ```
 
-More information: [periodic jobs on the wiki](https://github.com/mosquito-cr/mosquito/wiki/Periodic-Jobs)
+[More information on periodic jobs](https://mosquito-cr.github.io/manual/index.html#periodic-jobs) in the manual.
 
-## Throttling Jobs
+## Advanced usage
 
-Jobs can be throttled to limit the number of messages that get executed within a given period of time.  For example, if 10 messages were enqueued for `ThrottledJob` at one time; 5 would be executed immediately, then pause for a minute, then execute the last 5.
-
-```crystal
-class ThrottledJob < Mosquito::QueuedJob
-  params message : String
-  throttle limit: 5, period: 60
-
-  def perform
-    puts message
-  end
-end
-```
-
-
-## Connecting to Redis
-
-Mosquito uses [Redis](https://redis.io/) to schedule jobs and store metadata about those jobs. Conventionally, redis connections are configured by an environment variable. To pass that configuration to Mosqito,
-
-```crystal
-Mosquito.configure do |settings|
-  settings.redis_url = ENV["REDIS_URL"]
-end
-```
-
+For more advanced topics, including [use with Lucky Framework](https://mosquito-cr.github.io/manual/lucky_framework.html), [throttling or rate limiting](https://mosquito-cr.github.io/manual/rate_limiting.html), check out the [full manual](https://mosquito-cr.github.io/manual).
 
 ## Contributing
 
