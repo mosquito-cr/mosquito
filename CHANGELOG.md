@@ -20,6 +20,8 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
   `Mosquito::RateLimiter`. See pull #77 for migration details.
 - ** BREAKING ** `Job.job_type` has been replaced with `Job.queue_name`. The
   functionailty is identical but easier to access. See #86.
+- `log` statements now properly identify where they're coming from rather than
+  just 'mosquito'. See issue #78 and pull #88.
 
 ### Removed
 - Runner.idle_wait configuration is deprecated. Instead use
