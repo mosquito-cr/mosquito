@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Jobs can now specify their retry/reschedule logic with the #rescheduleable? and #reschedule_interval methods.
 - Job metadata storage engine.
 - Jobs can now specify `after` hooks.
+- Mosquito::Runner now has a `stop` method which halts the runner after
+  completion of any running tasks. See issue #21 and pull #87.
 
 ### Changed
 - The storage backend is now implemented via interface, allowing alternate backends to be implemented.
