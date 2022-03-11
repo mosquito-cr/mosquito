@@ -1,41 +1,54 @@
 # Changelog
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The format is based on [Keep a
+Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
+[Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [1.0.0] - PENDING RELEASE
 ### Added
-- Jobs can now specify their retry/reschedule logic with the #rescheduleable? and #reschedule_interval methods.
+- Jobs can now specify their retry/reschedule logic with the #rescheduleable?
+  and #reschedule_interval methods.
 - Job metadata storage engine.
 - Jobs can now specify `after` hooks.
 
 ### Changed
-- The storage backend is now implemented via interface, allowing alternate backends to be implemented.
-- The rate limiting functionality is now implemented in a module, `Mosquito::RateLimiter`. See pull #77 for migration details.
+- The storage backend is now implemented via interface, allowing alternate
+  backends to be implemented.
+- The rate limiting functionality is now implemented in a module,
+  `Mosquito::RateLimiter`. See pull #77 for migration details.
 
 ### Removed
-- Runner.idle_wait configuration is deprecated. Instead use Mosquito.configure#idle_wait.
-- Built in serializer for Granite models, and the Model type alias. See Serializers in the documentation if the functionality is necessary.
+- Runner.idle_wait configuration is deprecated. Instead use
+  Mosquito.configure#idle_wait.
+- Built in serializer for Granite models, and the Model type alias. See
+  Serializers in the documentation if the functionality is necessary.
 
 ### Fixed
-- Boolean false can now be specified as the default value for a parameter: `params(name = false)`
+- Boolean false can now be specified as the default value for a parameter:
+  `params(name = false)`
 
 ## [0.11.2] - 2022-01-25
 ### Fixed
-- #66 Jobs with no parameters can now be enqueued without specifying an empty `params()`.
+- #66 Jobs with no parameters can now be enqueued without specifying an empty
+  `params()`.
 - #65 PeriodicJobs can now specify their run period in months.
 
 ### Notes
-The v0 major version is now bugfix-only. Please update to v1.0. v0 will be supported as long as it's feasible to do so.
+The v0 major version is now bugfix-only. Please update to v1.0. v0 will be
+supported as long as it's feasible to do so.
 
 ## [0.11.1] - 2022-01-17
 ### Added
-- Jobs can now specify `before` hooks, which can abort before the perform is triggered.
-- The Cron scheduler for periodic jobs can now be disabled via Mosquito.configure#run_cron_scheduler
-- The list of queues which are watched by the runner can now be configured via Mosquito.configure#run_from.
+- Jobs can now specify `before` hooks, which can abort before the perform is
+  triggered.
+- The Cron scheduler for periodic jobs can now be disabled via
+  Mosquito.configure#run_cron_scheduler
+- The list of queues which are watched by the runner can now be configured via
+  Mosquito.configure#run_from.
 
 ### Updated
-- Redis shard 2.8.0, removes hash shims which are no longer needed. Thanks @jwoertink.
+- Redis shard 2.8.0, removes hash shims which are no longer needed. Thanks
+  @jwoertink.
 
 ## [0.11.0] - 2021-04-10
 Proforma release for Crystal 1.0.
@@ -46,18 +59,22 @@ Proforma release for Crystal 1.0.
 
 ### Updated
 - Switches from Benchmark.measure to Time.measure, thanks @anapsix.
-- Runner.idle_wait is now configured via Mosquito.configure instead of directly on Mosquito::Runner.
+- Runner.idle_wait is now configured via Mosquito.configure instead of directly
+  on Mosquito::Runner.
 
 ## [0.9.0] - 2020-10-26
 ### Added
-- Allows redis connection string to be specified via config option, thanks @watzon.
+- Allows redis connection string to be specified via config option, thanks
+  @watzon.
 
 ### Deprecated
-- Connecting to redis via implicit REDIS_URL parameter is deprecated, thanks @watzon.
+- Connecting to redis via implicit REDIS_URL parameter is deprecated, thanks
+  @watzon.
 
 ## [0.8.0] - 2020-05-28
 ### Fixed
-- (Breaking) Dead tasks which have failed and expired are now cleaned up with a Redis TTL. See Pull #48.
+- (Breaking) Dead tasks which have failed and expired are now cleaned up with a
+  Redis TTL. See Pull #48.
 
 ## [0.7.0] - 2020-05-05
 ### Added
@@ -114,7 +131,8 @@ Proforma release for Crystal 1.0.
 - Readme.
 - Misc typo fixes and flexibility upgrades.
 - Update Crystal specification 0.23.1 -> .24.2.
-- Correctly specify and sync version numbers from shard.yml / version.cr / git tag.
+- Correctly specify and sync version numbers from shard.yml / version.cr / git
+  tag.
 - Use configurable Logger instead of writing directly to stdout.
 - Log output is now colorized and formatted to be read by human eyes.
 
@@ -122,5 +140,7 @@ Proforma release for Crystal 1.0.
 - Breaking: Update Mosquito::Model type alias to match updates to Granite.
 
 ### Fixed
-- BUG: task id was mutating on each save, causing weird logging when tasks reschedule.
-- PERFORMANCE: adding IDLE_WAIT to prevent slamming redis when the queues are empty. Smarter querying of the queues for work.
+- BUG: task id was mutating on each save, causing weird logging when tasks
+  reschedule.
+- PERFORMANCE: adding IDLE_WAIT to prevent slamming redis when the queues are
+  empty. Smarter querying of the queues for work.
