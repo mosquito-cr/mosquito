@@ -22,16 +22,35 @@ module Mosquito
 
     property task_id : String?
 
-    def self.job_type : String
-      ""
+    # The queue this job is assigned to.
+    # By default every job has it's own named queue:
+    #
+    # - EmailTheUniverseJob.queue = "email_the_universe"
+    def self.queue_name : String
+      {{ @type.id }}.to_s.underscore
     end
 
-    def self.queue
-      if job_type.blank?
-        Queue.new("default")
-      else
-        Queue.new(job_type)
+    # Easily override the queue for any job.
+    macro queue_name(name)
+      def self.queue_name : String
+        "{{ name.id }}"
       end
+    end
+
+    # The Queue this job uses to store tasks.
+    def self.queue
+      if queue_name.blank?
+        Queue.new "default"
+      else
+        Queue.new queue_name
+      end
+    end
+
+    # Job name is used to differentiate jobs coming off the same queue.
+    # By default it is the class name, and this should never need to be changed.
+    # 
+    private def self.job_name : String
+      "{{ @type.id }}".underscore
     end
 
     def run

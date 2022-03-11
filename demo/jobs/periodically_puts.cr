@@ -1,6 +1,8 @@
 class PeriodicallyPuts < Mosquito::PeriodicJob
   run_every 3.seconds
 
+  queue_name :demo_queue
+
   def perform
     log "Hello from PeriodicallyPuts"
 

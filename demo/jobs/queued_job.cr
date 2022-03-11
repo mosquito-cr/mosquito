@@ -1,6 +1,8 @@
 class QueuedJob < Mosquito::QueuedJob
   params count : Int32
 
+  queue_name :demo_queue
+
   def perform
     count.times do |i|
       log "ohai #{i}"

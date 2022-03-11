@@ -5,23 +5,14 @@ module Mosquito
         "{{ @type.id }}".underscore.downcase
       end
 
-      def job_name
-        self.class.job_name
-      end
-
       Mosquito::Base.register_job_mapping job_name, {{ @type.id }}
 
-      def self.job_type : String
-        job_name
-      end
-
       def build_task
-        Mosquito::Task.new job_name
+        Mosquito::Task.new self.class.job_name
       end
 
       macro params(*parameters)
         {% verbatim do %}
-
           {%
             parsed_parameters = parameters.map do |parameter|
               type = nil
@@ -99,7 +90,7 @@ module Mosquito
           end
 
           def build_task
-            task = Mosquito::Task.new(job_name)
+            task = Mosquito::Task.new self.class.job_name
 
             {% for parameter in parsed_parameters %}
               task.config["{{ parameter["name"] }}"] = serialize_{{ parameter["method_suffix"] }}({{ parameter["name"] }})
