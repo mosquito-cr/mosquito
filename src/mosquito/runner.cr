@@ -11,16 +11,25 @@ module Mosquito
     # How long a job config is persisted after failure
     property failed_job_ttl : Int32
 
+    # Should the worker continue working?
+    class_property keep_running : Bool = true
+
+    getter queues, start_time
+
     def self.start
       Log.info { "Mosquito is buzzing..." }
       instance = new
 
       while true
         instance.run
+        break unless @@keep_running
       end
     end
 
-    getter queues, start_time
+    def self.stop
+      Log.info { "Mosquito is shutting down..." }
+      @@keep_running = false
+    end
 
     def initialize
       Mosquito.validate_settings
