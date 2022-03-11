@@ -17,11 +17,16 @@ def expect_run_count(klass, expected)
   end
 end
 
+Signal::INT.trap do
+  Mosquito::Runner.stop
+end
+
 spawn do
   Mosquito::Runner.start
 end
 
 sleep 21
+Mosquito::Runner.stop
 
 puts "End of demo."
 puts "----------------------------------"
