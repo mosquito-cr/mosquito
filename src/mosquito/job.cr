@@ -1,4 +1,3 @@
-require "./log"
 require "./serializers/*"
 
 module Mosquito
@@ -9,12 +8,12 @@ module Mosquito
   # - Jobs Rescue when a #perform method fails a task for any reason
   # - Jobs can be rescheduleable
   abstract class Job
-    Log = Mosquito::Log.for(self)
+    Log = ::Log.for(self)
 
     include Mosquito::Serializers::Primitives
 
     def log(message)
-      Log.info { message }
+      ::Log.for(self.class).info { message }
     end
 
     getter executed = false
@@ -64,9 +63,8 @@ module Mosquito
     rescue e : DoubleRun
       raise e
     rescue e
-      log "Job failed! Raised #{e.class}: #{e.message}"
-      e.backtrace.each do |trace|
-        log trace
+      Log.warn(exception: e) do
+        "Job failed! Raised #{e.class}: #{e.message}"
       end
 
       @succeeded = false
@@ -114,7 +112,7 @@ module Mosquito
 
     # abstract, override in a Job descendant to do something productive
     def perform
-      log "No job definition found for #{self.class.name}"
+      Log.error { "No job definition found for #{self.class.name}" }
       fail
     end
 

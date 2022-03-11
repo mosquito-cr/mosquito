@@ -2,6 +2,8 @@ require "colorize"
 
 module Mosquito
   class Runner
+    Log = ::Log.for self
+
     # Minimum time in seconds to wait between checking for jobs.
     property idle_wait : Float64
 
@@ -17,7 +19,7 @@ module Mosquito
     getter queues, start_time
 
     def self.start
-      Log.info { "Mosquito is buzzing..." }
+      Log.notice { "Mosquito is buzzing..." }
       instance = new
 
       while true
