@@ -294,7 +294,7 @@ Jobs are pieces of code which run a Task.</p>
   </h2>
   
     
-      <a href="https://github.com/mosquito-cr/mosquito/blob/b00cda3bbf31e37b9444df5a8ca4753254c3fc20/src/mosquito/job.cr#L11" target="_blank">
+      <a href="https://github.com/mosquito-cr/mosquito/blob/08c5c5abb9d73738706f2f30d52cb9a5e2ba2958/src/mosquito/job.cr#L11" target="_blank">
         mosquito/job.cr
       </a>
     
@@ -337,11 +337,6 @@ Jobs are pieces of code which run a Task.</p>
   <ul class="list-summary">
     
       <li class="entry-summary">
-        <a href="#job_type%3AString-class-method" class="signature"><strong>.job_type</strong> : String</a>
-        
-      </li>
-    
-      <li class="entry-summary">
         <a href="#metadata%3AMetadata-class-method" class="signature"><strong>.metadata</strong> : Metadata</a>
         
       </li>
@@ -353,6 +348,15 @@ Jobs are pieces of code which run a Task.</p>
     
       <li class="entry-summary">
         <a href="#queue-class-method" class="signature"><strong>.queue</strong></a>
+        
+          <div class="summary"><p>The Queue this job uses to store tasks.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#queue_name%3AString-class-method" class="signature"><strong>.queue_name</strong> : String</a>
+        
+          <div class="summary"><p>The queue this job is assigned to.</p></div>
         
       </li>
     
@@ -497,6 +501,13 @@ Jobs are pieces of code which run a Task.</p>
     
       <li class="entry-summary">
         <a href="#before%28%26block%29-macro" class="signature"><strong>before</strong>(&block)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#queue_name%28name%29-macro" class="signature"><strong>queue_name</strong>(name)</a>
+        
+          <div class="summary"><p>Easily override the queue for any job.</p></div>
         
       </li>
     
@@ -719,22 +730,6 @@ Jobs are pieces of code which run a Task.</p>
     Class Method Detail
   </h2>
   
-    <div class="entry-detail" id="job_type:String-class-method">
-      <div class="signature">
-        
-        def self.<strong>job_type</strong> : String
-
-        <a class="method-permalink" href="#job_type%3AString-class-method">#</a>
-      </div>
-      
-      <br/>
-      <div>
-        
-          [<a href="https://github.com/mosquito-cr/mosquito/blob/b00cda3bbf31e37b9444df5a8ca4753254c3fc20/src/mosquito/job.cr#L25" target="_blank">View source</a>]
-        
-      </div>
-    </div>
-  
     <div class="entry-detail" id="metadata:Metadata-class-method">
       <div class="signature">
         
@@ -746,7 +741,7 @@ Jobs are pieces of code which run a Task.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/mosquito-cr/mosquito/blob/b00cda3bbf31e37b9444df5a8ca4753254c3fc20/src/mosquito/job.cr#L156" target="_blank">View source</a>]
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/08c5c5abb9d73738706f2f30d52cb9a5e2ba2958/src/mosquito/job.cr#L175" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -762,7 +757,7 @@ Jobs are pieces of code which run a Task.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/mosquito-cr/mosquito/blob/b00cda3bbf31e37b9444df5a8ca4753254c3fc20/src/mosquito/job.cr#L160" target="_blank">View source</a>]
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/08c5c5abb9d73738706f2f30d52cb9a5e2ba2958/src/mosquito/job.cr#L179" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -775,10 +770,40 @@ Jobs are pieces of code which run a Task.</p>
         <a class="method-permalink" href="#queue-class-method">#</a>
       </div>
       
+        <div class="doc">
+          
+          <p>The Queue this job uses to store tasks.</p>
+        </div>
+      
       <br/>
       <div>
         
-          [<a href="https://github.com/mosquito-cr/mosquito/blob/b00cda3bbf31e37b9444df5a8ca4753254c3fc20/src/mosquito/job.cr#L29" target="_blank">View source</a>]
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/08c5c5abb9d73738706f2f30d52cb9a5e2ba2958/src/mosquito/job.cr#L41" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="queue_name:String-class-method">
+      <div class="signature">
+        
+        def self.<strong>queue_name</strong> : String
+
+        <a class="method-permalink" href="#queue_name%3AString-class-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>The queue this job is assigned to.
+By default every job has it's own named queue:</p>
+<ul>
+<li>EmailTheUniverseJob.queue = &quot;email_the_universe&quot;</li>
+</ul>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/08c5c5abb9d73738706f2f30d52cb9a5e2ba2958/src/mosquito/job.cr#L29" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -806,7 +831,7 @@ Jobs are pieces of code which run a Task.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/mosquito-cr/mosquito/blob/b00cda3bbf31e37b9444df5a8ca4753254c3fc20/src/mosquito/job.cr#L64" target="_blank">View source</a>]
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/08c5c5abb9d73738706f2f30d52cb9a5e2ba2958/src/mosquito/job.cr#L83" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -822,7 +847,7 @@ Jobs are pieces of code which run a Task.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/mosquito-cr/mosquito/blob/b00cda3bbf31e37b9444df5a8ca4753254c3fc20/src/mosquito/job.cr#L60" target="_blank">View source</a>]
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/08c5c5abb9d73738706f2f30d52cb9a5e2ba2958/src/mosquito/job.cr#L79" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -838,7 +863,7 @@ Jobs are pieces of code which run a Task.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/mosquito-cr/mosquito/blob/b00cda3bbf31e37b9444df5a8ca4753254c3fc20/src/mosquito/job.cr#L20" target="_blank">View source</a>]
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/08c5c5abb9d73738706f2f30d52cb9a5e2ba2958/src/mosquito/job.cr#L20" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -859,7 +884,7 @@ Jobs are pieces of code which run a Task.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/mosquito-cr/mosquito/blob/b00cda3bbf31e37b9444df5a8ca4753254c3fc20/src/mosquito/job.cr#L110" target="_blank">View source</a>]
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/08c5c5abb9d73738706f2f30d52cb9a5e2ba2958/src/mosquito/job.cr#L129" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -882,7 +907,7 @@ re-scheduling, it will be run again at a later time.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/mosquito-cr/mosquito/blob/b00cda3bbf31e37b9444df5a8ca4753254c3fc20/src/mosquito/job.cr#L105" target="_blank">View source</a>]
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/08c5c5abb9d73738706f2f30d52cb9a5e2ba2958/src/mosquito/job.cr#L124" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -903,7 +928,7 @@ re-scheduling, it will be run again at a later time.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/mosquito-cr/mosquito/blob/b00cda3bbf31e37b9444df5a8ca4753254c3fc20/src/mosquito/job.cr#L120" target="_blank">View source</a>]
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/08c5c5abb9d73738706f2f30d52cb9a5e2ba2958/src/mosquito/job.cr#L139" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -919,7 +944,7 @@ re-scheduling, it will be run again at a later time.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/mosquito-cr/mosquito/blob/b00cda3bbf31e37b9444df5a8ca4753254c3fc20/src/mosquito/job.cr#L16" target="_blank">View source</a>]
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/08c5c5abb9d73738706f2f30d52cb9a5e2ba2958/src/mosquito/job.cr#L16" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -935,7 +960,7 @@ re-scheduling, it will be run again at a later time.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/mosquito-cr/mosquito/blob/b00cda3bbf31e37b9444df5a8ca4753254c3fc20/src/mosquito/job.cr#L150" target="_blank">View source</a>]
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/08c5c5abb9d73738706f2f30d52cb9a5e2ba2958/src/mosquito/job.cr#L169" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -956,7 +981,7 @@ re-scheduling, it will be run again at a later time.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/mosquito-cr/mosquito/blob/b00cda3bbf31e37b9444df5a8ca4753254c3fc20/src/mosquito/job.cr#L97" target="_blank">View source</a>]
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/08c5c5abb9d73738706f2f30d52cb9a5e2ba2958/src/mosquito/job.cr#L116" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -979,7 +1004,7 @@ job attempts be?</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/mosquito-cr/mosquito/blob/b00cda3bbf31e37b9444df5a8ca4753254c3fc20/src/mosquito/job.cr#L142" target="_blank">View source</a>]
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/08c5c5abb9d73738706f2f30d52cb9a5e2ba2958/src/mosquito/job.cr#L161" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1001,7 +1026,7 @@ job attempts be?</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/mosquito-cr/mosquito/blob/b00cda3bbf31e37b9444df5a8ca4753254c3fc20/src/mosquito/job.cr#L134" target="_blank">View source</a>]
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/08c5c5abb9d73738706f2f30d52cb9a5e2ba2958/src/mosquito/job.cr#L153" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1023,7 +1048,7 @@ job attempts be?</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/mosquito-cr/mosquito/blob/b00cda3bbf31e37b9444df5a8ca4753254c3fc20/src/mosquito/job.cr#L127" target="_blank">View source</a>]
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/08c5c5abb9d73738706f2f30d52cb9a5e2ba2958/src/mosquito/job.cr#L146" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1039,7 +1064,7 @@ job attempts be?</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/mosquito-cr/mosquito/blob/b00cda3bbf31e37b9444df5a8ca4753254c3fc20/src/mosquito/job.cr#L68" target="_blank">View source</a>]
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/08c5c5abb9d73738706f2f30d52cb9a5e2ba2958/src/mosquito/job.cr#L87" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1055,7 +1080,7 @@ job attempts be?</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/mosquito-cr/mosquito/blob/b00cda3bbf31e37b9444df5a8ca4753254c3fc20/src/mosquito/job.cr#L37" target="_blank">View source</a>]
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/08c5c5abb9d73738706f2f30d52cb9a5e2ba2958/src/mosquito/job.cr#L56" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1071,7 +1096,7 @@ job attempts be?</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/mosquito-cr/mosquito/blob/b00cda3bbf31e37b9444df5a8ca4753254c3fc20/src/mosquito/job.cr#L21" target="_blank">View source</a>]
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/08c5c5abb9d73738706f2f30d52cb9a5e2ba2958/src/mosquito/job.cr#L21" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1092,7 +1117,7 @@ job attempts be?</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/mosquito-cr/mosquito/blob/b00cda3bbf31e37b9444df5a8ca4753254c3fc20/src/mosquito/job.cr#L115" target="_blank">View source</a>]
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/08c5c5abb9d73738706f2f30d52cb9a5e2ba2958/src/mosquito/job.cr#L134" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1108,7 +1133,7 @@ job attempts be?</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/mosquito-cr/mosquito/blob/b00cda3bbf31e37b9444df5a8ca4753254c3fc20/src/mosquito/job.cr#L23" target="_blank">View source</a>]
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/08c5c5abb9d73738706f2f30d52cb9a5e2ba2958/src/mosquito/job.cr#L23" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1124,7 +1149,7 @@ job attempts be?</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/mosquito-cr/mosquito/blob/b00cda3bbf31e37b9444df5a8ca4753254c3fc20/src/mosquito/job.cr#L23" target="_blank">View source</a>]
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/08c5c5abb9d73738706f2f30d52cb9a5e2ba2958/src/mosquito/job.cr#L23" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1152,7 +1177,7 @@ job attempts be?</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/mosquito-cr/mosquito/blob/b00cda3bbf31e37b9444df5a8ca4753254c3fc20/src/mosquito/job.cr#L84" target="_blank">View source</a>]
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/08c5c5abb9d73738706f2f30d52cb9a5e2ba2958/src/mosquito/job.cr#L103" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1168,7 +1193,28 @@ job attempts be?</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/mosquito-cr/mosquito/blob/b00cda3bbf31e37b9444df5a8ca4753254c3fc20/src/mosquito/job.cr#L72" target="_blank">View source</a>]
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/08c5c5abb9d73738706f2f30d52cb9a5e2ba2958/src/mosquito/job.cr#L91" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="queue_name(name)-macro">
+      <div class="signature">
+        
+        macro <strong>queue_name</strong>(name)
+
+        <a class="method-permalink" href="#queue_name%28name%29-macro">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Easily override the queue for any job.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/08c5c5abb9d73738706f2f30d52cb9a5e2ba2958/src/mosquito/job.cr#L34" target="_blank">View source</a>]
         
       </div>
     </div>
