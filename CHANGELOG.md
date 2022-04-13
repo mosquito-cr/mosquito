@@ -22,6 +22,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
   functionailty is identical but easier to access. See #86.
 - `log` statements now properly identify where they're coming from rather than
   just 'mosquito'. See issue #78 and pull #88.
+- Mosquito now connects to Redis using a connection pool. See #89
 
 ### Removed
 - Runner.idle_wait configuration is deprecated. Instead use
