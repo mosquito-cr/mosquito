@@ -8,12 +8,15 @@ module Mosquito
       @last_executed_at = Time.unix 0
     end
 
-    def try_to_execute : Nil
+    def try_to_execute : Bool
       now = Time.utc
 
       if last_executed_at + interval <= now
         execute
         @last_executed_at = now
+        true
+      else
+        false
       end
     end
 

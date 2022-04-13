@@ -80,32 +80,56 @@ module Mosquito
       run_at_most every: 0.25.seconds, label: :fetch_queues do |t|
         candidate_queues = Mosquito.backend.list_queues.map { |name| Queue.new name }
         @queues = filter_queues(candidate_queues)
+
+        if @queues.size > 0
+          Log.for("fetch_queues").debug {
+              "found #{@queues.size} queues: #{@queues.map(&.name).join(", ")}"
+          }
+        end
       end
     end
 
     private def filter_queues(present_queues : Array(Mosquito::Queue))
       permitted_queues = Mosquito.settings.run_from
       return present_queues if permitted_queues.empty?
-      present_queues.select! do |queue|
+      filtered_queues = present_queues.select do |queue|
         permitted_queues.includes? queue.name
       end
+
+      if filtered_queues.empty?
+        Log.for("filter_queues").debug {
+          filtered_out_queues = present_queues - filtered_queues
+
+          if filtered_out_queues.size > 0
+            "No watchable queues found. Ignored #{filtered_out_queues.size} queues not configured to be watched: #{filtered_out_queues.map(&.name).join(", ")}"
+          end
+        }
+      end
+
+      filtered_queues
     end
 
     private def enqueue_periodic_tasks
       return unless Mosquito.settings.run_cron_scheduler
+
       run_at_most every: 1.second, label: :enqueue_periodic_tasks do |now|
         Base.scheduled_tasks.each do |scheduled_task|
-          scheduled_task.try_to_execute
+          enqueued = scheduled_task.try_to_execute
+
+          if enqueued
+            Log.for("enqueue_periodic_tasks").debug { "enqueued #{scheduled_task.class}" }
+          end
         end
       end
     end
 
     private def enqueue_delayed_tasks
       run_at_most every: 1.second, label: :enqueue_delayed_tasks do |t|
+
         queues.each do |q|
           overdue_tasks = q.dequeue_scheduled
           next unless overdue_tasks.any?
-          Log.info { "Found #{overdue_tasks.size} delayed tasks" }
+          Log.for("enqueue_delayed_tasks").debug { "Found #{overdue_tasks.size} delayed tasks in #{q.name}" }
 
           overdue_tasks.each do |task|
             q.enqueue task
@@ -116,9 +140,9 @@ module Mosquito
 
     private def dequeue_and_run_tasks
       queues.each do |q|
-        run_next_task q
+          run_next_task q
+        end
       end
-    end
 
     private def run_next_task(q : Queue)
       task = q.dequeue
