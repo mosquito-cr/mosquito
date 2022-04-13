@@ -59,7 +59,13 @@ module Mosquito
     def build_job
       return @job unless @job.class == NilJob
 
-      @job = instance = Base.job_for_type(type).new
+      job_class = Base.job_for_type(type)
+      if job_class.nil?
+        fail
+        raise FailedJobRetrieval.new("Unable to find job for type #{type}.")
+      end
+
+      @job = instance = job_class.new
 
       if instance.responds_to? :vars_from
         instance.vars_from config
@@ -77,6 +83,8 @@ module Mosquito
         @retry_count += 1
         store
       end
+    rescue e
+      Log.error { "Error running task #{id}. #{e.class} (#{e.message})" }
     end
 
     def fail

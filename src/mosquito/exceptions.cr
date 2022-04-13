@@ -10,4 +10,7 @@ module Mosquito
   # When a job contains a model_id parameter pointing to a database record but the database doesn't return anything for that id.
   class IrretrievableParameter < Exception
   end
+
+  class FailedJobRetrieval < Exception
+  end
 end

@@ -2,6 +2,8 @@ module Mosquito
   alias Id = Int64 | Int32
 
   class Base
+    Log = ::Log.for(self)
+
     class_getter mapping = {} of String => Mosquito::Job.class
     class_getter scheduled_tasks = [] of PeriodicTask
     class_getter timetable = [] of PeriodicTask
@@ -10,20 +12,13 @@ module Mosquito
       @@mapping[string] = klass
     end
 
-    def self.job_for_type(type : String) : Mosquito::Job.class
+    def self.job_for_type(type : String) : Mosquito::Job.class | Nil
       @@mapping[type]
     rescue e : KeyError
-      error = <<-TEXT
-      Could not find a job class for type "#{type}", perhaps you forgot to register it?
-
-      Current known types are:
-
-      TEXT
-
-      error += @@mapping.keys.map { |k| "- #{k}" }.join "\n"
-      error += "\n\n"
-
-      raise KeyError.new(error)
+      Log.error {
+        error = "Could not find a job class for type '#{type}'. Known types are: "
+        error += @@mapping.keys.join ", "
+      }
     end
 
     def self.register_job_interval(klass, interval : Time::Span | Time::MonthSpan)
