@@ -66,7 +66,7 @@ describe "Mosquito::Runner#run_next_task" do
       runner.run :fetch_queues
       runner.run :run
 
-      assert_includes logs, "cannot be rescheduled"
+      assert_logs_match "cannot be rescheduled"
     end
   end
 
@@ -107,7 +107,7 @@ describe "Mosquito::Runner#run_next_task" do
       runner.run :fetch_queues
       runner.run :run
 
-      assert_includes logs, "Success"
+      assert_logs_match "Success"
 
       QueuedTestJob.queue.enqueue task
       ttl = Mosquito.backend.expires_in task.config_key

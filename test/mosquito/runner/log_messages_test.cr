@@ -23,7 +23,7 @@ describe "Mosquito::Runner logs" do
 
         clear_logs
         run_task QueuedTestJob
-        assert_includes logs, "Success"
+        assert_logs_match "Success"
       end
     end
 
@@ -32,7 +32,7 @@ describe "Mosquito::Runner logs" do
         register_mappings
         clear_logs
         run_task FailingJob
-        assert_includes logs, "Failure"
+        assert_logs_match "Failure"
       end
     end
   end
@@ -43,7 +43,7 @@ describe "Mosquito::Runner logs" do
         register_mappings
         clear_logs
         run_task QueuedTestJob
-        assert_includes logs, "and took"
+        assert_logs_match "and took"
       end
     end
 
@@ -52,7 +52,7 @@ describe "Mosquito::Runner logs" do
         register_mappings
         clear_logs
         run_task FailingJob
-        assert_includes logs, "taking"
+        assert_logs_match "taking"
       end
     end
   end
@@ -63,7 +63,7 @@ describe "Mosquito::Runner logs" do
         register_mappings
         clear_logs
         run_task QueuedTestJob
-        assert_includes logs, "Starting: queued_test_job"
+        assert_logs_match "Starting: queued_test_job"
       end
     end
   end
@@ -76,7 +76,7 @@ describe "Mosquito::Runner logs" do
         QueuedTestJob.new.enqueue at: 1.second.ago
         runner.run :fetch_queues
         runner.run :enqueue
-        assert_includes logs, "Found 1 delayed task"
+        assert_logs_match "Found 1 delayed task"
       end
     end
   end
