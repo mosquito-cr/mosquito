@@ -28,25 +28,6 @@ describe "Mosquito::Runner#run_next_task" do
     end
   end
 
-  it "logs a success message" do
-    clean_slate do
-      register_mappings
-
-      clear_logs
-      run_task QueuedTestJob
-      assert_includes logs, "Success"
-    end
-  end
-
-  it "logs a failure message" do
-    clean_slate do
-      register_mappings
-      clear_logs
-      run_task FailingJob
-      assert_includes logs, "Failure"
-    end
-  end
-
   it "reschedules a job that failed" do
     skip
   end
@@ -106,7 +87,6 @@ describe "Mosquito::Runner#run_next_task" do
       QueuedTestJob.queue.enqueue task
       ttl = Mosquito.backend.expires_in task.config_key
       assert_equal runner.successful_job_ttl, ttl
-
     end
   end
 

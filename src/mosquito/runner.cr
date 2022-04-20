@@ -29,7 +29,7 @@ module Mosquito
     end
 
     def self.stop
-      Log.info { "Mosquito is shutting down..." }
+      Log.notice { "Mosquito is shutting down..." }
       @@keep_running = false
     end
 
@@ -81,11 +81,11 @@ module Mosquito
         candidate_queues = Mosquito.backend.list_queues.map { |name| Queue.new name }
         @queues = filter_queues(candidate_queues)
 
-        if @queues.size > 0
-          Log.for("fetch_queues").debug {
-              "found #{@queues.size} queues: #{@queues.map(&.name).join(", ")}"
-          }
-        end
+        Log.for("fetch_queues").debug {
+          if @queues.size > 0
+            "found #{@queues.size} queues: #{@queues.map(&.name).join(", ")}"
+          end
+        }
       end
     end
 
@@ -96,15 +96,15 @@ module Mosquito
         permitted_queues.includes? queue.name
       end
 
-      if filtered_queues.empty?
-        Log.for("filter_queues").debug {
+      Log.for("filter_queues").debug {
+        if filtered_queues.empty?
           filtered_out_queues = present_queues - filtered_queues
 
           if filtered_out_queues.size > 0
             "No watchable queues found. Ignored #{filtered_out_queues.size} queues not configured to be watched: #{filtered_out_queues.map(&.name).join(", ")}"
           end
-        }
-      end
+        end
+      }
 
       filtered_queues
     end
@@ -116,9 +116,9 @@ module Mosquito
         Base.scheduled_tasks.each do |scheduled_task|
           enqueued = scheduled_task.try_to_execute
 
-          if enqueued
-            Log.for("enqueue_periodic_tasks").debug { "enqueued #{scheduled_task.class}" }
-          end
+          Log.for("enqueue_periodic_tasks").debug {
+            "enqueued #{scheduled_task.class}" if enqueued
+          }
         end
       end
     end
@@ -129,7 +129,7 @@ module Mosquito
         queues.each do |q|
           overdue_tasks = q.dequeue_scheduled
           next unless overdue_tasks.any?
-          Log.for("enqueue_delayed_tasks").debug { "Found #{overdue_tasks.size} delayed tasks in #{q.name}" }
+          Log.for("enqueue_delayed_tasks").info { "Found #{overdue_tasks.size} delayed tasks in #{q.name}" }
 
           overdue_tasks.each do |task|
             q.enqueue task
@@ -140,50 +140,75 @@ module Mosquito
 
     private def dequeue_and_run_tasks
       queues.each do |q|
-          run_next_task q
-        end
+        run_next_task q
       end
+    end
 
     private def run_next_task(q : Queue)
       task = q.dequeue
       return unless task
 
-      Log.info { "#{"Running".colorize.magenta} task #{task} from #{q.name}" }
+      Log.notice { "#{"Starting:".colorize.magenta} #{task} from #{q.name}" }
 
-      bench = Time.measure do
+      duration = Time.measure do
         task.run
       end.total_seconds
 
-      if bench > 0.1
-        time = "#{(bench).*(100).trunc./(100)}s".colorize.red
-      elsif bench > 0.001
-        time = "#{(bench * 1_000).trunc}ms".colorize.yellow
-      elsif bench > 0.000_001
-        time = "#{(bench * 100_000).trunc}µs".colorize.green
-      elsif bench > 0.000_000_001
-        time = "#{(bench * 1_000_000_000).trunc}ns".colorize.green
-      else
-        time = "no discernible time at all".colorize.green
-      end
-
       if task.succeeded?
-        Log.info { "#{"Success:".colorize.green} task #{task} finished and took #{time}" }
+        Log.notice { "#{"Success:".colorize.green} #{task} finished and took #{time_with_units duration}" }
         q.forget task
         task.delete in: successful_job_ttl
 
       else
-        message = "#{"Failure:".colorize.red} task #{task} failed, taking #{time}"
-
         if task.rescheduleable?
-          interval = task.reschedule_interval
-          next_execution = Time.utc + interval
-          Log.warn { "#{message} and #{"will run again".colorize.cyan} in #{interval} (at #{next_execution})" }
+          next_execution = Time.utc + task.reschedule_interval
+
+          Log.notice {
+            String.build do |s|
+              s << "Failure: ".colorize.red
+              s << task
+              s << " failed, taking "
+              s << time_with_units duration
+              s << " and "
+              s << "will run again".colorize.cyan
+              s << " in "
+              s << task.reschedule_interval
+              s << "( at "
+              s << next_execution
+              s << ")"
+            end
+          }
+
           q.reschedule task, next_execution
         else
-          Log.warn { "#{message} and #{"cannot be rescheduled".colorize.yellow}" }
+          Log.notice {
+            String.build do |s|
+              s << "Failure: ".colorize.red
+              s << task
+              s << " failed, taking "
+              s << time_with_units duration
+              s << " and "
+              s << "cannot be rescheduled".colorize.yellow
+            end
+          }
+
           q.banish task
           task.delete in: failed_job_ttl
         end
+      end
+    end
+
+    private def time_with_units(seconds : Float64)
+      if seconds > 0.1
+        "#{(seconds).*(100).trunc./(100)}s".colorize.red
+      elsif seconds > 0.001
+        "#{(seconds * 1_000).trunc}ms".colorize.yellow
+      elsif seconds > 0.000_001
+        "#{(seconds * 100_000).trunc}µs".colorize.green
+      elsif seconds > 0.000_000_001
+        "#{(seconds * 1_000_000_000).trunc}ns".colorize.green
+      else
+        "no discernible time at all".colorize.green
       end
     end
   end
