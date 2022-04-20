@@ -29,7 +29,32 @@ describe "Mosquito::Runner#run_next_task" do
   end
 
   it "reschedules a job that failed" do
-    skip
+    clean_slate do
+      register_mappings
+
+      now = Time.utc
+      job = FailingJob.new
+      task = job.build_task
+      task.store
+      FailingJob.queue.enqueue task
+
+      Timecop.freeze now do
+        runner.run :fetch_queues
+        runner.run :run
+      end
+
+      task.reload
+      assert_equal 1, task.retry_count
+
+      Timecop.freeze now + job.reschedule_interval(1) do
+        runner.run :fetch_queues
+        runner.run :enqueue
+        runner.run :run
+      end
+
+      task.reload
+      assert_equal 2, task.retry_count
+    end
   end
 
   it "doesnt reschedule a job that cant be rescheduled" do
