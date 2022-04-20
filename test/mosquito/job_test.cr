@@ -22,6 +22,15 @@ describe Mosquito::Job do
     assert passing_job.succeeded?
   end
 
+  it "emits a failure message when #fail contains a reason message" do
+    clear_logs
+
+    failing_job.run
+    assert failing_job.failed?
+
+    assert_logs_match failing_job.exception_message
+  end
+
   it "run captures and marks failure for other exceptions" do
     clear_logs
 

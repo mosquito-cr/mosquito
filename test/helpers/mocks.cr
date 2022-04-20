@@ -40,6 +40,8 @@ end
 
 class FailingJob < QueuedTestJob
   property fail_with_exception = false
+  property exception_message = "this is the reason #{name} failed"
+
   include PerformanceCounter
   params()
 
@@ -49,12 +51,8 @@ class FailingJob < QueuedTestJob
     if fail_with_exception
       raise exception_message
     else
-      fail
+      fail exception_message
     end
-  end
-
-  def exception_message
-    "Job failed"
   end
 end
 
