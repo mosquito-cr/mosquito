@@ -47,4 +47,8 @@ describe "task storage" do
     set_ttl = backend.expires_in task.config_key
     assert_equal ttl, set_ttl
   end
+
+  it "can reload a task" do
+    task.reload
+  end
 end
