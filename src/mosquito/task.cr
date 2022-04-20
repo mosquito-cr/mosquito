@@ -94,6 +94,7 @@ module Mosquito
 
     delegate :executed?, :succeeded?, :failed?, :failed, :rescheduled, to: @job
 
+    # Used to construct a task from the parameters stored in the backend.
     def self.retrieve(id : String)
       fields = Mosquito.backend.retrieve config_key(id)
 
@@ -105,6 +106,12 @@ module Mosquito
       instance.config = fields
 
       instance
+    end
+
+    # Updates this task config from the backend.
+    def reload : Nil
+      config.merge! Mosquito.backend.retrieve config_key
+      @retry_count = config["retry_count"].to_i
     end
 
     def to_s(io : IO)
