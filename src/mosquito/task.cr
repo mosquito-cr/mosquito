@@ -15,14 +15,17 @@ module Mosquito
     getter retry_count = 0
     getter job : Mosquito::Job
 
+    # :nodoc:
     property config
 
     CONFIG_KEY_PREFIX = "task"
 
+    # The config key is the backend storage key for the metadata of this task.
     def config_key
       self.class.config_key id
     end
 
+    # :ditto:
     def self.config_key(*parts)
       Mosquito.backend.build_key CONFIG_KEY_PREFIX, parts
     end
@@ -43,6 +46,7 @@ module Mosquito
       @job = NilJob.new
     end
 
+    # Stores this job run configuration and metadata in the backend.
     def store
       fields = config.dup
       fields["enqueue_time"] = enqueue_time.to_unix_ms.to_s
@@ -52,10 +56,14 @@ module Mosquito
       Mosquito.backend.store config_key, fields
     end
 
+    # Deletes this task from the backend.
+    # Optionally, after a delay in seconds (handled by the backend).
     def delete(in ttl = 0)
       Mosquito.backend.delete config_key, ttl
     end
 
+    # Builds a Job instance from this task. Populates the job with config from
+    # the backend.
     def build_job
       return @job unless @job.class == NilJob
 
@@ -69,6 +77,7 @@ module Mosquito
       instance
     end
 
+    # Builds and runs the job with this task config.
     def run
       instance = build_job
       instance.run
@@ -79,19 +88,23 @@ module Mosquito
       end
     end
 
+    # Fails this job run and make sure it's persisted as such.
     def fail
       @retry_count += 1
       store
     end
 
+    # For the current retry count, is the job rescheduleable?
     def rescheduleable?
       job.rescheduleable? @retry_count
     end
 
+    # For the current retry count, how long should a runner wait before retry?
     def reschedule_interval
       job.reschedule_interval @retry_count
     end
 
+    # :nodoc:
     delegate :executed?, :succeeded?, :failed?, :failed, :rescheduled, to: @job
 
     # Used to construct a task from the parameters stored in the backend.
