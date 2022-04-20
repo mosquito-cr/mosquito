@@ -173,7 +173,7 @@ module Mosquito
               s << "will run again".colorize.cyan
               s << " in "
               s << task.reschedule_interval
-              s << "( at "
+              s << " (at "
               s << next_execution
               s << ")"
             end

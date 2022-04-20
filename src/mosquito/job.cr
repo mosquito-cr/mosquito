@@ -58,8 +58,11 @@ module Mosquito
       raise DoubleRun.new if executed
       @executed = true
       perform
-    rescue JobFailed
+    rescue e : JobFailed
       @succeeded = false
+      Log.error {
+        "Job failed: #{e.message}"
+      }
     rescue e : DoubleRun
       raise e
     rescue e
@@ -119,8 +122,8 @@ module Mosquito
     # To be called from inside a #perform
     # Marks this job as a failure. If the job is a candidate for
     # re-scheduling, it will be run again at a later time.
-    def fail
-      raise JobFailed.new
+    def fail(reason = "")
+      raise JobFailed.new(reason)
     end
 
     # Did the job execute?
