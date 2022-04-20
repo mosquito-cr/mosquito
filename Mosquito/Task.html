@@ -237,7 +237,7 @@ Tasks know how to:</p>
 <li>build an instance of that Job class and pass off the config data</li>
 <li>Ask the job to run</li>
 </ul>
-<p>Task data is called <code><a href="../Mosquito/Task.html#config%3AHash%28String%2CString%29-instance-method">#config</a></code> and is persisted in the backend under the key
+<p>Task data is called <code>config</code> and is persisted in the backend under the key
 <code>mosquito:task:task_id</code>.</p>
 
 
@@ -263,7 +263,7 @@ Tasks know how to:</p>
   </h2>
   
     
-      <a href="https://github.com/mosquito-cr/mosquito/blob/351b50fbcb7a58cb01a67f34062e87650743b962/src/mosquito/task.cr#L11" target="_blank">
+      <a href="https://github.com/mosquito-cr/mosquito/blob/6f86288f198a78a95fa9ea97d1b664035899ecb5/src/mosquito/task.cr#L11" target="_blank">
         mosquito/task.cr
       </a>
     
@@ -325,10 +325,14 @@ Tasks know how to:</p>
       <li class="entry-summary">
         <a href="#config_key%28%2Aparts%29-class-method" class="signature"><strong>.config_key</strong>(*parts)</a>
         
+          <div class="summary"><p>The config key is the backend storage key for the metadata of this task.</p></div>
+        
       </li>
     
       <li class="entry-summary">
         <a href="#retrieve%28id%3AString%29-class-method" class="signature"><strong>.retrieve</strong>(id : String)</a>
+        
+          <div class="summary"><p>Used to construct a task from the parameters stored in the backend.</p></div>
         
       </li>
     
@@ -356,25 +360,21 @@ Tasks know how to:</p>
       <li class="entry-summary">
         <a href="#build_job-instance-method" class="signature"><strong>#build_job</strong></a>
         
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#config%3AHash%28String%2CString%29-instance-method" class="signature"><strong>#config</strong> : Hash(String, String)</a>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#config%3D%28config%29-instance-method" class="signature"><strong>#config=</strong>(config)</a>
+          <div class="summary"><p>Builds a Job instance from this task.</p></div>
         
       </li>
     
       <li class="entry-summary">
         <a href="#config_key-instance-method" class="signature"><strong>#config_key</strong></a>
         
+          <div class="summary"><p>The config key is the backend storage key for the metadata of this task.</p></div>
+        
       </li>
     
       <li class="entry-summary">
         <a href="#delete%28inttl%3D0%29-instance-method" class="signature"><strong>#delete</strong>(in ttl = <span class="n">0</span>)</a>
+        
+          <div class="summary"><p>Deletes this task from the backend.</p></div>
         
       </li>
     
@@ -384,37 +384,9 @@ Tasks know how to:</p>
       </li>
     
       <li class="entry-summary">
-        <a href="#executed%3F%28%2Aargs%2C%2A%2Aoptions%29-instance-method" class="signature"><strong>#executed?</strong>(*args, **options)</a>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#executed%3F%28%2Aargs%2C%2A%2Aoptions%2C%26%29-instance-method" class="signature"><strong>#executed?</strong>(*args, **options, &)</a>
-        
-      </li>
-    
-      <li class="entry-summary">
         <a href="#fail-instance-method" class="signature"><strong>#fail</strong></a>
         
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#failed%28%2Aargs%2C%2A%2Aoptions%29-instance-method" class="signature"><strong>#failed</strong>(*args, **options)</a>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#failed%28%2Aargs%2C%2A%2Aoptions%2C%26%29-instance-method" class="signature"><strong>#failed</strong>(*args, **options, &)</a>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#failed%3F%28%2Aargs%2C%2A%2Aoptions%29-instance-method" class="signature"><strong>#failed?</strong>(*args, **options)</a>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#failed%3F%28%2Aargs%2C%2A%2Aoptions%2C%26%29-instance-method" class="signature"><strong>#failed?</strong>(*args, **options, &)</a>
+          <div class="summary"><p>Fails this job run and make sure it's persisted as such.</p></div>
         
       </li>
     
@@ -429,22 +401,23 @@ Tasks know how to:</p>
       </li>
     
       <li class="entry-summary">
+        <a href="#reload%3ANil-instance-method" class="signature"><strong>#reload</strong> : Nil</a>
+        
+          <div class="summary"><p>Updates this task config from the backend.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
         <a href="#reschedule_interval-instance-method" class="signature"><strong>#reschedule_interval</strong></a>
+        
+          <div class="summary"><p>For the current retry count, how long should a runner wait before retry?</p></div>
         
       </li>
     
       <li class="entry-summary">
         <a href="#rescheduleable%3F-instance-method" class="signature"><strong>#rescheduleable?</strong></a>
         
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#rescheduled%28%2Aargs%2C%2A%2Aoptions%29-instance-method" class="signature"><strong>#rescheduled</strong>(*args, **options)</a>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#rescheduled%28%2Aargs%2C%2A%2Aoptions%2C%26%29-instance-method" class="signature"><strong>#rescheduled</strong>(*args, **options, &)</a>
+          <div class="summary"><p>For the current retry count, is the job rescheduleable?</p></div>
         
       </li>
     
@@ -456,20 +429,14 @@ Tasks know how to:</p>
       <li class="entry-summary">
         <a href="#run-instance-method" class="signature"><strong>#run</strong></a>
         
+          <div class="summary"><p>Builds and runs the job with this task config.</p></div>
+        
       </li>
     
       <li class="entry-summary">
         <a href="#store-instance-method" class="signature"><strong>#store</strong></a>
         
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#succeeded%3F%28%2Aargs%2C%2A%2Aoptions%29-instance-method" class="signature"><strong>#succeeded?</strong>(*args, **options)</a>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#succeeded%3F%28%2Aargs%2C%2A%2Aoptions%2C%26%29-instance-method" class="signature"><strong>#succeeded?</strong>(*args, **options, &)</a>
+          <div class="summary"><p>Stores this job run configuration and metadata in the backend.</p></div>
         
       </li>
     
@@ -536,7 +503,7 @@ Tasks know how to:</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/mosquito-cr/mosquito/blob/351b50fbcb7a58cb01a67f34062e87650743b962/src/mosquito/task.cr#L34" target="_blank">View source</a>]
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/6f86288f198a78a95fa9ea97d1b664035899ecb5/src/mosquito/task.cr#L37" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -561,10 +528,15 @@ Tasks know how to:</p>
         <a class="method-permalink" href="#config_key%28%2Aparts%29-class-method">#</a>
       </div>
       
+        <div class="doc">
+          
+          <p>The config key is the backend storage key for the metadata of this task.</p>
+        </div>
+      
       <br/>
       <div>
         
-          [<a href="https://github.com/mosquito-cr/mosquito/blob/351b50fbcb7a58cb01a67f34062e87650743b962/src/mosquito/task.cr#L26" target="_blank">View source</a>]
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/6f86288f198a78a95fa9ea97d1b664035899ecb5/src/mosquito/task.cr#L29" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -577,10 +549,15 @@ Tasks know how to:</p>
         <a class="method-permalink" href="#retrieve%28id%3AString%29-class-method">#</a>
       </div>
       
+        <div class="doc">
+          
+          <p>Used to construct a task from the parameters stored in the backend.</p>
+        </div>
+      
       <br/>
       <div>
         
-          [<a href="https://github.com/mosquito-cr/mosquito/blob/351b50fbcb7a58cb01a67f34062e87650743b962/src/mosquito/task.cr#L97" target="_blank">View source</a>]
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/6f86288f198a78a95fa9ea97d1b664035899ecb5/src/mosquito/task.cr#L111" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -617,7 +594,7 @@ Tasks know how to:</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/mosquito-cr/mosquito/blob/351b50fbcb7a58cb01a67f34062e87650743b962/src/mosquito/task.cr#L114" target="_blank">View source</a>]
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/6f86288f198a78a95fa9ea97d1b664035899ecb5/src/mosquito/task.cr#L134" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -630,42 +607,16 @@ Tasks know how to:</p>
         <a class="method-permalink" href="#build_job-instance-method">#</a>
       </div>
       
-      <br/>
-      <div>
-        
-          [<a href="https://github.com/mosquito-cr/mosquito/blob/351b50fbcb7a58cb01a67f34062e87650743b962/src/mosquito/task.cr#L59" target="_blank">View source</a>]
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="config:Hash(String,String)-instance-method">
-      <div class="signature">
-        
-        def <strong>config</strong> : Hash(String, String)
-
-        <a class="method-permalink" href="#config%3AHash%28String%2CString%29-instance-method">#</a>
-      </div>
+        <div class="doc">
+          
+          <p>Builds a Job instance from this task. Populates the job with config from
+the backend.</p>
+        </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/mosquito-cr/mosquito/blob/351b50fbcb7a58cb01a67f34062e87650743b962/src/mosquito/task.cr#L18" target="_blank">View source</a>]
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="config=(config)-instance-method">
-      <div class="signature">
-        
-        def <strong>config=</strong>(config)
-
-        <a class="method-permalink" href="#config%3D%28config%29-instance-method">#</a>
-      </div>
-      
-      <br/>
-      <div>
-        
-          [<a href="https://github.com/mosquito-cr/mosquito/blob/351b50fbcb7a58cb01a67f34062e87650743b962/src/mosquito/task.cr#L18" target="_blank">View source</a>]
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/6f86288f198a78a95fa9ea97d1b664035899ecb5/src/mosquito/task.cr#L67" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -678,10 +629,15 @@ Tasks know how to:</p>
         <a class="method-permalink" href="#config_key-instance-method">#</a>
       </div>
       
+        <div class="doc">
+          
+          <p>The config key is the backend storage key for the metadata of this task.</p>
+        </div>
+      
       <br/>
       <div>
         
-          [<a href="https://github.com/mosquito-cr/mosquito/blob/351b50fbcb7a58cb01a67f34062e87650743b962/src/mosquito/task.cr#L22" target="_blank">View source</a>]
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/6f86288f198a78a95fa9ea97d1b664035899ecb5/src/mosquito/task.cr#L24" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -694,10 +650,16 @@ Tasks know how to:</p>
         <a class="method-permalink" href="#delete%28inttl%3D0%29-instance-method">#</a>
       </div>
       
+        <div class="doc">
+          
+          <p>Deletes this task from the backend.
+Optionally, after a delay in seconds (handled by the backend).</p>
+        </div>
+      
       <br/>
       <div>
         
-          [<a href="https://github.com/mosquito-cr/mosquito/blob/351b50fbcb7a58cb01a67f34062e87650743b962/src/mosquito/task.cr#L55" target="_blank">View source</a>]
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/6f86288f198a78a95fa9ea97d1b664035899ecb5/src/mosquito/task.cr#L61" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -713,39 +675,7 @@ Tasks know how to:</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/mosquito-cr/mosquito/blob/351b50fbcb7a58cb01a67f34062e87650743b962/src/mosquito/task.cr#L13" target="_blank">View source</a>]
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="executed?(*args,**options)-instance-method">
-      <div class="signature">
-        
-        def <strong>executed?</strong>(*args, **options)
-
-        <a class="method-permalink" href="#executed%3F%28%2Aargs%2C%2A%2Aoptions%29-instance-method">#</a>
-      </div>
-      
-      <br/>
-      <div>
-        
-          [<a href="https://github.com/mosquito-cr/mosquito/blob/351b50fbcb7a58cb01a67f34062e87650743b962/src/mosquito/task.cr#L95" target="_blank">View source</a>]
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="executed?(*args,**options,&amp;)-instance-method">
-      <div class="signature">
-        
-        def <strong>executed?</strong>(*args, **options, &)
-
-        <a class="method-permalink" href="#executed%3F%28%2Aargs%2C%2A%2Aoptions%2C%26%29-instance-method">#</a>
-      </div>
-      
-      <br/>
-      <div>
-        
-          [<a href="https://github.com/mosquito-cr/mosquito/blob/351b50fbcb7a58cb01a67f34062e87650743b962/src/mosquito/task.cr#L95" target="_blank">View source</a>]
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/6f86288f198a78a95fa9ea97d1b664035899ecb5/src/mosquito/task.cr#L13" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -758,74 +688,15 @@ Tasks know how to:</p>
         <a class="method-permalink" href="#fail-instance-method">#</a>
       </div>
       
-      <br/>
-      <div>
-        
-          [<a href="https://github.com/mosquito-cr/mosquito/blob/351b50fbcb7a58cb01a67f34062e87650743b962/src/mosquito/task.cr#L82" target="_blank">View source</a>]
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="failed(*args,**options)-instance-method">
-      <div class="signature">
-        
-        def <strong>failed</strong>(*args, **options)
-
-        <a class="method-permalink" href="#failed%28%2Aargs%2C%2A%2Aoptions%29-instance-method">#</a>
-      </div>
+        <div class="doc">
+          
+          <p>Fails this job run and make sure it's persisted as such.</p>
+        </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/mosquito-cr/mosquito/blob/351b50fbcb7a58cb01a67f34062e87650743b962/src/mosquito/task.cr#L95" target="_blank">View source</a>]
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="failed(*args,**options,&amp;)-instance-method">
-      <div class="signature">
-        
-        def <strong>failed</strong>(*args, **options, &)
-
-        <a class="method-permalink" href="#failed%28%2Aargs%2C%2A%2Aoptions%2C%26%29-instance-method">#</a>
-      </div>
-      
-      <br/>
-      <div>
-        
-          [<a href="https://github.com/mosquito-cr/mosquito/blob/351b50fbcb7a58cb01a67f34062e87650743b962/src/mosquito/task.cr#L95" target="_blank">View source</a>]
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="failed?(*args,**options)-instance-method">
-      <div class="signature">
-        
-        def <strong>failed?</strong>(*args, **options)
-
-        <a class="method-permalink" href="#failed%3F%28%2Aargs%2C%2A%2Aoptions%29-instance-method">#</a>
-      </div>
-      
-      <br/>
-      <div>
-        
-          [<a href="https://github.com/mosquito-cr/mosquito/blob/351b50fbcb7a58cb01a67f34062e87650743b962/src/mosquito/task.cr#L95" target="_blank">View source</a>]
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="failed?(*args,**options,&amp;)-instance-method">
-      <div class="signature">
-        
-        def <strong>failed?</strong>(*args, **options, &)
-
-        <a class="method-permalink" href="#failed%3F%28%2Aargs%2C%2A%2Aoptions%2C%26%29-instance-method">#</a>
-      </div>
-      
-      <br/>
-      <div>
-        
-          [<a href="https://github.com/mosquito-cr/mosquito/blob/351b50fbcb7a58cb01a67f34062e87650743b962/src/mosquito/task.cr#L95" target="_blank">View source</a>]
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/6f86288f198a78a95fa9ea97d1b664035899ecb5/src/mosquito/task.cr#L92" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -841,7 +712,7 @@ Tasks know how to:</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/mosquito-cr/mosquito/blob/351b50fbcb7a58cb01a67f34062e87650743b962/src/mosquito/task.cr#L14" target="_blank">View source</a>]
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/6f86288f198a78a95fa9ea97d1b664035899ecb5/src/mosquito/task.cr#L14" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -857,7 +728,28 @@ Tasks know how to:</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/mosquito-cr/mosquito/blob/351b50fbcb7a58cb01a67f34062e87650743b962/src/mosquito/task.cr#L16" target="_blank">View source</a>]
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/6f86288f198a78a95fa9ea97d1b664035899ecb5/src/mosquito/task.cr#L16" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="reload:Nil-instance-method">
+      <div class="signature">
+        
+        def <strong>reload</strong> : Nil
+
+        <a class="method-permalink" href="#reload%3ANil-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Updates this task config from the backend.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/6f86288f198a78a95fa9ea97d1b664035899ecb5/src/mosquito/task.cr#L125" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -870,10 +762,15 @@ Tasks know how to:</p>
         <a class="method-permalink" href="#reschedule_interval-instance-method">#</a>
       </div>
       
+        <div class="doc">
+          
+          <p>For the current retry count, how long should a runner wait before retry?</p>
+        </div>
+      
       <br/>
       <div>
         
-          [<a href="https://github.com/mosquito-cr/mosquito/blob/351b50fbcb7a58cb01a67f34062e87650743b962/src/mosquito/task.cr#L91" target="_blank">View source</a>]
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/6f86288f198a78a95fa9ea97d1b664035899ecb5/src/mosquito/task.cr#L103" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -886,42 +783,15 @@ Tasks know how to:</p>
         <a class="method-permalink" href="#rescheduleable%3F-instance-method">#</a>
       </div>
       
-      <br/>
-      <div>
-        
-          [<a href="https://github.com/mosquito-cr/mosquito/blob/351b50fbcb7a58cb01a67f34062e87650743b962/src/mosquito/task.cr#L87" target="_blank">View source</a>]
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="rescheduled(*args,**options)-instance-method">
-      <div class="signature">
-        
-        def <strong>rescheduled</strong>(*args, **options)
-
-        <a class="method-permalink" href="#rescheduled%28%2Aargs%2C%2A%2Aoptions%29-instance-method">#</a>
-      </div>
+        <div class="doc">
+          
+          <p>For the current retry count, is the job rescheduleable?</p>
+        </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/mosquito-cr/mosquito/blob/351b50fbcb7a58cb01a67f34062e87650743b962/src/mosquito/task.cr#L95" target="_blank">View source</a>]
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="rescheduled(*args,**options,&amp;)-instance-method">
-      <div class="signature">
-        
-        def <strong>rescheduled</strong>(*args, **options, &)
-
-        <a class="method-permalink" href="#rescheduled%28%2Aargs%2C%2A%2Aoptions%2C%26%29-instance-method">#</a>
-      </div>
-      
-      <br/>
-      <div>
-        
-          [<a href="https://github.com/mosquito-cr/mosquito/blob/351b50fbcb7a58cb01a67f34062e87650743b962/src/mosquito/task.cr#L95" target="_blank">View source</a>]
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/6f86288f198a78a95fa9ea97d1b664035899ecb5/src/mosquito/task.cr#L98" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -937,7 +807,7 @@ Tasks know how to:</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/mosquito-cr/mosquito/blob/351b50fbcb7a58cb01a67f34062e87650743b962/src/mosquito/task.cr#L15" target="_blank">View source</a>]
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/6f86288f198a78a95fa9ea97d1b664035899ecb5/src/mosquito/task.cr#L15" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -950,10 +820,15 @@ Tasks know how to:</p>
         <a class="method-permalink" href="#run-instance-method">#</a>
       </div>
       
+        <div class="doc">
+          
+          <p>Builds and runs the job with this task config.</p>
+        </div>
+      
       <br/>
       <div>
         
-          [<a href="https://github.com/mosquito-cr/mosquito/blob/351b50fbcb7a58cb01a67f34062e87650743b962/src/mosquito/task.cr#L72" target="_blank">View source</a>]
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/6f86288f198a78a95fa9ea97d1b664035899ecb5/src/mosquito/task.cr#L81" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -966,42 +841,15 @@ Tasks know how to:</p>
         <a class="method-permalink" href="#store-instance-method">#</a>
       </div>
       
-      <br/>
-      <div>
-        
-          [<a href="https://github.com/mosquito-cr/mosquito/blob/351b50fbcb7a58cb01a67f34062e87650743b962/src/mosquito/task.cr#L46" target="_blank">View source</a>]
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="succeeded?(*args,**options)-instance-method">
-      <div class="signature">
-        
-        def <strong>succeeded?</strong>(*args, **options)
-
-        <a class="method-permalink" href="#succeeded%3F%28%2Aargs%2C%2A%2Aoptions%29-instance-method">#</a>
-      </div>
+        <div class="doc">
+          
+          <p>Stores this job run configuration and metadata in the backend.</p>
+        </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/mosquito-cr/mosquito/blob/351b50fbcb7a58cb01a67f34062e87650743b962/src/mosquito/task.cr#L95" target="_blank">View source</a>]
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="succeeded?(*args,**options,&amp;)-instance-method">
-      <div class="signature">
-        
-        def <strong>succeeded?</strong>(*args, **options, &)
-
-        <a class="method-permalink" href="#succeeded%3F%28%2Aargs%2C%2A%2Aoptions%2C%26%29-instance-method">#</a>
-      </div>
-      
-      <br/>
-      <div>
-        
-          [<a href="https://github.com/mosquito-cr/mosquito/blob/351b50fbcb7a58cb01a67f34062e87650743b962/src/mosquito/task.cr#L95" target="_blank">View source</a>]
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/6f86288f198a78a95fa9ea97d1b664035899ecb5/src/mosquito/task.cr#L50" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1033,7 +881,7 @@ which includes its class name and its object address.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/mosquito-cr/mosquito/blob/351b50fbcb7a58cb01a67f34062e87650743b962/src/mosquito/task.cr#L110" target="_blank">View source</a>]
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/6f86288f198a78a95fa9ea97d1b664035899ecb5/src/mosquito/task.cr#L130" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -1049,7 +897,7 @@ which includes its class name and its object address.</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/mosquito-cr/mosquito/blob/351b50fbcb7a58cb01a67f34062e87650743b962/src/mosquito/task.cr#L12" target="_blank">View source</a>]
+          [<a href="https://github.com/mosquito-cr/mosquito/blob/6f86288f198a78a95fa9ea97d1b664035899ecb5/src/mosquito/task.cr#L12" target="_blank">View source</a>]
         
       </div>
     </div>
