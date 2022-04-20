@@ -29,7 +29,7 @@ describe Mosquito::Job do
     failing_job.run
     assert failing_job.failed?
 
-    assert_includes logs, failing_job.exception_message
+    assert_logs_match failing_job.exception_message
   end
 
   it "marks success=false when #fail-ed" do
@@ -43,7 +43,7 @@ describe Mosquito::Job do
     not_implemented_job.run
     assert not_implemented_job.failed?
 
-    assert_includes logs, "No job definition found"
+    assert_logs_match "No job definition found"
   end
 
   it "raises DoubleRun if it's already been executed" do
@@ -120,9 +120,9 @@ describe Mosquito::Job do
       clear_logs
       hooked_job.should_fail = false
       hooked_job.run
-      assert_includes logs, "Before Hook Executed"
-      assert_includes logs, "2nd Before Hook Executed"
-      assert_includes logs, "Perform Executed"
+      assert_logs_match "Before Hook Executed"
+      assert_logs_match "2nd Before Hook Executed"
+      assert_logs_match "Perform Executed"
     end
 
     it "should not exec when a before hook fails the job" do
@@ -130,9 +130,9 @@ describe Mosquito::Job do
       hooked_job.should_fail = true
       hooked_job.run
 
-      assert_includes logs, "Before Hook Executed"
-      assert_includes logs, "2nd Before Hook Executed"
-      refute_includes logs, "Perform Executed"
+      assert_logs_match "Before Hook Executed"
+      assert_logs_match "2nd Before Hook Executed"
+      refute_logs_match "Perform Executed"
     end
   end
 
@@ -141,18 +141,18 @@ describe Mosquito::Job do
       clear_logs
       hooked_job.should_fail = false
       hooked_job.run
-      assert_includes logs, "After Hook Executed"
-      assert_includes logs, "2nd After Hook Executed"
-      assert_includes logs, "Perform Executed"
+      assert_logs_match "After Hook Executed"
+      assert_logs_match "2nd After Hook Executed"
+      assert_logs_match "Perform Executed"
     end
 
     it "should run the `after` hooks even if a job fails" do
       clear_logs
       hooked_job.should_fail = true
       hooked_job.run
-      assert_includes logs, "After Hook Executed"
-      assert_includes logs, "2nd After Hook Executed"
-      refute_includes logs, "Perform Executed"
+      assert_logs_match "After Hook Executed"
+      assert_logs_match "2nd After Hook Executed"
+      refute_logs_match "Perform Executed"
     end
   end
 end
