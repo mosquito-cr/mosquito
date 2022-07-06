@@ -6,7 +6,8 @@ module Mosquito
   end
 
   class Configuration
-    property redis_url : String?
+    # property redis_url : String?
+    property redis_connection : Mosquito::RedisInterface?
     property idle_wait : Float64 = 0.1
     property successful_job_ttl : Int32 = 1
     property failed_job_ttl : Int32 = 86400
@@ -21,11 +22,16 @@ module Mosquito
       @idle_wait = time_span.total_seconds
     end
 
+    def redis_connection!
+      validate
+      redis_connection.not_nil!
+    end
+
     def validate
       return if @validated
       @validated = true
 
-      if redis_url.nil?
+      if redis_connection.nil?
         message = <<-error
         Mosquito cannot start because the redis connection string hasn't been provided.
 

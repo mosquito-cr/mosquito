@@ -1,7 +1,14 @@
+require "redis"
+require "../src/mosquito/redis"
+
+class Redis
+  include Mosquito::RedisInterface
+end
+
 require "../src/mosquito"
 
 Mosquito.configure do |settings|
-  settings.redis_url = ENV["REDIS_URL"]? || "redis://localhost:6379/3"
+  settings.redis_connection = Redis.new(ENV["REDIS_URL"]? || "redis://127.0.0.1:6379/3")
 end
 
 Mosquito::Redis.instance.flushall
