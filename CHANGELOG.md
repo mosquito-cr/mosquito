@@ -23,12 +23,16 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 - `log` statements now properly identify where they're coming from rather than
   just 'mosquito'. See issue #78 and pull #88.
 - Mosquito now connects to Redis using a connection pool. See #89
+- ** BREAKING **  `Mosquito.settings` is now `Mosquito.configuration`. While
+  this is technically a public API, it's unlikely anyone is using it for
+  anything.
 
 ### Removed
 - Runner.idle_wait configuration is deprecated. Instead use
   Mosquito.configure#idle_wait.
 - Built in serializer for Granite models, and the Model type alias. See
   Serializers in the documentation if the functionality is necessary.
+- Mosquito no longer depends on luckyframework/habitat
 
 ### Fixed
 - Boolean false can now be specified as the default value for a parameter:

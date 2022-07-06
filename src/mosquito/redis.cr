@@ -7,9 +7,9 @@ module Mosquito
     end
 
     def initialize
-      Mosquito.validate_settings
+      Mosquito.configuration.validate
 
-      @connection = ::Redis::PooledClient.new url: Mosquito.settings.redis_url
+      @connection = ::Redis::PooledClient.new url: Mosquito.configuration.redis_url
     end
 
     def self.key(*parts)

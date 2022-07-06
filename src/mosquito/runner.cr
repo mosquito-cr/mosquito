@@ -34,11 +34,11 @@ module Mosquito
     end
 
     def initialize
-      Mosquito.validate_settings
+      Mosquito.configuration.validate
 
-      @idle_wait = Mosquito.settings.idle_wait
-      @successful_job_ttl = Mosquito.settings.successful_job_ttl
-      @failed_job_ttl = Mosquito.settings.failed_job_ttl
+      @idle_wait = Mosquito.configuration.idle_wait
+      @successful_job_ttl = Mosquito.configuration.successful_job_ttl
+      @failed_job_ttl = Mosquito.configuration.failed_job_ttl
 
       @queues = [] of Queue
       @start_time = 0_i64
@@ -90,7 +90,7 @@ module Mosquito
     end
 
     private def filter_queues(present_queues : Array(Mosquito::Queue))
-      permitted_queues = Mosquito.settings.run_from
+      permitted_queues = Mosquito.configuration.run_from
       return present_queues if permitted_queues.empty?
       filtered_queues = present_queues.select do |queue|
         permitted_queues.includes? queue.name
@@ -110,7 +110,7 @@ module Mosquito
     end
 
     private def enqueue_periodic_tasks
-      return unless Mosquito.settings.run_cron_scheduler
+      return unless Mosquito.configuration.run_cron_scheduler
 
       run_at_most every: 1.second, label: :enqueue_periodic_tasks do |now|
         Base.scheduled_tasks.each do |scheduled_task|
