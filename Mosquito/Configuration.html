@@ -13,7 +13,7 @@
 <script type="text/javascript" src="../js/doc.js"></script>
 
   <meta name="repository-name" content="mosquito">
-  <title>Mosquito::Runner - mosquito 1.0.0.rc1</title>
+  <title>Mosquito::Configuration - mosquito 1.0.0.rc1</title>
   <script type="text/javascript">
     CrystalDocs.base_path = "../";
   </script>
@@ -76,7 +76,7 @@
       
     </li>
   
-  <li class=" " data-id="mosquito/Mosquito/Configuration" data-name="mosquito::configuration">
+  <li class=" current" data-id="mosquito/Mosquito/Configuration" data-name="mosquito::configuration">
       <a href="../Mosquito/Configuration.html">Configuration</a>
       
     </li>
@@ -166,7 +166,7 @@
       
     </li>
   
-  <li class=" current" data-id="mosquito/Mosquito/Runner" data-name="mosquito::runner">
+  <li class=" " data-id="mosquito/Mosquito/Runner" data-name="mosquito::runner">
       <a href="../Mosquito/Runner.html">Runner</a>
       
     </li>
@@ -210,12 +210,12 @@
 <div class="main-content">
 <h1 class="type-name">
 
-  <span class="kind">class</span> Mosquito::Runner
+  <span class="kind">class</span> Mosquito::Configuration
 
 </h1>
 
 
-  <ul class="superclass-hierarchy"><li class="superclass"><a href="../Mosquito/Runner.html">Mosquito::Runner</a></li><li class="superclass">Reference</li><li class="superclass">Object</li></ul>
+  <ul class="superclass-hierarchy"><li class="superclass"><a href="../Mosquito/Configuration.html">Mosquito::Configuration</a></li><li class="superclass">Reference</li><li class="superclass">Object</li></ul>
 
 
 
@@ -243,88 +243,16 @@
   </h2>
   
     
-      mosquito/runner.cr
+      mosquito/configuration.cr
     
     <br/>
   
 
 
 
-  
-    <h2>
-      <a id="constant-summary" class="anchor" href="#constant-summary">
-  <svg class="octicon-link" aria-hidden="true">
-    <use href="#octicon-link"/>
-  </svg>
-</a>
-      Constant Summary
-    </h2>
-  
-  <dl>
-    
-      <dt class="entry-const" id="Log">
-        <strong>Log</strong> = <code><span class="t">::</span><span class="t">Log</span>.<span class="k">for</span>(<span class="k">self</span>)</code>
-      </dt>
-      
-    
-  </dl>
 
 
 
-  <h2>
-    <a id="constructors" class="anchor" href="#constructors">
-  <svg class="octicon-link" aria-hidden="true">
-    <use href="#octicon-link"/>
-  </svg>
-</a>
-    Constructors
-  </h2>
-  <ul class="list-summary">
-    
-      <li class="entry-summary">
-        <a href="#new-class-method" class="signature"><strong>.new</strong></a>
-        
-      </li>
-    
-  </ul>
-
-
-
-  <h2>
-    <a id="class-method-summary" class="anchor" href="#class-method-summary">
-  <svg class="octicon-link" aria-hidden="true">
-    <use href="#octicon-link"/>
-  </svg>
-</a>
-    Class Method Summary
-  </h2>
-  <ul class="list-summary">
-    
-      <li class="entry-summary">
-        <a href="#keep_running%3ABool-class-method" class="signature"><strong>.keep_running</strong> : Bool</a>
-        
-          <div class="summary"><p>Should the worker continue working?</p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#keep_running%3D%28keep_running%3ABool%29-class-method" class="signature"><strong>.keep_running=</strong>(keep_running : Bool)</a>
-        
-          <div class="summary"><p>Should the worker continue working?</p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#start-class-method" class="signature"><strong>.start</strong></a>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#stop-class-method" class="signature"><strong>.stop</strong></a>
-        
-      </li>
-    
-  </ul>
 
 
 
@@ -339,59 +267,92 @@
   <ul class="list-summary">
     
       <li class="entry-summary">
-        <a href="#failed_job_ttl%3AInt32-instance-method" class="signature"><strong>#failed_job_ttl</strong> : Int32</a>
+        <a href="#backend%3AMosquito%3A%3ABackend.class-instance-method" class="signature"><strong>#backend</strong> : <span class="t">Mosquito</span><span class="t">::</span><span class="t">Backend</span>.<span class="k">class</span></a>
         
-          <div class="summary"><p>How long a job config is persisted after failure</p></div>
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#backend%3D%28backend%3AMosquito%3A%3ABackend.class%29-instance-method" class="signature"><strong>#backend=</strong>(backend : <span class="t">Mosquito</span><span class="t">::</span><span class="t">Backend</span>.<span class="k">class</span>)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#failed_job_ttl%3AInt32-instance-method" class="signature"><strong>#failed_job_ttl</strong> : Int32</a>
         
       </li>
     
       <li class="entry-summary">
         <a href="#failed_job_ttl%3D%28failed_job_ttl%3AInt32%29-instance-method" class="signature"><strong>#failed_job_ttl=</strong>(failed_job_ttl : Int32)</a>
         
-          <div class="summary"><p>How long a job config is persisted after failure</p></div>
-        
       </li>
     
       <li class="entry-summary">
         <a href="#idle_wait%3AFloat64-instance-method" class="signature"><strong>#idle_wait</strong> : Float64</a>
-        
-          <div class="summary"><p>Minimum time in seconds to wait between checking for jobs.</p></div>
         
       </li>
     
       <li class="entry-summary">
         <a href="#idle_wait%3D%28idle_wait%3AFloat64%29-instance-method" class="signature"><strong>#idle_wait=</strong>(idle_wait : Float64)</a>
         
-          <div class="summary"><p>Minimum time in seconds to wait between checking for jobs.</p></div>
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#idle_wait%3D%28time_span%3ATime%3A%3ASpan%29-instance-method" class="signature"><strong>#idle_wait=</strong>(time_span : Time::Span)</a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#queues%3AArray%28Mosquito%3A%3AQueue%29-instance-method" class="signature"><strong>#queues</strong> : Array(Mosquito::Queue)</a>
+        <a href="#redis_url%3AString%3F-instance-method" class="signature"><strong>#redis_url</strong> : String?</a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#run-instance-method" class="signature"><strong>#run</strong></a>
+        <a href="#redis_url%3D%28redis_url%3AString%3F%29-instance-method" class="signature"><strong>#redis_url=</strong>(redis_url : String?)</a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#start_time%3AInt64-instance-method" class="signature"><strong>#start_time</strong> : Int64</a>
+        <a href="#run_cron_scheduler%3ABool-instance-method" class="signature"><strong>#run_cron_scheduler</strong> : Bool</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#run_cron_scheduler%3D%28run_cron_scheduler%3ABool%29-instance-method" class="signature"><strong>#run_cron_scheduler=</strong>(run_cron_scheduler : Bool)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#run_from%3AArray%28String%29-instance-method" class="signature"><strong>#run_from</strong> : Array(String)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#run_from%3D%28run_from%3AArray%28String%29%29-instance-method" class="signature"><strong>#run_from=</strong>(run_from : Array(String))</a>
         
       </li>
     
       <li class="entry-summary">
         <a href="#successful_job_ttl%3AInt32-instance-method" class="signature"><strong>#successful_job_ttl</strong> : Int32</a>
         
-          <div class="summary"><p>How long a job config is persisted after success</p></div>
-        
       </li>
     
       <li class="entry-summary">
         <a href="#successful_job_ttl%3D%28successful_job_ttl%3AInt32%29-instance-method" class="signature"><strong>#successful_job_ttl=</strong>(successful_job_ttl : Int32)</a>
         
-          <div class="summary"><p>How long a job config is persisted after success</p></div>
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#validate-instance-method" class="signature"><strong>#validate</strong></a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#validated%3ABool-instance-method" class="signature"><strong>#validated</strong> : Bool</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#validated%3D%28validated%3ABool%29-instance-method" class="signature"><strong>#validated=</strong>(validated : Bool)</a>
         
       </li>
     
@@ -426,107 +387,7 @@
 </div>
 
 
-  <h2>
-    <a id="constructor-detail" class="anchor" href="#constructor-detail">
-  <svg class="octicon-link" aria-hidden="true">
-    <use href="#octicon-link"/>
-  </svg>
-</a>
-    Constructor Detail
-  </h2>
-  
-    <div class="entry-detail" id="new-class-method">
-      <div class="signature">
-        
-        def self.<strong>new</strong>
 
-        <a class="method-permalink" href="#new-class-method">#</a>
-      </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-
-
-
-  <h2>
-    <a id="class-method-detail" class="anchor" href="#class-method-detail">
-  <svg class="octicon-link" aria-hidden="true">
-    <use href="#octicon-link"/>
-  </svg>
-</a>
-    Class Method Detail
-  </h2>
-  
-    <div class="entry-detail" id="keep_running:Bool-class-method">
-      <div class="signature">
-        
-        def self.<strong>keep_running</strong> : Bool
-
-        <a class="method-permalink" href="#keep_running%3ABool-class-method">#</a>
-      </div>
-      
-        <div class="doc">
-          
-          <p>Should the worker continue working?</p>
-        </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="keep_running=(keep_running:Bool)-class-method">
-      <div class="signature">
-        
-        def self.<strong>keep_running=</strong>(keep_running : Bool)
-
-        <a class="method-permalink" href="#keep_running%3D%28keep_running%3ABool%29-class-method">#</a>
-      </div>
-      
-        <div class="doc">
-          
-          <p>Should the worker continue working?</p>
-        </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="start-class-method">
-      <div class="signature">
-        
-        def self.<strong>start</strong>
-
-        <a class="method-permalink" href="#start-class-method">#</a>
-      </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="stop-class-method">
-      <div class="signature">
-        
-        def self.<strong>stop</strong>
-
-        <a class="method-permalink" href="#stop-class-method">#</a>
-      </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
 
 
 
@@ -539,6 +400,34 @@
     Instance Method Detail
   </h2>
   
+    <div class="entry-detail" id="backend:Mosquito::Backend.class-instance-method">
+      <div class="signature">
+        
+        def <strong>backend</strong> : <span class="t">Mosquito</span><span class="t">::</span><span class="t">Backend</span>.<span class="k">class</span>
+
+        <a class="method-permalink" href="#backend%3AMosquito%3A%3ABackend.class-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="backend=(backend:Mosquito::Backend.class)-instance-method">
+      <div class="signature">
+        
+        def <strong>backend=</strong>(backend : <span class="t">Mosquito</span><span class="t">::</span><span class="t">Backend</span>.<span class="k">class</span>)
+
+        <a class="method-permalink" href="#backend%3D%28backend%3AMosquito%3A%3ABackend.class%29-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
     <div class="entry-detail" id="failed_job_ttl:Int32-instance-method">
       <div class="signature">
         
@@ -546,11 +435,6 @@
 
         <a class="method-permalink" href="#failed_job_ttl%3AInt32-instance-method">#</a>
       </div>
-      
-        <div class="doc">
-          
-          <p>How long a job config is persisted after failure</p>
-        </div>
       
       <br/>
       <div>
@@ -566,11 +450,6 @@
         <a class="method-permalink" href="#failed_job_ttl%3D%28failed_job_ttl%3AInt32%29-instance-method">#</a>
       </div>
       
-        <div class="doc">
-          
-          <p>How long a job config is persisted after failure</p>
-        </div>
-      
       <br/>
       <div>
         
@@ -584,11 +463,6 @@
 
         <a class="method-permalink" href="#idle_wait%3AFloat64-instance-method">#</a>
       </div>
-      
-        <div class="doc">
-          
-          <p>Minimum time in seconds to wait between checking for jobs.</p>
-        </div>
       
       <br/>
       <div>
@@ -604,37 +478,18 @@
         <a class="method-permalink" href="#idle_wait%3D%28idle_wait%3AFloat64%29-instance-method">#</a>
       </div>
       
-        <div class="doc">
-          
-          <p>Minimum time in seconds to wait between checking for jobs.</p>
-        </div>
-      
       <br/>
       <div>
         
       </div>
     </div>
   
-    <div class="entry-detail" id="queues:Array(Mosquito::Queue)-instance-method">
+    <div class="entry-detail" id="idle_wait=(time_span:Time::Span)-instance-method">
       <div class="signature">
         
-        def <strong>queues</strong> : Array(<a href="../Mosquito/Queue.html">Mosquito::Queue</a>)
+        def <strong>idle_wait=</strong>(time_span : Time::Span)
 
-        <a class="method-permalink" href="#queues%3AArray%28Mosquito%3A%3AQueue%29-instance-method">#</a>
-      </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="run-instance-method">
-      <div class="signature">
-        
-        def <strong>run</strong>
-
-        <a class="method-permalink" href="#run-instance-method">#</a>
+        <a class="method-permalink" href="#idle_wait%3D%28time_span%3ATime%3A%3ASpan%29-instance-method">#</a>
       </div>
       
       <br/>
@@ -643,12 +498,82 @@
       </div>
     </div>
   
-    <div class="entry-detail" id="start_time:Int64-instance-method">
+    <div class="entry-detail" id="redis_url:String?-instance-method">
       <div class="signature">
         
-        def <strong>start_time</strong> : Int64
+        def <strong>redis_url</strong> : String?
 
-        <a class="method-permalink" href="#start_time%3AInt64-instance-method">#</a>
+        <a class="method-permalink" href="#redis_url%3AString%3F-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="redis_url=(redis_url:String?)-instance-method">
+      <div class="signature">
+        
+        def <strong>redis_url=</strong>(redis_url : String?)
+
+        <a class="method-permalink" href="#redis_url%3D%28redis_url%3AString%3F%29-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="run_cron_scheduler:Bool-instance-method">
+      <div class="signature">
+        
+        def <strong>run_cron_scheduler</strong> : Bool
+
+        <a class="method-permalink" href="#run_cron_scheduler%3ABool-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="run_cron_scheduler=(run_cron_scheduler:Bool)-instance-method">
+      <div class="signature">
+        
+        def <strong>run_cron_scheduler=</strong>(run_cron_scheduler : Bool)
+
+        <a class="method-permalink" href="#run_cron_scheduler%3D%28run_cron_scheduler%3ABool%29-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="run_from:Array(String)-instance-method">
+      <div class="signature">
+        
+        def <strong>run_from</strong> : Array(String)
+
+        <a class="method-permalink" href="#run_from%3AArray%28String%29-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="run_from=(run_from:Array(String))-instance-method">
+      <div class="signature">
+        
+        def <strong>run_from=</strong>(run_from : Array(String))
+
+        <a class="method-permalink" href="#run_from%3D%28run_from%3AArray%28String%29%29-instance-method">#</a>
       </div>
       
       <br/>
@@ -665,11 +590,6 @@
         <a class="method-permalink" href="#successful_job_ttl%3AInt32-instance-method">#</a>
       </div>
       
-        <div class="doc">
-          
-          <p>How long a job config is persisted after success</p>
-        </div>
-      
       <br/>
       <div>
         
@@ -684,10 +604,47 @@
         <a class="method-permalink" href="#successful_job_ttl%3D%28successful_job_ttl%3AInt32%29-instance-method">#</a>
       </div>
       
-        <div class="doc">
-          
-          <p>How long a job config is persisted after success</p>
-        </div>
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="validate-instance-method">
+      <div class="signature">
+        
+        def <strong>validate</strong>
+
+        <a class="method-permalink" href="#validate-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="validated:Bool-instance-method">
+      <div class="signature">
+        
+        def <strong>validated</strong> : Bool
+
+        <a class="method-permalink" href="#validated%3ABool-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="validated=(validated:Bool)-instance-method">
+      <div class="signature">
+        
+        def <strong>validated=</strong>(validated : Bool)
+
+        <a class="method-permalink" href="#validated%3D%28validated%3ABool%29-instance-method">#</a>
+      </div>
       
       <br/>
       <div>
