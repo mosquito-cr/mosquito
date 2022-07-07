@@ -1,5 +1,3 @@
-require "habitat"
-
 require "./mosquito/*"
 
 module Mosquito
