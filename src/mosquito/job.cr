@@ -19,6 +19,9 @@ module Mosquito
     getter executed = false
     getter succeeded = false
 
+    # When a job fails and raises an exception, it will be saved into this attribute.
+    getter exception : Exception?
+
     property task_id : String?
 
     # The queue this job is assigned to.
@@ -47,7 +50,6 @@ module Mosquito
 
     # Job name is used to differentiate jobs coming off the same queue.
     # By default it is the class name, and this should never need to be changed.
-    # 
     private def self.job_name : String
       "{{ @type.id }}".underscore
     end
@@ -71,6 +73,7 @@ module Mosquito
       end
 
       @succeeded = false
+      @exception = e
     else
       @succeeded = true
     ensure

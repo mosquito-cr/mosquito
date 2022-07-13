@@ -8,57 +8,70 @@ describe Mosquito::Job do
   let(:throttled_job) { ThrottledJob.new }
   let(:hooked_job) { JobWithHooks.new }
 
-  it "run captures JobFailed and marks sucess=false" do
-    failing_job.run
-    assert failing_job.failed?
-  end
+  describe "run" do
+    it "captures JobFailed and marks sucess=false" do
+      failing_job.run
+      assert failing_job.failed?
+    end
 
-  it "run sets #executed? and #succeeded?" do
-    refute passing_job.executed?
+    it "sets #executed? and #succeeded?" do
+      refute passing_job.executed?
 
-    passing_job.run
-
-    assert passing_job.executed?
-    assert passing_job.succeeded?
-  end
-
-  it "emits a failure message when #fail contains a reason message" do
-    clear_logs
-
-    failing_job.run
-    assert failing_job.failed?
-
-    assert_logs_match failing_job.exception_message
-  end
-
-  it "run captures and marks failure for other exceptions" do
-    clear_logs
-
-    failing_job.fail_with_exception = true
-    failing_job.run
-    assert failing_job.failed?
-
-    assert_logs_match failing_job.exception_message
-  end
-
-  it "marks success=false when #fail-ed" do
-    failing_job.run
-    refute failing_job.succeeded?
-  end
-
-  it "fails when no perform is implemented" do
-    clear_logs
-
-    not_implemented_job.run
-    assert not_implemented_job.failed?
-
-    assert_logs_match "No job definition found"
-  end
-
-  it "raises DoubleRun if it's already been executed" do
-    passing_job.run
-    assert_raises Mosquito::DoubleRun do
       passing_job.run
+
+      assert passing_job.executed?
+      assert passing_job.succeeded?
+    end
+
+    it "emits a failure message when #fail contains a reason message" do
+      clear_logs
+
+      failing_job.run
+      assert failing_job.failed?
+
+      assert_logs_match failing_job.exception_message
+    end
+
+    it "captures and marks failure for other exceptions" do
+      clear_logs
+
+      failing_job.fail_with_exception = true
+      failing_job.run
+      assert failing_job.failed?
+
+      assert_logs_match failing_job.exception_message
+    end
+
+    it "captures and marks failure for other exceptions" do
+      clear_logs
+
+      assert_nil failing_job.exception
+
+      failing_job.fail_with_exception = true
+      failing_job.run
+      assert failing_job.failed?
+      refute_nil failing_job.exception
+    end
+
+    it "sets success=false when #fail-ed" do
+      failing_job.run
+      refute failing_job.succeeded?
+    end
+
+    it "fails when no perform is implemented" do
+      clear_logs
+
+      not_implemented_job.run
+      assert not_implemented_job.failed?
+
+      assert_logs_match "No job definition found"
+    end
+
+    it "raises DoubleRun if it's already been executed" do
+      passing_job.run
+      assert_raises Mosquito::DoubleRun do
+        passing_job.run
+      end
     end
   end
 
