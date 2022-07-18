@@ -25,6 +25,7 @@ module Mosquito
       abstract def store(key : String, value : Hash(String, String)) : Nil
       abstract def retrieve(key : String) : Hash(String, String)
       abstract def list_queues : Array(String)
+      abstract def list_runners : Array(String)
 
       # from task.cr
       abstract def delete(key : String, in ttl = 0) : Nil
@@ -67,5 +68,10 @@ module Mosquito
     abstract def terminate(task : Task) # should this be called fail?
     abstract def flush : Nil
     abstract def size(include_dead : Bool = true) : Int64
+
+    {% for name in ["waiting", "scheduled", "pending", "dead"] %}
+      abstract def dump_{{name.id}}_q : Array(String)
+    {% end %}
+
   end
 end
