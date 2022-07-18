@@ -72,7 +72,7 @@ module Mosquito
         long_names.map(&.to_s).map do |long_name|
           long_name.sub(queue_prefix, "")
         end
-      end.uniq.flatten
+      end.flatten.uniq
     end
 
     def self.list_runners : Array(String)
