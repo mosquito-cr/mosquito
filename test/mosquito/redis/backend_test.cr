@@ -1,7 +1,7 @@
 require "../../test_helper"
 
 describe Mosquito::RedisBackend do
-  let(:redis) { Mosquito::Redis.instance }
+  let(:redis) { Mosquito::RedisBackend.redis }
   let(:backend_name) { "test#{rand(1000)}" }
   let(:backend) { RedisBackend.named backend_name }
   let(:location) { "location-#{rand(1000)}" }

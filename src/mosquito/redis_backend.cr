@@ -1,15 +1,17 @@
+require "redis"
+
 module Mosquito
   class RedisBackend < Mosquito::Backend
     QUEUES = %w(waiting scheduled pending dead)
 
     @[AlwaysInline]
-    def redis
-      self.class.redis
+    def self.redis
+      @@connection ||= ::Redis::PooledClient.new url: Mosquito.configuration.redis_url
     end
 
     @[AlwaysInline]
-    def self.redis
-      Mosquito::Redis.instance
+    def redis
+      self.class.redis
     end
 
     {% for q in QUEUES %}
