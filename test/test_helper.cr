@@ -14,6 +14,6 @@ end
 
 require "./helpers/*"
 
-Mosquito::Redis.instance.flushall
+Mosquito.configuration.backend.flush
 
 require "minitest/autorun"

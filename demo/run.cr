@@ -4,7 +4,7 @@ Mosquito.configure do |settings|
   settings.redis_url = ENV["REDIS_URL"]? || "redis://localhost:6379/3"
 end
 
-Mosquito::Redis.instance.flushall
+Mosquito.configuration.backend.flush
 
 require "./jobs/*"
 
