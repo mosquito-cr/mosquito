@@ -22,4 +22,28 @@ describe Mosquito::RedisBackend do
       assert_equal 4, RedisBackend.increment(key, field, by: 3)
     end
   end
+
+  describe "dump_q" do
+    it "can dump the waiting q" do
+      skip
+    end
+
+    it "can dump the scheduled q" do
+      skip
+    end
+
+    it "can dump the pending q" do
+      skip
+    end
+
+    it "can dump the dead q" do
+      skip
+    end
+  end
+
+  describe "list_runners" do
+    it "can list runners" do
+      skip
+    end
+  end
 end
