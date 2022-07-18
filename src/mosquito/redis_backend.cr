@@ -28,12 +28,16 @@ module Mosquito
       redis.hgetall key
     end
 
-    def self.delete(key : String, in ttl = 0) : Nil
+    def self.delete(key : String, in ttl : Int64 = 0) : Nil
       if (ttl > 0)
         redis.expire key, ttl
       else
         redis.del key
       end
+    end
+
+    def self.delete(key : String, in ttl : Time::Span) : Nil
+      delete key, ttl.to_i
     end
 
     def self.get(key : String, field : String) : String?
@@ -143,12 +147,12 @@ module Mosquito
     {% for name in ["waiting", "scheduled", "pending", "dead"] %}
       def dump_{{name.id}}_q : Array(String)
         key = {{name.id}}_q
-        type = Redis.instance.type key
+        type = redis.type key
 
         if type == "list"
-          Redis.instance.lrange(key, 0, -1).map(&.as(String))
+          redis.lrange(key, 0, -1).map(&.as(String))
         elsif type == "zset"
-          Redis.instance.zrange(key, 0, -1).map(&.as(String))
+          redis.zrange(key, 0, -1).map(&.as(String))
         elsif type == "none"
           [] of String
         else
@@ -156,5 +160,9 @@ module Mosquito
         end
       end
     {% end %}
+
+    def scheduled_task_time(task : Task) : String?
+      redis.zscore scheduled_q, task.id
+    end
   end
 end
