@@ -28,7 +28,8 @@ module Mosquito
       abstract def list_runners : Array(String)
 
       # from task.cr
-      abstract def delete(key : String, in ttl = 0) : Nil
+      abstract def delete(key : String, in ttl : Int64 = 0) : Nil
+      abstract def delete(key : String, in ttl : Time::Span) : Nil
       abstract def expires_in(key : String) : Int64
 
       abstract def get(key : String, field : String) : String?
@@ -72,6 +73,8 @@ module Mosquito
     {% for name in ["waiting", "scheduled", "pending", "dead"] %}
       abstract def dump_{{name.id}}_q : Array(String)
     {% end %}
+
+    abstract def scheduled_task_time(task : Task) : String?
 
   end
 end

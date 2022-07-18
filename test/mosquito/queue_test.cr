@@ -12,8 +12,8 @@ describe Queue do
     Mosquito::Task.new("mock_task").tap(&.store)
   end
 
-  let(:backend) do
-    Mosquito::RedisBackend.named name
+  getter backend : Mosquito::Backend do
+    TestHelpers.backend.named name
   end
 
   describe "config_key" do
