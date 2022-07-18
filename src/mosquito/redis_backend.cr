@@ -14,6 +14,10 @@ module Mosquito
       self.class.redis
     end
 
+    def initialize(name : String | Symbol)
+      @name = name.to_s
+    end
+
     {% for q in QUEUES %}
       def {{q.id}}_q
         build_key {{q}}, name
