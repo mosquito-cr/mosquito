@@ -41,15 +41,42 @@ describe "Backend inspection" do
   describe "dump_q" do
     it "can dump the waiting q" do
       clean_slate do
+        expected_tasks = Array(Mosquito::Task).new(3) { Mosquito::Task.new("mock_task") }
+        expected_tasks.each { |task| queue.enqueue task }
+        expected_task_ids = expected_tasks.map { |task| task.id }.sort
+
+        actual_tasks = queue.dump_waiting_q.sort
+        assert_equal 3, actual_tasks.size
+
+        assert_equal expected_task_ids, actual_tasks
       end
     end
 
     it "can dump the scheduled q" do
-      skip
+      clean_slate do
+        expected_tasks = Array(Mosquito::Task).new(3) { Mosquito::Task.new("mock_task") }
+        expected_tasks.each { |task| queue.schedule task, at: 1.second.from_now }
+        expected_task_ids = expected_tasks.map { |task| task.id }.sort
+
+        actual_tasks = queue.dump_scheduled_q.sort
+        assert_equal 3, actual_tasks.size
+
+        assert_equal expected_task_ids, actual_tasks
+      end
     end
 
     it "can dump the pending q" do
-      skip
+      clean_slate do
+        expected_tasks = Array(Mosquito::Task).new(3) { Mosquito::Task.new("mock_task").tap(&.store) }
+
+        expected_tasks.each { |task| queue.enqueue task }
+        expected_task_ids = 3.times.map { queue.dequeue.not_nil!.id }.to_a.sort
+
+        actual_tasks = queue.dump_pending_q.sort
+        assert_equal 3, actual_tasks.size
+
+        assert_equal expected_task_ids, actual_tasks
+      end
     end
 
     it "can dump the dead q" do
