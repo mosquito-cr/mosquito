@@ -32,6 +32,13 @@ module Mosquito
       redis.hgetall key
     end
 
+    # Overload required for crystal 1.1-1.2.
+    # Soft Deprecation isn't shown, but it's here so this will get cleaned up at some point.
+    # @[Deprecated("To be removed when support for 1.1 is dropped. See RedisBackend.delete(String, Int64).")]
+    def self.delete(key : String, in ttl : Int32 = 0) : Nil
+      delete key, in: ttl.to_i64
+    end
+
     def self.delete(key : String, in ttl : Int64 = 0) : Nil
       if (ttl > 0)
         redis.expire key, ttl
