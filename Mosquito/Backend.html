@@ -156,11 +156,6 @@
       
     </li>
   
-  <li class=" " data-id="mosquito/Mosquito/Redis" data-name="mosquito::redis">
-      <a href="../Mosquito/Redis.html">Redis</a>
-      
-    </li>
-  
   <li class=" " data-id="mosquito/Mosquito/RedisBackend" data-name="mosquito::redisbackend">
       <a href="../Mosquito/RedisBackend.html">RedisBackend</a>
       
@@ -359,6 +354,26 @@
       </li>
     
       <li class="entry-summary">
+        <a href="#dump_dead_q%3AArray%28String%29-instance-method" class="signature"><strong>#dump_dead_q</strong> : Array(String)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#dump_pending_q%3AArray%28String%29-instance-method" class="signature"><strong>#dump_pending_q</strong> : Array(String)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#dump_scheduled_q%3AArray%28String%29-instance-method" class="signature"><strong>#dump_scheduled_q</strong> : Array(String)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#dump_waiting_q%3AArray%28String%29-instance-method" class="signature"><strong>#dump_waiting_q</strong> : Array(String)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
         <a href="#enqueue%28task%3ATask%29%3ATask-instance-method" class="signature"><strong>#enqueue</strong>(task : Task) : Task</a>
         
           <div class="summary"><p>from queue.cr</p></div>
@@ -387,6 +402,11 @@
     
       <li class="entry-summary">
         <a href="#schedule%28task%3ATask%2Catscheduled_time%3ATime%29%3ATask-instance-method" class="signature"><strong>#schedule</strong>(task : Task, at scheduled_time : Time) : Task</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#scheduled_task_time%28task%3ATask%29%3AString%3F-instance-method" class="signature"><strong>#scheduled_task_time</strong>(task : Task) : String?</a>
         
       </li>
     
@@ -567,6 +587,62 @@
       </div>
     </div>
   
+    <div class="entry-detail" id="dump_dead_q:Array(String)-instance-method">
+      <div class="signature">
+        abstract 
+        def <strong>dump_dead_q</strong> : Array(String)
+
+        <a class="method-permalink" href="#dump_dead_q%3AArray%28String%29-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="dump_pending_q:Array(String)-instance-method">
+      <div class="signature">
+        abstract 
+        def <strong>dump_pending_q</strong> : Array(String)
+
+        <a class="method-permalink" href="#dump_pending_q%3AArray%28String%29-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="dump_scheduled_q:Array(String)-instance-method">
+      <div class="signature">
+        abstract 
+        def <strong>dump_scheduled_q</strong> : Array(String)
+
+        <a class="method-permalink" href="#dump_scheduled_q%3AArray%28String%29-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="dump_waiting_q:Array(String)-instance-method">
+      <div class="signature">
+        abstract 
+        def <strong>dump_waiting_q</strong> : Array(String)
+
+        <a class="method-permalink" href="#dump_waiting_q%3AArray%28String%29-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
     <div class="entry-detail" id="enqueue(task:Task):Task-instance-method">
       <div class="signature">
         abstract 
@@ -648,6 +724,20 @@
         def <strong>schedule</strong>(task : <a href="../Mosquito/Task.html">Task</a>, at scheduled_time : Time) : <a href="../Mosquito/Task.html">Task</a>
 
         <a class="method-permalink" href="#schedule%28task%3ATask%2Catscheduled_time%3ATime%29%3ATask-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="scheduled_task_time(task:Task):String?-instance-method">
+      <div class="signature">
+        abstract 
+        def <strong>scheduled_task_time</strong>(task : <a href="../Mosquito/Task.html">Task</a>) : String?
+
+        <a class="method-permalink" href="#scheduled_task_time%28task%3ATask%29%3AString%3F-instance-method">#</a>
       </div>
       
       <br/>

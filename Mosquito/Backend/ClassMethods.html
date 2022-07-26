@@ -156,11 +156,6 @@
       
     </li>
   
-  <li class=" " data-id="mosquito/Mosquito/Redis" data-name="mosquito::redis">
-      <a href="../../Mosquito/Redis.html">Redis</a>
-      
-    </li>
-  
   <li class=" " data-id="mosquito/Mosquito/RedisBackend" data-name="mosquito::redisbackend">
       <a href="../../Mosquito/RedisBackend.html">RedisBackend</a>
       
@@ -265,9 +260,14 @@
   <ul class="list-summary">
     
       <li class="entry-summary">
-        <a href="#delete%28key%3AString%2Cinttl%3D0%29%3ANil-instance-method" class="signature"><strong>#delete</strong>(key : String, in ttl = <span class="n">0</span>) : Nil</a>
+        <a href="#delete%28key%3AString%2Cinttl%3AInt64%3D0%29%3ANil-instance-method" class="signature"><strong>#delete</strong>(key : String, in ttl : Int64 = <span class="n">0</span>) : Nil</a>
         
           <div class="summary"><p>from task.cr</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#delete%28key%3AString%2Cinttl%3ATime%3A%3ASpan%29%3ANil-instance-method" class="signature"><strong>#delete</strong>(key : String, in ttl : Time::Span) : Nil</a>
         
       </li>
     
@@ -298,6 +298,11 @@
     
       <li class="entry-summary">
         <a href="#list_queues%3AArray%28String%29-instance-method" class="signature"><strong>#list_queues</strong> : Array(String)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#list_runners%3AArray%28String%29-instance-method" class="signature"><strong>#list_runners</strong> : Array(String)</a>
         
       </li>
     
@@ -342,18 +347,32 @@
     Instance Method Detail
   </h2>
   
-    <div class="entry-detail" id="delete(key:String,inttl=0):Nil-instance-method">
+    <div class="entry-detail" id="delete(key:String,inttl:Int64=0):Nil-instance-method">
       <div class="signature">
         abstract 
-        def <strong>delete</strong>(key : String, in ttl = <span class="n">0</span>) : Nil
+        def <strong>delete</strong>(key : String, in ttl : Int64 = <span class="n">0</span>) : Nil
 
-        <a class="method-permalink" href="#delete%28key%3AString%2Cinttl%3D0%29%3ANil-instance-method">#</a>
+        <a class="method-permalink" href="#delete%28key%3AString%2Cinttl%3AInt64%3D0%29%3ANil-instance-method">#</a>
       </div>
       
         <div class="doc">
           
           <p>from task.cr</p>
         </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="delete(key:String,inttl:Time::Span):Nil-instance-method">
+      <div class="signature">
+        abstract 
+        def <strong>delete</strong>(key : String, in ttl : Time::Span) : Nil
+
+        <a class="method-permalink" href="#delete%28key%3AString%2Cinttl%3ATime%3A%3ASpan%29%3ANil-instance-method">#</a>
+      </div>
       
       <br/>
       <div>
@@ -437,6 +456,20 @@
         def <strong>list_queues</strong> : Array(String)
 
         <a class="method-permalink" href="#list_queues%3AArray%28String%29-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="list_runners:Array(String)-instance-method">
+      <div class="signature">
+        abstract 
+        def <strong>list_runners</strong> : Array(String)
+
+        <a class="method-permalink" href="#list_runners%3AArray%28String%29-instance-method">#</a>
       </div>
       
       <br/>

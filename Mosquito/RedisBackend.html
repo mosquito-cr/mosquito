@@ -156,11 +156,6 @@
       
     </li>
   
-  <li class=" " data-id="mosquito/Mosquito/Redis" data-name="mosquito::redis">
-      <a href="../Mosquito/Redis.html">Redis</a>
-      
-    </li>
-  
   <li class=" current" data-id="mosquito/Mosquito/RedisBackend" data-name="mosquito::redisbackend">
       <a href="../Mosquito/RedisBackend.html">RedisBackend</a>
       
@@ -285,6 +280,23 @@
 
 
 
+  <h2>
+    <a id="constructors" class="anchor" href="#constructors">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Constructors
+  </h2>
+  <ul class="list-summary">
+    
+      <li class="entry-summary">
+        <a href="#new%28name%3AString%7CSymbol%29-class-method" class="signature"><strong>.new</strong>(name : String | Symbol)</a>
+        
+      </li>
+    
+  </ul>
+
 
 
   <h2>
@@ -298,7 +310,19 @@
   <ul class="list-summary">
     
       <li class="entry-summary">
-        <a href="#delete%28key%3AString%2Cinttl%3D0%29%3ANil-class-method" class="signature"><strong>.delete</strong>(key : String, in ttl = <span class="n">0</span>) : Nil</a>
+        <a href="#delete%28key%3AString%2Cinttl%3AInt32%3D0%29%3ANil-class-method" class="signature"><strong>.delete</strong>(key : String, in ttl : Int32 = <span class="n">0</span>) : Nil</a>
+        
+          <div class="summary"><p>Overload required for crystal 1.1-1.2.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#delete%28key%3AString%2Cinttl%3AInt64%3D0%29%3ANil-class-method" class="signature"><strong>.delete</strong>(key : String, in ttl : Int64 = <span class="n">0</span>) : Nil</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#delete%28key%3AString%2Cinttl%3ATime%3A%3ASpan%29%3ANil-class-method" class="signature"><strong>.delete</strong>(key : String, in ttl : Time::Span) : Nil</a>
         
       </li>
     
@@ -331,6 +355,11 @@
     
       <li class="entry-summary">
         <a href="#list_queues%3AArray%28String%29-class-method" class="signature"><strong>.list_queues</strong> : Array(String)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#list_runners%3AArray%28String%29-class-method" class="signature"><strong>.list_runners</strong> : Array(String)</a>
         
       </li>
     
@@ -384,6 +413,26 @@
       </li>
     
       <li class="entry-summary">
+        <a href="#dump_dead_q%3AArray%28String%29-instance-method" class="signature"><strong>#dump_dead_q</strong> : Array(String)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#dump_pending_q%3AArray%28String%29-instance-method" class="signature"><strong>#dump_pending_q</strong> : Array(String)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#dump_scheduled_q%3AArray%28String%29-instance-method" class="signature"><strong>#dump_scheduled_q</strong> : Array(String)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#dump_waiting_q%3AArray%28String%29-instance-method" class="signature"><strong>#dump_waiting_q</strong> : Array(String)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
         <a href="#enqueue%28task%3ATask%29%3ATask-instance-method" class="signature"><strong>#enqueue</strong>(task : Task) : Task</a>
         
           <div class="summary"><p>from queue.cr</p></div>
@@ -417,6 +466,11 @@
     
       <li class="entry-summary">
         <a href="#scheduled_q-instance-method" class="signature"><strong>#scheduled_q</strong></a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#scheduled_task_time%28task%3ATask%29%3AString%3F-instance-method" class="signature"><strong>#scheduled_task_time</strong>(task : Task) : String?</a>
         
       </li>
     
@@ -468,6 +522,26 @@
     deschedule</a>, 
     
   
+    <a href="../Mosquito/Backend.html#dump_dead_q%3AArray%28String%29-instance-method" class="tooltip">
+      <span>dump_dead_q : Array(String)</span>
+    dump_dead_q</a>, 
+    
+  
+    <a href="../Mosquito/Backend.html#dump_pending_q%3AArray%28String%29-instance-method" class="tooltip">
+      <span>dump_pending_q : Array(String)</span>
+    dump_pending_q</a>, 
+    
+  
+    <a href="../Mosquito/Backend.html#dump_scheduled_q%3AArray%28String%29-instance-method" class="tooltip">
+      <span>dump_scheduled_q : Array(String)</span>
+    dump_scheduled_q</a>, 
+    
+  
+    <a href="../Mosquito/Backend.html#dump_waiting_q%3AArray%28String%29-instance-method" class="tooltip">
+      <span>dump_waiting_q : Array(String)</span>
+    dump_waiting_q</a>, 
+    
+  
     <a href="../Mosquito/Backend.html#enqueue%28task%3ATask%29%3ATask-instance-method" class="tooltip">
       <span>enqueue(task : Task) : Task</span>
     enqueue</a>, 
@@ -496,6 +570,11 @@
     <a href="../Mosquito/Backend.html#schedule%28task%3ATask%2Catscheduled_time%3ATime%29%3ATask-instance-method" class="tooltip">
       <span>schedule(task : Task, at scheduled_time : Time) : Task</span>
     schedule</a>, 
+    
+  
+    <a href="../Mosquito/Backend.html#scheduled_task_time%28task%3ATask%29%3AString%3F-instance-method" class="tooltip">
+      <span>scheduled_task_time(task : Task) : String?</span>
+    scheduled_task_time</a>, 
     
   
     <a href="../Mosquito/Backend.html#size%28include_dead%3ABool%3Dtrue%29%3AInt64-instance-method" class="tooltip">
@@ -568,6 +647,30 @@
 </div>
 
 
+  <h2>
+    <a id="constructor-detail" class="anchor" href="#constructor-detail">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Constructor Detail
+  </h2>
+  
+    <div class="entry-detail" id="new(name:String|Symbol)-class-method">
+      <div class="signature">
+        
+        def self.<strong>new</strong>(name : String | Symbol)
+
+        <a class="method-permalink" href="#new%28name%3AString%7CSymbol%29-class-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+
 
 
   <h2>
@@ -579,12 +682,47 @@
     Class Method Detail
   </h2>
   
-    <div class="entry-detail" id="delete(key:String,inttl=0):Nil-class-method">
+    <div class="entry-detail" id="delete(key:String,inttl:Int32=0):Nil-class-method">
       <div class="signature">
         
-        def self.<strong>delete</strong>(key : String, in ttl = <span class="n">0</span>) : Nil
+        def self.<strong>delete</strong>(key : String, in ttl : Int32 = <span class="n">0</span>) : Nil
 
-        <a class="method-permalink" href="#delete%28key%3AString%2Cinttl%3D0%29%3ANil-class-method">#</a>
+        <a class="method-permalink" href="#delete%28key%3AString%2Cinttl%3AInt32%3D0%29%3ANil-class-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Overload required for crystal 1.1-1.2.
+Soft Deprecation isn't shown, but it's here so this will get cleaned up at some point.
+@[Deprecated(&quot;To be removed when support for 1.1 is dropped. See RedisBackend.delete(String, Int64).&quot;)]</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="delete(key:String,inttl:Int64=0):Nil-class-method">
+      <div class="signature">
+        
+        def self.<strong>delete</strong>(key : String, in ttl : Int64 = <span class="n">0</span>) : Nil
+
+        <a class="method-permalink" href="#delete%28key%3AString%2Cinttl%3AInt64%3D0%29%3ANil-class-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="delete(key:String,inttl:Time::Span):Nil-class-method">
+      <div class="signature">
+        
+        def self.<strong>delete</strong>(key : String, in ttl : Time::Span) : Nil
+
+        <a class="method-permalink" href="#delete%28key%3AString%2Cinttl%3ATime%3A%3ASpan%29%3ANil-class-method">#</a>
       </div>
       
       <br/>
@@ -674,6 +812,20 @@
         def self.<strong>list_queues</strong> : Array(String)
 
         <a class="method-permalink" href="#list_queues%3AArray%28String%29-class-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="list_runners:Array(String)-class-method">
+      <div class="signature">
+        
+        def self.<strong>list_runners</strong> : Array(String)
+
+        <a class="method-permalink" href="#list_runners%3AArray%28String%29-class-method">#</a>
       </div>
       
       <br/>
@@ -792,6 +944,62 @@
       </div>
     </div>
   
+    <div class="entry-detail" id="dump_dead_q:Array(String)-instance-method">
+      <div class="signature">
+        
+        def <strong>dump_dead_q</strong> : Array(String)
+
+        <a class="method-permalink" href="#dump_dead_q%3AArray%28String%29-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="dump_pending_q:Array(String)-instance-method">
+      <div class="signature">
+        
+        def <strong>dump_pending_q</strong> : Array(String)
+
+        <a class="method-permalink" href="#dump_pending_q%3AArray%28String%29-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="dump_scheduled_q:Array(String)-instance-method">
+      <div class="signature">
+        
+        def <strong>dump_scheduled_q</strong> : Array(String)
+
+        <a class="method-permalink" href="#dump_scheduled_q%3AArray%28String%29-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="dump_waiting_q:Array(String)-instance-method">
+      <div class="signature">
+        
+        def <strong>dump_waiting_q</strong> : Array(String)
+
+        <a class="method-permalink" href="#dump_waiting_q%3AArray%28String%29-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
     <div class="entry-detail" id="enqueue(task:Task):Task-instance-method">
       <div class="signature">
         
@@ -891,6 +1099,20 @@
         def <strong>scheduled_q</strong>
 
         <a class="method-permalink" href="#scheduled_q-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="scheduled_task_time(task:Task):String?-instance-method">
+      <div class="signature">
+        
+        def <strong>scheduled_task_time</strong>(task : <a href="../Mosquito/Task.html">Task</a>) : String?
+
+        <a class="method-permalink" href="#scheduled_task_time%28task%3ATask%29%3AString%3F-instance-method">#</a>
       </div>
       
       <br/>
