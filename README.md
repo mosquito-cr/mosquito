@@ -17,8 +17,7 @@ Mosquito currently provides these features:
 - Rate limited jobs
 
 Current Limitations:
-- Visibility into the job queue is difficult and must be done through redis manually.
-
+- Visibility into a running job network and queue is limited. There is a working proof of concept visualization API and [bare-bones terminal application](https://github.com/mosquito-cr/tui-visualizer).
 
 ## Project State
 
