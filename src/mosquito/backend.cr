@@ -65,7 +65,7 @@ module Mosquito
     abstract def dequeue : Task?
     abstract def schedule(task : Task, at scheduled_time : Time) : Task
     abstract def deschedule : Array(Task)
-    abstract def finish(task : Task) # should this be called succeed?
+    abstract def finish(task : Task)    # should this be called succeed?
     abstract def terminate(task : Task) # should this be called fail?
     abstract def flush : Nil
     abstract def size(include_dead : Bool = true) : Int64
@@ -75,6 +75,5 @@ module Mosquito
     {% end %}
 
     abstract def scheduled_task_time(task : Task) : String?
-
   end
 end

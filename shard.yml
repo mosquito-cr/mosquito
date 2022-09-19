@@ -17,8 +17,8 @@ targets:
 
 dependencies:
   redis:
-    github: stefanwille/crystal-redis
-    version: ~> 2.8.0
+    github: jgaskins/redis
+    branch: master
 
 development_dependencies:
   minitest:

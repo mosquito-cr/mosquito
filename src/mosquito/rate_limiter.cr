@@ -10,11 +10,10 @@ module Mosquito::RateLimiter
     #
     # `key` is used to combine rate limiting functions across multiple jobs.
     def throttle(*,
-      limit : Int32 = 1,
-      per : Time::Span = 1.second,
-      increment = 1,
-      key = self.name.underscore
-    )
+                 limit : Int32 = 1,
+                 per : Time::Span = 1.second,
+                 increment = 1,
+                 key = self.name.underscore)
       @@rate_limit_ceiling = limit
       @@rate_limit_interval = per
       @@rate_limit_key = Mosquito.backend.build_key "rate_limit", key
@@ -27,24 +26,24 @@ module Mosquito::RateLimiter
       meta = metadata
 
       window_start = if window_start_ = meta["window_start"]?
-        Time.unix window_start_.to_i
-      else
-        Time::UNIX_EPOCH
-      end
+                       Time.unix window_start_.to_i
+                     else
+                       Time::UNIX_EPOCH
+                     end
 
       run_count = if run_count_ = meta["run_count"]?
-        run_count_.to_i
-      else
-        0
-      end
+                    run_count_.to_i
+                  else
+                    0
+                  end
 
       {
-        interval: @@rate_limit_interval,
-        key: @@rate_limit_key,
-        increment: @@rate_limit_increment,
-        limit: @@rate_limit_ceiling,
+        interval:     @@rate_limit_interval,
+        key:          @@rate_limit_key,
+        increment:    @@rate_limit_increment,
+        limit:        @@rate_limit_ceiling,
         window_start: window_start,
-        run_count: run_count
+        run_count:    run_count,
       }
     end
 
@@ -146,7 +145,7 @@ module Mosquito::RateLimiter
   # should be allowed through the rate limiter.
   def reschedule_interval(retry_count : Int32) : Time::Span
     if rate_limited? && (window_expiration = window_expires_at)
-      next_window =  window_expiration - Time.utc
+      next_window = window_expiration - Time.utc
       log "Rate limited: will run again in #{next_window}"
       next_window
     else

@@ -39,9 +39,9 @@ module Mosquito
                 simplified_type = type.resolve
               end
 
-              method_suffix = simplified_type.stringify.underscore.gsub(/::/,"__").id
+              method_suffix = simplified_type.stringify.underscore.gsub(/::/, "__").id
 
-              { name: name, value: value, type: type, simplified_type: simplified_type, method_suffix: method_suffix }
+              {name: name, value: value, type: type, simplified_type: simplified_type, method_suffix: method_suffix}
             end
           %}
 
@@ -74,13 +74,13 @@ module Mosquito
           end
 
           def initialize({{
-              parsed_parameters.map do |parameter|
-                assignment = "@#{parameter["name"]}"
-                assignment = assignment + " : #{parameter["type"]}" if parameter["type"]
-                assignment = assignment + " = #{parameter["value"]}" unless parameter["value"].is_a? Nop
-                assignment
-              end.join(", ").id
-              }})
+                           parsed_parameters.map do |parameter|
+                             assignment = "@#{parameter["name"]}"
+                             assignment = assignment + " : #{parameter["type"]}" if parameter["type"]
+                             assignment = assignment + " = #{parameter["value"]}" unless parameter["value"].is_a? Nop
+                             assignment
+                           end.join(", ").id
+                         }})
           end
 
           def vars_from(config : Hash(String, String))

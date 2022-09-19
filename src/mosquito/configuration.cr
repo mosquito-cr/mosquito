@@ -41,6 +41,5 @@ module Mosquito
         raise message
       end
     end
-
   end
 end
