@@ -38,21 +38,22 @@ module Mosquito::Serializers::Primitives
   {% begin %}
     {%
       primitives = [
-        {Int8, :to_i8},
-        {Int16, :to_i16},
-        {Int32, :to_i32},
-        {Int64, :to_i64},
-        {Int128, :to_i128},
+        { Int8, :to_i8 },
+        { Int16, :to_i16 },
+        { Int32, :to_i32 },
+        { Int64, :to_i64 },
+        { Int128, :to_i128 },
 
-        {UInt8, :to_u8},
-        {UInt16, :to_u16},
-        {UInt32, :to_u32},
-        {UInt64, :to_u64},
-        {UInt128, :to_u128},
+        { UInt8, :to_u8 },
+        { UInt16, :to_u16 },
+        { UInt32, :to_u32 },
+        { UInt64, :to_u64 },
+        { UInt128, :to_u128 },
 
-        {Float32, :to_f32},
-        {Float64, :to_f64},
+        { Float32, :to_f32 },
+        { Float64, :to_f64 }
       ]
+
     %}
      {% for mapping in primitives %}
 
