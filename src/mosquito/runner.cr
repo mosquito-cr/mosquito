@@ -125,6 +125,7 @@ module Mosquito
 
     private def enqueue_delayed_tasks
       run_at_most every: 1.second, label: :enqueue_delayed_tasks do |t|
+
         queues.each do |q|
           overdue_tasks = q.dequeue_scheduled
           next unless overdue_tasks.any?
@@ -157,6 +158,7 @@ module Mosquito
         Log.notice { "#{"Success:".colorize.green} #{task} finished and took #{time_with_units duration}" }
         q.forget task
         task.delete in: successful_job_ttl
+
       else
         if task.rescheduleable?
           next_execution = Time.utc + task.reschedule_interval
