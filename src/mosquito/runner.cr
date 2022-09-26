@@ -23,6 +23,7 @@ module Mosquito
       instance = new
 
       while true
+        Log.notice { "inside the while true" }
         instance.run
         break unless @@keep_running
       end
