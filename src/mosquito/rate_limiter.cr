@@ -44,7 +44,7 @@ module Mosquito::RateLimiter
         increment: @@rate_limit_increment,
         limit: @@rate_limit_ceiling,
         window_start: window_start,
-        run_count: run_count,
+        run_count: run_count
       }
     end
 
