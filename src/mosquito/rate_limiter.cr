@@ -13,12 +13,14 @@ module Mosquito::RateLimiter
       limit : Int32 = 1,
       per : Time::Span = 1.second,
       increment = 1,
-      key = self.name.underscore
+      key = self.name.underscore,
+      persist_run_count : Bool = false
     )
       @@rate_limit_ceiling = limit
       @@rate_limit_interval = per
       @@rate_limit_key = Mosquito.backend.build_key "rate_limit", key
       @@rate_limit_increment = increment
+      @@persist_run_count = persist_run_count
     end
 
     # Statistics about the rate limiter, including both the configuration
@@ -75,6 +77,7 @@ module Mosquito::RateLimiter
 
     after do
       increment_run_count if executed?
+      decrement_run_count if @@persist_run_count && succeeded?
     end
   end
 
@@ -126,13 +129,18 @@ module Mosquito::RateLimiter
     now = Time.utc
     if (now - started_window) > @@rate_limit_interval
       metadata["window_start"] = now.to_unix.to_s
-      metadata["run_count"] = "0"
+      metadata["run_count"] = "0" unless @@persist_run_count
     end
   end
 
   # Increments the run counter.
   def increment_run_count : Nil
     metadata.increment "run_count", by: increment_run_count_by
+  end
+
+  # Decrements the run counter.
+  def decrement_run_count : Nil
+    metadata.decrement "run_count", by: increment_run_count_by
   end
 
   # How much the run counter should be incremented by.
