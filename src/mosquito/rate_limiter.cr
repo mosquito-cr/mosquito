@@ -69,6 +69,7 @@ module Mosquito::RateLimiter
     @@rate_limit_interval : Time::Span = 1.second
     @@rate_limit_key = ""
     @@rate_limit_increment = 1
+    @@persist_run_count = false
 
     before do
       update_window_start
