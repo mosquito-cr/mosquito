@@ -141,7 +141,7 @@ module Mosquito::RateLimiter
 
   # Decrements the run counter.
   def decrement_run_count : Nil
-    metadata.decrement "run_count", by: increment_run_count_by
+    metadata.increment "run_count", by: -increment_run_count_by
   end
 
   # How much the run counter should be incremented by.
