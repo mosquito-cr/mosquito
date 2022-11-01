@@ -7,7 +7,7 @@ module Mosquito
 
   class Configuration
     property redis_url : String?
-    property idle_wait : Float64 = 0.1
+    property idle_wait : Time::Span = 100.milliseconds
     property successful_job_ttl : Int32 = 1
     property failed_job_ttl : Int32 = 86400
 
@@ -17,8 +17,8 @@ module Mosquito
 
     property validated = false
 
-    def idle_wait=(time_span : Time::Span)
-      @idle_wait = time_span.total_seconds
+    def idle_wait=(time_span : Float)
+      @idle_wait = time_span.seconds
     end
 
     def validate
