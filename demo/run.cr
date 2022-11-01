@@ -25,7 +25,12 @@ spawn do
   Mosquito::Runner.start
 end
 
-sleep 21
+count = 0
+while count <= 20 && Mosquito::Runner.keep_running
+  sleep 1
+  count += 1
+end
+
 Mosquito::Runner.stop
 
 puts "End of demo."
