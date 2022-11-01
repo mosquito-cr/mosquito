@@ -19,7 +19,7 @@ describe "Mosquito Config" do
     test_value = 2.4
     Mosquito.temp_config do
       Mosquito.configuration.idle_wait = test_value
-      assert_equal test_value, Mosquito.configuration.idle_wait
+      assert_equal test_value.seconds, Mosquito.configuration.idle_wait
     end
   end
 
@@ -28,7 +28,7 @@ describe "Mosquito Config" do
 
     Mosquito.temp_config do
       Mosquito.configuration.idle_wait = test_value
-      assert_equal test_value.total_seconds, Mosquito.configuration.idle_wait
+      assert_equal test_value, Mosquito.configuration.idle_wait
     end
   end
 
