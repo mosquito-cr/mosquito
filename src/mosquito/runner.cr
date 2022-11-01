@@ -5,7 +5,7 @@ module Mosquito
     Log = ::Log.for self
 
     # Minimum time in seconds to wait between checking for jobs.
-    property idle_wait : Float64
+    property idle_wait : Time::Span
 
     # How long a job config is persisted after success
     property successful_job_ttl : Int32
@@ -22,9 +22,8 @@ module Mosquito
       Log.notice { "Mosquito is buzzing..." }
       instance = new
 
-      while true
+      while @@keep_running
         instance.run
-        break unless @@keep_running
       end
     end
 
@@ -41,7 +40,7 @@ module Mosquito
       @failed_job_ttl = Mosquito.configuration.failed_job_ttl
 
       @queues = [] of Queue
-      @start_time = 0_i64
+      @start_time = 0.seconds
       @execution_timestamps = {} of Symbol => Time
     end
 
@@ -55,11 +54,11 @@ module Mosquito
     end
 
     private def set_start_time
-      @start_time = Time.utc.to_unix
+      @start_time = Time.monotonic
     end
 
     private def idle
-      delta = Time.utc.to_unix - @start_time
+      delta = Time.monotonic - @start_time
       if delta < idle_wait
         sleep(idle_wait - delta)
       end
