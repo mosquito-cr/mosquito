@@ -12,12 +12,23 @@ module Mosquito
 
     include Mosquito::Serializers::Primitives
 
+    enum State
+      Initialization
+      Running
+      Succeeded
+      Failed
+
+      def executed? : Bool
+        succeeded? || failed?
+      end
+    end
+
     def log(message)
       ::Log.for(self.class).info { message }
     end
 
-    getter executed = false
-    getter succeeded = false
+    getter state = State::Initialization
+    delegate executed?, succeeded?, failed?, to: state
 
     # When a job fails and raises an exception, it will be saved into this attribute.
     getter exception : Exception?
@@ -57,25 +68,26 @@ module Mosquito
     def run
       before_hook
 
-      raise DoubleRun.new if executed
-      @executed = true
+      raise DoubleRun.new unless state.initialization?
+      @state = State::Running
       perform
     rescue e : JobFailed
-      @succeeded = false
+      @state = State::Failed
       Log.error {
         "Job failed: #{e.message}"
       }
     rescue e : DoubleRun
+      @state = State::Failed
       raise e
     rescue e
       Log.warn(exception: e) do
         "Job failed! Raised #{e.class}: #{e.message}"
       end
 
-      @succeeded = false
+      @state = State::Failed
       @exception = e
     else
-      @succeeded = true
+      @state = State::Succeeded
     ensure
       after_hook
     end
@@ -127,21 +139,6 @@ module Mosquito
     # re-scheduling, it will be run again at a later time.
     def fail(reason = "")
       raise JobFailed.new(reason)
-    end
-
-    # Did the job execute?
-    def executed? : Bool
-      @executed
-    end
-
-    # Did the job succeed?
-    def succeeded? : Bool
-      @succeeded
-    end
-
-    # Did the job run and fail?
-    def failed? : Bool
-      !succeeded?
     end
 
     # abstract, override if desired.
