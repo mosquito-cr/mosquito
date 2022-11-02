@@ -80,7 +80,7 @@ describe Mosquito::Job do
   end
 
   it "fetches the named queue" do
-    assert_equal "mosquito::nil_job", NilJob.queue.name
+    assert_equal "io_queue", EchoJob.queue.name
   end
 
   describe "reschedule interval" do

@@ -13,7 +13,11 @@ module Mosquito
     getter enqueue_time : Time
     getter id : String
     getter retry_count = 0
-    getter job : Mosquito::Job
+    getter job : Mosquito::Job?
+
+    def job! : Mosquito::Job
+      job || raise RuntimeError.new("No job yet retrieved for task.")
+    end
 
     # :nodoc:
     property config
@@ -43,7 +47,7 @@ module Mosquito
 
       @id = id || KeyBuilder.build @enqueue_time.to_unix_ms.to_s, rand(1000)
       @config = {} of String => String
-      @job = NilJob.new
+      @job = nil
     end
 
     # Stores this job run configuration and metadata in the backend.
@@ -64,8 +68,10 @@ module Mosquito
 
     # Builds a Job instance from this task. Populates the job with config from
     # the backend.
-    def build_job
-      return @job unless @job.class == NilJob
+    def build_job : Mosquito::Job
+      if job = @job
+        return job
+      end
 
       @job = instance = Base.job_for_type(type).new
 
@@ -96,16 +102,16 @@ module Mosquito
 
     # For the current retry count, is the job rescheduleable?
     def rescheduleable?
-      job.rescheduleable? @retry_count
+      job!.rescheduleable? @retry_count
     end
 
     # For the current retry count, how long should a runner wait before retry?
     def reschedule_interval
-      job.reschedule_interval @retry_count
+      job!.reschedule_interval @retry_count
     end
 
     # :nodoc:
-    delegate :executed?, :succeeded?, :failed?, :failed, :rescheduled, to: @job
+    delegate :executed?, :succeeded?, :failed?, :failed, :rescheduled, to: job!
 
     # Used to construct a task from the parameters stored in the backend.
     def self.retrieve(id : String)
