@@ -111,6 +111,8 @@ class JobWithHooks < Mosquito::QueuedJob
 end
 
 class EchoJob < Mosquito::QueuedJob
+  queue_name "io_queue"
+
   params text : String
 
   def perform
