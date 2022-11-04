@@ -79,9 +79,6 @@ module Mosquito
       @state = State::Running
 
       perform
-    rescue e : DoubleRun
-      @state = State::Failed
-      raise e
 
       @state = State::Succeeded
     rescue e
