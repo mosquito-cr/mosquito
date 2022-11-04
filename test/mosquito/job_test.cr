@@ -66,13 +66,6 @@ describe Mosquito::Job do
 
       assert_logs_match "No job definition found"
     end
-
-    it "raises DoubleRun if it's already been executed" do
-      passing_job.run
-      assert_raises Mosquito::DoubleRun do
-        passing_job.run
-      end
-    end
   end
 
   it "fetches the default queue" do
