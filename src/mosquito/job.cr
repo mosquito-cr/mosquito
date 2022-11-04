@@ -17,6 +17,7 @@ module Mosquito
       Running
       Succeeded
       Failed
+      Aborted
 
       def executed? : Bool
         succeeded? || failed?
@@ -28,7 +29,8 @@ module Mosquito
     end
 
     getter state = State::Initialization
-    delegate executed?, succeeded?, failed?, to: state
+
+    delegate executed?, succeeded?, failed?, aborted?, to: state
 
     # When a job fails and raises an exception, it will be saved into this attribute.
     getter exception : Exception?
@@ -66,28 +68,29 @@ module Mosquito
     end
 
     def run
-      before_hook
+      begin
+        before_hook
+      rescue e : Exception
+        Log.error(exception: e) { "Before hook raised, job will not be executed" }
+        @state = State::Aborted
+        return
+      end
 
-      raise DoubleRun.new unless state.initialization?
       @state = State::Running
+
       perform
-    rescue e : JobFailed
-      @state = State::Failed
-      Log.error {
-        "Job failed: #{e.message}"
-      }
     rescue e : DoubleRun
       @state = State::Failed
       raise e
+
+      @state = State::Succeeded
     rescue e
       Log.warn(exception: e) do
         "Job failed! Raised #{e.class}: #{e.message}"
       end
 
-      @state = State::Failed
       @exception = e
-    else
-      @state = State::Succeeded
+      @state = State::Failed
     ensure
       after_hook
     end
