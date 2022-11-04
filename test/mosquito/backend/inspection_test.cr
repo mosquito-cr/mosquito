@@ -5,22 +5,22 @@ describe "Backend inspection" do
   getter queue : Mosquito::Backend { backend.named backend_name }
 
   getter job : QueuedTestJob { QueuedTestJob.new }
-  getter task : Mosquito::Task { Mosquito::Task.new("mock_task") }
+  getter job_run : Mosquito::JobRun { Mosquito::JobRun.new("mock_job_run") }
 
   describe "size" do
     def fill_queues
       # add to waiting queue
-      queue.enqueue task
-      queue.enqueue task
+      queue.enqueue job_run
+      queue.enqueue job_run
 
       # move 1 from waiting to pending queue
       pending_t = queue.dequeue
 
       # add to scheduled queue
-      queue.schedule task, at: 1.second.from_now
+      queue.schedule job_run, at: 1.second.from_now
 
       # add to dead queue
-      queue.terminate task
+      queue.terminate job_run
     end
 
     it "returns the size of the named q" do
@@ -41,41 +41,41 @@ describe "Backend inspection" do
   describe "dump_q" do
     it "can dump the waiting q" do
       clean_slate do
-        expected_tasks = Array(Mosquito::Task).new(3) { Mosquito::Task.new("mock_task") }
-        expected_tasks.each { |task| queue.enqueue task }
-        expected_task_ids = expected_tasks.map { |task| task.id }.sort
+        expected_job_runs = Array(Mosquito::JobRun).new(3) { Mosquito::JobRun.new("mock_job_run") }
+        expected_job_runs.each { |job_run| queue.enqueue job_run }
+        expected_job_run_ids = expected_job_runs.map { |job_run| job_run.id }.sort
 
-        actual_tasks = queue.dump_waiting_q.sort
-        assert_equal 3, actual_tasks.size
+        actual_job_runs = queue.dump_waiting_q.sort
+        assert_equal 3, actual_job_runs.size
 
-        assert_equal expected_task_ids, actual_tasks
+        assert_equal expected_job_run_ids, actual_job_runs
       end
     end
 
     it "can dump the scheduled q" do
       clean_slate do
-        expected_tasks = Array(Mosquito::Task).new(3) { Mosquito::Task.new("mock_task") }
-        expected_tasks.each { |task| queue.schedule task, at: 1.second.from_now }
-        expected_task_ids = expected_tasks.map { |task| task.id }.sort
+        expected_job_runs = Array(Mosquito::JobRun).new(3) { Mosquito::JobRun.new("mock_job_run") }
+        expected_job_runs.each { |job_run| queue.schedule job_run, at: 1.second.from_now }
+        expected_job_run_ids = expected_job_runs.map { |job_run| job_run.id }.sort
 
-        actual_tasks = queue.dump_scheduled_q.sort
-        assert_equal 3, actual_tasks.size
+        actual_job_runs = queue.dump_scheduled_q.sort
+        assert_equal 3, actual_job_runs.size
 
-        assert_equal expected_task_ids, actual_tasks
+        assert_equal expected_job_run_ids, actual_job_runs
       end
     end
 
     it "can dump the pending q" do
       clean_slate do
-        expected_tasks = Array(Mosquito::Task).new(3) { Mosquito::Task.new("mock_task").tap(&.store) }
+        expected_job_runs = Array(Mosquito::JobRun).new(3) { Mosquito::JobRun.new("mock_job_run").tap(&.store) }
 
-        expected_tasks.each { |task| queue.enqueue task }
-        expected_task_ids = 3.times.map { queue.dequeue.not_nil!.id }.to_a.sort
+        expected_job_runs.each { |job_run| queue.enqueue job_run }
+        expected_job_run_ids = 3.times.map { queue.dequeue.not_nil!.id }.to_a.sort
 
-        actual_tasks = queue.dump_pending_q.sort
-        assert_equal 3, actual_tasks.size
+        actual_job_runs = queue.dump_pending_q.sort
+        assert_equal 3, actual_job_runs.size
 
-        assert_equal expected_task_ids, actual_tasks
+        assert_equal expected_job_run_ids, actual_job_runs
       end
     end
 

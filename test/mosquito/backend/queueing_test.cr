@@ -5,7 +5,7 @@ describe "Backend Queues" do
   getter queue : Mosquito::Backend { backend.named backend_name }
 
   let(:job) { QueuedTestJob.new }
-  getter task : Mosquito::Task { Mosquito::Task.new("mock_task") }
+  getter job_run : Mosquito::JobRun { Mosquito::JobRun.new("mock_job_run") }
 
   describe "queue_names" do
     it "builds a waiting queue" do
@@ -30,10 +30,10 @@ describe "Backend Queues" do
       names = %w|test1 test2 test3 test4|
 
       names[0..3].each do |queue_name|
-        backend.named(queue_name).enqueue task
+        backend.named(queue_name).enqueue job_run
       end
 
-      backend.named(names.last).schedule task, at: 1.second.from_now
+      backend.named(names.last).schedule job_run, at: 1.second.from_now
     end
 
     def fill_uncounted_queues
@@ -41,12 +41,12 @@ describe "Backend Queues" do
 
       names[0..3].each do |queue_name|
         backend.named(queue_name).tap do |q|
-          q.enqueue task
+          q.enqueue job_run
           q.dequeue
         end
       end
 
-      backend.named(names.last).terminate task
+      backend.named(names.last).terminate job_run
     end
 
     it "can get a list of available queues" do
@@ -74,79 +74,79 @@ describe "Backend Queues" do
   end
 
   describe "schedule" do
-    it "adds a task to the schedule_q at the time" do
+    it "adds a job_run to the schedule_q at the time" do
       clean_slate do
         timestamp = 2.seconds.from_now
-        task = job.build_task
-        queue.schedule task, at: timestamp
-        assert_equal timestamp.to_unix_ms.to_s, queue.scheduled_task_time task
+        job_run = job.build_job_run
+        queue.schedule job_run, at: timestamp
+        assert_equal timestamp.to_unix_ms.to_s, queue.scheduled_job_run_time job_run
       end
     end
   end
 
   describe "deschedule" do
-    it "returns a task if it's due" do
+    it "returns a job_run if it's due" do
       clean_slate do
         run_time = Time.utc - 2.seconds
-        task = job.build_task
-        task.store
-        queue.schedule task, at: run_time
+        job_run = job.build_job_run
+        job_run.store
+        queue.schedule job_run, at: run_time
 
-        overdue_tasks = queue.deschedule
-        assert_equal [task], overdue_tasks
+        overdue_job_runs = queue.deschedule
+        assert_equal [job_run], overdue_job_runs
       end
     end
 
-    it "returns a blank array when no tasks exist" do
+    it "returns a blank array when no job_runs exist" do
       clean_slate do
-        overdue_tasks = queue.deschedule
-        assert_empty overdue_tasks
+        overdue_job_runs = queue.deschedule
+        assert_empty overdue_job_runs
       end
     end
 
-    it "doesn't return tasks which aren't yet due" do
+    it "doesn't return job_runs which aren't yet due" do
       clean_slate do
         run_time = Time.utc + 2.seconds
-        task = job.build_task
-        task.store
-        queue.schedule task, at: run_time
+        job_run = job.build_job_run
+        job_run.store
+        queue.schedule job_run, at: run_time
 
-        overdue_tasks = queue.deschedule
-        assert_empty overdue_tasks
+        overdue_job_runs = queue.deschedule
+        assert_empty overdue_job_runs
       end
     end
   end
 
   describe "enqueue" do
-    it "puts a task on the waiting_q" do
+    it "puts a job_run on the waiting_q" do
       clean_slate do
-        task = job.build_task
-        queue.enqueue task
-        waiting_tasks = queue.dump_waiting_q
-        assert_equal [task.id], waiting_tasks
+        job_run = job.build_job_run
+        queue.enqueue job_run
+        waiting_job_runs = queue.dump_waiting_q
+        assert_equal [job_run.id], waiting_job_runs
       end
     end
   end
 
   describe "dequeue" do
-    it "returns a task object when one is waiting" do
+    it "returns a job_run object when one is waiting" do
       clean_slate do
-        task = job.build_task
-        task.store
-        queue.enqueue task
-        waiting_task = queue.dequeue
-        assert_equal task, waiting_task
+        job_run = job.build_job_run
+        job_run.store
+        queue.enqueue job_run
+        waiting_job_run = queue.dequeue
+        assert_equal job_run, waiting_job_run
       end
     end
 
-    it "moves the task from waiting to pending" do
+    it "moves the job_run from waiting to pending" do
       clean_slate do
-        task = job.build_task
-        task.store
-        queue.enqueue task
-        waiting_task = queue.dequeue
-        pending_tasks = queue.dump_pending_q
-        assert_equal [task.id], pending_tasks
+        job_run = job.build_job_run
+        job_run.store
+        queue.enqueue job_run
+        waiting_job_run = queue.dequeue
+        pending_job_runs = queue.dump_pending_q
+        assert_equal [job_run.id], pending_job_runs
       end
     end
 
@@ -156,53 +156,53 @@ describe "Backend Queues" do
       end
     end
 
-    it "returns nil when a task is queued but not stored" do
+    it "returns nil when a job_run is queued but not stored" do
       clean_slate do
-        task = job.build_task
-        # task.store # explicitly don't store this one
-        queue.enqueue task
-        waiting_task = queue.dequeue
-        assert_nil waiting_task
+        job_run = job.build_job_run
+        # job_run.store # explicitly don't store this one
+        queue.enqueue job_run
+        waiting_job_run = queue.dequeue
+        assert_nil waiting_job_run
       end
     end
   end
 
   describe "finish" do
-    it "removes the task from the pending queue" do
+    it "removes the job_run from the pending queue" do
       clean_slate do
-        task = job.build_task
-        task.store
+        job_run = job.build_job_run
+        job_run.store
 
-        # first move the task from waiting to pending
-        queue.enqueue task
-        waiting_task = queue.dequeue
-        assert_equal task, waiting_task
+        # first move the job_run from waiting to pending
+        queue.enqueue job_run
+        waiting_job_run = queue.dequeue
+        assert_equal job_run, waiting_job_run
 
         # now finish it
-        queue.finish task
+        queue.finish job_run
 
-        pending_tasks = queue.dump_pending_q
-        assert_empty pending_tasks
+        pending_job_runs = queue.dump_pending_q
+        assert_empty pending_job_runs
       end
     end
   end
 
   describe "terminate" do
-    it "adds a task to the dead queue" do
+    it "adds a job_run to the dead queue" do
       clean_slate do
-        task = job.build_task
-        task.store
+        job_run = job.build_job_run
+        job_run.store
 
-        # first move the task from waiting to pending
-        queue.enqueue task
-        waiting_task = queue.dequeue
-        assert_equal task, waiting_task
+        # first move the job_run from waiting to pending
+        queue.enqueue job_run
+        waiting_job_run = queue.dequeue
+        assert_equal job_run, waiting_job_run
 
         # now terminate it
-        queue.terminate task
+        queue.terminate job_run
 
-        dead_tasks = queue.dump_dead_q
-        assert_equal [task.id], dead_tasks
+        dead_job_runs = queue.dump_dead_q
+        assert_equal [job_run.id], dead_job_runs
       end
     end
   end

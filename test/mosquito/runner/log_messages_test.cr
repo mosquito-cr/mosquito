@@ -9,7 +9,7 @@ describe "Mosquito::Runner logs" do
     Mosquito::Base.register_job_mapping "failing_job", FailingJob
   end
 
-  def run_task(job)
+  def run_job_run(job)
     job.new.enqueue
 
     runner.run :fetch_queues
@@ -22,7 +22,7 @@ describe "Mosquito::Runner logs" do
         register_mappings
 
         clear_logs
-        run_task QueuedTestJob
+        run_job_run QueuedTestJob
         assert_logs_match "Success"
       end
     end
@@ -31,7 +31,7 @@ describe "Mosquito::Runner logs" do
       clean_slate do
         register_mappings
         clear_logs
-        run_task FailingJob
+        run_job_run FailingJob
         assert_logs_match "Failure"
       end
     end
@@ -42,7 +42,7 @@ describe "Mosquito::Runner logs" do
       clean_slate do
         register_mappings
         clear_logs
-        run_task QueuedTestJob
+        run_job_run QueuedTestJob
         assert_logs_match "and took"
       end
     end
@@ -51,7 +51,7 @@ describe "Mosquito::Runner logs" do
       clean_slate do
         register_mappings
         clear_logs
-        run_task FailingJob
+        run_job_run FailingJob
         assert_logs_match "taking"
       end
     end
@@ -62,21 +62,21 @@ describe "Mosquito::Runner logs" do
       clean_slate do
         register_mappings
         clear_logs
-        run_task QueuedTestJob
+        run_job_run QueuedTestJob
         assert_logs_match "Starting: queued_test_job"
       end
     end
   end
 
   describe "messages for finding ready delayed and scheduled jobs" do
-    it "logs when it finds delayed tasks" do
+    it "logs when it finds delayed job_runs" do
       clean_slate do
         register_mappings
         clear_logs
         QueuedTestJob.new.enqueue at: 1.second.ago
         runner.run :fetch_queues
         runner.run :enqueue
-        assert_logs_match "Found 1 delayed task"
+        assert_logs_match "Found 1 delayed job run"
       end
     end
   end

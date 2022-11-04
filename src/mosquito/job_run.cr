@@ -1,14 +1,14 @@
 module Mosquito
-  # A Task is a unit of work which will be performed by a Job.
-  # Tasks know how to:
+  # A JobRun is a unit of work which will be performed by a Job.
+  # JobRuns know how to:
   # - store and retrieve their data to and from the datastore
   # - figure out what Job class they match to
   # - build an instance of that Job class and pass off the config data
   # - Ask the job to run
   #
-  # Task data is called `config` and is persisted in the backend under the key
-  # `mosquito:task:task_id`.
-  class Task
+  # JobRun data is called `config` and is persisted in the backend under the key
+  # `mosquito:job_run:job_run_id`.
+  class JobRun
     getter type
     getter enqueue_time : Time
     getter id : String
@@ -16,15 +16,15 @@ module Mosquito
     getter job : Mosquito::Job?
 
     def job! : Mosquito::Job
-      job || raise RuntimeError.new("No job yet retrieved for task.")
+      job || raise RuntimeError.new("No job yet retrieved for job_run.")
     end
 
     # :nodoc:
     property config
 
-    CONFIG_KEY_PREFIX = "task"
+    CONFIG_KEY_PREFIX = "job_run"
 
-    # The config key is the backend storage key for the metadata of this task.
+    # The config key is the backend storage key for the metadata of this job_run.
     def config_key
       self.class.config_key id
     end
@@ -60,13 +60,13 @@ module Mosquito
       Mosquito.backend.store config_key, fields
     end
 
-    # Deletes this task from the backend.
+    # Deletes this job_run from the backend.
     # Optionally, after a delay in seconds (handled by the backend).
     def delete(in ttl = 0)
       Mosquito.backend.delete config_key, ttl
     end
 
-    # Builds a Job instance from this task. Populates the job with config from
+    # Builds a Job instance from this job_run. Populates the job with config from
     # the backend.
     def build_job : Mosquito::Job
       if job = @job
@@ -79,11 +79,11 @@ module Mosquito
         instance.vars_from config
       end
 
-      instance.task_id = id
+      instance.job_run_id = id
       instance
     end
 
-    # Builds and runs the job with this task config.
+    # Builds and runs the job with this job_run config.
     def run
       instance = build_job
       instance.run
@@ -113,7 +113,7 @@ module Mosquito
     # :nodoc:
     delegate :executed?, :succeeded?, :failed?, :failed, :rescheduled, to: job!
 
-    # Used to construct a task from the parameters stored in the backend.
+    # Used to construct a job_run from the parameters stored in the backend.
     def self.retrieve(id : String)
       fields = Mosquito.backend.retrieve config_key(id)
 
@@ -127,7 +127,7 @@ module Mosquito
       instance
     end
 
-    # Updates this task config from the backend.
+    # Updates this job_run config from the backend.
     def reload : Nil
       config.merge! Mosquito.backend.retrieve config_key
       @retry_count = config["retry_count"].to_i

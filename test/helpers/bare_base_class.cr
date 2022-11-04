@@ -1,10 +1,10 @@
 module Mosquito
   class Base
-    # Testing wedge which wipes out the Task mapping for the
+    # Testing wedge which wipes out the JobRun mapping for the
     # duration of the block.
     def self.bare_mapping(&block)
-      scheduled_tasks = @@scheduled_tasks
-      @@scheduled_tasks = [] of PeriodicTask
+      scheduled_job_runs = @@scheduled_job_runs
+      @@scheduled_job_runs = [] of PeriodicJobRun
 
       mapping = @@mapping
       @@mapping = {} of String => Job.class
@@ -13,7 +13,7 @@ module Mosquito
 
     ensure
       @@mapping = mapping unless mapping.nil?
-      @@scheduled_tasks = scheduled_tasks unless scheduled_tasks.nil?
+      @@scheduled_job_runs = scheduled_job_runs unless scheduled_job_runs.nil?
     end
   end
 end

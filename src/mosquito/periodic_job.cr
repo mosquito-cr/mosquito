@@ -3,7 +3,7 @@ module Mosquito
     def initialize
     end
 
-    abstract def build_task
+    abstract def build_job_run
 
     macro inherited
       macro job_name
@@ -16,8 +16,8 @@ module Mosquito
         job_name
       end
 
-      def build_task
-        task = Mosquito::Task.new(job_name)
+      def build_job_run
+        job_run = Mosquito::JobRun.new(job_name)
       end
 
       macro run_every(interval)

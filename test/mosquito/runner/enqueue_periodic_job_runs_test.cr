@@ -1,6 +1,6 @@
 require "../../test_helper"
 
-describe "Mosquito::Runner#enqueue_periodic_tasks" do
+describe "Mosquito::Runner#enqueue_periodic_job_runs" do
   getter(queue : Queue) { test_job.class.queue }
   getter(test_job)      { PeriodicTestJob.new }
   getter(runner)        { Mosquito::TestableRunner.new }
@@ -10,7 +10,7 @@ describe "Mosquito::Runner#enqueue_periodic_tasks" do
     Mosquito::Base.register_job_interval PeriodicTestJob, interval: 1.second
   end
 
-  it "enqueues a scheduled task at the appropriate time" do
+  it "enqueues a scheduled job_run at the appropriate time" do
     clean_slate do
       setup
       enqueue_time = Time.utc
@@ -19,17 +19,17 @@ describe "Mosquito::Runner#enqueue_periodic_tasks" do
         runner.run :enqueue
       end
 
-      queued_tasks = queue.backend.dump_waiting_q
-      assert queued_tasks.size >= 1
+      queued_job_runs = queue.backend.dump_waiting_q
+      assert queued_job_runs.size >= 1
 
-      last_task = queued_tasks.last
-      task_metadata = queue.backend.retrieve Task.config_key(last_task)
+      last_job_run = queued_job_runs.last
+      job_run_metadata = queue.backend.retrieve JobRun.config_key(last_job_run)
 
-      assert_equal enqueue_time.to_unix_ms.to_s, task_metadata["enqueue_time"]
+      assert_equal enqueue_time.to_unix_ms.to_s, job_run_metadata["enqueue_time"]
     end
   end
 
-  it "doesn't enqueue periodic tasks when disabled" do
+  it "doesn't enqueue periodic job_runs when disabled" do
     clean_slate do
       setup
 
@@ -37,8 +37,8 @@ describe "Mosquito::Runner#enqueue_periodic_tasks" do
         runner.run :enqueue
       end
 
-      queued_tasks = queue.backend.dump_waiting_q
-      assert_equal 0, queued_tasks.size
+      queued_job_runs = queue.backend.dump_waiting_q
+      assert_equal 0, queued_job_runs.size
     end
   end
 end

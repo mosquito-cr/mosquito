@@ -3,8 +3,8 @@ module Mosquito
 
   class Base
     class_getter mapping = {} of String => Mosquito::Job.class
-    class_getter scheduled_tasks = [] of PeriodicTask
-    class_getter timetable = [] of PeriodicTask
+    class_getter scheduled_job_runs = [] of PeriodicJobRun
+    class_getter timetable = [] of PeriodicJobRun
 
     def self.register_job_mapping(string, klass)
       @@mapping[string] = klass
@@ -27,7 +27,7 @@ module Mosquito
     end
 
     def self.register_job_interval(klass, interval : Time::Span | Time::MonthSpan)
-      @@scheduled_tasks << PeriodicTask.new(klass, interval)
+      @@scheduled_job_runs << PeriodicJobRun.new(klass, interval)
     end
 
     def self.register_job(klass, *, to_run_at scheduled_time : Time)

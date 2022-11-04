@@ -21,13 +21,11 @@ module Mosquito
     end
 
     module ClassMethods
-      # from queue.cr
       abstract def store(key : String, value : Hash(String, String)) : Nil
       abstract def retrieve(key : String) : Hash(String, String)
       abstract def list_queues : Array(String)
       abstract def list_runners : Array(String)
 
-      # from task.cr
       abstract def delete(key : String, in ttl : Int64 = 0) : Nil
       abstract def delete(key : String, in ttl : Time::Span) : Nil
       abstract def expires_in(key : String) : Int64
@@ -61,12 +59,12 @@ module Mosquito
     end
 
     # from queue.cr
-    abstract def enqueue(task : Task) : Task
-    abstract def dequeue : Task?
-    abstract def schedule(task : Task, at scheduled_time : Time) : Task
-    abstract def deschedule : Array(Task)
-    abstract def finish(task : Task) # should this be called succeed?
-    abstract def terminate(task : Task) # should this be called fail?
+    abstract def enqueue(job_run : JobRun) : JobRun
+    abstract def dequeue : JobRun?
+    abstract def schedule(job_run : JobRun, at scheduled_time : Time) : JobRun
+    abstract def deschedule : Array(JobRun)
+    abstract def finish(job_run : JobRun) # should this be called succeed?
+    abstract def terminate(job_run : JobRun) # should this be called fail?
     abstract def flush : Nil
     abstract def size(include_dead : Bool = true) : Int64
 
@@ -74,7 +72,7 @@ module Mosquito
       abstract def dump_{{name.id}}_q : Array(String)
     {% end %}
 
-    abstract def scheduled_task_time(task : Task) : String?
+    abstract def scheduled_job_run_time(job_run : JobRun) : String?
 
   end
 end

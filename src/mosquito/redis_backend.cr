@@ -98,40 +98,40 @@ module Mosquito
       redis.flushall
     end
 
-    def schedule(task : Task, at scheduled_time : Time) : Task
-      redis.zadd scheduled_q, scheduled_time.to_unix_ms, task.id
-      task
+    def schedule(job_run : JobRun, at scheduled_time : Time) : JobRun
+      redis.zadd scheduled_q, scheduled_time.to_unix_ms, job_run.id
+      job_run
     end
 
-    def deschedule : Array(Task)
+    def deschedule : Array(JobRun)
       time = Time.utc
-      overdue_tasks = redis.zrangebyscore scheduled_q, 0, time.to_unix_ms
+      overdue_job_runs = redis.zrangebyscore scheduled_q, 0, time.to_unix_ms
 
-      return [] of Task unless overdue_tasks.any?
+      return [] of JobRun unless overdue_job_runs.any?
 
-      overdue_tasks.compact_map do |task_id|
-        redis.zrem scheduled_q, task_id
-        Task.retrieve task_id.as(String)
+      overdue_job_runs.compact_map do |job_run_id|
+        redis.zrem scheduled_q, job_run_id
+        JobRun.retrieve job_run_id.as(String)
       end
     end
 
-    def enqueue(task : Task) : Task
-      redis.lpush waiting_q, task.id
-      task
+    def enqueue(job_run : JobRun) : JobRun
+      redis.lpush waiting_q, job_run.id
+      job_run
     end
 
-    def dequeue : Task?
+    def dequeue : JobRun?
       if id = redis.rpoplpush waiting_q, pending_q
-        Task.retrieve id
+        JobRun.retrieve id
       end
     end
 
-    def finish(task : Task)
-      redis.lrem pending_q, 0, task.id
+    def finish(job_run : JobRun)
+      redis.lrem pending_q, 0, job_run.id
     end
 
-    def terminate(task : Task)
-      redis.lpush dead_q, task.id
+    def terminate(job_run : JobRun)
+      redis.lpush dead_q, job_run.id
     end
 
     def flush : Nil
@@ -172,8 +172,8 @@ module Mosquito
       end
     {% end %}
 
-    def scheduled_task_time(task : Task) : String?
-      redis.zscore scheduled_q, task.id
+    def scheduled_job_run_time(job_run : JobRun) : String?
+      redis.zscore scheduled_q, job_run.id
     end
   end
 end

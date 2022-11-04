@@ -8,67 +8,67 @@ module Mosquito
   # - The Scheduled list is indexed by execution time and holds jobs which need to be executed at a later time.
   # - The Dead list is for jobs which have been retried too many times and are no longer viable.
   #
-  # A task is represented in a queue by its id.
+  # A job_run is represented in a queue by its id.
   #
-  # A task flows through the queues in this manner:
+  # A job_run flows through the queues in this manner:
   #
   #
   # ```text
-  #  Time=0: Task does not exist yet, lists are empty
+  #  Time=0: JobRun does not exist yet, lists are empty
   #
   #    Waiting  Pending  Scheduled    Dead
   #
   #  ---------------------------------
-  #  Time=1: Task is enqueued
+  #  Time=1: JobRun is enqueued
   #
   #    Waiting  Pending  Scheduled    Dead
-  #     Task#1
+  #     JobRun#1
   #
   #  ---------------------------------
-  #  Time=2: Task begins running. Task is moved to pending and executed
+  #  Time=2: JobRun begins. JobRun is moved to pending and executed
   #
   #    Waiting  Pending  Scheduled    Dead
-  #              Task#1
+  #              JobRun#1
   #
   #  ---------------------------------
-  #  Time=3: Tasks are Enqueued.
+  #  Time=3: JobRuns are Enqueued.
   #
   #    Waiting  Pending  Scheduled    Dead
-  #     Task#2   Task#1
-  #     Task#3
+  #     JobRun#2   JobRun#1
+  #     JobRun#3
   #
   #  ---------------------------------
-  #  Time=4: Task succeeds, next task begins.
+  #  Time=4: JobRun succeeds, next job_run begins.
   #
   #    Waiting  Pending  Scheduled    Dead
-  #     Task#3   Task#2
+  #     JobRun#3   JobRun#2
   #
   #  ---------------------------------
-  #  Time=5: Task fails and is scheduled for later, next task begins.
+  #  Time=5: JobRun fails and is scheduled for later, next job_run begins.
   #
   #    Waiting  Pending  Scheduled     Dead
-  #              Task#3  t=7:Task#2
+  #              JobRun#3  t=7:JobRun#2
   #
   #  ---------------------------------
-  #  Time=6: Task succeeds. Nothing is executing.
+  #  Time=6: JobRun succeeds. Nothing is executing.
   #
   #    Waiting  Pending  Scheduled     Dead
-  #                      t=7:Task#2
+  #                      t=7:JobRun#2
   #
   #  ---------------------------------
-  #  Time=7: Scheduled task is due and is moved to waiting. Nothing is executing.
+  #  Time=7: Scheduled job_run is due and is moved to waiting. Nothing is executing.
   #
   #    Waiting  Pending  Scheduled     Dead
-  #     Task#2
+  #     JobRun#2
   #
   #  ---------------------------------
-  #  Time=8: Task begins executing (for the second time).
+  #  Time=8: JobRun begins executing (for the second time).
   #
   #    Waiting  Pending  Scheduled     Dead
-  #              Task#2
+  #              JobRun#2
   #
   #  ---------------------------------
-  #  Time=9: Task finished successfully. No more tasks present.
+  #  Time=9: JobRun finished successfully. No more job_runs present.
   #
   #    Waiting  Pending  Scheduled     Dead
   #
@@ -85,45 +85,45 @@ module Mosquito
       @config_key = @name
     end
 
-    def enqueue(task : Task) : Task
-      backend.enqueue task
+    def enqueue(job_run : JobRun) : JobRun
+      backend.enqueue job_run
     end
 
-    def enqueue(task : Task, in interval : Time::Span) : Task
-      enqueue task, at: interval.from_now
+    def enqueue(job_run : JobRun, in interval : Time::Span) : JobRun
+      enqueue job_run, at: interval.from_now
     end
 
-    def enqueue(task : Task, at execute_time : Time) : Task
-      backend.schedule task, execute_time
+    def enqueue(job_run : JobRun, at execute_time : Time) : JobRun
+      backend.schedule job_run, execute_time
     end
 
-    def dequeue : Task?
+    def dequeue : JobRun?
       return if empty?
 
-      if task = backend.dequeue
-        task
+      if job_run = backend.dequeue
+        job_run
       else
         @empty = true
         nil
       end
     end
 
-    def reschedule(task : Task, execution_time)
-      backend.finish task
-      enqueue(task, at: execution_time)
+    def reschedule(job_run : JobRun, execution_time)
+      backend.finish job_run
+      enqueue(job_run, at: execution_time)
     end
 
-    def dequeue_scheduled : Array(Task)
+    def dequeue_scheduled : Array(JobRun)
       backend.deschedule
     end
 
-    def forget(task : Task)
-      backend.finish task
+    def forget(job_run : JobRun)
+      backend.finish job_run
     end
 
-    def banish(task : Task)
-      backend.finish task
-      backend.terminate task
+    def banish(job_run : JobRun)
+      backend.finish job_run
+      backend.terminate job_run
     end
 
     def size : Int64

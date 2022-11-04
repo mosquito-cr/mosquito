@@ -142,7 +142,7 @@ module Mosquito::RateLimiter
     @@rate_limit_increment
   end
 
-  # Configure the reschedule interval so that the task is not run again until it
+  # Configure the reschedule interval so that the job_run is not run again until it
   # should be allowed through the rate limiter.
   def reschedule_interval(retry_count : Int32) : Time::Span
     if rate_limited? && (window_expiration = window_expires_at)
