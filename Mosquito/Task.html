@@ -96,8 +96,18 @@
       
     </li>
   
-  <li class=" " data-id="mosquito/Mosquito/Job" data-name="mosquito::job">
+  <li class="parent " data-id="mosquito/Mosquito/Job" data-name="mosquito::job">
       <a href="../Mosquito/Job.html">Job</a>
+      
+        <ul>
+  
+  <li class=" " data-id="mosquito/Mosquito/Job/State" data-name="mosquito::job::state">
+      <a href="../Mosquito/Job/State.html">State</a>
+      
+    </li>
+  
+</ul>
+
       
     </li>
   
@@ -113,11 +123,6 @@
   
   <li class=" " data-id="mosquito/Mosquito/Metadata" data-name="mosquito::metadata">
       <a href="../Mosquito/Metadata.html">Metadata</a>
-      
-    </li>
-  
-  <li class=" " data-id="mosquito/Mosquito/NilJob" data-name="mosquito::niljob">
-      <a href="../Mosquito/NilJob.html">NilJob</a>
       
     </li>
   
@@ -351,7 +356,7 @@ Tasks know how to:</p>
       </li>
     
       <li class="entry-summary">
-        <a href="#build_job-instance-method" class="signature"><strong>#build_job</strong></a>
+        <a href="#build_job%3AMosquito%3A%3AJob-instance-method" class="signature"><strong>#build_job</strong> : Mosquito::Job</a>
         
           <div class="summary"><p>Builds a Job instance from this task.</p></div>
         
@@ -389,7 +394,12 @@ Tasks know how to:</p>
       </li>
     
       <li class="entry-summary">
-        <a href="#job%3AMosquito%3A%3AJob-instance-method" class="signature"><strong>#job</strong> : Mosquito::Job</a>
+        <a href="#job%3AMosquito%3A%3AJob%3F-instance-method" class="signature"><strong>#job</strong> : Mosquito::Job?</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#job%21%3AMosquito%3A%3AJob-instance-method" class="signature"><strong>#job!</strong> : Mosquito::Job</a>
         
       </li>
     
@@ -584,12 +594,12 @@ Tasks know how to:</p>
       </div>
     </div>
   
-    <div class="entry-detail" id="build_job-instance-method">
+    <div class="entry-detail" id="build_job:Mosquito::Job-instance-method">
       <div class="signature">
         
-        def <strong>build_job</strong>
+        def <strong>build_job</strong> : <a href="../Mosquito/Job.html">Mosquito::Job</a>
 
-        <a class="method-permalink" href="#build_job-instance-method">#</a>
+        <a class="method-permalink" href="#build_job%3AMosquito%3A%3AJob-instance-method">#</a>
       </div>
       
         <div class="doc">
@@ -690,12 +700,26 @@ Optionally, after a delay in seconds (handled by the backend).</p>
       </div>
     </div>
   
-    <div class="entry-detail" id="job:Mosquito::Job-instance-method">
+    <div class="entry-detail" id="job:Mosquito::Job?-instance-method">
       <div class="signature">
         
-        def <strong>job</strong> : <a href="../Mosquito/Job.html">Mosquito::Job</a>
+        def <strong>job</strong> : <a href="../Mosquito/Job.html">Mosquito::Job</a>?
 
-        <a class="method-permalink" href="#job%3AMosquito%3A%3AJob-instance-method">#</a>
+        <a class="method-permalink" href="#job%3AMosquito%3A%3AJob%3F-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="job!:Mosquito::Job-instance-method">
+      <div class="signature">
+        
+        def <strong>job!</strong> : <a href="../Mosquito/Job.html">Mosquito::Job</a>
+
+        <a class="method-permalink" href="#job%21%3AMosquito%3A%3AJob-instance-method">#</a>
       </div>
       
       <br/>

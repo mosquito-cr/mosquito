@@ -96,8 +96,18 @@
       
     </li>
   
-  <li class=" current" data-id="mosquito/Mosquito/Job" data-name="mosquito::job">
+  <li class="parent open current" data-id="mosquito/Mosquito/Job" data-name="mosquito::job">
       <a href="../Mosquito/Job.html">Job</a>
+      
+        <ul>
+  
+  <li class=" " data-id="mosquito/Mosquito/Job/State" data-name="mosquito::job::state">
+      <a href="../Mosquito/Job/State.html">State</a>
+      
+    </li>
+  
+</ul>
+
       
     </li>
   
@@ -113,11 +123,6 @@
   
   <li class=" " data-id="mosquito/Mosquito/Metadata" data-name="mosquito::metadata">
       <a href="../Mosquito/Metadata.html">Metadata</a>
-      
-    </li>
-  
-  <li class=" " data-id="mosquito/Mosquito/NilJob" data-name="mosquito::niljob">
-      <a href="../Mosquito/NilJob.html">NilJob</a>
       
     </li>
   
@@ -264,8 +269,6 @@ Jobs are pieces of code which run a Task.</p>
   </h2>
   <ul class="other-types-list">
     
-      <li class="other-type"><a href="../Mosquito/NilJob.html">Mosquito::NilJob</a></li>
-    
       <li class="other-type"><a href="../Mosquito/PeriodicJob.html">Mosquito::PeriodicJob</a></li>
     
       <li class="other-type"><a href="../Mosquito/QueuedJob.html">Mosquito::QueuedJob</a></li>
@@ -368,6 +371,16 @@ Jobs are pieces of code which run a Task.</p>
   <ul class="list-summary">
     
       <li class="entry-summary">
+        <a href="#aborted%3F%28%2Aargs%2C%2A%2Aoptions%29-instance-method" class="signature"><strong>#aborted?</strong>(*args, **options)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#aborted%3F%28%2Aargs%2C%2A%2Aoptions%2C%26%29-instance-method" class="signature"><strong>#aborted?</strong>(*args, **options, &)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
         <a href="#after_hook-instance-method" class="signature"><strong>#after_hook</strong></a>
         
       </li>
@@ -385,14 +398,12 @@ Jobs are pieces of code which run a Task.</p>
       </li>
     
       <li class="entry-summary">
-        <a href="#executed%3ABool-instance-method" class="signature"><strong>#executed</strong> : Bool</a>
+        <a href="#executed%3F%28%2Aargs%2C%2A%2Aoptions%29-instance-method" class="signature"><strong>#executed?</strong>(*args, **options)</a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#executed%3F%3ABool-instance-method" class="signature"><strong>#executed?</strong> : Bool</a>
-        
-          <div class="summary"><p>Did the job execute?</p></div>
+        <a href="#executed%3F%28%2Aargs%2C%2A%2Aoptions%2C%26%29-instance-method" class="signature"><strong>#executed?</strong>(*args, **options, &)</a>
         
       </li>
     
@@ -404,9 +415,12 @@ Jobs are pieces of code which run a Task.</p>
       </li>
     
       <li class="entry-summary">
-        <a href="#failed%3F%3ABool-instance-method" class="signature"><strong>#failed?</strong> : Bool</a>
+        <a href="#failed%3F%28%2Aargs%2C%2A%2Aoptions%29-instance-method" class="signature"><strong>#failed?</strong>(*args, **options)</a>
         
-          <div class="summary"><p>Did the job run and fail?</p></div>
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#failed%3F%28%2Aargs%2C%2A%2Aoptions%2C%26%29-instance-method" class="signature"><strong>#failed?</strong>(*args, **options, &)</a>
         
       </li>
     
@@ -459,14 +473,17 @@ Jobs are pieces of code which run a Task.</p>
       </li>
     
       <li class="entry-summary">
-        <a href="#succeeded%3ABool-instance-method" class="signature"><strong>#succeeded</strong> : Bool</a>
+        <a href="#state%3AMosquito%3A%3AJob%3A%3AState-instance-method" class="signature"><strong>#state</strong> : Mosquito::Job::State</a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#succeeded%3F%3ABool-instance-method" class="signature"><strong>#succeeded?</strong> : Bool</a>
+        <a href="#succeeded%3F%28%2Aargs%2C%2A%2Aoptions%29-instance-method" class="signature"><strong>#succeeded?</strong>(*args, **options)</a>
         
-          <div class="summary"><p>Did the job succeed?</p></div>
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#succeeded%3F%28%2Aargs%2C%2A%2Aoptions%2C%26%29-instance-method" class="signature"><strong>#succeeded?</strong>(*args, **options, &)</a>
         
       </li>
     
@@ -812,6 +829,34 @@ By default every job has it's own named queue:</p>
     Instance Method Detail
   </h2>
   
+    <div class="entry-detail" id="aborted?(*args,**options)-instance-method">
+      <div class="signature">
+        
+        def <strong>aborted?</strong>(*args, **options)
+
+        <a class="method-permalink" href="#aborted%3F%28%2Aargs%2C%2A%2Aoptions%29-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="aborted?(*args,**options,&amp;)-instance-method">
+      <div class="signature">
+        
+        def <strong>aborted?</strong>(*args, **options, &)
+
+        <a class="method-permalink" href="#aborted%3F%28%2Aargs%2C%2A%2Aoptions%2C%26%29-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
     <div class="entry-detail" id="after_hook-instance-method">
       <div class="signature">
         
@@ -859,12 +904,12 @@ By default every job has it's own named queue:</p>
       </div>
     </div>
   
-    <div class="entry-detail" id="executed:Bool-instance-method">
+    <div class="entry-detail" id="executed?(*args,**options)-instance-method">
       <div class="signature">
         
-        def <strong>executed</strong> : Bool
+        def <strong>executed?</strong>(*args, **options)
 
-        <a class="method-permalink" href="#executed%3ABool-instance-method">#</a>
+        <a class="method-permalink" href="#executed%3F%28%2Aargs%2C%2A%2Aoptions%29-instance-method">#</a>
       </div>
       
       <br/>
@@ -873,18 +918,13 @@ By default every job has it's own named queue:</p>
       </div>
     </div>
   
-    <div class="entry-detail" id="executed?:Bool-instance-method">
+    <div class="entry-detail" id="executed?(*args,**options,&amp;)-instance-method">
       <div class="signature">
         
-        def <strong>executed?</strong> : Bool
+        def <strong>executed?</strong>(*args, **options, &)
 
-        <a class="method-permalink" href="#executed%3F%3ABool-instance-method">#</a>
+        <a class="method-permalink" href="#executed%3F%28%2Aargs%2C%2A%2Aoptions%2C%26%29-instance-method">#</a>
       </div>
-      
-        <div class="doc">
-          
-          <p>Did the job execute?</p>
-        </div>
       
       <br/>
       <div>
@@ -913,18 +953,27 @@ re-scheduling, it will be run again at a later time.</p>
       </div>
     </div>
   
-    <div class="entry-detail" id="failed?:Bool-instance-method">
+    <div class="entry-detail" id="failed?(*args,**options)-instance-method">
       <div class="signature">
         
-        def <strong>failed?</strong> : Bool
+        def <strong>failed?</strong>(*args, **options)
 
-        <a class="method-permalink" href="#failed%3F%3ABool-instance-method">#</a>
+        <a class="method-permalink" href="#failed%3F%28%2Aargs%2C%2A%2Aoptions%29-instance-method">#</a>
       </div>
       
-        <div class="doc">
-          
-          <p>Did the job run and fail?</p>
-        </div>
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="failed?(*args,**options,&amp;)-instance-method">
+      <div class="signature">
+        
+        def <strong>failed?</strong>(*args, **options, &)
+
+        <a class="method-permalink" href="#failed%3F%28%2Aargs%2C%2A%2Aoptions%2C%26%29-instance-method">#</a>
+      </div>
       
       <br/>
       <div>
@@ -1068,12 +1117,12 @@ job attempts be?</p>
       </div>
     </div>
   
-    <div class="entry-detail" id="succeeded:Bool-instance-method">
+    <div class="entry-detail" id="state:Mosquito::Job::State-instance-method">
       <div class="signature">
         
-        def <strong>succeeded</strong> : Bool
+        def <strong>state</strong> : <a href="../Mosquito/Job/State.html">Mosquito::Job::State</a>
 
-        <a class="method-permalink" href="#succeeded%3ABool-instance-method">#</a>
+        <a class="method-permalink" href="#state%3AMosquito%3A%3AJob%3A%3AState-instance-method">#</a>
       </div>
       
       <br/>
@@ -1082,18 +1131,27 @@ job attempts be?</p>
       </div>
     </div>
   
-    <div class="entry-detail" id="succeeded?:Bool-instance-method">
+    <div class="entry-detail" id="succeeded?(*args,**options)-instance-method">
       <div class="signature">
         
-        def <strong>succeeded?</strong> : Bool
+        def <strong>succeeded?</strong>(*args, **options)
 
-        <a class="method-permalink" href="#succeeded%3F%3ABool-instance-method">#</a>
+        <a class="method-permalink" href="#succeeded%3F%28%2Aargs%2C%2A%2Aoptions%29-instance-method">#</a>
       </div>
       
-        <div class="doc">
-          
-          <p>Did the job succeed?</p>
-        </div>
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="succeeded?(*args,**options,&amp;)-instance-method">
+      <div class="signature">
+        
+        def <strong>succeeded?</strong>(*args, **options, &)
+
+        <a class="method-permalink" href="#succeeded%3F%28%2Aargs%2C%2A%2Aoptions%2C%26%29-instance-method">#</a>
+      </div>
       
       <br/>
       <div>
