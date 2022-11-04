@@ -3,7 +3,7 @@ module Mosquito
   class JobFailed < Exception
   end
 
-  # When a task tries to run twice
+  # When a job_run tries to run twice
   class DoubleRun < Exception
   end
 

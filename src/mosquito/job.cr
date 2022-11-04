@@ -2,10 +2,10 @@ require "./serializers/*"
 
 module Mosquito
   # A Job is a definition for work to be performed.
-  # Jobs are pieces of code which run a Task.
+  # Jobs are pieces of code which run a JobRun.
   #
-  # - Jobs prevent double execution of a job for a task
-  # - Jobs Rescue when a #perform method fails a task for any reason
+  # - Jobs prevent double execution of a job for a job_run
+  # - Jobs Rescue when a #perform method fails a job_run for any reason
   # - Jobs can be rescheduleable
   abstract class Job
     Log = ::Log.for(self)
@@ -35,7 +35,7 @@ module Mosquito
     # When a job fails and raises an exception, it will be saved into this attribute.
     getter exception : Exception?
 
-    property task_id : String?
+    property job_run_id : String?
 
     # The queue this job is assigned to.
     # By default every job has it's own named queue:
@@ -52,7 +52,7 @@ module Mosquito
       end
     end
 
-    # The Queue this job uses to store tasks.
+    # The Queue this job uses to store job_runs.
     def self.queue
       if queue_name.blank?
         Queue.new "default"

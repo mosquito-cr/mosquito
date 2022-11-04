@@ -7,12 +7,12 @@ describe Mosquito::PeriodicJob do
     assert_equal "periodic_test_job", PeriodicTestJob.job_type
   end
 
-  it "builds a task" do
+  it "builds a job_run" do
     job = PeriodicTestJob.new
-    task = job.build_task
+    job_run = job.build_job_run
 
-    assert_instance_of Task, task
-    assert_equal PeriodicTestJob.job_type, task.type
+    assert_instance_of JobRun, job_run
+    assert_equal PeriodicTestJob.job_type, job_run.type
   end
 
   it "is not reschedulable" do
@@ -35,16 +35,16 @@ describe Mosquito::PeriodicJob do
       runner.run :fetch_queues
       runner.run :run
       MonthlyJob.queue
-      assert_includes logs, "monthly task ran"
+      assert_includes logs, "monthly job_run ran"
     end
   end
 
   it "schedules itself for an interval" do
     clean_slate do
       PeriodicTestJob.run_every 2.minutes
-      scheduled_task = Base.scheduled_tasks.first
-      assert_equal PeriodicTestJob, scheduled_task.class
-      assert_equal 2.minutes, scheduled_task.interval
+      scheduled_job_run = Base.scheduled_job_runs.first
+      assert_equal PeriodicTestJob, scheduled_job_run.class
+      assert_equal 2.minutes, scheduled_job_run.interval
     end
   end
 end

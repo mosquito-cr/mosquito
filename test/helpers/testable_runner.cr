@@ -4,12 +4,12 @@ class Mosquito::TestableRunner < Mosquito::Runner
     when :fetch_queues
       fetch_queues
     when :enqueue
-      enqueue_periodic_tasks
-      enqueue_delayed_tasks
+      enqueue_periodic_job_runs
+      enqueue_delayed_job_runs
     when :start_time
       set_start_time
     when :run
-      dequeue_and_run_tasks
+      dequeue_and_run_job_runs
     when :idle
       idle
     else

@@ -3,13 +3,13 @@ module Mosquito
     def initialize
     end
 
-    abstract def build_task
+    abstract def build_job_run
 
     macro inherited
       Mosquito::Base.register_job_mapping job_name, {{ @type.id }}
 
-      def build_task
-        task = Mosquito::Task.new(job_name)
+      def build_job_run
+        job_run = Mosquito::JobRun.new(job_name)
       end
 
       macro run_at(time)

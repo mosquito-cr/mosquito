@@ -124,7 +124,7 @@ class MonthlyJob < Mosquito::PeriodicJob
   run_every 1.month
 
   def perform
-    log "monthly task ran"
+    log "monthly job_run ran"
   end
 end
 
@@ -165,16 +165,16 @@ Mosquito::Base.register_job_mapping "job_with_performance_counter", JobWithPerfo
 Mosquito::Base.register_job_mapping "failing_job", FailingJob
 Mosquito::Base.register_job_mapping "non_reschedulable_failing_job", NonReschedulableFailingJob
 
-def task_config
+def job_run_config
   {
     "year" => "1752",
     "name" => "the year september lost 12 days",
   }
 end
 
-def create_task(type = "job_with_config", config = task_config)
-  Mosquito::Task.new(type).tap do |task|
-    task.config = config
-    task.store
+def create_job_run(type = "job_with_config", config = job_run_config)
+  Mosquito::JobRun.new(type).tap do |job_run|
+    job_run.config = config
+    job_run.store
   end
 end

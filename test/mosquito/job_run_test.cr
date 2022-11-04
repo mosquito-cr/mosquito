@@ -1,2 +1,2 @@
 require "../test_helper"
-require "./task/*"
+require "./job_run/*"

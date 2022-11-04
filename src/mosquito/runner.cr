@@ -47,9 +47,9 @@ module Mosquito
     def run
       set_start_time
       fetch_queues
-      enqueue_periodic_tasks
-      enqueue_delayed_tasks
-      dequeue_and_run_tasks
+      enqueue_periodic_job_runs
+      enqueue_delayed_job_runs
+      dequeue_and_run_job_runs
       idle
     end
 
@@ -108,82 +108,82 @@ module Mosquito
       filtered_queues
     end
 
-    private def enqueue_periodic_tasks
+    private def enqueue_periodic_job_runs
       return unless Mosquito.configuration.run_cron_scheduler
 
-      run_at_most every: 1.second, label: :enqueue_periodic_tasks do |now|
-        Base.scheduled_tasks.each do |scheduled_task|
-          enqueued = scheduled_task.try_to_execute
+      run_at_most every: 1.second, label: :enqueue_periodic_job_runs do |now|
+        Base.scheduled_job_runs.each do |scheduled_job_run|
+          enqueued = scheduled_job_run.try_to_execute
 
-          Log.for("enqueue_periodic_tasks").debug {
-            "enqueued #{scheduled_task.class}" if enqueued
+          Log.for("enqueue_periodic_job_runs").debug {
+            "enqueued #{scheduled_job_run.class}" if enqueued
           }
         end
       end
     end
 
-    private def enqueue_delayed_tasks
-      run_at_most every: 1.second, label: :enqueue_delayed_tasks do |t|
+    private def enqueue_delayed_job_runs
+      run_at_most every: 1.second, label: :enqueue_delayed_job_runs do |t|
 
         queues.each do |q|
-          overdue_tasks = q.dequeue_scheduled
-          next unless overdue_tasks.any?
-          Log.for("enqueue_delayed_tasks").info { "Found #{overdue_tasks.size} delayed tasks in #{q.name}" }
+          overdue_job_runs = q.dequeue_scheduled
+          next unless overdue_job_runs.any?
+          Log.for("enqueue_delayed_job_runs").info { "Found #{overdue_job_runs.size} delayed job runs in #{q.name}" }
 
-          overdue_tasks.each do |task|
-            q.enqueue task
+          overdue_job_runs.each do |job_run|
+            q.enqueue job_run
           end
         end
       end
     end
 
-    private def dequeue_and_run_tasks
+    private def dequeue_and_run_job_runs
       queues.each do |q|
-        run_next_task q
+        run_next_job_run q
       end
     end
 
-    private def run_next_task(q : Queue)
-      task = q.dequeue
-      return unless task
+    private def run_next_job_run(q : Queue)
+      job_run = q.dequeue
+      return unless job_run
 
-      Log.notice { "#{"Starting:".colorize.magenta} #{task} from #{q.name}" }
+      Log.notice { "#{"Starting:".colorize.magenta} #{job_run} from #{q.name}" }
 
       duration = Time.measure do
-        task.run
+        job_run.run
       end.total_seconds
 
-      if task.succeeded?
-        Log.notice { "#{"Success:".colorize.green} #{task} finished and took #{time_with_units duration}" }
-        q.forget task
-        task.delete in: successful_job_ttl
+      if job_run.succeeded?
+        Log.notice { "#{"Success:".colorize.green} #{job_run} finished and took #{time_with_units duration}" }
+        q.forget job_run
+        job_run.delete in: successful_job_ttl
 
       else
-        if task.rescheduleable?
-          next_execution = Time.utc + task.reschedule_interval
+        if job_run.rescheduleable?
+          next_execution = Time.utc + job_run.reschedule_interval
 
           Log.notice {
             String.build do |s|
               s << "Failure: ".colorize.red
-              s << task
+              s << job_run
               s << " failed, taking "
               s << time_with_units duration
               s << " and "
               s << "will run again".colorize.cyan
               s << " in "
-              s << task.reschedule_interval
+              s << job_run.reschedule_interval
               s << " (at "
               s << next_execution
               s << ")"
             end
           }
 
-          q.reschedule task, next_execution
+          q.reschedule job_run, next_execution
         else
           Log.notice {
             String.build do |s|
               s << "Failure: ".colorize.red
-              s << task
+              s << job_run
               s << " failed, taking "
               s << time_with_units duration
               s << " and "
@@ -191,8 +191,8 @@ module Mosquito
             end
           }
 
-          q.banish task
-          task.delete in: failed_job_ttl
+          q.banish job_run
+          job_run.delete in: failed_job_ttl
         end
       end
     end

@@ -12,7 +12,7 @@ describe "Backend deleting" do
   getter key : String { "key-#{rand 1000}" }
   getter field : String { "field-#{rand 1000}" }
 
-  getter task : Mosquito::Task { Mosquito::Task.new("mock_task") }
+  getter job_run : Mosquito::JobRun { Mosquito::JobRun.new("mock_job_run") }
 
   describe "delete" do
     it "deletes immediately" do
@@ -43,17 +43,17 @@ describe "Backend deleting" do
   describe "#flush" do
     it "empties the queues" do
       clean_slate do
-        # add a task to waiting
-        queue.enqueue task
+        # add a job_run to waiting
+        queue.enqueue job_run
 
-        # add a task to scheduled
-        queue.schedule task, at: 1.second.from_now
+        # add a job_run to scheduled
+        queue.schedule job_run, at: 1.second.from_now
 
-        # move a task to pending
-        pending_task = queue.dequeue
+        # move a job_run to pending
+        pending_job_run = queue.dequeue
 
-        # add a task to the dead queue
-        queue.terminate task
+        # add a job_run to the dead queue
+        queue.terminate job_run
 
         queue.flush
         empty_set = [] of String

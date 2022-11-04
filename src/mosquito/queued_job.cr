@@ -7,8 +7,8 @@ module Mosquito
 
       Mosquito::Base.register_job_mapping job_name, {{ @type.id }}
 
-      def build_task
-        Mosquito::Task.new self.class.job_name
+      def build_job_run
+        Mosquito::JobRun.new self.class.job_name
       end
 
       macro params(*parameters)
@@ -89,37 +89,37 @@ module Mosquito
             {% end %}
           end
 
-          def build_task
-            task = Mosquito::Task.new self.class.job_name
+          def build_job_run
+            job_run = Mosquito::JobRun.new self.class.job_name
 
             {% for parameter in parsed_parameters %}
-              task.config["{{ parameter["name"] }}"] = serialize_{{ parameter["method_suffix"] }}({{ parameter["name"] }})
+              job_run.config["{{ parameter["name"] }}"] = serialize_{{ parameter["method_suffix"] }}({{ parameter["name"] }})
             {% end %}
 
-            task
+            job_run
           end
         {% end %}
       end
     end
 
-    def enqueue : Task
-      build_task.tap do |task|
-        task.store
-        self.class.queue.enqueue task
+    def enqueue : JobRun
+      build_job_run.tap do |job_run|
+        job_run.store
+        self.class.queue.enqueue job_run
       end
     end
 
-    def enqueue(in delay_interval : Time::Span) : Task
-      build_task.tap do |task|
-        task.store
-        self.class.queue.enqueue task, in: delay_interval
+    def enqueue(in delay_interval : Time::Span) : JobRun
+      build_job_run.tap do |job_run|
+        job_run.store
+        self.class.queue.enqueue job_run, in: delay_interval
       end
     end
 
-    def enqueue(at execute_time : Time) : Task
-      build_task.tap do |task|
-        task.store
-        self.class.queue.enqueue task, at: execute_time
+    def enqueue(at execute_time : Time) : JobRun
+      build_job_run.tap do |job_run|
+        job_run.store
+        self.class.queue.enqueue job_run, at: execute_time
       end
     end
   end
