@@ -95,9 +95,7 @@ module Mosquito
     end
 
     # is this even a good idea?
-    # nope, but flushdb should be ok...
     def self.flush : Nil
-      # redis.flushall
       redis.flushdb
     end
 
@@ -108,13 +106,13 @@ module Mosquito
 
     def deschedule : Array(JobRun)
       time = Time.utc
-      overdue_tasks = redis.zrangebyscore(scheduled_q, "0", time.to_unix_ms.to_s).as(Array)
+      overdue_job_runs = redis.zrangebyscore(scheduled_q, "0", time.to_unix_ms.to_s).as(Array)
 
       return [] of JobRun unless overdue_job_runs.any?
 
-      overdue_tasks.compact_map do |task_id|
-        redis.zrem scheduled_q, task_id.to_s
-        Task.retrieve task_id.as(String)
+      overdue_job_runs.compact_map do |job_run_id|
+        redis.zrem scheduled_q, job_run_id.to_s
+        JobRun.retrieve job_run_id.as(String)
       end
     end
 
@@ -125,7 +123,7 @@ module Mosquito
 
     def dequeue : JobRun?
       if id = redis.rpoplpush waiting_q, pending_q
-        Task.retrieve id.to_s
+        JobRun.retrieve id.to_s
       end
     end
 
@@ -175,8 +173,8 @@ module Mosquito
       end
     {% end %}
 
-    def scheduled_task_time(task : Task) : String?
-      redis.zscore(scheduled_q, task.id).as?(String)
+    def scheduled_job_run_time(job_run : JobRun) : String?
+      redis.zscore(scheduled_q, job_run.id).as?(String)
     end
   end
 end
