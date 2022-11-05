@@ -13,7 +13,7 @@
 <script type="text/javascript" src="../js/doc.js"></script>
 
   <meta name="repository-name" content="mosquito">
-  <title>Mosquito::Task - mosquito 1.0.0.rc1</title>
+  <title>Mosquito::JobRun - mosquito 1.0.0.rc1</title>
   <script type="text/javascript">
     CrystalDocs.base_path = "../";
   </script>
@@ -116,6 +116,11 @@
       
     </li>
   
+  <li class=" current" data-id="mosquito/Mosquito/JobRun" data-name="mosquito::jobrun">
+      <a href="../Mosquito/JobRun.html">JobRun</a>
+      
+    </li>
+  
   <li class=" " data-id="mosquito/Mosquito/KeyBuilder" data-name="mosquito::keybuilder">
       <a href="../Mosquito/KeyBuilder.html">KeyBuilder</a>
       
@@ -131,8 +136,8 @@
       
     </li>
   
-  <li class=" " data-id="mosquito/Mosquito/PeriodicTask" data-name="mosquito::periodictask">
-      <a href="../Mosquito/PeriodicTask.html">PeriodicTask</a>
+  <li class=" " data-id="mosquito/Mosquito/PeriodicJobRun" data-name="mosquito::periodicjobrun">
+      <a href="../Mosquito/PeriodicJobRun.html">PeriodicJobRun</a>
       
     </li>
   
@@ -191,11 +196,6 @@
       
     </li>
   
-  <li class=" current" data-id="mosquito/Mosquito/Task" data-name="mosquito::task">
-      <a href="../Mosquito/Task.html">Task</a>
-      
-    </li>
-  
 </ul>
 
       
@@ -210,12 +210,12 @@
 <div class="main-content">
 <h1 class="type-name">
 
-  <span class="kind">class</span> Mosquito::Task
+  <span class="kind">class</span> Mosquito::JobRun
 
 </h1>
 
 
-  <ul class="superclass-hierarchy"><li class="superclass"><a href="../Mosquito/Task.html">Mosquito::Task</a></li><li class="superclass">Reference</li><li class="superclass">Object</li></ul>
+  <ul class="superclass-hierarchy"><li class="superclass"><a href="../Mosquito/JobRun.html">Mosquito::JobRun</a></li><li class="superclass">Reference</li><li class="superclass">Object</li></ul>
 
 
 
@@ -229,16 +229,16 @@
     Overview
   </h2>
 
-  <p>A Task is a unit of work which will be performed by a Job.
-Tasks know how to:</p>
+  <p>A JobRun is a unit of work which will be performed by a Job.
+JobRuns know how to:</p>
 <ul>
 <li>store and retrieve their data to and from the datastore</li>
 <li>figure out what Job class they match to</li>
 <li>build an instance of that Job class and pass off the config data</li>
 <li>Ask the job to run</li>
 </ul>
-<p>Task data is called <code>config</code> and is persisted in the backend under the key
-<code>mosquito:task:task_id</code>.</p>
+<p>JobRun data is called <code>config</code> and is persisted in the backend under the key
+<code>mosquito:job_run:job_run_id</code>.</p>
 
 
 
@@ -263,7 +263,7 @@ Tasks know how to:</p>
   </h2>
   
     
-      mosquito/task.cr
+      mosquito/job_run.cr
     
     <br/>
   
@@ -283,7 +283,7 @@ Tasks know how to:</p>
   <dl>
     
       <dt class="entry-const" id="CONFIG_KEY_PREFIX">
-        <strong>CONFIG_KEY_PREFIX</strong> = <code><span class="s">&quot;task&quot;</span></code>
+        <strong>CONFIG_KEY_PREFIX</strong> = <code><span class="s">&quot;job_run&quot;</span></code>
       </dt>
       
     
@@ -323,14 +323,14 @@ Tasks know how to:</p>
       <li class="entry-summary">
         <a href="#config_key%28%2Aparts%29-class-method" class="signature"><strong>.config_key</strong>(*parts)</a>
         
-          <div class="summary"><p>The config key is the backend storage key for the metadata of this task.</p></div>
+          <div class="summary"><p>The config key is the backend storage key for the metadata of this job_run.</p></div>
         
       </li>
     
       <li class="entry-summary">
         <a href="#retrieve%28id%3AString%29-class-method" class="signature"><strong>.retrieve</strong>(id : String)</a>
         
-          <div class="summary"><p>Used to construct a task from the parameters stored in the backend.</p></div>
+          <div class="summary"><p>Used to construct a job_run from the parameters stored in the backend.</p></div>
         
       </li>
     
@@ -358,21 +358,21 @@ Tasks know how to:</p>
       <li class="entry-summary">
         <a href="#build_job%3AMosquito%3A%3AJob-instance-method" class="signature"><strong>#build_job</strong> : Mosquito::Job</a>
         
-          <div class="summary"><p>Builds a Job instance from this task.</p></div>
+          <div class="summary"><p>Builds a Job instance from this job_run.</p></div>
         
       </li>
     
       <li class="entry-summary">
         <a href="#config_key-instance-method" class="signature"><strong>#config_key</strong></a>
         
-          <div class="summary"><p>The config key is the backend storage key for the metadata of this task.</p></div>
+          <div class="summary"><p>The config key is the backend storage key for the metadata of this job_run.</p></div>
         
       </li>
     
       <li class="entry-summary">
         <a href="#delete%28inttl%3D0%29-instance-method" class="signature"><strong>#delete</strong>(in ttl = <span class="n">0</span>)</a>
         
-          <div class="summary"><p>Deletes this task from the backend.</p></div>
+          <div class="summary"><p>Deletes this job_run from the backend.</p></div>
         
       </li>
     
@@ -406,7 +406,7 @@ Tasks know how to:</p>
       <li class="entry-summary">
         <a href="#reload%3ANil-instance-method" class="signature"><strong>#reload</strong> : Nil</a>
         
-          <div class="summary"><p>Updates this task config from the backend.</p></div>
+          <div class="summary"><p>Updates this job_run config from the backend.</p></div>
         
       </li>
     
@@ -432,7 +432,7 @@ Tasks know how to:</p>
       <li class="entry-summary">
         <a href="#run-instance-method" class="signature"><strong>#run</strong></a>
         
-          <div class="summary"><p>Builds and runs the job with this task config.</p></div>
+          <div class="summary"><p>Builds and runs the job with this job_run config.</p></div>
         
       </li>
     
@@ -531,7 +531,7 @@ Tasks know how to:</p>
       
         <div class="doc">
           
-          <p>The config key is the backend storage key for the metadata of this task.</p>
+          <p>The config key is the backend storage key for the metadata of this job_run.</p>
         </div>
       
       <br/>
@@ -550,7 +550,7 @@ Tasks know how to:</p>
       
         <div class="doc">
           
-          <p>Used to construct a task from the parameters stored in the backend.</p>
+          <p>Used to construct a job_run from the parameters stored in the backend.</p>
         </div>
       
       <br/>
@@ -604,7 +604,7 @@ Tasks know how to:</p>
       
         <div class="doc">
           
-          <p>Builds a Job instance from this task. Populates the job with config from
+          <p>Builds a Job instance from this job_run. Populates the job with config from
 the backend.</p>
         </div>
       
@@ -624,7 +624,7 @@ the backend.</p>
       
         <div class="doc">
           
-          <p>The config key is the backend storage key for the metadata of this task.</p>
+          <p>The config key is the backend storage key for the metadata of this job_run.</p>
         </div>
       
       <br/>
@@ -643,7 +643,7 @@ the backend.</p>
       
         <div class="doc">
           
-          <p>Deletes this task from the backend.
+          <p>Deletes this job_run from the backend.
 Optionally, after a delay in seconds (handled by the backend).</p>
         </div>
       
@@ -738,7 +738,7 @@ Optionally, after a delay in seconds (handled by the backend).</p>
       
         <div class="doc">
           
-          <p>Updates this task config from the backend.</p>
+          <p>Updates this job_run config from the backend.</p>
         </div>
       
       <br/>
@@ -809,7 +809,7 @@ Optionally, after a delay in seconds (handled by the backend).</p>
       
         <div class="doc">
           
-          <p>Builds and runs the job with this task config.</p>
+          <p>Builds and runs the job with this job_run config.</p>
         </div>
       
       <br/>

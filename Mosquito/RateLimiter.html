@@ -116,6 +116,11 @@
       
     </li>
   
+  <li class=" " data-id="mosquito/Mosquito/JobRun" data-name="mosquito::jobrun">
+      <a href="../Mosquito/JobRun.html">JobRun</a>
+      
+    </li>
+  
   <li class=" " data-id="mosquito/Mosquito/KeyBuilder" data-name="mosquito::keybuilder">
       <a href="../Mosquito/KeyBuilder.html">KeyBuilder</a>
       
@@ -131,8 +136,8 @@
       
     </li>
   
-  <li class=" " data-id="mosquito/Mosquito/PeriodicTask" data-name="mosquito::periodictask">
-      <a href="../Mosquito/PeriodicTask.html">PeriodicTask</a>
+  <li class=" " data-id="mosquito/Mosquito/PeriodicJobRun" data-name="mosquito::periodicjobrun">
+      <a href="../Mosquito/PeriodicJobRun.html">PeriodicJobRun</a>
       
     </li>
   
@@ -188,11 +193,6 @@
   
 </ul>
 
-      
-    </li>
-  
-  <li class=" " data-id="mosquito/Mosquito/Task" data-name="mosquito::task">
-      <a href="../Mosquito/Task.html">Task</a>
       
     </li>
   
@@ -302,7 +302,7 @@
       <li class="entry-summary">
         <a href="#reschedule_interval%28retry_count%3AInt32%29%3ATime%3A%3ASpan-instance-method" class="signature"><strong>#reschedule_interval</strong>(retry_count : Int32) : Time::Span</a>
         
-          <div class="summary"><p>Configure the reschedule interval so that the task is not run again until it should be allowed through the rate limiter.</p></div>
+          <div class="summary"><p>Configure the reschedule interval so that the job_run is not run again until it should be allowed through the rate limiter.</p></div>
         
       </li>
     
@@ -466,7 +466,7 @@ If not, update the rate limit metadata.</p>
       
         <div class="doc">
           
-          <p>Configure the reschedule interval so that the task is not run again until it
+          <p>Configure the reschedule interval so that the job_run is not run again until it
 should be allowed through the rate limiter.</p>
         </div>
       

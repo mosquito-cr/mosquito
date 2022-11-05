@@ -116,6 +116,11 @@
       
     </li>
   
+  <li class=" " data-id="mosquito/Mosquito/JobRun" data-name="mosquito::jobrun">
+      <a href="../Mosquito/JobRun.html">JobRun</a>
+      
+    </li>
+  
   <li class=" " data-id="mosquito/Mosquito/KeyBuilder" data-name="mosquito::keybuilder">
       <a href="../Mosquito/KeyBuilder.html">KeyBuilder</a>
       
@@ -131,8 +136,8 @@
       
     </li>
   
-  <li class=" " data-id="mosquito/Mosquito/PeriodicTask" data-name="mosquito::periodictask">
-      <a href="../Mosquito/PeriodicTask.html">PeriodicTask</a>
+  <li class=" " data-id="mosquito/Mosquito/PeriodicJobRun" data-name="mosquito::periodicjobrun">
+      <a href="../Mosquito/PeriodicJobRun.html">PeriodicJobRun</a>
       
     </li>
   
@@ -191,11 +196,6 @@
       
     </li>
   
-  <li class=" " data-id="mosquito/Mosquito/Task" data-name="mosquito::task">
-      <a href="../Mosquito/Task.html">Task</a>
-      
-    </li>
-  
 </ul>
 
       
@@ -237,63 +237,63 @@
 <li>The Scheduled list is indexed by execution time and holds jobs which need to be executed at a later time.</li>
 <li>The Dead list is for jobs which have been retried too many times and are no longer viable.</li>
 </ul>
-<p>A task is represented in a queue by its id.</p>
-<p>A task flows through the queues in this manner:</p>
-<pre><code class="language-text"> Time=0: Task does not exist yet, lists are empty
+<p>A job_run is represented in a queue by its id.</p>
+<p>A job_run flows through the queues in this manner:</p>
+<pre><code class="language-text"> Time=0: JobRun does not exist yet, lists are empty
 
    Waiting  Pending  Scheduled    Dead
 
  ---------------------------------
- Time=1: Task is enqueued
+ Time=1: JobRun is enqueued
 
    Waiting  Pending  Scheduled    Dead
-    Task#1
+    JobRun#1
 
  ---------------------------------
- Time=2: Task begins running. Task is moved to pending and executed
+ Time=2: JobRun begins. JobRun is moved to pending and executed
 
    Waiting  Pending  Scheduled    Dead
-             Task#1
+             JobRun#1
 
  ---------------------------------
- Time=3: Tasks are Enqueued.
+ Time=3: JobRuns are Enqueued.
 
    Waiting  Pending  Scheduled    Dead
-    Task#2   Task#1
-    Task#3
+    JobRun#2   JobRun#1
+    JobRun#3
 
  ---------------------------------
- Time=4: Task succeeds, next task begins.
+ Time=4: JobRun succeeds, next job_run begins.
 
    Waiting  Pending  Scheduled    Dead
-    Task#3   Task#2
+    JobRun#3   JobRun#2
 
  ---------------------------------
- Time=5: Task fails and is scheduled for later, next task begins.
+ Time=5: JobRun fails and is scheduled for later, next job_run begins.
 
    Waiting  Pending  Scheduled     Dead
-             Task#3  t=7:Task#2
+             JobRun#3  t=7:JobRun#2
 
  ---------------------------------
- Time=6: Task succeeds. Nothing is executing.
+ Time=6: JobRun succeeds. Nothing is executing.
 
    Waiting  Pending  Scheduled     Dead
-                     t=7:Task#2
+                     t=7:JobRun#2
 
  ---------------------------------
- Time=7: Scheduled task is due and is moved to waiting. Nothing is executing.
+ Time=7: Scheduled job_run is due and is moved to waiting. Nothing is executing.
 
    Waiting  Pending  Scheduled     Dead
-    Task#2
+    JobRun#2
 
  ---------------------------------
- Time=8: Task begins executing (for the second time).
+ Time=8: JobRun begins executing (for the second time).
 
    Waiting  Pending  Scheduled     Dead
-             Task#2
+             JobRun#2
 
  ---------------------------------
- Time=9: Task finished successfully. No more tasks present.
+ Time=9: JobRun finished successfully. No more job_runs present.
 
    Waiting  Pending  Scheduled     Dead
 </code></pre>
@@ -379,7 +379,7 @@
       </li>
     
       <li class="entry-summary">
-        <a href="#banish%28task%3ATask%29-instance-method" class="signature"><strong>#banish</strong>(task : Task)</a>
+        <a href="#banish%28job_run%3AJobRun%29-instance-method" class="signature"><strong>#banish</strong>(job_run : JobRun)</a>
         
       </li>
     
@@ -389,12 +389,12 @@
       </li>
     
       <li class="entry-summary">
-        <a href="#dequeue%3ATask%3F-instance-method" class="signature"><strong>#dequeue</strong> : Task?</a>
+        <a href="#dequeue%3AJobRun%3F-instance-method" class="signature"><strong>#dequeue</strong> : JobRun?</a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#dequeue_scheduled%3AArray%28Task%29-instance-method" class="signature"><strong>#dequeue_scheduled</strong> : Array(Task)</a>
+        <a href="#dequeue_scheduled%3AArray%28JobRun%29-instance-method" class="signature"><strong>#dequeue_scheduled</strong> : Array(JobRun)</a>
         
       </li>
     
@@ -404,17 +404,17 @@
       </li>
     
       <li class="entry-summary">
-        <a href="#enqueue%28task%3ATask%2Cininterval%3ATime%3A%3ASpan%29%3ATask-instance-method" class="signature"><strong>#enqueue</strong>(task : Task, in interval : Time::Span) : Task</a>
+        <a href="#enqueue%28job_run%3AJobRun%2Cininterval%3ATime%3A%3ASpan%29%3AJobRun-instance-method" class="signature"><strong>#enqueue</strong>(job_run : JobRun, in interval : Time::Span) : JobRun</a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#enqueue%28task%3ATask%2Catexecute_time%3ATime%29%3ATask-instance-method" class="signature"><strong>#enqueue</strong>(task : Task, at execute_time : Time) : Task</a>
+        <a href="#enqueue%28job_run%3AJobRun%2Catexecute_time%3ATime%29%3AJobRun-instance-method" class="signature"><strong>#enqueue</strong>(job_run : JobRun, at execute_time : Time) : JobRun</a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#enqueue%28task%3ATask%29%3ATask-instance-method" class="signature"><strong>#enqueue</strong>(task : Task) : Task</a>
+        <a href="#enqueue%28job_run%3AJobRun%29%3AJobRun-instance-method" class="signature"><strong>#enqueue</strong>(job_run : JobRun) : JobRun</a>
         
       </li>
     
@@ -424,7 +424,7 @@
       </li>
     
       <li class="entry-summary">
-        <a href="#forget%28task%3ATask%29-instance-method" class="signature"><strong>#forget</strong>(task : Task)</a>
+        <a href="#forget%28job_run%3AJobRun%29-instance-method" class="signature"><strong>#forget</strong>(job_run : JobRun)</a>
         
       </li>
     
@@ -441,7 +441,7 @@
       </li>
     
       <li class="entry-summary">
-        <a href="#reschedule%28task%3ATask%2Cexecution_time%29-instance-method" class="signature"><strong>#reschedule</strong>(task : Task, execution_time)</a>
+        <a href="#reschedule%28job_run%3AJobRun%2Cexecution_time%29-instance-method" class="signature"><strong>#reschedule</strong>(job_run : JobRun, execution_time)</a>
         
       </li>
     
@@ -569,12 +569,12 @@
       </div>
     </div>
   
-    <div class="entry-detail" id="banish(task:Task)-instance-method">
+    <div class="entry-detail" id="banish(job_run:JobRun)-instance-method">
       <div class="signature">
         
-        def <strong>banish</strong>(task : <a href="../Mosquito/Task.html">Task</a>)
+        def <strong>banish</strong>(job_run : <a href="../Mosquito/JobRun.html">JobRun</a>)
 
-        <a class="method-permalink" href="#banish%28task%3ATask%29-instance-method">#</a>
+        <a class="method-permalink" href="#banish%28job_run%3AJobRun%29-instance-method">#</a>
       </div>
       
       <br/>
@@ -597,12 +597,12 @@
       </div>
     </div>
   
-    <div class="entry-detail" id="dequeue:Task?-instance-method">
+    <div class="entry-detail" id="dequeue:JobRun?-instance-method">
       <div class="signature">
         
-        def <strong>dequeue</strong> : <a href="../Mosquito/Task.html">Task</a>?
+        def <strong>dequeue</strong> : <a href="../Mosquito/JobRun.html">JobRun</a>?
 
-        <a class="method-permalink" href="#dequeue%3ATask%3F-instance-method">#</a>
+        <a class="method-permalink" href="#dequeue%3AJobRun%3F-instance-method">#</a>
       </div>
       
       <br/>
@@ -611,12 +611,12 @@
       </div>
     </div>
   
-    <div class="entry-detail" id="dequeue_scheduled:Array(Task)-instance-method">
+    <div class="entry-detail" id="dequeue_scheduled:Array(JobRun)-instance-method">
       <div class="signature">
         
-        def <strong>dequeue_scheduled</strong> : Array(<a href="../Mosquito/Task.html">Task</a>)
+        def <strong>dequeue_scheduled</strong> : Array(<a href="../Mosquito/JobRun.html">JobRun</a>)
 
-        <a class="method-permalink" href="#dequeue_scheduled%3AArray%28Task%29-instance-method">#</a>
+        <a class="method-permalink" href="#dequeue_scheduled%3AArray%28JobRun%29-instance-method">#</a>
       </div>
       
       <br/>
@@ -639,12 +639,12 @@
       </div>
     </div>
   
-    <div class="entry-detail" id="enqueue(task:Task,ininterval:Time::Span):Task-instance-method">
+    <div class="entry-detail" id="enqueue(job_run:JobRun,ininterval:Time::Span):JobRun-instance-method">
       <div class="signature">
         
-        def <strong>enqueue</strong>(task : <a href="../Mosquito/Task.html">Task</a>, in interval : Time::Span) : <a href="../Mosquito/Task.html">Task</a>
+        def <strong>enqueue</strong>(job_run : <a href="../Mosquito/JobRun.html">JobRun</a>, in interval : Time::Span) : <a href="../Mosquito/JobRun.html">JobRun</a>
 
-        <a class="method-permalink" href="#enqueue%28task%3ATask%2Cininterval%3ATime%3A%3ASpan%29%3ATask-instance-method">#</a>
+        <a class="method-permalink" href="#enqueue%28job_run%3AJobRun%2Cininterval%3ATime%3A%3ASpan%29%3AJobRun-instance-method">#</a>
       </div>
       
       <br/>
@@ -653,12 +653,12 @@
       </div>
     </div>
   
-    <div class="entry-detail" id="enqueue(task:Task,atexecute_time:Time):Task-instance-method">
+    <div class="entry-detail" id="enqueue(job_run:JobRun,atexecute_time:Time):JobRun-instance-method">
       <div class="signature">
         
-        def <strong>enqueue</strong>(task : <a href="../Mosquito/Task.html">Task</a>, at execute_time : Time) : <a href="../Mosquito/Task.html">Task</a>
+        def <strong>enqueue</strong>(job_run : <a href="../Mosquito/JobRun.html">JobRun</a>, at execute_time : Time) : <a href="../Mosquito/JobRun.html">JobRun</a>
 
-        <a class="method-permalink" href="#enqueue%28task%3ATask%2Catexecute_time%3ATime%29%3ATask-instance-method">#</a>
+        <a class="method-permalink" href="#enqueue%28job_run%3AJobRun%2Catexecute_time%3ATime%29%3AJobRun-instance-method">#</a>
       </div>
       
       <br/>
@@ -667,12 +667,12 @@
       </div>
     </div>
   
-    <div class="entry-detail" id="enqueue(task:Task):Task-instance-method">
+    <div class="entry-detail" id="enqueue(job_run:JobRun):JobRun-instance-method">
       <div class="signature">
         
-        def <strong>enqueue</strong>(task : <a href="../Mosquito/Task.html">Task</a>) : <a href="../Mosquito/Task.html">Task</a>
+        def <strong>enqueue</strong>(job_run : <a href="../Mosquito/JobRun.html">JobRun</a>) : <a href="../Mosquito/JobRun.html">JobRun</a>
 
-        <a class="method-permalink" href="#enqueue%28task%3ATask%29%3ATask-instance-method">#</a>
+        <a class="method-permalink" href="#enqueue%28job_run%3AJobRun%29%3AJobRun-instance-method">#</a>
       </div>
       
       <br/>
@@ -695,12 +695,12 @@
       </div>
     </div>
   
-    <div class="entry-detail" id="forget(task:Task)-instance-method">
+    <div class="entry-detail" id="forget(job_run:JobRun)-instance-method">
       <div class="signature">
         
-        def <strong>forget</strong>(task : <a href="../Mosquito/Task.html">Task</a>)
+        def <strong>forget</strong>(job_run : <a href="../Mosquito/JobRun.html">JobRun</a>)
 
-        <a class="method-permalink" href="#forget%28task%3ATask%29-instance-method">#</a>
+        <a class="method-permalink" href="#forget%28job_run%3AJobRun%29-instance-method">#</a>
       </div>
       
       <br/>
@@ -742,12 +742,12 @@
       </div>
     </div>
   
-    <div class="entry-detail" id="reschedule(task:Task,execution_time)-instance-method">
+    <div class="entry-detail" id="reschedule(job_run:JobRun,execution_time)-instance-method">
       <div class="signature">
         
-        def <strong>reschedule</strong>(task : <a href="../Mosquito/Task.html">Task</a>, execution_time)
+        def <strong>reschedule</strong>(job_run : <a href="../Mosquito/JobRun.html">JobRun</a>, execution_time)
 
-        <a class="method-permalink" href="#reschedule%28task%3ATask%2Cexecution_time%29-instance-method">#</a>
+        <a class="method-permalink" href="#reschedule%28job_run%3AJobRun%2Cexecution_time%29-instance-method">#</a>
       </div>
       
       <br/>

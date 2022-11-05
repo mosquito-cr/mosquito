@@ -116,6 +116,11 @@
       
     </li>
   
+  <li class=" " data-id="mosquito/Mosquito/JobRun" data-name="mosquito::jobrun">
+      <a href="../Mosquito/JobRun.html">JobRun</a>
+      
+    </li>
+  
   <li class=" " data-id="mosquito/Mosquito/KeyBuilder" data-name="mosquito::keybuilder">
       <a href="../Mosquito/KeyBuilder.html">KeyBuilder</a>
       
@@ -131,8 +136,8 @@
       
     </li>
   
-  <li class=" " data-id="mosquito/Mosquito/PeriodicTask" data-name="mosquito::periodictask">
-      <a href="../Mosquito/PeriodicTask.html">PeriodicTask</a>
+  <li class=" " data-id="mosquito/Mosquito/PeriodicJobRun" data-name="mosquito::periodicjobrun">
+      <a href="../Mosquito/PeriodicJobRun.html">PeriodicJobRun</a>
       
     </li>
   
@@ -191,11 +196,6 @@
       
     </li>
   
-  <li class=" " data-id="mosquito/Mosquito/Task" data-name="mosquito::task">
-      <a href="../Mosquito/Task.html">Task</a>
-      
-    </li>
-  
 </ul>
 
       
@@ -230,10 +230,10 @@
   </h2>
 
   <p>A Job is a definition for work to be performed.
-Jobs are pieces of code which run a Task.</p>
+Jobs are pieces of code which run a JobRun.</p>
 <ul>
-<li>Jobs prevent double execution of a job for a task</li>
-<li>Jobs Rescue when a #perform method fails a task for any reason</li>
+<li>Jobs prevent double execution of a job for a job_run</li>
+<li>Jobs Rescue when a #perform method fails a job_run for any reason</li>
 <li>Jobs can be rescheduleable</li>
 </ul>
 
@@ -345,7 +345,7 @@ Jobs are pieces of code which run a Task.</p>
       <li class="entry-summary">
         <a href="#queue-class-method" class="signature"><strong>.queue</strong></a>
         
-          <div class="summary"><p>The Queue this job uses to store tasks.</p></div>
+          <div class="summary"><p>The Queue this job uses to store job_runs.</p></div>
         
       </li>
     
@@ -425,6 +425,16 @@ Jobs are pieces of code which run a Task.</p>
       </li>
     
       <li class="entry-summary">
+        <a href="#job_run_id%3AString%3F-instance-method" class="signature"><strong>#job_run_id</strong> : String?</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#job_run_id%3D%28job_run_id%3AString%3F%29-instance-method" class="signature"><strong>#job_run_id=</strong>(job_run_id : String?)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
         <a href="#log%28message%29-instance-method" class="signature"><strong>#log</strong>(message)</a>
         
       </li>
@@ -484,16 +494,6 @@ Jobs are pieces of code which run a Task.</p>
     
       <li class="entry-summary">
         <a href="#succeeded%3F%28%2Aargs%2C%2A%2Aoptions%2C%26%29-instance-method" class="signature"><strong>#succeeded?</strong>(*args, **options, &)</a>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#task_id%3AString%3F-instance-method" class="signature"><strong>#task_id</strong> : String?</a>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#task_id%3D%28task_id%3AString%3F%29-instance-method" class="signature"><strong>#task_id=</strong>(task_id : String?)</a>
         
       </li>
     
@@ -785,7 +785,7 @@ Jobs are pieces of code which run a Task.</p>
       
         <div class="doc">
           
-          <p>The Queue this job uses to store tasks.</p>
+          <p>The Queue this job uses to store job_runs.</p>
         </div>
       
       <br/>
@@ -981,6 +981,34 @@ re-scheduling, it will be run again at a later time.</p>
       </div>
     </div>
   
+    <div class="entry-detail" id="job_run_id:String?-instance-method">
+      <div class="signature">
+        
+        def <strong>job_run_id</strong> : String?
+
+        <a class="method-permalink" href="#job_run_id%3AString%3F-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="job_run_id=(job_run_id:String?)-instance-method">
+      <div class="signature">
+        
+        def <strong>job_run_id=</strong>(job_run_id : String?)
+
+        <a class="method-permalink" href="#job_run_id%3D%28job_run_id%3AString%3F%29-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
     <div class="entry-detail" id="log(message)-instance-method">
       <div class="signature">
         
@@ -1151,34 +1179,6 @@ job attempts be?</p>
         def <strong>succeeded?</strong>(*args, **options, &)
 
         <a class="method-permalink" href="#succeeded%3F%28%2Aargs%2C%2A%2Aoptions%2C%26%29-instance-method">#</a>
-      </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="task_id:String?-instance-method">
-      <div class="signature">
-        
-        def <strong>task_id</strong> : String?
-
-        <a class="method-permalink" href="#task_id%3AString%3F-instance-method">#</a>
-      </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="task_id=(task_id:String?)-instance-method">
-      <div class="signature">
-        
-        def <strong>task_id=</strong>(task_id : String?)
-
-        <a class="method-permalink" href="#task_id%3D%28task_id%3AString%3F%29-instance-method">#</a>
       </div>
       
       <br/>

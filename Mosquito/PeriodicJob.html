@@ -116,6 +116,11 @@
       
     </li>
   
+  <li class=" " data-id="mosquito/Mosquito/JobRun" data-name="mosquito::jobrun">
+      <a href="../Mosquito/JobRun.html">JobRun</a>
+      
+    </li>
+  
   <li class=" " data-id="mosquito/Mosquito/KeyBuilder" data-name="mosquito::keybuilder">
       <a href="../Mosquito/KeyBuilder.html">KeyBuilder</a>
       
@@ -131,8 +136,8 @@
       
     </li>
   
-  <li class=" " data-id="mosquito/Mosquito/PeriodicTask" data-name="mosquito::periodictask">
-      <a href="../Mosquito/PeriodicTask.html">PeriodicTask</a>
+  <li class=" " data-id="mosquito/Mosquito/PeriodicJobRun" data-name="mosquito::periodicjobrun">
+      <a href="../Mosquito/PeriodicJobRun.html">PeriodicJobRun</a>
       
     </li>
   
@@ -188,11 +193,6 @@
   
 </ul>
 
-      
-    </li>
-  
-  <li class=" " data-id="mosquito/Mosquito/Task" data-name="mosquito::task">
-      <a href="../Mosquito/Task.html">Task</a>
       
     </li>
   
@@ -284,7 +284,7 @@
   <ul class="list-summary">
     
       <li class="entry-summary">
-        <a href="#build_task-instance-method" class="signature"><strong>#build_task</strong></a>
+        <a href="#build_job_run-instance-method" class="signature"><strong>#build_job_run</strong></a>
         
       </li>
     
@@ -343,6 +343,16 @@
     failed?</a>, 
     
   
+    <a href="../Mosquito/Job.html#job_run_id%3AString%3F-instance-method" class="tooltip">
+      <span>job_run_id : String?</span>
+    job_run_id</a>, 
+    
+  
+    <a href="../Mosquito/Job.html#job_run_id%3D%28job_run_id%3AString%3F%29-instance-method" class="tooltip">
+      <span>job_run_id=(job_run_id : String?)</span>
+    job_run_id=</a>, 
+    
+  
     <a href="../Mosquito/Job.html#log%28message%29-instance-method" class="tooltip">
       <span>log(message)</span>
     log</a>, 
@@ -385,17 +395,7 @@
   
     <a href="../Mosquito/Job.html#succeeded%3F%28%2Aargs%2C%2A%2Aoptions%29-instance-method" class="tooltip">
       <span>succeeded?(*args, **options)<br/>succeeded?(*args, **options, &)</span>
-    succeeded?</a>, 
-    
-  
-    <a href="../Mosquito/Job.html#task_id%3AString%3F-instance-method" class="tooltip">
-      <span>task_id : String?</span>
-    task_id</a>, 
-    
-  
-    <a href="../Mosquito/Job.html#task_id%3D%28task_id%3AString%3F%29-instance-method" class="tooltip">
-      <span>task_id=(task_id : String?)</span>
-    task_id=</a>
+    succeeded?</a>
     
   
 
@@ -670,12 +670,12 @@
     Instance Method Detail
   </h2>
   
-    <div class="entry-detail" id="build_task-instance-method">
+    <div class="entry-detail" id="build_job_run-instance-method">
       <div class="signature">
         abstract 
-        def <strong>build_task</strong>
+        def <strong>build_job_run</strong>
 
-        <a class="method-permalink" href="#build_task-instance-method">#</a>
+        <a class="method-permalink" href="#build_job_run-instance-method">#</a>
       </div>
       
       <br/>

@@ -116,6 +116,11 @@
       
     </li>
   
+  <li class=" " data-id="mosquito/Mosquito/JobRun" data-name="mosquito::jobrun">
+      <a href="../Mosquito/JobRun.html">JobRun</a>
+      
+    </li>
+  
   <li class=" " data-id="mosquito/Mosquito/KeyBuilder" data-name="mosquito::keybuilder">
       <a href="../Mosquito/KeyBuilder.html">KeyBuilder</a>
       
@@ -131,8 +136,8 @@
       
     </li>
   
-  <li class=" " data-id="mosquito/Mosquito/PeriodicTask" data-name="mosquito::periodictask">
-      <a href="../Mosquito/PeriodicTask.html">PeriodicTask</a>
+  <li class=" " data-id="mosquito/Mosquito/PeriodicJobRun" data-name="mosquito::periodicjobrun">
+      <a href="../Mosquito/PeriodicJobRun.html">PeriodicJobRun</a>
       
     </li>
   
@@ -188,11 +193,6 @@
   
 </ul>
 
-      
-    </li>
-  
-  <li class=" " data-id="mosquito/Mosquito/Task" data-name="mosquito::task">
-      <a href="../Mosquito/Task.html">Task</a>
       
     </li>
   
@@ -267,17 +267,17 @@
   <ul class="list-summary">
     
       <li class="entry-summary">
-        <a href="#enqueue%28indelay_interval%3ATime%3A%3ASpan%29%3ATask-instance-method" class="signature"><strong>#enqueue</strong>(in delay_interval : Time::Span) : Task</a>
+        <a href="#enqueue%28indelay_interval%3ATime%3A%3ASpan%29%3AJobRun-instance-method" class="signature"><strong>#enqueue</strong>(in delay_interval : Time::Span) : JobRun</a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#enqueue%28atexecute_time%3ATime%29%3ATask-instance-method" class="signature"><strong>#enqueue</strong>(at execute_time : Time) : Task</a>
+        <a href="#enqueue%28atexecute_time%3ATime%29%3AJobRun-instance-method" class="signature"><strong>#enqueue</strong>(at execute_time : Time) : JobRun</a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#enqueue%3ATask-instance-method" class="signature"><strong>#enqueue</strong> : Task</a>
+        <a href="#enqueue%3AJobRun-instance-method" class="signature"><strong>#enqueue</strong> : JobRun</a>
         
       </li>
     
@@ -329,6 +329,16 @@
     failed?</a>, 
     
   
+    <a href="../Mosquito/Job.html#job_run_id%3AString%3F-instance-method" class="tooltip">
+      <span>job_run_id : String?</span>
+    job_run_id</a>, 
+    
+  
+    <a href="../Mosquito/Job.html#job_run_id%3D%28job_run_id%3AString%3F%29-instance-method" class="tooltip">
+      <span>job_run_id=(job_run_id : String?)</span>
+    job_run_id=</a>, 
+    
+  
     <a href="../Mosquito/Job.html#log%28message%29-instance-method" class="tooltip">
       <span>log(message)</span>
     log</a>, 
@@ -371,17 +381,7 @@
   
     <a href="../Mosquito/Job.html#succeeded%3F%28%2Aargs%2C%2A%2Aoptions%29-instance-method" class="tooltip">
       <span>succeeded?(*args, **options)<br/>succeeded?(*args, **options, &)</span>
-    succeeded?</a>, 
-    
-  
-    <a href="../Mosquito/Job.html#task_id%3AString%3F-instance-method" class="tooltip">
-      <span>task_id : String?</span>
-    task_id</a>, 
-    
-  
-    <a href="../Mosquito/Job.html#task_id%3D%28task_id%3AString%3F%29-instance-method" class="tooltip">
-      <span>task_id=(task_id : String?)</span>
-    task_id=</a>
+    succeeded?</a>
     
   
 
@@ -632,12 +632,12 @@
     Instance Method Detail
   </h2>
   
-    <div class="entry-detail" id="enqueue(indelay_interval:Time::Span):Task-instance-method">
+    <div class="entry-detail" id="enqueue(indelay_interval:Time::Span):JobRun-instance-method">
       <div class="signature">
         
-        def <strong>enqueue</strong>(in delay_interval : Time::Span) : <a href="../Mosquito/Task.html">Task</a>
+        def <strong>enqueue</strong>(in delay_interval : Time::Span) : <a href="../Mosquito/JobRun.html">JobRun</a>
 
-        <a class="method-permalink" href="#enqueue%28indelay_interval%3ATime%3A%3ASpan%29%3ATask-instance-method">#</a>
+        <a class="method-permalink" href="#enqueue%28indelay_interval%3ATime%3A%3ASpan%29%3AJobRun-instance-method">#</a>
       </div>
       
       <br/>
@@ -646,12 +646,12 @@
       </div>
     </div>
   
-    <div class="entry-detail" id="enqueue(atexecute_time:Time):Task-instance-method">
+    <div class="entry-detail" id="enqueue(atexecute_time:Time):JobRun-instance-method">
       <div class="signature">
         
-        def <strong>enqueue</strong>(at execute_time : Time) : <a href="../Mosquito/Task.html">Task</a>
+        def <strong>enqueue</strong>(at execute_time : Time) : <a href="../Mosquito/JobRun.html">JobRun</a>
 
-        <a class="method-permalink" href="#enqueue%28atexecute_time%3ATime%29%3ATask-instance-method">#</a>
+        <a class="method-permalink" href="#enqueue%28atexecute_time%3ATime%29%3AJobRun-instance-method">#</a>
       </div>
       
       <br/>
@@ -660,12 +660,12 @@
       </div>
     </div>
   
-    <div class="entry-detail" id="enqueue:Task-instance-method">
+    <div class="entry-detail" id="enqueue:JobRun-instance-method">
       <div class="signature">
         
-        def <strong>enqueue</strong> : <a href="../Mosquito/Task.html">Task</a>
+        def <strong>enqueue</strong> : <a href="../Mosquito/JobRun.html">JobRun</a>
 
-        <a class="method-permalink" href="#enqueue%3ATask-instance-method">#</a>
+        <a class="method-permalink" href="#enqueue%3AJobRun-instance-method">#</a>
       </div>
       
       <br/>

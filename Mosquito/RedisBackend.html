@@ -116,6 +116,11 @@
       
     </li>
   
+  <li class=" " data-id="mosquito/Mosquito/JobRun" data-name="mosquito::jobrun">
+      <a href="../Mosquito/JobRun.html">JobRun</a>
+      
+    </li>
+  
   <li class=" " data-id="mosquito/Mosquito/KeyBuilder" data-name="mosquito::keybuilder">
       <a href="../Mosquito/KeyBuilder.html">KeyBuilder</a>
       
@@ -131,8 +136,8 @@
       
     </li>
   
-  <li class=" " data-id="mosquito/Mosquito/PeriodicTask" data-name="mosquito::periodictask">
-      <a href="../Mosquito/PeriodicTask.html">PeriodicTask</a>
+  <li class=" " data-id="mosquito/Mosquito/PeriodicJobRun" data-name="mosquito::periodicjobrun">
+      <a href="../Mosquito/PeriodicJobRun.html">PeriodicJobRun</a>
       
     </li>
   
@@ -188,11 +193,6 @@
   
 </ul>
 
-      
-    </li>
-  
-  <li class=" " data-id="mosquito/Mosquito/Task" data-name="mosquito::task">
-      <a href="../Mosquito/Task.html">Task</a>
       
     </li>
   
@@ -408,12 +408,12 @@
       </li>
     
       <li class="entry-summary">
-        <a href="#dequeue%3ATask%3F-instance-method" class="signature"><strong>#dequeue</strong> : Task?</a>
+        <a href="#dequeue%3AJobRun%3F-instance-method" class="signature"><strong>#dequeue</strong> : JobRun?</a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#deschedule%3AArray%28Task%29-instance-method" class="signature"><strong>#deschedule</strong> : Array(Task)</a>
+        <a href="#deschedule%3AArray%28JobRun%29-instance-method" class="signature"><strong>#deschedule</strong> : Array(JobRun)</a>
         
       </li>
     
@@ -438,14 +438,14 @@
       </li>
     
       <li class="entry-summary">
-        <a href="#enqueue%28task%3ATask%29%3ATask-instance-method" class="signature"><strong>#enqueue</strong>(task : Task) : Task</a>
+        <a href="#enqueue%28job_run%3AJobRun%29%3AJobRun-instance-method" class="signature"><strong>#enqueue</strong>(job_run : JobRun) : JobRun</a>
         
           <div class="summary"><p>from queue.cr</p></div>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#finish%28task%3ATask%29-instance-method" class="signature"><strong>#finish</strong>(task : Task)</a>
+        <a href="#finish%28job_run%3AJobRun%29-instance-method" class="signature"><strong>#finish</strong>(job_run : JobRun)</a>
         
       </li>
     
@@ -465,7 +465,12 @@
       </li>
     
       <li class="entry-summary">
-        <a href="#schedule%28task%3ATask%2Catscheduled_time%3ATime%29%3ATask-instance-method" class="signature"><strong>#schedule</strong>(task : Task, at scheduled_time : Time) : Task</a>
+        <a href="#schedule%28job_run%3AJobRun%2Catscheduled_time%3ATime%29%3AJobRun-instance-method" class="signature"><strong>#schedule</strong>(job_run : JobRun, at scheduled_time : Time) : JobRun</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#scheduled_job_run_time%28job_run%3AJobRun%29%3AString%3F-instance-method" class="signature"><strong>#scheduled_job_run_time</strong>(job_run : JobRun) : String?</a>
         
       </li>
     
@@ -475,17 +480,12 @@
       </li>
     
       <li class="entry-summary">
-        <a href="#scheduled_task_time%28task%3ATask%29%3AString%3F-instance-method" class="signature"><strong>#scheduled_task_time</strong>(task : Task) : String?</a>
-        
-      </li>
-    
-      <li class="entry-summary">
         <a href="#size%28include_dead%3Dtrue%29%3AInt64-instance-method" class="signature"><strong>#size</strong>(include_dead = <span class="n">true</span>) : Int64</a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#terminate%28task%3ATask%29-instance-method" class="signature"><strong>#terminate</strong>(task : Task)</a>
+        <a href="#terminate%28job_run%3AJobRun%29-instance-method" class="signature"><strong>#terminate</strong>(job_run : JobRun)</a>
         
       </li>
     
@@ -517,13 +517,13 @@
     delete</a>, 
     
   
-    <a href="../Mosquito/Backend.html#dequeue%3ATask%3F-instance-method" class="tooltip">
-      <span>dequeue : Task?</span>
+    <a href="../Mosquito/Backend.html#dequeue%3AJobRun%3F-instance-method" class="tooltip">
+      <span>dequeue : JobRun?</span>
     dequeue</a>, 
     
   
-    <a href="../Mosquito/Backend.html#deschedule%3AArray%28Task%29-instance-method" class="tooltip">
-      <span>deschedule : Array(Task)</span>
+    <a href="../Mosquito/Backend.html#deschedule%3AArray%28JobRun%29-instance-method" class="tooltip">
+      <span>deschedule : Array(JobRun)</span>
     deschedule</a>, 
     
   
@@ -547,8 +547,8 @@
     dump_waiting_q</a>, 
     
   
-    <a href="../Mosquito/Backend.html#enqueue%28task%3ATask%29%3ATask-instance-method" class="tooltip">
-      <span>enqueue(task : Task) : Task</span>
+    <a href="../Mosquito/Backend.html#enqueue%28job_run%3AJobRun%29%3AJobRun-instance-method" class="tooltip">
+      <span>enqueue(job_run : JobRun) : JobRun</span>
     enqueue</a>, 
     
   
@@ -557,8 +557,8 @@
     expires_in</a>, 
     
   
-    <a href="../Mosquito/Backend.html#finish%28task%3ATask%29-instance-method" class="tooltip">
-      <span>finish(task : Task)</span>
+    <a href="../Mosquito/Backend.html#finish%28job_run%3AJobRun%29-instance-method" class="tooltip">
+      <span>finish(job_run : JobRun)</span>
     finish</a>, 
     
   
@@ -572,14 +572,14 @@
     retrieve</a>, 
     
   
-    <a href="../Mosquito/Backend.html#schedule%28task%3ATask%2Catscheduled_time%3ATime%29%3ATask-instance-method" class="tooltip">
-      <span>schedule(task : Task, at scheduled_time : Time) : Task</span>
+    <a href="../Mosquito/Backend.html#schedule%28job_run%3AJobRun%2Catscheduled_time%3ATime%29%3AJobRun-instance-method" class="tooltip">
+      <span>schedule(job_run : JobRun, at scheduled_time : Time) : JobRun</span>
     schedule</a>, 
     
   
-    <a href="../Mosquito/Backend.html#scheduled_task_time%28task%3ATask%29%3AString%3F-instance-method" class="tooltip">
-      <span>scheduled_task_time(task : Task) : String?</span>
-    scheduled_task_time</a>, 
+    <a href="../Mosquito/Backend.html#scheduled_job_run_time%28job_run%3AJobRun%29%3AString%3F-instance-method" class="tooltip">
+      <span>scheduled_job_run_time(job_run : JobRun) : String?</span>
+    scheduled_job_run_time</a>, 
     
   
     <a href="../Mosquito/Backend.html#size%28include_dead%3ABool%3Dtrue%29%3AInt64-instance-method" class="tooltip">
@@ -592,8 +592,8 @@
     store</a>, 
     
   
-    <a href="../Mosquito/Backend.html#terminate%28task%3ATask%29-instance-method" class="tooltip">
-      <span>terminate(task : Task)</span>
+    <a href="../Mosquito/Backend.html#terminate%28job_run%3AJobRun%29-instance-method" class="tooltip">
+      <span>terminate(job_run : JobRun)</span>
     terminate</a>
     
   
@@ -921,12 +921,12 @@ Soft Deprecation isn't shown, but it's here so this will get cleaned up at some 
       </div>
     </div>
   
-    <div class="entry-detail" id="dequeue:Task?-instance-method">
+    <div class="entry-detail" id="dequeue:JobRun?-instance-method">
       <div class="signature">
         
-        def <strong>dequeue</strong> : <a href="../Mosquito/Task.html">Task</a>?
+        def <strong>dequeue</strong> : <a href="../Mosquito/JobRun.html">JobRun</a>?
 
-        <a class="method-permalink" href="#dequeue%3ATask%3F-instance-method">#</a>
+        <a class="method-permalink" href="#dequeue%3AJobRun%3F-instance-method">#</a>
       </div>
       
       <br/>
@@ -935,12 +935,12 @@ Soft Deprecation isn't shown, but it's here so this will get cleaned up at some 
       </div>
     </div>
   
-    <div class="entry-detail" id="deschedule:Array(Task)-instance-method">
+    <div class="entry-detail" id="deschedule:Array(JobRun)-instance-method">
       <div class="signature">
         
-        def <strong>deschedule</strong> : Array(<a href="../Mosquito/Task.html">Task</a>)
+        def <strong>deschedule</strong> : Array(<a href="../Mosquito/JobRun.html">JobRun</a>)
 
-        <a class="method-permalink" href="#deschedule%3AArray%28Task%29-instance-method">#</a>
+        <a class="method-permalink" href="#deschedule%3AArray%28JobRun%29-instance-method">#</a>
       </div>
       
       <br/>
@@ -1005,12 +1005,12 @@ Soft Deprecation isn't shown, but it's here so this will get cleaned up at some 
       </div>
     </div>
   
-    <div class="entry-detail" id="enqueue(task:Task):Task-instance-method">
+    <div class="entry-detail" id="enqueue(job_run:JobRun):JobRun-instance-method">
       <div class="signature">
         
-        def <strong>enqueue</strong>(task : <a href="../Mosquito/Task.html">Task</a>) : <a href="../Mosquito/Task.html">Task</a>
+        def <strong>enqueue</strong>(job_run : <a href="../Mosquito/JobRun.html">JobRun</a>) : <a href="../Mosquito/JobRun.html">JobRun</a>
 
-        <a class="method-permalink" href="#enqueue%28task%3ATask%29%3ATask-instance-method">#</a>
+        <a class="method-permalink" href="#enqueue%28job_run%3AJobRun%29%3AJobRun-instance-method">#</a>
       </div>
       
         <div class="doc">
@@ -1028,12 +1028,12 @@ Soft Deprecation isn't shown, but it's here so this will get cleaned up at some 
       </div>
     </div>
   
-    <div class="entry-detail" id="finish(task:Task)-instance-method">
+    <div class="entry-detail" id="finish(job_run:JobRun)-instance-method">
       <div class="signature">
         
-        def <strong>finish</strong>(task : <a href="../Mosquito/Task.html">Task</a>)
+        def <strong>finish</strong>(job_run : <a href="../Mosquito/JobRun.html">JobRun</a>)
 
-        <a class="method-permalink" href="#finish%28task%3ATask%29-instance-method">#</a>
+        <a class="method-permalink" href="#finish%28job_run%3AJobRun%29-instance-method">#</a>
       </div>
       
       <br/>
@@ -1084,12 +1084,26 @@ Soft Deprecation isn't shown, but it's here so this will get cleaned up at some 
       </div>
     </div>
   
-    <div class="entry-detail" id="schedule(task:Task,atscheduled_time:Time):Task-instance-method">
+    <div class="entry-detail" id="schedule(job_run:JobRun,atscheduled_time:Time):JobRun-instance-method">
       <div class="signature">
         
-        def <strong>schedule</strong>(task : <a href="../Mosquito/Task.html">Task</a>, at scheduled_time : Time) : <a href="../Mosquito/Task.html">Task</a>
+        def <strong>schedule</strong>(job_run : <a href="../Mosquito/JobRun.html">JobRun</a>, at scheduled_time : Time) : <a href="../Mosquito/JobRun.html">JobRun</a>
 
-        <a class="method-permalink" href="#schedule%28task%3ATask%2Catscheduled_time%3ATime%29%3ATask-instance-method">#</a>
+        <a class="method-permalink" href="#schedule%28job_run%3AJobRun%2Catscheduled_time%3ATime%29%3AJobRun-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="scheduled_job_run_time(job_run:JobRun):String?-instance-method">
+      <div class="signature">
+        
+        def <strong>scheduled_job_run_time</strong>(job_run : <a href="../Mosquito/JobRun.html">JobRun</a>) : String?
+
+        <a class="method-permalink" href="#scheduled_job_run_time%28job_run%3AJobRun%29%3AString%3F-instance-method">#</a>
       </div>
       
       <br/>
@@ -1112,20 +1126,6 @@ Soft Deprecation isn't shown, but it's here so this will get cleaned up at some 
       </div>
     </div>
   
-    <div class="entry-detail" id="scheduled_task_time(task:Task):String?-instance-method">
-      <div class="signature">
-        
-        def <strong>scheduled_task_time</strong>(task : <a href="../Mosquito/Task.html">Task</a>) : String?
-
-        <a class="method-permalink" href="#scheduled_task_time%28task%3ATask%29%3AString%3F-instance-method">#</a>
-      </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
     <div class="entry-detail" id="size(include_dead=true):Int64-instance-method">
       <div class="signature">
         
@@ -1140,12 +1140,12 @@ Soft Deprecation isn't shown, but it's here so this will get cleaned up at some 
       </div>
     </div>
   
-    <div class="entry-detail" id="terminate(task:Task)-instance-method">
+    <div class="entry-detail" id="terminate(job_run:JobRun)-instance-method">
       <div class="signature">
         
-        def <strong>terminate</strong>(task : <a href="../Mosquito/Task.html">Task</a>)
+        def <strong>terminate</strong>(job_run : <a href="../Mosquito/JobRun.html">JobRun</a>)
 
-        <a class="method-permalink" href="#terminate%28task%3ATask%29-instance-method">#</a>
+        <a class="method-permalink" href="#terminate%28job_run%3AJobRun%29-instance-method">#</a>
       </div>
       
       <br/>
