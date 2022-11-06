@@ -6,7 +6,7 @@ module Mosquito
 
     @[AlwaysInline]
     def self.redis
-      @@connection ||= ::Redis::PooledClient.new url: Mosquito.configuration.redis_url
+      @@connection ||= ::Redis::Client.new(URI.parse(Mosquito.configuration.redis_url.to_s))
     end
 
     @[AlwaysInline]
@@ -29,7 +29,8 @@ module Mosquito
     end
 
     def self.retrieve(key : String) : Hash(String, String)
-      redis.hgetall key
+      result = redis.hgetall(key).as(Array).map(&.to_s)
+      result.in_groups_of(2, "").to_h
     end
 
     # Overload required for crystal 1.1-1.2.
@@ -52,7 +53,7 @@ module Mosquito
     end
 
     def self.get(key : String, field : String) : String?
-      redis.hget key, field
+      redis.hget(key, field).as?(String)
     end
 
     def self.set(key : String, field : String, value : String) : String
@@ -65,7 +66,7 @@ module Mosquito
     end
 
     def self.increment(key : String, field : String, by value : Int32) : Int64
-      redis.hincrby key, field, value
+      redis.hincrby(key, field, value).as(Int64)
     end
 
     def self.expires_in(key : String) : Int64
@@ -95,22 +96,22 @@ module Mosquito
 
     # is this even a good idea?
     def self.flush : Nil
-      redis.flushall
+      redis.flushdb
     end
 
     def schedule(job_run : JobRun, at scheduled_time : Time) : JobRun
-      redis.zadd scheduled_q, scheduled_time.to_unix_ms, job_run.id
+      redis.zadd scheduled_q, scheduled_time.to_unix_ms.to_s, job_run.id
       job_run
     end
 
     def deschedule : Array(JobRun)
       time = Time.utc
-      overdue_job_runs = redis.zrangebyscore scheduled_q, 0, time.to_unix_ms
+      overdue_job_runs = redis.zrangebyscore(scheduled_q, "0", time.to_unix_ms.to_s).as(Array)
 
       return [] of JobRun unless overdue_job_runs.any?
 
       overdue_job_runs.compact_map do |job_run_id|
-        redis.zrem scheduled_q, job_run_id
+        redis.zrem scheduled_q, job_run_id.to_s
         JobRun.retrieve job_run_id.as(String)
       end
     end
@@ -122,7 +123,7 @@ module Mosquito
 
     def dequeue : JobRun?
       if id = redis.rpoplpush waiting_q, pending_q
-        JobRun.retrieve id
+        JobRun.retrieve id.to_s
       end
     end
 
@@ -148,11 +149,11 @@ module Mosquito
       queues << dead_q if include_dead
 
       queue_size = queues
-        .map {|key| redis.llen key }
+        .map { |key| redis.llen(key).as(Int64) }
         .reduce { |sum, i| sum + i }
 
-      scheduled_size = redis.zcount scheduled_q, 0, "+inf"
-      queue_size + scheduled_size
+      scheduled_size = redis.zcount scheduled_q, "0", "+inf"
+      queue_size + scheduled_size.as(Int64)
     end
 
     {% for name in ["waiting", "scheduled", "pending", "dead"] %}
@@ -161,9 +162,9 @@ module Mosquito
         type = redis.type key
 
         if type == "list"
-          redis.lrange(key, 0, -1).map(&.as(String))
+          redis.lrange(key, "0", "-1").as(Array(Redis::Value)).map(&.as(String))
         elsif type == "zset"
-          redis.zrange(key, 0, -1).map(&.as(String))
+          redis.zrange(key, 0, -1).as(Array(Redis::Value)).map(&.as(String))
         elsif type == "none"
           [] of String
         else
@@ -173,7 +174,7 @@ module Mosquito
     {% end %}
 
     def scheduled_job_run_time(job_run : JobRun) : String?
-      redis.zscore scheduled_q, job_run.id
+      redis.zscore(scheduled_q, job_run.id).as?(String)
     end
   end
 end
