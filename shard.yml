@@ -18,7 +18,7 @@ targets:
 dependencies:
   redis:
     github: jgaskins/redis
-    branch: master
+    version: ~> 0.6.1
 
 development_dependencies:
   minitest:

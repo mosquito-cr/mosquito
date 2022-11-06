@@ -100,7 +100,7 @@ module Mosquito
     end
 
     def schedule(job_run : JobRun, at scheduled_time : Time) : JobRun
-      redis.zadd scheduled_q, scheduled_time.to_unix_ms, job_run.id
+      redis.zadd scheduled_q, scheduled_time.to_unix_ms.to_s, job_run.id
       job_run
     end
 
