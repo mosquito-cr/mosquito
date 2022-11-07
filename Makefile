@@ -8,8 +8,8 @@ all: test
 tests:=$(shell find ./test -iname "*_test.cr")
 .PHONY: test
 test:
-	crystal run test/test_helper.cr ${tests} -- --chaos
+	crystal run --error-trace test/test_helper.cr ${tests} -- --chaos
 
 .PHONY: demo
 demo:
-	crystal run demo/run.cr
+	crystal run demo/run.cr --error-trace

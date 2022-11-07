@@ -1,10 +1,10 @@
 name: mosquito
-version: 1.0.0.rc1
+version: 1.0.0.rc3
 
 authors:
   - robacarp
 
-crystal: '>= 0.36.1, < 2.0.0'
+crystal: '>= 1.1'
 
 license: MIT
 
