@@ -35,24 +35,24 @@ module Mosquito
       Log.warn { "Coordination activities took longer than LockTTL (#{duration} > #{LockTTL}) " }
     end
 
-    private def enqueue_periodic_job_runs
+    private def enqueue_periodic_jobs
       run_at_most every: 1.second, label: :enqueue_periodic_job_runs do |now|
         Base.scheduled_job_runs.each do |scheduled_job_run|
           enqueued = scheduled_job_run.try_to_execute
 
-          Log.for("enqueue_periodic_job_runs").debug {
+          Log.for("enqueue_periodic_jobs").debug {
             "enqueued #{scheduled_job_run.class}" if enqueued
           }
         end
       end
     end
 
-    private def enqueue_delayed_job_runs
+    private def enqueue_delayed_jobs
       run_at_most every: 1.second, label: :enqueue_delayed_job_runs do |t|
         queue_list.each do |q|
-          overdue_job_runs = q.dequeue_scheduled
+          overdue_jobs = q.dequeue_scheduled
           next unless overdue_job_runs.any?
-          Log.for("enqueue_delayed_job_runs").info { "Found #{overdue_job_runs.size} delayed job runs in #{q.name}" }
+          Log.for("enqueue_delayed_jobs").info { "#{overdue_job_runs.size} delayed jobs ready in #{q.name}" }
 
           overdue_job_runs.each do |job_run|
             q.enqueue job_run
