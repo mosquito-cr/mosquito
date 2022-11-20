@@ -7,10 +7,12 @@ module Mosquito
 
   class Configuration
     property redis_url : String?
+
     property idle_wait : Time::Span = 100.milliseconds
     property successful_job_ttl : Int32 = 1
     property failed_job_ttl : Int32 = 86400
 
+    @[Deprecated("cron scheduling is now handled automatically")]
     property run_cron_scheduler : Bool = true
     property run_from : Array(String) = [] of String
     property backend : Mosquito::Backend.class = Mosquito::RedisBackend
