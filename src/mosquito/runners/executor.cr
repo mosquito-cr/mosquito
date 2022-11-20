@@ -1,4 +1,4 @@
-module Mosquito
+module Mosquito::Runners
   # An Executor is responsible for building Job classes with deserialized
   # parameters and calling #run on them. It measures the time it takes to
   # run a job and provides detailed log messages about the current status.

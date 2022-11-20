@@ -8,26 +8,33 @@ module Mosquito
     class_property keep_running : Bool = true
 
     def self.start
-      instance = new
       Log.notice { "Mosquito is buzzing..." }
-
-      while @@keep_running
-        instance.run
-      end
+      instance.run
     end
 
     def self.stop
       Log.notice { "Mosquito is shutting down..." }
-      @@keep_running = false
+      self.keep_running = false
+      instance.stop
+    end
+
+    private def self.instance : self
+      @@instance ||= new
     end
 
     def initialize
       Mosquito.configuration.validate
-      @overseer = Overseer.new
+      @overseer = Runners::Overseer.new
     end
 
     def run
-      @overseer.run
+      spawn do
+        @overseer.run
+      end
+    end
+
+    def stop
+      @overseer.stop
     end
   end
 end

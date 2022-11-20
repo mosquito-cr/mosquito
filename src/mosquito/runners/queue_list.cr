@@ -1,4 +1,4 @@
-module Mosquito
+module Mosquito::Runners
   # QueueList handles searching the redis keyspace for named queues.
   class QueueList
     include RunAtMost

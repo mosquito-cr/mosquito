@@ -1,4 +1,4 @@
-module Mosquito
+module Mosquito::Runners
   # primer? loader?
   class Coordinator
     include RunAtMost
@@ -17,8 +17,8 @@ module Mosquito
 
     def bloop
       only_if_coordinator do
-        enqueue_periodic_job_runs
-        enqueue_delayed_job_runs
+        enqueue_periodic_jobs
+        enqueue_delayed_jobs
       end
     end
 
@@ -53,10 +53,10 @@ module Mosquito
       run_at_most every: 1.second, label: :enqueue_delayed_job_runs do |t|
         queue_list.each do |q|
           overdue_jobs = q.dequeue_scheduled
-          next unless overdue_job_runs.any?
-          Log.for("enqueue_delayed_jobs").info { "#{overdue_job_runs.size} delayed jobs ready in #{q.name}" }
+          next unless overdue_jobs.any?
+          Log.for("enqueue_delayed_jobs").info { "#{overdue_jobs.size} delayed jobs ready in #{q.name}" }
 
-          overdue_job_runs.each do |job_run|
+          overdue_jobs.each do |job_run|
             q.enqueue job_run
           end
         end

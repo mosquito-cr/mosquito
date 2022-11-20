@@ -1,4 +1,4 @@
-module Mosquito
+module Mosquito::Runners
   # The Overseer is responsible for looking managing:
   # - a `Coordinator`
   # - an `Executor`
@@ -25,14 +25,23 @@ module Mosquito
       @coordinator = Coordinator.new queue_list
       @executor = Executor.new queue_list
 
-      Log.info { "Worker [#{coordinator.instance_id}] reporting for duty" }
-
       @queues = [] of Queue
       @keep_running = true
     end
 
+    private def worker_id
+      "Worker [#{coordinator.instance_id}]"
+    end
+
+    def stop
+      Log.info { worker_id + " willn't take any more work" }
+      @keep_running = false
+    end
+
     # Infinite loop
     def run
+      Log.info { worker_id + " taking action" }
+
       while keep_running
         delta = Time.measure do
           queue_list.fetch
@@ -44,6 +53,8 @@ module Mosquito
           sleep(idle_wait - delta)
         end
       end
+
+      Log.info { worker_id + " finished" }
     end
   end
 end
