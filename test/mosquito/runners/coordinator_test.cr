@@ -3,7 +3,7 @@ require "../../test_helper"
 describe "Mosquito::Runners::Coordinator" do
   getter(queue : Queue) { test_job.class.queue }
   getter(test_job) { QueuedTestJob.new }
-  getter(queue_list) { Mosquito::Runners::MockQueueList.new }
+  getter(queue_list) { MockQueueList.new }
   getter(coordinator) { TestableCoordinator.new queue_list }
   getter(enqueue_time) { Time.utc }
 
