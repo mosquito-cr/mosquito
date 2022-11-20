@@ -19,7 +19,7 @@ module Mosquito
     def self.load(connection)
       SCRIPTS.each do |name, script|
         sha = @@script_sha[name] = connection.script_load script
-        puts "loading script : #{name} => #{sha}"
+        Log.info { "loading script : #{name} => #{sha}" }
       end
     end
 

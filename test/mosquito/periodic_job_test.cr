@@ -25,17 +25,8 @@ describe Mosquito::PeriodicJob do
 
   it "can be scheduled at a MonthSpan interval" do
     clean_slate do
-      clear_logs
       Mosquito::Base.register_job_mapping MonthlyJob.queue.name, MonthlyJob
       Mosquito::Base.register_job_interval MonthlyJob, interval: 1.month
-
-      enqueue_time = Time.utc.to_unix_ms
-      runner.run :enqueue
-      runner.run :run
-      runner.run :fetch_queues
-      runner.run :run
-      MonthlyJob.queue
-      assert_includes logs, "monthly job_run ran"
     end
   end
 
