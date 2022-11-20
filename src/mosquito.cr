@@ -1,4 +1,6 @@
-require "./mosquito/*"
+require "./mosquito/runners/base"
+
+require "./mosquito/**"
 
 module Mosquito
   def self.backend
