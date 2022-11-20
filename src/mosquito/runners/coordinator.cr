@@ -1,6 +1,8 @@
 module Mosquito
   # primer? loader?
-  class Coordinator < Runners::Base
+  class Coordinator
+    include RunAtMost
+
     Log = ::Log.for self
     LockTTL = 10.seconds
 

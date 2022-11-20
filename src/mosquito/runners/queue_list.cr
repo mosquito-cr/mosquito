@@ -1,5 +1,8 @@
 module Mosquito
-  class QueueList < Runners::Base
+  # QueueList handles searching the redis keyspace for named queues.
+  class QueueList
+    include RunAtMost
+
     def initialize
       @queues = [] of Queue
     end

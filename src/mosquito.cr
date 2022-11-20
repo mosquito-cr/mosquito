@@ -1,4 +1,4 @@
-require "./mosquito/runners/base"
+require "./mosquito/runners/run_at_most"
 
 require "./mosquito/**"
 

@@ -23,11 +23,11 @@ module Mosquito
 
     def initialize
       Mosquito.configuration.validate
-      @bacon = Bacon.new
+      @overseer = Overseer.new
     end
 
     def run
-      @bacon.run
+      @overseer.run
     end
   end
 end

@@ -1,5 +1,13 @@
 module Mosquito
-  class Executor < Runners::Base
+  # An Executor is responsible for building Job classes with deserialized
+  # parameters and calling #run on them. It measures the time it takes to
+  # run a job and provides detailed log messages about the current status.
+  #
+  # Executor#deqeue_and_run_jobs is the entrypoint and shoud be treated as
+  # if it will return only after a relative eternity.
+  class Executor
+    include RunAtMost
+
     Log = ::Log.for self
 
     # How long a job config is persisted after success

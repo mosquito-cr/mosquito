@@ -1,5 +1,5 @@
 module Mosquito::Runners
-  abstract class Base
+  module RunAtMost
     getter execution_timestamps = {} of Symbol => Time
 
     private def run_at_most(*, every interval, label name, &block)
