@@ -1,12 +1,46 @@
 require "redis"
 
 module Mosquito
+  module Scripts
+    SCRIPTS = {
+      :remove_matching_key => <<-LUA
+        if redis.call("get",KEYS[1]) == ARGV[1] then
+            return redis.call("del",KEYS[1])
+        else
+            return 0
+        end
+      LUA
+    }
+
+    @@script_sha = {} of Symbol => String
+
+    ## todo make this idempotent?
+    # todo make this re-write the functions if the sha doesnt match?
+    def self.load(connection)
+      SCRIPTS.each do |name, script|
+        sha = @@script_sha[name] = connection.script_load script
+        puts "loading script : #{name} => #{sha}"
+      end
+    end
+
+    {% for name, script in SCRIPTS %}
+      def self.{{ name.id }}
+        @@script_sha[:{{ name.id }}]
+      end
+    {% end %}
+  end
+
   class RedisBackend < Mosquito::Backend
     QUEUES = %w(waiting scheduled pending dead)
 
     @[AlwaysInline]
     def self.redis
-      @@connection ||= ::Redis::Client.new(URI.parse(Mosquito.configuration.redis_url.to_s))
+      load_scripts = @@connection.nil?
+
+      connection = @@connection ||= ::Redis::Client.new(URI.parse(Mosquito.configuration.redis_url.to_s))
+
+      Scripts.load(connection) if load_scripts
+      connection
     end
 
     @[AlwaysInline]
@@ -97,6 +131,15 @@ module Mosquito
     # is this even a good idea?
     def self.flush : Nil
       redis.flushdb
+    end
+
+    def self.lock?(key : String, value : String, ttl : Time::Span) : Bool
+      response = redis.set key, value, ex: ttl.to_i, nx: true
+      response == "OK"
+    end
+
+    def self.unlock(key : String, value : String)
+      redis.evalsha Scripts.remove_matching_key, keys: [key], args: [value]
     end
 
     def schedule(job_run : JobRun, at scheduled_time : Time) : JobRun

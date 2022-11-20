@@ -3,6 +3,7 @@ require "colorize"
 module Mosquito
   class Runner
     Log = ::Log.for self
+    LockTTL = 10.seconds
 
     # Minimum time in seconds to wait between checking for jobs.
     property idle_wait : Time::Span
@@ -17,10 +18,12 @@ module Mosquito
     class_property keep_running : Bool = true
 
     getter queues, start_time
+    getter lock_key : String
+    getter instance_id : String
 
     def self.start
-      Log.notice { "Mosquito is buzzing..." }
       instance = new
+      Log.notice { "Mosquito is buzzing..." }
 
       while @@keep_running
         instance.run
@@ -42,13 +45,19 @@ module Mosquito
       @queues = [] of Queue
       @start_time = 0.seconds
       @execution_timestamps = {} of Symbol => Time
+      @lock_key = Backend.build_key :coordinator, :football
+      @instance_id = Random::Secure.hex(8)
     end
 
     def run
       set_start_time
       fetch_queues
-      enqueue_periodic_job_runs
-      enqueue_delayed_job_runs
+
+      only_if_coordinator do
+        enqueue_periodic_job_runs
+        enqueue_delayed_job_runs
+      end
+
       dequeue_and_run_job_runs
       idle
     end
@@ -88,11 +97,25 @@ module Mosquito
       end
     end
 
+    def only_if_coordinator : Nil
+      duration = 0.seconds
+
+      if Mosquito.backend.lock? lock_key, instance_id, LockTTL
+        duration = Time.measure do
+          yield
+        end
+      end
+
+      return unless duration > LockTTL
+      Log.warn { "Coordination activities took longer than LockTTL (#{duration} > #{LockTTL}) " }
+    end
+
     private def filter_queues(present_queues : Array(Mosquito::Queue))
       permitted_queues = Mosquito.configuration.run_from
       return present_queues if permitted_queues.empty?
       filtered_queues = present_queues.select do |queue|
         permitted_queues.includes? queue.name
+        Mosquito.backend.unlock lock_key, instance_id
       end
 
       Log.for("filter_queues").debug {

@@ -36,6 +36,8 @@ module Mosquito
       abstract def increment(key : String, field : String, by value : Int32) : Int64
 
       abstract def flush : Nil
+
+      abstract def lock?(key : String, value : String, ttl : Time::Span) : Bool
     end
 
     macro inherited
