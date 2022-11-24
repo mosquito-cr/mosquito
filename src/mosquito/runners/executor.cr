@@ -23,11 +23,11 @@ module Mosquito::Runners
 
     def dequeue_and_run_jobs
       queue_list.each do |q|
-        run_next_job_run q
+        run_next_job q
       end
     end
 
-    private def run_next_job_run(q : Queue)
+    def run_next_job(q : Queue)
       job_run = q.dequeue
       return unless job_run
 
@@ -43,45 +43,35 @@ module Mosquito::Runners
         job_run.delete in: successful_job_ttl
 
       else
+        message = String::Builder.new
+        message << "Failure: ".colorize.red
+        message << job_run
+        message << " failed, taking "
+        message << time_with_units duration
+        message << " and "
+
         if job_run.rescheduleable?
           next_execution = Time.utc + job_run.reschedule_interval
-
-          Log.notice {
-            String.build do |s|
-              s << "Failure: ".colorize.red
-              s << job_run
-              s << " failed, taking "
-              s << time_with_units duration
-              s << " and "
-              s << "will run again".colorize.cyan
-              s << " in "
-              s << job_run.reschedule_interval
-              s << " (at "
-              s << next_execution
-              s << ")"
-            end
-          }
-
           q.reschedule job_run, next_execution
-        else
-          Log.notice {
-            String.build do |s|
-              s << "Failure: ".colorize.red
-              s << job_run
-              s << " failed, taking "
-              s << time_with_units duration
-              s << " and "
-              s << "cannot be rescheduled".colorize.yellow
-            end
-          }
 
+          message << "will run again".colorize.cyan
+          message << " in "
+          message << job_run.reschedule_interval
+          message << " (at "
+          message << next_execution
+          message << ")"
+        else
           q.banish job_run
           job_run.delete in: failed_job_ttl
+
+          message << "cannot be rescheduled".colorize.yellow
         end
+
+        Log.warn { message.to_s }
       end
     end
 
-    private def time_with_units(seconds : Float64)
+    def time_with_units(seconds : Float64)
       if seconds > 0.1
         "#{(seconds).*(100).trunc./(100)}s".colorize.red
       elsif seconds > 0.001
