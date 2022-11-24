@@ -20,7 +20,7 @@ module Mosquito
 
       TEXT
 
-      error += @@mapping.keys.map { |k| "- #{k}" }.join "\n"
+      error += @@mapping.map { |k,v| "#{k} => #{v}" }.join "\n"
       error += "\n\n"
 
       raise KeyError.new(error)
