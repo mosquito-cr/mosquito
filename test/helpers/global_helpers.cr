@@ -8,7 +8,7 @@ module TestHelpers
       backend = Mosquito.backend
       backend.flush
 
-      TestingBackend.instance.clear
+      TestingLogBackend.instance.clear
       yield
     end
   end

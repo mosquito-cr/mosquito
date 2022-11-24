@@ -1,4 +1,4 @@
-class TestingBackend < Log::MemoryBackend
+class TestingLogBackend < Log::MemoryBackend
   def self.instance
     @@instance ||= new
   end
@@ -10,7 +10,7 @@ end
 
 class Minitest::Test
   def logs
-    TestingBackend.instance.entries
+    TestingLogBackend.instance.entries
       .map(&.message)
       .map(&.gsub(/\e\[\d+(;\d+)?m/, "")) # remove color codes
   end
@@ -38,8 +38,8 @@ class Minitest::Test
   end
 
   def clear_logs
-    TestingBackend.instance.clear
+    TestingLogBackend.instance.clear
   end
 end
 
-Log.builder.bind "*", :debug, TestingBackend.instance
+Log.builder.bind "*", :debug, TestingLogBackend.instance
