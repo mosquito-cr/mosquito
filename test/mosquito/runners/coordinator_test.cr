@@ -4,7 +4,7 @@ describe "Mosquito::Runners::Coordinator" do
   getter(queue : Queue) { test_job.class.queue }
   getter(test_job) { QueuedTestJob.new }
   getter(queue_list) { MockQueueList.new }
-  getter(coordinator) { TestableCoordinator.new queue_list }
+  getter(coordinator) { MockCoordinator.new queue_list }
   getter(enqueue_time) { Time.utc }
 
   def enqueue_job_run : JobRun
@@ -21,34 +21,63 @@ describe "Mosquito::Runners::Coordinator" do
   end
 
   describe "only_if_coordinator" do
+    getter(coordinator1) { Mosquito::Runners::Coordinator.new queue_list }
+    getter(coordinator2) { Mosquito::Runners::Coordinator.new queue_list }
+
     it "gets a lock from the backend" do
-      skip
+      gotten = false
+
+      coordinator1.only_if_coordinator do
+        gotten = true
+      end
+
+      assert gotten
     end
 
     it "fails to get a lock from the backend" do
-      skip
+      gotten = false
+
+      coordinator1.only_if_coordinator do
+        coordinator2.only_if_coordinator do
+          gotten = true
+        end
+      end
+
+      refute gotten
     end
 
     it "releases the lock from the backend" do
-      skip
+      gotten = false
+
+      coordinator1.only_if_coordinator do
+      end
+
+      coordinator2.only_if_coordinator do
+        gotten = true
+      end
+
+      assert gotten
     end
 
     it "sets a ttl on the lock" do
-      skip
+      coordinator1.only_if_coordinator do
+        assert Mosquito.backend.expires_in(coordinator.lock_key) > 0
+      end
     end
 
-    # Broken, something with the compiler not knowing how to resolve super
+    # todo: this doesn't work
     # it "warns when coordination takes too long", focus: true do
     #   clear_logs
-    #   coordinator.always_coordinator!
+    #   Timecop.safe_mode = false
 
     #   Timecop.freeze(Time.utc) do
-    #     coordinator.only_if_coordinator do
+    #     coordinator1.only_if_coordinator do
     #       Timecop.travel Mosquito::Runners::Coordinator::LockTTL.from_now
     #       Timecop.travel 1.second.from_now
     #     end
     #   end
 
+    #   Timecop.safe_mode = true
     #   assert_logs_match "took longer than LockTTL"
     # end
   end
