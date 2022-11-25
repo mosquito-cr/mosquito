@@ -65,21 +65,19 @@ describe "Mosquito::Runners::Coordinator" do
       end
     end
 
-    # todo: this doesn't work
-    # it "warns when coordination takes too long", focus: true do
-    #   clear_logs
-    #   Timecop.safe_mode = false
+    it "warns when coordination takes too long" do
+      clear_logs
 
-    #   Timecop.freeze(Time.utc) do
-    #     coordinator1.only_if_coordinator do
-    #       Timecop.travel Mosquito::Runners::Coordinator::LockTTL.from_now
-    #       Timecop.travel 1.second.from_now
-    #     end
-    #   end
+      Timecop.scale 100 do
+        # 1 actual second is measured as 100 seconds
 
-    #   Timecop.safe_mode = true
-    #   assert_logs_match "took longer than LockTTL"
-    # end
+        coordinator1.only_if_coordinator do
+          sleep 0.1 # scaled to 10s by Timecop
+        end
+      end
+
+      assert_logs_match "took longer than LockTTL"
+    end
   end
 
   describe "enqueue_periodic_jobs" do
