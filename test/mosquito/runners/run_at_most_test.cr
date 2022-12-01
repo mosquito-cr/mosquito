@@ -50,7 +50,7 @@ describe "Mosquito::yielder#run_at_most" do
 
     # Should increment
     # Move ahead the rest of the second
-    moment += 1.second
+    moment += 1.1.seconds
     Timecop.freeze(moment) do |time|
       incrementy.call
     end
