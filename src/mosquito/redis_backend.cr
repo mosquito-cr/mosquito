@@ -1,4 +1,5 @@
 require "redis"
+require "digest/sha1"
 
 module Mosquito
   module Scripts
@@ -14,8 +15,6 @@ module Mosquito
 
     @@script_sha = {} of Symbol => String
 
-    ## todo make this idempotent?
-    # todo make this re-write the functions if the sha doesnt match?
     def self.load(connection)
       SCRIPTS.each do |name, script|
         sha = @@script_sha[name] = connection.script_load script
@@ -24,6 +23,9 @@ module Mosquito
     end
 
     {% for name, script in SCRIPTS %}
+      @@script_sha[:{{ name.id }}] = Digest::SHA1.hexdigest({{ script }})
+
+      @[AlwaysInline]
       def self.{{ name.id }}
         @@script_sha[:{{ name.id }}]
       end
@@ -32,6 +34,21 @@ module Mosquito
 
   class RedisBackend < Mosquito::Backend
     QUEUES = %w(waiting scheduled pending dead)
+
+    {% for name, script in Scripts::SCRIPTS %}
+      def self.{{ name.id }}(*, keys = [] of String, args = [] of String, loadscripts = true)
+        script = {{ script }}
+        digest = Scripts.{{name.id}}
+        redis.evalsha digest, keys: keys, args: args
+      rescue exception : Redis::Error
+        raise exception unless exception.message.try(&.starts_with? "NOSCRIPT")
+        raise exception unless loadscripts
+
+        Log.for("{{ name.id }}").warn { "Redis Scripts have gone missing, reloading" }
+        Scripts.load redis
+        {{ name.id }} keys: keys, args: args, loadscripts: false
+      end
+    {% end %}
 
     @[AlwaysInline]
     def self.redis
@@ -139,7 +156,7 @@ module Mosquito
     end
 
     def self.unlock(key : String, value : String)
-      redis.evalsha Scripts.remove_matching_key, keys: [key], args: [value]
+      remove_matching_key keys: [key], args: [value]
     end
 
     def schedule(job_run : JobRun, at scheduled_time : Time) : JobRun
