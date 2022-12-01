@@ -1,14 +1,14 @@
 require "../test_helper"
 
 describe Queue do
-  let(:name) { "test#{rand(1000)}" }
+  getter(name) { "test#{rand(1000)}" }
 
-  let(:test_queue) do
+  getter(test_queue) do
     Mosquito::Queue.new(name)
   end
 
   @job_run : Mosquito::JobRun?
-  let(:job_run) do
+  getter(job_run) do
     Mosquito::JobRun.new("mock_job_run").tap(&.store)
   end
 

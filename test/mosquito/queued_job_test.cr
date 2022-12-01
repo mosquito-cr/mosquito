@@ -1,8 +1,8 @@
 require "../test_helper"
 
 describe Mosquito::QueuedJob do
-  let(:runner) { Mosquito::TestableRunner.new }
-  let(:name) { "test#{rand(1000)}" }
+  getter(runner) { Mosquito::TestableRunner.new }
+  getter(name) { "test#{rand(1000)}" }
   getter(job : QueuedTestJob) { QueuedTestJob.new }
   getter(queue : Queue) { QueuedTestJob.queue }
 

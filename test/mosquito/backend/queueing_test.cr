@@ -1,10 +1,10 @@
 require "../../test_helper"
 
 describe "Backend Queues" do
-  let(:backend_name) { "test#{rand(1000)}" }
+  getter backend_name : String { "test#{rand(1000)}" }
   getter queue : Mosquito::Backend { backend.named backend_name }
 
-  let(:job) { QueuedTestJob.new }
+  getter job : QueuedTestJob { QueuedTestJob.new }
   getter job_run : Mosquito::JobRun { Mosquito::JobRun.new("mock_job_run") }
 
   describe "queue_names" do

@@ -1,7 +1,7 @@
 require "../test_helper"
 
 describe Mosquito::PeriodicJob do
-  let(:runner) { Mosquito::TestableRunner.new }
+  getter(runner) { Mosquito::TestableRunner.new }
 
   it "correctly renders job_type" do
     assert_equal "periodic_test_job", PeriodicTestJob.job_type

@@ -2,7 +2,7 @@ require "../../test_helper"
 
 describe "job_run rescheduling" do
   @failing_job_run : Mosquito::JobRun?
-  let(:failing_job_run) { create_job_run "failing_job" }
+  getter failing_job_run : Mosquito::JobRun { create_job_run "failing_job" }
 
   it "calculates reschedule interval correctly" do
     intervals = {
