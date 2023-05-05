@@ -1,6 +1,6 @@
 <img src="logo/logotype_horizontal.svg" alt="mosquito">
 
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/mosquito-cr/mosquito/Test%20and%20Demo?style=for-the-badge)
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/mosquito-cr/mosquito/ci.yml?branch=master&style=for-the-badge)
 [![GitHub](https://img.shields.io/github/license/mosquito-cr/mosquito.svg?style=for-the-badge)](https://tldrlegal.com/license/mit-license)
 
 <img src="https://mosquito-cr.github.io/images/amber-mosquito-small.png" align="right">
