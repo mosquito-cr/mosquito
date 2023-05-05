@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Crystal Docs 1.5.0">
-<meta name="crystal_docs.project_version" content="1.0.0.rc3">
+<meta name="generator" content="Crystal Docs 1.7.3">
+<meta name="crystal_docs.project_version" content="1.0.0">
 <meta name="crystal_docs.project_name" content="mosquito">
 
 
@@ -13,7 +13,7 @@
 <script type="text/javascript" src="../js/doc.js"></script>
 
   <meta name="repository-name" content="mosquito">
-  <title>Mosquito::RedisBackend - mosquito 1.0.0.rc3</title>
+  <title>Mosquito::RedisBackend - mosquito 1.0.0</title>
   <script type="text/javascript">
     CrystalDocs.base_path = "../";
   </script>
@@ -39,7 +39,7 @@
       </h1>
 
       <span class="project-version">
-        1.0.0.rc3
+        1.0.0
       </span>
     </div>
   </div>
@@ -344,7 +344,7 @@
       </li>
     
       <li class="entry-summary">
-        <a href="#get%28key%3AString%2Cfield%3AString%29%3AString%3F-class-method" class="signature"><strong>.get</strong>(key : String, field : String) : String?</a>
+        <a href="#get%28key%3AString%2Cfield%3AString%29%3AString%7CNil-class-method" class="signature"><strong>.get</strong>(key : String, field : String) : String | Nil</a>
         
       </li>
     
@@ -408,7 +408,7 @@
       </li>
     
       <li class="entry-summary">
-        <a href="#dequeue%3AJobRun%3F-instance-method" class="signature"><strong>#dequeue</strong> : JobRun?</a>
+        <a href="#dequeue%3AJobRun%7CNil-instance-method" class="signature"><strong>#dequeue</strong> : JobRun | Nil</a>
         
       </li>
     
@@ -470,7 +470,7 @@
       </li>
     
       <li class="entry-summary">
-        <a href="#scheduled_job_run_time%28job_run%3AJobRun%29%3AString%3F-instance-method" class="signature"><strong>#scheduled_job_run_time</strong>(job_run : JobRun) : String?</a>
+        <a href="#scheduled_job_run_time%28job_run%3AJobRun%29%3AString%7CNil-instance-method" class="signature"><strong>#scheduled_job_run_time</strong>(job_run : JobRun) : String | Nil</a>
         
       </li>
     
@@ -517,8 +517,8 @@
     delete</a>, 
     
   
-    <a href="../Mosquito/Backend.html#dequeue%3AJobRun%3F-instance-method" class="tooltip">
-      <span>dequeue : JobRun?</span>
+    <a href="../Mosquito/Backend.html#dequeue%3AJobRun%7CNil-instance-method" class="tooltip">
+      <span>dequeue : JobRun | Nil</span>
     dequeue</a>, 
     
   
@@ -577,8 +577,8 @@
     schedule</a>, 
     
   
-    <a href="../Mosquito/Backend.html#scheduled_job_run_time%28job_run%3AJobRun%29%3AString%3F-instance-method" class="tooltip">
-      <span>scheduled_job_run_time(job_run : JobRun) : String?</span>
+    <a href="../Mosquito/Backend.html#scheduled_job_run_time%28job_run%3AJobRun%29%3AString%7CNil-instance-method" class="tooltip">
+      <span>scheduled_job_run_time(job_run : JobRun) : String | Nil</span>
     scheduled_job_run_time</a>, 
     
   
@@ -769,12 +769,12 @@ Soft Deprecation isn't shown, but it's here so this will get cleaned up at some 
       </div>
     </div>
   
-    <div class="entry-detail" id="get(key:String,field:String):String?-class-method">
+    <div class="entry-detail" id="get(key:String,field:String):String|Nil-class-method">
       <div class="signature">
         
-        def self.<strong>get</strong>(key : String, field : String) : String?
+        def self.<strong>get</strong>(key : String, field : String) : String | Nil
 
-        <a class="method-permalink" href="#get%28key%3AString%2Cfield%3AString%29%3AString%3F-class-method">#</a>
+        <a class="method-permalink" href="#get%28key%3AString%2Cfield%3AString%29%3AString%7CNil-class-method">#</a>
       </div>
       
       <br/>
@@ -921,12 +921,12 @@ Soft Deprecation isn't shown, but it's here so this will get cleaned up at some 
       </div>
     </div>
   
-    <div class="entry-detail" id="dequeue:JobRun?-instance-method">
+    <div class="entry-detail" id="dequeue:JobRun|Nil-instance-method">
       <div class="signature">
         
-        def <strong>dequeue</strong> : <a href="../Mosquito/JobRun.html">JobRun</a>?
+        def <strong>dequeue</strong> : <a href="../Mosquito/JobRun.html">JobRun</a> | Nil
 
-        <a class="method-permalink" href="#dequeue%3AJobRun%3F-instance-method">#</a>
+        <a class="method-permalink" href="#dequeue%3AJobRun%7CNil-instance-method">#</a>
       </div>
       
       <br/>
@@ -1098,12 +1098,12 @@ Soft Deprecation isn't shown, but it's here so this will get cleaned up at some 
       </div>
     </div>
   
-    <div class="entry-detail" id="scheduled_job_run_time(job_run:JobRun):String?-instance-method">
+    <div class="entry-detail" id="scheduled_job_run_time(job_run:JobRun):String|Nil-instance-method">
       <div class="signature">
         
-        def <strong>scheduled_job_run_time</strong>(job_run : <a href="../Mosquito/JobRun.html">JobRun</a>) : String?
+        def <strong>scheduled_job_run_time</strong>(job_run : <a href="../Mosquito/JobRun.html">JobRun</a>) : String | Nil
 
-        <a class="method-permalink" href="#scheduled_job_run_time%28job_run%3AJobRun%29%3AString%3F-instance-method">#</a>
+        <a class="method-permalink" href="#scheduled_job_run_time%28job_run%3AJobRun%29%3AString%7CNil-instance-method">#</a>
       </div>
       
       <br/>

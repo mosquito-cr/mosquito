@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Crystal Docs 1.5.0">
-<meta name="crystal_docs.project_version" content="1.0.0.rc3">
+<meta name="generator" content="Crystal Docs 1.7.3">
+<meta name="crystal_docs.project_version" content="1.0.0">
 <meta name="crystal_docs.project_name" content="mosquito">
 
 
@@ -13,7 +13,7 @@
 <script type="text/javascript" src="../js/doc.js"></script>
 
   <meta name="repository-name" content="mosquito">
-  <title>Mosquito::JobRun - mosquito 1.0.0.rc3</title>
+  <title>Mosquito::JobRun - mosquito 1.0.0</title>
   <script type="text/javascript">
     CrystalDocs.base_path = "../";
   </script>
@@ -39,7 +39,7 @@
       </h1>
 
       <span class="project-version">
-        1.0.0.rc3
+        1.0.0
       </span>
     </div>
   </div>
@@ -302,7 +302,7 @@ JobRuns know how to:</p>
   <ul class="list-summary">
     
       <li class="entry-summary">
-        <a href="#new%28type%3AString%2Cenqueue_time%3ATime%3DTime.utc%2Cid%3AString%3F%3Dnil%2Cretry_count%3AInt32%3D0%29-class-method" class="signature"><strong>.new</strong>(type : String, enqueue_time : Time = <span class="t">Time</span>.utc, id : String? = <span class="n">nil</span>, retry_count : Int32 = <span class="n">0</span>)</a>
+        <a href="#new%28type%3AString%2Cenqueue_time%3ATime%3DTime.utc%2Cid%3AString%7CNil%3Dnil%2Cretry_count%3AInt32%3D0%29-class-method" class="signature"><strong>.new</strong>(type : String, enqueue_time : Time = <span class="t">Time</span>.utc, id : String | Nil = <span class="n">nil</span>, retry_count : Int32 = <span class="n">0</span>)</a>
         
       </li>
     
@@ -394,7 +394,7 @@ JobRuns know how to:</p>
       </li>
     
       <li class="entry-summary">
-        <a href="#job%3AMosquito%3A%3AJob%3F-instance-method" class="signature"><strong>#job</strong> : Mosquito::Job?</a>
+        <a href="#job%3AMosquito%3A%3AJob%7CNil-instance-method" class="signature"><strong>#job</strong> : Mosquito::Job | Nil</a>
         
       </li>
     
@@ -495,12 +495,12 @@ JobRuns know how to:</p>
     Constructor Detail
   </h2>
   
-    <div class="entry-detail" id="new(type:String,enqueue_time:Time=Time.utc,id:String?=nil,retry_count:Int32=0)-class-method">
+    <div class="entry-detail" id="new(type:String,enqueue_time:Time=Time.utc,id:String|Nil=nil,retry_count:Int32=0)-class-method">
       <div class="signature">
         
-        def self.<strong>new</strong>(type : String, enqueue_time : Time = <span class="t">Time</span>.utc, id : String? = <span class="n">nil</span>, retry_count : Int32 = <span class="n">0</span>)
+        def self.<strong>new</strong>(type : String, enqueue_time : Time = <span class="t">Time</span>.utc, id : String | Nil = <span class="n">nil</span>, retry_count : Int32 = <span class="n">0</span>)
 
-        <a class="method-permalink" href="#new%28type%3AString%2Cenqueue_time%3ATime%3DTime.utc%2Cid%3AString%3F%3Dnil%2Cretry_count%3AInt32%3D0%29-class-method">#</a>
+        <a class="method-permalink" href="#new%28type%3AString%2Cenqueue_time%3ATime%3DTime.utc%2Cid%3AString%7CNil%3Dnil%2Cretry_count%3AInt32%3D0%29-class-method">#</a>
       </div>
       
       <br/>
@@ -700,12 +700,12 @@ Optionally, after a delay in seconds (handled by the backend).</p>
       </div>
     </div>
   
-    <div class="entry-detail" id="job:Mosquito::Job?-instance-method">
+    <div class="entry-detail" id="job:Mosquito::Job|Nil-instance-method">
       <div class="signature">
         
-        def <strong>job</strong> : <a href="../Mosquito/Job.html">Mosquito::Job</a>?
+        def <strong>job</strong> : <a href="../Mosquito/Job.html">Mosquito::Job</a> | Nil
 
-        <a class="method-permalink" href="#job%3AMosquito%3A%3AJob%3F-instance-method">#</a>
+        <a class="method-permalink" href="#job%3AMosquito%3A%3AJob%7CNil-instance-method">#</a>
       </div>
       
       <br/>
