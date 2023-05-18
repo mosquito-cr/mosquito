@@ -70,6 +70,8 @@ module Mosquito
       end
 
       macro params(*parameters)
+        {% puts "QueuedJob params() macro is deprecated, use param() instead." %}
+
         {% verbatim do %}
           {% for parameter in parameters %}
             param {{ parameter }}
