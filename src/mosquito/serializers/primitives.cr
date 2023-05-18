@@ -3,7 +3,7 @@ module Mosquito::Serializers::Primitives
     str
   end
 
-  def deserialize_string(raw : String) : String?
+  def deserialize_string(raw : String) : String
     raw
   end
 

@@ -23,8 +23,8 @@ dependencies:
 development_dependencies:
   minitest:
     github: ysbaddaden/minitest.cr
-    version: ~> 1.0.0
+    version: ~> 1.1.0
 
   timecop:
     github: crystal-community/timecop.cr
-    version: ~> 0.4.1
+    version: ~> 0.5.0
