@@ -59,7 +59,7 @@ module Mosquito
                 %object
             else
               msg = <<-MSG
-                Expected a parameter named {{ name }} but found nil.
+                Expected a parameter named `{{ name }}` but found nil.
                 The parameter may not have been provided when the job was enqueued.
                 Should you be using `{{ name }}` instead?
               MSG
@@ -69,9 +69,8 @@ module Mosquito
         {% end %}
       end
 
+      @[Deprecated("To be removed in 1.1.0, use param() instead. See: https://github.com/mosquito-cr/mosquito/pull/110")]
       macro params(*parameters)
-        {% puts "QueuedJob params() macro is deprecated, use param() instead." %}
-
         {% verbatim do %}
           {% for parameter in parameters %}
             param {{ parameter }}
