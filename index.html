@@ -256,7 +256,7 @@
 </a>Step 1: Define a queued job</h3>
 <pre><code class="language-crystal"><span class="c"># src/jobs/puts_job.cr</span>
 <span class="k">class</span> <span class="t">PutsJob</span> <span class="o">&lt;</span> <span class="t">Mosquito</span><span class="t">::</span><span class="t">QueuedJob</span>
-  params message : <span class="t">String</span>
+  param message : <span class="t">String</span>
 
   <span class="k">def</span> <span class="m">perform</span>
     puts message
