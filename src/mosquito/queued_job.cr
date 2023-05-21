@@ -7,97 +7,114 @@ module Mosquito
 
       Mosquito::Base.register_job_mapping job_name, {{ @type.id }}
 
-      def build_job_run
-        Mosquito::JobRun.new self.class.job_name
-      end
+      PARAMETERS = [] of Nil
 
-      macro params(*parameters)
+      macro param(parameter)
         {% verbatim do %}
           {%
-            parsed_parameters = parameters.map do |parameter|
-              type = nil
-              simplified_type = nil
-
-              if parameter.is_a? Assign
-                name = parameter.target
-                value = parameter.value
-              elsif parameter.is_a? TypeDeclaration
-                name = parameter.var
-                value = parameter.value
-                type = parameter.type
-              else
-                raise "Mosquito Job: Unable to generate parameter for #{parameter}"
-              end
-
-              unless type
-                raise "Mosquito Job: parameter types must be specified explicitly"
-              end
-
-              if type.is_a? Union
-                raise "Mosquito Job: Unable to generate a constructor for Union Types: #{type}"
-              elsif type.is_a? Path
-                simplified_type = type.resolve
-              end
-
-              method_suffix = simplified_type.stringify.underscore.gsub(/::/,"__").id
-
-              { name: name, value: value, type: type, simplified_type: simplified_type, method_suffix: method_suffix }
+            unless parameter.is_a? TypeDeclaration
+              raise "Mosquito Job: Unable to generate parameter for #{parameter}"
             end
+
+          %}
+          {%
+
+            name = parameter.var
+            value = parameter.value
+            type = parameter.type
+            simplified_type = nil
+
+            unless type
+              raise "Mosquito Job: Parameter types must be specified explicitly"
+            end
+
+            if type.is_a? Union
+              raise "Mosquito Job: Unable to build serialization logic for Union Types: #{type}"
+            else
+              simplified_type = type.resolve
+            end
+
+            method_suffix = simplified_type.stringify.underscore.gsub(/::/,"__").id
+
+            PARAMETERS << {
+              name: name,
+              value: value,
+              type: type,
+              method_suffix: method_suffix
+            }
           %}
 
-          {% for parameter in parsed_parameters %}
-              @{{ parameter["name"] }} : {{ parameter["simplified_type"] }}?
+          @{{ name }} : {{ type }}?
 
-              def {{ parameter["name"] }} : {{ parameter["simplified_type"] }}
-                if ! (%object = {{ parameter["name"] }}?).nil?
-                    %object
-                else
-                  msg = <<-MSG
-                    Expected a parameter named {{ parameter["name"] }} but found nil.
-                    The parameter may not have been provided when the job was enqueued.
-                    Should you be using `{{ parameter["name"] }}` instead?
-                  MSG
-                  raise msg
-                end
-              end
-
-              def {{ parameter["name"] }}=(value : {{parameter["simplified_type"]}}) : {{parameter["simplified_type"]}}
-                @{{ parameter["name"] }} = value
-              end
-
-              def {{ parameter["name"] }}? : {{ parameter["simplified_type"] }} | Nil
-                @{{ parameter["name"] }}
-              end
-          {% end %}
-
-          def initialize
+          def {{ name }}=(value : {{simplified_type}}) : {{simplified_type}}
+            @{{ name }} = value
           end
 
+          def {{ name }}? : {{ simplified_type }} | Nil
+            @{{ name }}
+          end
+
+          def {{ name }} : {{ simplified_type }}
+            if ! (%object = {{ name }}?).nil?
+                %object
+            else
+              msg = <<-MSG
+                Expected a parameter named `{{ name }}` but found nil.
+                The parameter may not have been provided when the job was enqueued.
+                Should you be using `{{ name }}` instead?
+              MSG
+              raise msg
+            end
+          end
+        {% end %}
+      end
+
+      @[Deprecated("To be removed in 1.1.0, use param() instead. See: https://github.com/mosquito-cr/mosquito/pull/110")]
+      macro params(*parameters)
+        {% verbatim do %}
+          {% for parameter in parameters %}
+            param {{ parameter }}
+          {% end %}
+        {% end %}
+      end
+
+      macro finished
+        {% verbatim do %}
+          def initialize; end
+
           def initialize({{
-              parsed_parameters.map do |parameter|
+              PARAMETERS.map do |parameter|
                 assignment = "@#{parameter["name"]}"
                 assignment = assignment + " : #{parameter["type"]}" if parameter["type"]
                 assignment = assignment + " = #{parameter["value"]}" unless parameter["value"].is_a? Nop
                 assignment
               end.join(", ").id
-              }})
+            }})
           end
 
-          def vars_from(config : Hash(String, String))
-            {% for parameter in parsed_parameters %}
-              @{{ parameter["name"] }} = deserialize_{{ parameter["method_suffix"] }}(config["{{ parameter["name"] }}"])
-            {% end %}
-          end
+          # Methods declared in here have the side effect over overwriting any overrides which may have been implemented
+          # otherwise in the job class. In order to allow folks to override the behavior here, these methods are only
+          # injected if none already exists.
 
-          def build_job_run
-            job_run = Mosquito::JobRun.new self.class.job_name
+          {% unless @type.methods.map(&.name).includes?(:vars_from.id) %}
+            def vars_from(config : Hash(String, String))
+              {% for parameter in PARAMETERS %}
+                @{{ parameter["name"] }} = deserialize_{{ parameter["method_suffix"] }}(config["{{ parameter["name"] }}"])
+              {% end %}
+            end
+          {% end %}
 
-            {% for parameter in parsed_parameters %}
-              job_run.config["{{ parameter["name"] }}"] = serialize_{{ parameter["method_suffix"] }}({{ parameter["name"] }})
-            {% end %}
+          {% unless @type.methods.map(&.name).includes?(:build_job_run.id) %}
+            def build_job_run
+              job_run = Mosquito::JobRun.new self.class.job_name
 
-            job_run
-          end
+              {% for parameter in PARAMETERS %}
+                job_run.config["{{ parameter["name"] }}"] = serialize_{{ parameter["method_suffix"] }}(@{{ parameter["name"] }}.not_nil!)
+              {% end %}
+
+              job_run
+            end
+          {% end %}
         {% end %}
       end
     end

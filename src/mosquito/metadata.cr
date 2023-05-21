@@ -10,6 +10,10 @@ module Mosquito
     def initialize(@root_key : String, @readonly = false)
     end
 
+    def delete : Nil
+      Mosquito.backend.delete root_key
+    end
+
     def to_h : Hash(String, String)
       Mosquito.backend.retrieve root_key
     end
