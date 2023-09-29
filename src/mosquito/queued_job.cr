@@ -77,15 +77,6 @@ module Mosquito
         {% end %}
       end
 
-      @[Deprecated("To be removed in 1.1.0, use param() instead. See: https://github.com/mosquito-cr/mosquito/pull/110")]
-      macro params(*parameters)
-        {% verbatim do %}
-          {% for parameter in parameters %}
-            param {{ parameter }}
-          {% end %}
-        {% end %}
-      end
-
       macro finished
         {% verbatim do %}
           def initialize; end

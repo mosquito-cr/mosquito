@@ -1,5 +1,5 @@
 class QueuedJob < Mosquito::QueuedJob
-  params count : Int32
+  param count : Int32
 
   queue_name :demo_queue
 
