@@ -1,10 +1,9 @@
 require "../../test_helper"
 
 describe "Backend hash storage" do
-  let(:sample_data) { { "test" => "#{rand(1000)}" } }
-
-  let(:key) { "key-#{rand 1000}" }
-  let(:field) { "field-#{rand 1000}" }
+  getter sample_data : Hash(String,String) { { "test" => "#{rand(1000)}" } }
+  getter key : String { "key-#{rand 1000}" }
+  getter field : String { "field-#{rand 1000}" }
 
   it "can store and retrieve" do
     backend.store key, sample_data

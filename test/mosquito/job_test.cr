@@ -1,12 +1,12 @@
 require "../test_helper"
 
 describe Mosquito::Job do
-  let(:passing_job) { PassingJob.new }
-  let(:failing_job) { FailingJob.new }
-  let(:not_implemented_job) { NotImplementedJob.new }
+  getter(passing_job) { PassingJob.new }
+  getter(failing_job) { FailingJob.new }
+  getter(not_implemented_job) { NotImplementedJob.new }
 
-  let(:throttled_job) { ThrottledJob.new }
-  let(:hooked_job) { JobWithHooks.new }
+  getter(throttled_job) { ThrottledJob.new }
+  getter(hooked_job) { JobWithHooks.new }
 
   describe "run" do
     it "captures JobFailed and marks sucess=false" do

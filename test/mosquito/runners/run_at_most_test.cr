@@ -1,13 +1,23 @@
 require "../../test_helper"
 
-describe "Mosquito::Runner#run_at_most" do
-  let(:runner) { Mosquito::TestableRunner.new }
+class RunsAtMostMock
+  include Mosquito::Runners::RunAtMost
+
+  def yield_once_a_second(&block)
+    run_at_most every: 1.second, label: :testing do |t|
+      yield
+    end
+  end
+end
+
+describe "Mosquito::yielder#run_at_most" do
+  getter(yielder) { RunsAtMostMock.new }
 
   it "prevents throttled blocks from running too often" do
     count = 0
 
     2.times do
-      runner.yield_once_a_second do
+      yielder.yield_once_a_second do
         count += 1
       end
     end
@@ -18,9 +28,9 @@ describe "Mosquito::Runner#run_at_most" do
   it "allows throttled blocks to run only after enough time has passed" do
     count = 0
     moment = Time.utc
-    runner
+    yielder
     incrementy = ->() do
-      runner.yield_once_a_second do
+      yielder.yield_once_a_second do
         count += 1
       end
     end
@@ -40,7 +50,7 @@ describe "Mosquito::Runner#run_at_most" do
 
     # Should increment
     # Move ahead the rest of the second
-    moment += 1.second
+    moment += 1.1.seconds
     Timecop.freeze(moment) do |time|
       incrementy.call
     end

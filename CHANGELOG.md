@@ -12,6 +12,8 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 - Jobs can now specify `after` hooks.
 - Mosquito::Runner now has a `stop` method which halts the runner after
   completion of any running tasks. See issue #21 and pull #87.
+- Mosquito config option `run_cron_scheduler` is no longer present, multiple
+  workers will compete for a distributed lock instead.
 
 ### Changed
 - The storage backend is now implemented via interface, allowing alternate
@@ -26,13 +28,16 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 - ** BREAKING **  `Mosquito.settings` is now `Mosquito.configuration`. While
   this is technically a public API, it's unlikely anyone is using it for
   anything.
+- Mosquito::Runner.start need not be called from a spawn, it will spawn on it's own.
 
 ### Removed
 - Runner.idle_wait configuration is deprecated. Instead use
   Mosquito.configure#idle_wait.
 - Built in serializer for Granite models, and the Model type alias. See
   Serializers in the documentation if the functionality is necessary.
-- Mosquito no longer depends on luckyframework/habitat
+- Mosquito no longer depends on luckyframework/habitat.
+- Mosquito config option `run_cron_scheduler` is no longer present, multiple
+  workers will compete for a distributed lock instead. See #108.
 
 ### Fixed
 - Boolean false can now be specified as the default value for a parameter:

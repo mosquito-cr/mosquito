@@ -13,15 +13,18 @@ module Mosquito
     def self.job_for_type(type : String) : Mosquito::Job.class
       @@mapping[type]
     rescue e : KeyError
-      error = <<-TEXT
-      Could not find a job class for type "#{type}", perhaps you forgot to register it?
+      error = String.build do |s|
+        s << <<-TEXT
+        Could not find a job class for type "#{type}", perhaps you forgot to register it?
 
-      Current known types are:
+        Current known types are:
 
-      TEXT
+        TEXT
 
-      error += @@mapping.keys.map { |k| "- #{k}" }.join "\n"
-      error += "\n\n"
+        @@mapping.each { |k, v| s << "#{k}=>#{v}\n" }
+
+        s << "\n\n"
+      end
 
       raise KeyError.new(error)
     end

@@ -7,6 +7,8 @@ module TestHelpers
     Mosquito::Base.bare_mapping do
       backend = Mosquito.backend
       backend.flush
+
+      TestingLogBackend.instance.clear
       yield
     end
   end
