@@ -182,8 +182,48 @@
       
     </li>
   
+  <li class="parent " data-id="mosquito/Mosquito/Runners" data-name="mosquito::runners">
+      <a href="../Mosquito/Runners.html">Runners</a>
+      
+        <ul>
+  
+  <li class=" " data-id="mosquito/Mosquito/Runners/Coordinator" data-name="mosquito::runners::coordinator">
+      <a href="../Mosquito/Runners/Coordinator.html">Coordinator</a>
+      
+    </li>
+  
+  <li class=" " data-id="mosquito/Mosquito/Runners/Executor" data-name="mosquito::runners::executor">
+      <a href="../Mosquito/Runners/Executor.html">Executor</a>
+      
+    </li>
+  
+  <li class=" " data-id="mosquito/Mosquito/Runners/Overseer" data-name="mosquito::runners::overseer">
+      <a href="../Mosquito/Runners/Overseer.html">Overseer</a>
+      
+    </li>
+  
+  <li class=" " data-id="mosquito/Mosquito/Runners/QueueList" data-name="mosquito::runners::queuelist">
+      <a href="../Mosquito/Runners/QueueList.html">QueueList</a>
+      
+    </li>
+  
+  <li class=" " data-id="mosquito/Mosquito/Runners/RunAtMost" data-name="mosquito::runners::runatmost">
+      <a href="../Mosquito/Runners/RunAtMost.html">RunAtMost</a>
+      
+    </li>
+  
+</ul>
+
+      
+    </li>
+  
   <li class=" " data-id="mosquito/Mosquito/ScheduledJob" data-name="mosquito::scheduledjob">
       <a href="../Mosquito/ScheduledJob.html">ScheduledJob</a>
+      
+    </li>
+  
+  <li class=" " data-id="mosquito/Mosquito/Scripts" data-name="mosquito::scripts">
+      <a href="../Mosquito/Scripts.html">Scripts</a>
       
     </li>
   
@@ -375,7 +415,17 @@
       </li>
     
       <li class="entry-summary">
+        <a href="#lock%3F%28key%3AString%2Cvalue%3AString%2Cttl%3ATime%3A%3ASpan%29%3ABool-class-method" class="signature"><strong>.lock?</strong>(key : String, value : String, ttl : Time::Span) : Bool</a>
+        
+      </li>
+    
+      <li class="entry-summary">
         <a href="#redis-class-method" class="signature"><strong>.redis</strong></a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#remove_matching_key%28%2A%2Ckeys%3D%5B%5DofString%2Cargs%3D%5B%5DofString%2Cloadscripts%3Dtrue%29-class-method" class="signature"><strong>.remove_matching_key</strong>(*, keys = <span class="o">[]</span> <span class="k">of</span> <span class="t">String</span>, args = <span class="o">[]</span> <span class="k">of</span> <span class="t">String</span>, loadscripts = <span class="n">true</span>)</a>
         
       </li>
     
@@ -391,6 +441,11 @@
     
       <li class="entry-summary">
         <a href="#store%28key%3AString%2Cvalue%3AHash%28String%2CString%29%29%3ANil-class-method" class="signature"><strong>.store</strong>(key : String, value : Hash(String, String)) : Nil</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#unlock%28key%3AString%2Cvalue%3AString%29-class-method" class="signature"><strong>.unlock</strong>(key : String, value : String)</a>
         
       </li>
     
@@ -845,12 +900,40 @@ Soft Deprecation isn't shown, but it's here so this will get cleaned up at some 
       </div>
     </div>
   
+    <div class="entry-detail" id="lock?(key:String,value:String,ttl:Time::Span):Bool-class-method">
+      <div class="signature">
+        
+        def self.<strong>lock?</strong>(key : String, value : String, ttl : Time::Span) : Bool
+
+        <a class="method-permalink" href="#lock%3F%28key%3AString%2Cvalue%3AString%2Cttl%3ATime%3A%3ASpan%29%3ABool-class-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
     <div class="entry-detail" id="redis-class-method">
       <div class="signature">
         
         def self.<strong>redis</strong>
 
         <a class="method-permalink" href="#redis-class-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="remove_matching_key(*,keys=[]ofString,args=[]ofString,loadscripts=true)-class-method">
+      <div class="signature">
+        
+        def self.<strong>remove_matching_key</strong>(*, keys = <span class="o">[]</span> <span class="k">of</span> <span class="t">String</span>, args = <span class="o">[]</span> <span class="k">of</span> <span class="t">String</span>, loadscripts = <span class="n">true</span>)
+
+        <a class="method-permalink" href="#remove_matching_key%28%2A%2Ckeys%3D%5B%5DofString%2Cargs%3D%5B%5DofString%2Cloadscripts%3Dtrue%29-class-method">#</a>
       </div>
       
       <br/>
@@ -893,6 +976,20 @@ Soft Deprecation isn't shown, but it's here so this will get cleaned up at some 
         def self.<strong>store</strong>(key : String, value : Hash(String, String)) : Nil
 
         <a class="method-permalink" href="#store%28key%3AString%2Cvalue%3AHash%28String%2CString%29%29%3ANil-class-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="unlock(key:String,value:String)-class-method">
+      <div class="signature">
+        
+        def self.<strong>unlock</strong>(key : String, value : String)
+
+        <a class="method-permalink" href="#unlock%28key%3AString%2Cvalue%3AString%29-class-method">#</a>
       </div>
       
       <br/>

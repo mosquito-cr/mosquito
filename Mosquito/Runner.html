@@ -182,8 +182,48 @@
       
     </li>
   
+  <li class="parent " data-id="mosquito/Mosquito/Runners" data-name="mosquito::runners">
+      <a href="../Mosquito/Runners.html">Runners</a>
+      
+        <ul>
+  
+  <li class=" " data-id="mosquito/Mosquito/Runners/Coordinator" data-name="mosquito::runners::coordinator">
+      <a href="../Mosquito/Runners/Coordinator.html">Coordinator</a>
+      
+    </li>
+  
+  <li class=" " data-id="mosquito/Mosquito/Runners/Executor" data-name="mosquito::runners::executor">
+      <a href="../Mosquito/Runners/Executor.html">Executor</a>
+      
+    </li>
+  
+  <li class=" " data-id="mosquito/Mosquito/Runners/Overseer" data-name="mosquito::runners::overseer">
+      <a href="../Mosquito/Runners/Overseer.html">Overseer</a>
+      
+    </li>
+  
+  <li class=" " data-id="mosquito/Mosquito/Runners/QueueList" data-name="mosquito::runners::queuelist">
+      <a href="../Mosquito/Runners/QueueList.html">QueueList</a>
+      
+    </li>
+  
+  <li class=" " data-id="mosquito/Mosquito/Runners/RunAtMost" data-name="mosquito::runners::runatmost">
+      <a href="../Mosquito/Runners/RunAtMost.html">RunAtMost</a>
+      
+    </li>
+  
+</ul>
+
+      
+    </li>
+  
   <li class=" " data-id="mosquito/Mosquito/ScheduledJob" data-name="mosquito::scheduledjob">
       <a href="../Mosquito/ScheduledJob.html">ScheduledJob</a>
+      
+    </li>
+  
+  <li class=" " data-id="mosquito/Mosquito/Scripts" data-name="mosquito::scripts">
+      <a href="../Mosquito/Scripts.html">Scripts</a>
       
     </li>
   
@@ -309,14 +349,14 @@
       <li class="entry-summary">
         <a href="#keep_running%3ABool-class-method" class="signature"><strong>.keep_running</strong> : Bool</a>
         
-          <div class="summary"><p>Should the worker continue working?</p></div>
+          <div class="summary"><p>Should mosquito continue working?</p></div>
         
       </li>
     
       <li class="entry-summary">
         <a href="#keep_running%3D%28keep_running%3ABool%29-class-method" class="signature"><strong>.keep_running=</strong>(keep_running : Bool)</a>
         
-          <div class="summary"><p>Should the worker continue working?</p></div>
+          <div class="summary"><p>Should mosquito continue working?</p></div>
         
       </li>
     
@@ -345,59 +385,12 @@
   <ul class="list-summary">
     
       <li class="entry-summary">
-        <a href="#failed_job_ttl%3AInt32-instance-method" class="signature"><strong>#failed_job_ttl</strong> : Int32</a>
-        
-          <div class="summary"><p>How long a job config is persisted after failure</p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#failed_job_ttl%3D%28failed_job_ttl%3AInt32%29-instance-method" class="signature"><strong>#failed_job_ttl=</strong>(failed_job_ttl : Int32)</a>
-        
-          <div class="summary"><p>How long a job config is persisted after failure</p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#idle_wait%3ATime%3A%3ASpan-instance-method" class="signature"><strong>#idle_wait</strong> : Time::Span</a>
-        
-          <div class="summary"><p>Minimum time in seconds to wait between checking for jobs.</p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#idle_wait%3D%28idle_wait%3ATime%3A%3ASpan%29-instance-method" class="signature"><strong>#idle_wait=</strong>(idle_wait : Time::Span)</a>
-        
-          <div class="summary"><p>Minimum time in seconds to wait between checking for jobs.</p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#queues%3AArray%28Mosquito%3A%3AQueue%29-instance-method" class="signature"><strong>#queues</strong> : Array(Mosquito::Queue)</a>
-        
-      </li>
-    
-      <li class="entry-summary">
         <a href="#run-instance-method" class="signature"><strong>#run</strong></a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#start_time%3ATime%3A%3ASpan-instance-method" class="signature"><strong>#start_time</strong> : Time::Span</a>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#successful_job_ttl%3AInt32-instance-method" class="signature"><strong>#successful_job_ttl</strong> : Int32</a>
-        
-          <div class="summary"><p>How long a job config is persisted after success</p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#successful_job_ttl%3D%28successful_job_ttl%3AInt32%29-instance-method" class="signature"><strong>#successful_job_ttl=</strong>(successful_job_ttl : Int32)</a>
-        
-          <div class="summary"><p>How long a job config is persisted after success</p></div>
+        <a href="#stop-instance-method" class="signature"><strong>#stop</strong></a>
         
       </li>
     
@@ -477,7 +470,7 @@
       
         <div class="doc">
           
-          <p>Should the worker continue working?</p>
+          <p>Should mosquito continue working?</p>
         </div>
       
       <br/>
@@ -496,7 +489,7 @@
       
         <div class="doc">
           
-          <p>Should the worker continue working?</p>
+          <p>Should mosquito continue working?</p>
         </div>
       
       <br/>
@@ -545,96 +538,6 @@
     Instance Method Detail
   </h2>
   
-    <div class="entry-detail" id="failed_job_ttl:Int32-instance-method">
-      <div class="signature">
-        
-        def <strong>failed_job_ttl</strong> : Int32
-
-        <a class="method-permalink" href="#failed_job_ttl%3AInt32-instance-method">#</a>
-      </div>
-      
-        <div class="doc">
-          
-          <p>How long a job config is persisted after failure</p>
-        </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="failed_job_ttl=(failed_job_ttl:Int32)-instance-method">
-      <div class="signature">
-        
-        def <strong>failed_job_ttl=</strong>(failed_job_ttl : Int32)
-
-        <a class="method-permalink" href="#failed_job_ttl%3D%28failed_job_ttl%3AInt32%29-instance-method">#</a>
-      </div>
-      
-        <div class="doc">
-          
-          <p>How long a job config is persisted after failure</p>
-        </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="idle_wait:Time::Span-instance-method">
-      <div class="signature">
-        
-        def <strong>idle_wait</strong> : Time::Span
-
-        <a class="method-permalink" href="#idle_wait%3ATime%3A%3ASpan-instance-method">#</a>
-      </div>
-      
-        <div class="doc">
-          
-          <p>Minimum time in seconds to wait between checking for jobs.</p>
-        </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="idle_wait=(idle_wait:Time::Span)-instance-method">
-      <div class="signature">
-        
-        def <strong>idle_wait=</strong>(idle_wait : Time::Span)
-
-        <a class="method-permalink" href="#idle_wait%3D%28idle_wait%3ATime%3A%3ASpan%29-instance-method">#</a>
-      </div>
-      
-        <div class="doc">
-          
-          <p>Minimum time in seconds to wait between checking for jobs.</p>
-        </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="queues:Array(Mosquito::Queue)-instance-method">
-      <div class="signature">
-        
-        def <strong>queues</strong> : Array(<a href="../Mosquito/Queue.html">Mosquito::Queue</a>)
-
-        <a class="method-permalink" href="#queues%3AArray%28Mosquito%3A%3AQueue%29-instance-method">#</a>
-      </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
     <div class="entry-detail" id="run-instance-method">
       <div class="signature">
         
@@ -649,51 +552,13 @@
       </div>
     </div>
   
-    <div class="entry-detail" id="start_time:Time::Span-instance-method">
+    <div class="entry-detail" id="stop-instance-method">
       <div class="signature">
         
-        def <strong>start_time</strong> : Time::Span
+        def <strong>stop</strong>
 
-        <a class="method-permalink" href="#start_time%3ATime%3A%3ASpan-instance-method">#</a>
+        <a class="method-permalink" href="#stop-instance-method">#</a>
       </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="successful_job_ttl:Int32-instance-method">
-      <div class="signature">
-        
-        def <strong>successful_job_ttl</strong> : Int32
-
-        <a class="method-permalink" href="#successful_job_ttl%3AInt32-instance-method">#</a>
-      </div>
-      
-        <div class="doc">
-          
-          <p>How long a job config is persisted after success</p>
-        </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="successful_job_ttl=(successful_job_ttl:Int32)-instance-method">
-      <div class="signature">
-        
-        def <strong>successful_job_ttl=</strong>(successful_job_ttl : Int32)
-
-        <a class="method-permalink" href="#successful_job_ttl%3D%28successful_job_ttl%3AInt32%29-instance-method">#</a>
-      </div>
-      
-        <div class="doc">
-          
-          <p>How long a job config is persisted after success</p>
-        </div>
       
       <br/>
       <div>

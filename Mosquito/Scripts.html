@@ -14,7 +14,7 @@
 <script type="text/javascript" src="../js/doc.js"></script>
 
   <meta name="repository-name" content="mosquito">
-  <title>Mosquito::Serializers - mosquito 1.0.0</title>
+  <title>Mosquito::Scripts - mosquito 1.0.0</title>
   <script type="text/javascript">
     CrystalDocs.base_path = "../";
   </script>
@@ -222,12 +222,12 @@
       
     </li>
   
-  <li class=" " data-id="mosquito/Mosquito/Scripts" data-name="mosquito::scripts">
+  <li class=" current" data-id="mosquito/Mosquito/Scripts" data-name="mosquito::scripts">
       <a href="../Mosquito/Scripts.html">Scripts</a>
       
     </li>
   
-  <li class="parent open current" data-id="mosquito/Mosquito/Serializers" data-name="mosquito::serializers">
+  <li class="parent " data-id="mosquito/Mosquito/Serializers" data-name="mosquito::serializers">
       <a href="../Mosquito/Serializers.html">Serializers</a>
       
         <ul>
@@ -256,7 +256,7 @@
 <div class="main-content">
 <h1 class="type-name">
 
-  <span class="kind">module</span> Mosquito::Serializers
+  <span class="kind">module</span> Mosquito::Scripts
 
 </h1>
 
@@ -287,16 +287,57 @@
   </h2>
   
     
-      mosquito/serializers/primitives.cr
+      mosquito/redis_backend.cr
     
     <br/>
   
 
 
 
+  
+    <h2>
+      <a id="constant-summary" class="anchor" href="#constant-summary">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+      Constant Summary
+    </h2>
+  
+  <dl>
+    
+      <dt class="entry-const" id="SCRIPTS">
+        <strong>SCRIPTS</strong> = <code>{<span class="n">:remove_matching_key</span> <span class="o">=&gt;</span> <span class="s">&quot;  if redis.call(\&quot;get\&quot;,KEYS[1]) == ARGV[1] then\n      return redis.call(\&quot;del\&quot;,KEYS[1])\n  else\n      return 0\n  end&quot;</span>}</code>
+      </dt>
+      
+    
+  </dl>
 
 
 
+
+
+  <h2>
+    <a id="class-method-summary" class="anchor" href="#class-method-summary">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Class Method Summary
+  </h2>
+  <ul class="list-summary">
+    
+      <li class="entry-summary">
+        <a href="#load%28connection%29-class-method" class="signature"><strong>.load</strong>(connection)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#remove_matching_key-class-method" class="signature"><strong>.remove_matching_key</strong></a>
+        
+      </li>
+    
+  </ul>
 
 
 
@@ -310,6 +351,44 @@
 
 
 
+
+  <h2>
+    <a id="class-method-detail" class="anchor" href="#class-method-detail">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Class Method Detail
+  </h2>
+  
+    <div class="entry-detail" id="load(connection)-class-method">
+      <div class="signature">
+        
+        def self.<strong>load</strong>(connection)
+
+        <a class="method-permalink" href="#load%28connection%29-class-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="remove_matching_key-class-method">
+      <div class="signature">
+        
+        def self.<strong>remove_matching_key</strong>
+
+        <a class="method-permalink" href="#remove_matching_key-class-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
 
 
 

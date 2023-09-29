@@ -14,7 +14,7 @@
 <script type="text/javascript" src="../../js/doc.js"></script>
 
   <meta name="repository-name" content="mosquito">
-  <title>Mosquito::Job::State - mosquito 1.0.0</title>
+  <title>Mosquito::Runners::Coordinator - mosquito 1.0.0</title>
   <script type="text/javascript">
     CrystalDocs.base_path = "../../";
   </script>
@@ -102,12 +102,12 @@
       
     </li>
   
-  <li class="parent open current" data-id="mosquito/Mosquito/Job" data-name="mosquito::job">
+  <li class="parent " data-id="mosquito/Mosquito/Job" data-name="mosquito::job">
       <a href="../../Mosquito/Job.html">Job</a>
       
         <ul>
   
-  <li class=" current" data-id="mosquito/Mosquito/Job/State" data-name="mosquito::job::state">
+  <li class=" " data-id="mosquito/Mosquito/Job/State" data-name="mosquito::job::state">
       <a href="../../Mosquito/Job/State.html">State</a>
       
     </li>
@@ -182,12 +182,12 @@
       
     </li>
   
-  <li class="parent " data-id="mosquito/Mosquito/Runners" data-name="mosquito::runners">
+  <li class="parent open current" data-id="mosquito/Mosquito/Runners" data-name="mosquito::runners">
       <a href="../../Mosquito/Runners.html">Runners</a>
       
         <ul>
   
-  <li class=" " data-id="mosquito/Mosquito/Runners/Coordinator" data-name="mosquito::runners::coordinator">
+  <li class=" current" data-id="mosquito/Mosquito/Runners/Coordinator" data-name="mosquito::runners::coordinator">
       <a href="../../Mosquito/Runners/Coordinator.html">Coordinator</a>
       
     </li>
@@ -256,17 +256,44 @@
 <div class="main-content">
 <h1 class="type-name">
 
-  <span class="kind">enum</span> Mosquito::Job::State
+  <span class="kind">class</span> Mosquito::Runners::Coordinator
 
 </h1>
 
 
+  <ul class="superclass-hierarchy"><li class="superclass"><a href="../../Mosquito/Runners/Coordinator.html">Mosquito::Runners::Coordinator</a></li><li class="superclass">Reference</li><li class="superclass">Object</li></ul>
+
+
+
+
+  <h2>
+    <a id="overview" class="anchor" href="#overview">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Overview
+  </h2>
+
+  <p>primer? loader?</p>
 
 
 
 
 
-
+  <h2>
+    <a id="included-modules" class="anchor" href="#included-modules">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Included Modules
+  </h2>
+  <ul class="other-types-list">
+    
+      <li class="other-type"><a href="../../Mosquito/Runners/RunAtMost.html">Mosquito::Runners::RunAtMost</a></li>
+    
+  </ul>
 
 
 
@@ -287,7 +314,7 @@
   </h2>
   
     
-      mosquito/job.cr
+      mosquito/runners/coordinator.cr
     
     <br/>
   
@@ -296,44 +323,46 @@
 
   
     <h2>
-      <a id="enum-members" class="anchor" href="#enum-members">
+      <a id="constant-summary" class="anchor" href="#constant-summary">
   <svg class="octicon-link" aria-hidden="true">
     <use href="#octicon-link"/>
   </svg>
 </a>
-      Enum Members
+      Constant Summary
     </h2>
   
   <dl>
     
-      <dt class="entry-const" id="Initialization">
-        <strong>Initialization</strong> = <code><span class="n">0</span></code>
+      <dt class="entry-const" id="LockTTL">
+        <strong>LockTTL</strong> = <code><span class="n">10</span>.seconds</code>
       </dt>
       
     
-      <dt class="entry-const" id="Running">
-        <strong>Running</strong> = <code><span class="n">1</span></code>
-      </dt>
-      
-    
-      <dt class="entry-const" id="Succeeded">
-        <strong>Succeeded</strong> = <code><span class="n">2</span></code>
-      </dt>
-      
-    
-      <dt class="entry-const" id="Failed">
-        <strong>Failed</strong> = <code><span class="n">3</span></code>
-      </dt>
-      
-    
-      <dt class="entry-const" id="Aborted">
-        <strong>Aborted</strong> = <code><span class="n">4</span></code>
+      <dt class="entry-const" id="Log">
+        <strong>Log</strong> = <code><span class="t">::</span><span class="t">Log</span>.<span class="k">for</span>(<span class="k">self</span>)</code>
       </dt>
       
     
   </dl>
 
 
+
+  <h2>
+    <a id="constructors" class="anchor" href="#constructors">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Constructors
+  </h2>
+  <ul class="list-summary">
+    
+      <li class="entry-summary">
+        <a href="#new%28queue_list%3AMosquito%3A%3ARunners%3A%3AQueueList%29-class-method" class="signature"><strong>.new</strong>(queue_list : Mosquito::Runners::QueueList)</a>
+        
+      </li>
+    
+  </ul>
 
 
 
@@ -350,32 +379,37 @@
   <ul class="list-summary">
     
       <li class="entry-summary">
-        <a href="#aborted%3F-instance-method" class="signature"><strong>#aborted?</strong></a>
+        <a href="#bloop-instance-method" class="signature"><strong>#bloop</strong></a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#executed%3F%3ABool-instance-method" class="signature"><strong>#executed?</strong> : Bool</a>
+        <a href="#enqueue_delayed_jobs-instance-method" class="signature"><strong>#enqueue_delayed_jobs</strong></a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#failed%3F-instance-method" class="signature"><strong>#failed?</strong></a>
+        <a href="#enqueue_periodic_jobs-instance-method" class="signature"><strong>#enqueue_periodic_jobs</strong></a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#initialization%3F-instance-method" class="signature"><strong>#initialization?</strong></a>
+        <a href="#instance_id%3AString-instance-method" class="signature"><strong>#instance_id</strong> : String</a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#running%3F-instance-method" class="signature"><strong>#running?</strong></a>
+        <a href="#lock_key%3AString-instance-method" class="signature"><strong>#lock_key</strong> : String</a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#succeeded%3F-instance-method" class="signature"><strong>#succeeded?</strong></a>
+        <a href="#only_if_coordinator%28%26%29%3ANil-instance-method" class="signature"><strong>#only_if_coordinator</strong>(&) : Nil</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#queue_list%3AQueueList-instance-method" class="signature"><strong>#queue_list</strong> : QueueList</a>
         
       </li>
     
@@ -389,15 +423,14 @@
   
     
 
-
-    
-
-
-    
-
-
+  <h3>Instance methods inherited from module <code><a href="../../Mosquito/Runners/RunAtMost.html">Mosquito::Runners::RunAtMost</a></code></h3>
   
+  
+    <a href="../../Mosquito/Runners/RunAtMost.html#execution_timestamps-instance-method" class="tooltip">
+      <span>execution_timestamps</span>
+    execution_timestamps</a>
     
+  
 
 
     
@@ -430,6 +463,30 @@
 </div>
 
 
+  <h2>
+    <a id="constructor-detail" class="anchor" href="#constructor-detail">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Constructor Detail
+  </h2>
+  
+    <div class="entry-detail" id="new(queue_list:Mosquito::Runners::QueueList)-class-method">
+      <div class="signature">
+        
+        def self.<strong>new</strong>(queue_list : <a href="../../Mosquito/Runners/QueueList.html">Mosquito::Runners::QueueList</a>)
+
+        <a class="method-permalink" href="#new%28queue_list%3AMosquito%3A%3ARunners%3A%3AQueueList%29-class-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+
 
 
 
@@ -443,12 +500,12 @@
     Instance Method Detail
   </h2>
   
-    <div class="entry-detail" id="aborted?-instance-method">
+    <div class="entry-detail" id="bloop-instance-method">
       <div class="signature">
         
-        def <strong>aborted?</strong>
+        def <strong>bloop</strong>
 
-        <a class="method-permalink" href="#aborted%3F-instance-method">#</a>
+        <a class="method-permalink" href="#bloop-instance-method">#</a>
       </div>
       
       <br/>
@@ -457,12 +514,12 @@
       </div>
     </div>
   
-    <div class="entry-detail" id="executed?:Bool-instance-method">
+    <div class="entry-detail" id="enqueue_delayed_jobs-instance-method">
       <div class="signature">
         
-        def <strong>executed?</strong> : Bool
+        def <strong>enqueue_delayed_jobs</strong>
 
-        <a class="method-permalink" href="#executed%3F%3ABool-instance-method">#</a>
+        <a class="method-permalink" href="#enqueue_delayed_jobs-instance-method">#</a>
       </div>
       
       <br/>
@@ -471,12 +528,12 @@
       </div>
     </div>
   
-    <div class="entry-detail" id="failed?-instance-method">
+    <div class="entry-detail" id="enqueue_periodic_jobs-instance-method">
       <div class="signature">
         
-        def <strong>failed?</strong>
+        def <strong>enqueue_periodic_jobs</strong>
 
-        <a class="method-permalink" href="#failed%3F-instance-method">#</a>
+        <a class="method-permalink" href="#enqueue_periodic_jobs-instance-method">#</a>
       </div>
       
       <br/>
@@ -485,12 +542,12 @@
       </div>
     </div>
   
-    <div class="entry-detail" id="initialization?-instance-method">
+    <div class="entry-detail" id="instance_id:String-instance-method">
       <div class="signature">
         
-        def <strong>initialization?</strong>
+        def <strong>instance_id</strong> : String
 
-        <a class="method-permalink" href="#initialization%3F-instance-method">#</a>
+        <a class="method-permalink" href="#instance_id%3AString-instance-method">#</a>
       </div>
       
       <br/>
@@ -499,12 +556,12 @@
       </div>
     </div>
   
-    <div class="entry-detail" id="running?-instance-method">
+    <div class="entry-detail" id="lock_key:String-instance-method">
       <div class="signature">
         
-        def <strong>running?</strong>
+        def <strong>lock_key</strong> : String
 
-        <a class="method-permalink" href="#running%3F-instance-method">#</a>
+        <a class="method-permalink" href="#lock_key%3AString-instance-method">#</a>
       </div>
       
       <br/>
@@ -513,12 +570,26 @@
       </div>
     </div>
   
-    <div class="entry-detail" id="succeeded?-instance-method">
+    <div class="entry-detail" id="only_if_coordinator(&amp;):Nil-instance-method">
       <div class="signature">
         
-        def <strong>succeeded?</strong>
+        def <strong>only_if_coordinator</strong>(&) : Nil
 
-        <a class="method-permalink" href="#succeeded%3F-instance-method">#</a>
+        <a class="method-permalink" href="#only_if_coordinator%28%26%29%3ANil-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="queue_list:QueueList-instance-method">
+      <div class="signature">
+        
+        def <strong>queue_list</strong> : <a href="../../Mosquito/Runners/QueueList.html">QueueList</a>
+
+        <a class="method-permalink" href="#queue_list%3AQueueList-instance-method">#</a>
       </div>
       
       <br/>
