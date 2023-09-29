@@ -1,5 +1,5 @@
 class CustomSerializersJob < Mosquito::QueuedJob
-  params count : Int32
+  param count : Int32
 
   def perform
     log "deserialized: #{count}"

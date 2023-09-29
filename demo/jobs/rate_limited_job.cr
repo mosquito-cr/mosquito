@@ -7,7 +7,7 @@ class RateLimitedJob < Mosquito::QueuedJob
 
   throttle limit: 3, per: 10.seconds
 
-  params count : Int32
+  param count : Int32
 
   def perform
     log @@rate_limit_key

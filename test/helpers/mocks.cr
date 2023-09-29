@@ -28,7 +28,6 @@ end
 
 class QueuedTestJob < Mosquito::QueuedJob
   include PerformanceCounter
-  params()
 end
 
 class PassingJob < QueuedTestJob
@@ -44,7 +43,6 @@ class FailingJob < QueuedTestJob
   property exception_message = "this is the reason #{name} failed"
 
   include PerformanceCounter
-  params()
 
   def perform
     super
@@ -90,7 +88,7 @@ class JobWithNoParams < Mosquito::QueuedJob
 end
 
 class JobWithHooks < Mosquito::QueuedJob
-  params(should_fail : Bool)
+  param should_fail : Bool
 
   before do
     log "Before Hook Executed"
@@ -117,7 +115,7 @@ end
 class EchoJob < Mosquito::QueuedJob
   queue_name "io_queue"
 
-  params text : String
+  param text : String
 
   def perform
     log text
@@ -137,7 +135,8 @@ class RateLimitedJob < Mosquito::QueuedJob
 
   throttle key: "rate_limit", limit: Int32::MAX
 
-  params should_fail : Bool = false, increment : Int32 = 1
+  param should_fail : Bool = false
+  param increment : Int32 = 1
 
   before do
     log "Before Hook Executed"
@@ -157,8 +156,6 @@ class SecondRateLimitedJob < Mosquito::QueuedJob
   include Mosquito::RateLimiter
 
   throttle key: "rate_limit", limit: Int32::MAX
-
-  params()
 
   def perform
   end
