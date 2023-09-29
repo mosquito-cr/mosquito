@@ -12,27 +12,35 @@ module Mosquito
       macro param(parameter)
         {% verbatim do %}
           {%
-            unless parameter.is_a? TypeDeclaration
-              raise "Mosquito Job: Unable to generate parameter for #{parameter}"
-            end
+            a = "multiline macro hack"
 
-          %}
-          {%
+            if ! parameter.is_a?(TypeDeclaration) || parameter.type.nil? || parameter.type.is_a?(Generic) || parameter.type.is_a?(Union)
+              message = <<-TEXT
+              Mosquito::QueuedJob: Unable to build parameter serialization for `#{parameter.type}` in param declaration `#{parameter}`.
+
+              Mosquito covers most of the crystal primitives for serialization out of the box[1]. More complex types
+              either need to be serialized yourself (recommended) or implement custom serializer logic[2].
+
+              Parameter types must be specified explicitly. Make sure your parameter declarations look something like this:
+
+                class LongJob < Mosquito::QueuedJob
+                  param user_email : String
+                end
+
+              Check the manual on declaring job parameters [3] if needed
+
+              [1] - https://mosquito-cr.github.io/manual/index.html#primitive-serialization
+              [2] - https://mosquito-cr.github.io/manual/serialization.html
+              [3] - https://mosquito-cr.github.io/manual/index.html#parameters
+              TEXT
+
+              raise message
+            end
 
             name = parameter.var
             value = parameter.value
             type = parameter.type
-            simplified_type = nil
-
-            unless type
-              raise "Mosquito Job: Parameter types must be specified explicitly"
-            end
-
-            if type.is_a? Union
-              raise "Mosquito Job: Unable to build serialization logic for Union Types: #{type}"
-            else
-              simplified_type = type.resolve
-            end
+            simplified_type = type.resolve
 
             method_suffix = simplified_type.stringify.underscore.gsub(/::/,"__").id
 
