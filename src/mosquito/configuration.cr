@@ -12,8 +12,10 @@ module Mosquito
     property successful_job_ttl : Int32 = 1
     property failed_job_ttl : Int32 = 86400
 
-    @[Deprecated("cron scheduling is now handled automatically")]
+    @[Deprecated("cron scheduling can now handled automatically. See https://github.com/mosquito-cr/mosquito/pull/108")]
     property run_cron_scheduler : Bool = true
+    property use_distributed_lock : Bool = false
+
     property run_from : Array(String) = [] of String
     property backend : Mosquito::Backend.class = Mosquito::RedisBackend
 

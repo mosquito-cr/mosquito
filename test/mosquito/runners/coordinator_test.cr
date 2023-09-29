@@ -20,63 +20,88 @@ describe "Mosquito::Runners::Coordinator" do
     job_run
   end
 
+  def opt_in_to_locking
+    Mosquito.temp_config(run_cron_scheduler: false, use_distributed_lock: true) do
+      yield
+    end
+  end
+
   describe "only_if_coordinator" do
     getter(coordinator1) { Mosquito::Runners::Coordinator.new queue_list }
     getter(coordinator2) { Mosquito::Runners::Coordinator.new queue_list }
 
-    it "gets a lock from the backend" do
-      gotten = false
-
-      coordinator1.only_if_coordinator do
-        gotten = true
+    it "runs when use_cron_scheduler is true" do
+      Mosquito.temp_config(run_cron_scheduler: true, use_distributed_lock: false) do
+        coordinator_ran = true
+        coordinator1.only_if_coordinator do
+          coordinator_ran = false
+        end
       end
+    end
 
-      assert gotten
+    it "gets a lock from the backend" do
+      opt_in_to_locking do
+        gotten = false
+
+        coordinator1.only_if_coordinator do
+          gotten = true
+        end
+
+        assert gotten
+      end
     end
 
     it "fails to get a lock from the backend" do
-      gotten = false
+      opt_in_to_locking do
+        gotten = false
 
-      coordinator1.only_if_coordinator do
-        coordinator2.only_if_coordinator do
-          gotten = true
+        coordinator1.only_if_coordinator do
+          coordinator2.only_if_coordinator do
+            gotten = true
+          end
         end
-      end
 
-      refute gotten
+        refute gotten
+      end
     end
 
     it "releases the lock from the backend" do
-      gotten = false
+      opt_in_to_locking do
+        gotten = false
 
-      coordinator1.only_if_coordinator do
+        coordinator1.only_if_coordinator do
+        end
+
+        coordinator2.only_if_coordinator do
+          gotten = true
+        end
+
+        assert gotten
       end
-
-      coordinator2.only_if_coordinator do
-        gotten = true
-      end
-
-      assert gotten
     end
 
     it "sets a ttl on the lock" do
-      coordinator1.only_if_coordinator do
-        assert Mosquito.backend.expires_in(coordinator.lock_key) > 0
+      opt_in_to_locking do
+        coordinator1.only_if_coordinator do
+          assert Mosquito.backend.expires_in(coordinator.lock_key) > 0
+        end
       end
     end
 
     it "warns when coordination takes too long" do
-      clear_logs
+      opt_in_to_locking do
+        clear_logs
 
-      Timecop.scale 100 do
-        # 1 actual second is measured as 100 seconds
+        Timecop.scale 100 do
+          # 1 actual second is measured as 100 seconds
 
-        coordinator1.only_if_coordinator do
-          sleep 0.1 # scaled to 10s by Timecop
+          coordinator1.only_if_coordinator do
+            sleep 0.1 # scaled to 10s by Timecop
+          end
         end
-      end
 
-      assert_logs_match "took longer than LockTTL"
+        assert_logs_match "took longer than LockTTL"
+      end
     end
   end
 

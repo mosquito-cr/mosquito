@@ -13,6 +13,8 @@ module Mosquito::Runners
     def initialize(@queue_list)
       @lock_key = Backend.build_key :coordinator, :football
       @instance_id = Random::Secure.hex(8)
+
+      @emitted_scheduling_deprecation_runtime_message = false
     end
 
     def bloop
@@ -24,6 +26,21 @@ module Mosquito::Runners
 
     def only_if_coordinator : Nil
       duration = 0.seconds
+
+      if Mosquito.configuration.run_cron_scheduler
+        yield
+
+        unless @emitted_scheduling_deprecation_runtime_message
+          Log.warn { "Scheduling coordinator / CRON Scheduler has been manually activated. This behavior is deprecated in favor of distributed locking and the default will change in 1.1.0. See https://github.com/mosquito-cr/mosquito/pull/108 " }
+          @emitted_scheduling_deprecation_runtime_message = true
+        end
+
+        return
+      end
+
+      unless Mosquito.configuration.use_distributed_lock
+        return
+      end
 
       if Mosquito.backend.lock? lock_key, instance_id, LockTTL
         duration = Time.measure do
