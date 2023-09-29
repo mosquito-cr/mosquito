@@ -31,7 +31,7 @@ module Mosquito::Runners
         yield
 
         unless @emitted_scheduling_deprecation_runtime_message
-          Log.warn { "Scheduling coordinator / CRON Scheduler has been manually activated. This behavior is deprecated in favor of distributed locking and the default will change in 1.1.0. See https://github.com/mosquito-cr/mosquito/pull/108 " }
+          Log.warn { "Scheduling coordinator / CRON Scheduler has been manually activated. This behavior is deprecated in favor of distributed locking. See https://github.com/mosquito-cr/mosquito/pull/108 " }
           @emitted_scheduling_deprecation_runtime_message = true
         end
 

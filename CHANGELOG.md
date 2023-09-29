@@ -4,6 +4,23 @@ The format is based on [Keep a
 Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Pending Release]
+
+
+## [1.0.1]
+### Added
+- Implements a distributed lock for scheduler coordination. The behavior is opt-in
+  for now, but will become the default in the next release. See #108.
+- Provides a helpful error message for most implementation errors dealing with
+  declaring params.
+
+### Changed
+- Mosquito::QueuedJob: the `params` macro has been deprecated in favor of `param`.
+  See #110.
+- The deprecated Redis command [`rpoplpush`](https://redis.io/commands/rpoplpush/)
+  is no longer used. This lifts the minimum redis server requirement up to 6.2.0
+  and jgaskins redis to > 0.7.0.
+
 ## [1.0.0]
 ### Added
 - Jobs can now specify their retry/reschedule logic with the #rescheduleable?
