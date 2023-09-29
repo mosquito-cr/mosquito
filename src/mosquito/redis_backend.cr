@@ -122,7 +122,7 @@ module Mosquito
     end
 
     def dequeue : JobRun?
-      if id = redis.rpoplpush waiting_q, pending_q
+      if id = redis.lmove waiting_q, pending_q, :right, :left
         JobRun.retrieve id.to_s
       end
     end
