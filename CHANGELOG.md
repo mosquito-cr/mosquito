@@ -5,6 +5,10 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Pending Release]
+### Added
+- Job#fail now takes an optional `retry` parameter which defaults to true, allowing
+  a developer to explicitly mark a job as not retry-able during a job run. Additionally
+  a `should_retry` property exists which can be set as well.
 
 ## [1.0.2]
 ### Fixed
