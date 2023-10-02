@@ -40,6 +40,7 @@ end
 
 class FailingJob < QueuedTestJob
   property fail_with_exception = false
+  property fail_with_retry = true
   property exception_message = "this is the reason #{name} failed"
 
   include PerformanceCounter
@@ -48,8 +49,11 @@ class FailingJob < QueuedTestJob
   def perform
     super
 
-    if fail_with_exception
+    case
+    when fail_with_exception
       raise exception_message
+    when ! fail_with_retry
+      fail exception_message, retry: false
     else
       fail exception_message
     end

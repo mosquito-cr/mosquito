@@ -32,7 +32,7 @@ describe Mosquito::Job do
       assert_logs_match failing_job.exception_message
     end
 
-    it "captures and marks failure for other exceptions" do
+    it "exception messages are sent to the logs" do
       clear_logs
 
       failing_job.fail_with_exception = true
@@ -58,7 +58,7 @@ describe Mosquito::Job do
       refute failing_job.succeeded?
     end
 
-    it "fails when no perform is implemented" do
+    it "fails when no perform is implemented, and a messsage is sent to the logs" do
       clear_logs
 
       not_implemented_job.run

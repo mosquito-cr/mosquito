@@ -42,9 +42,17 @@ describe "job_run rescheduling" do
     assert_equal 1, failing_job_run.retry_count
   end
 
-  it "updates redis when a failure happens" do
+  it "updates the backend when a failure happens" do
     failing_job_run.run
     saved_job_run = Mosquito::JobRun.retrieve failing_job_run.id.not_nil!
     assert_equal 1, saved_job_run.not_nil!.retry_count
+  end
+
+  it "does not reschedule a job which fails with retry=false" do
+    job = FailingJob.new
+    job.fail_with_retry = false
+    job.run
+
+    refute job.should_retry
   end
 end
