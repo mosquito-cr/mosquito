@@ -37,6 +37,10 @@ module Mosquito
 
     property job_run_id : String?
 
+    # When a job run fails, should it be added to the retry queue?
+    # See: #fail(retry: false)
+    property should_retry : Bool = true
+
     # The queue this job is assigned to.
     # By default every job has it's own named queue:
     #
@@ -135,9 +139,11 @@ module Mosquito
     end
 
     # To be called from inside a #perform
-    # Marks this job as a failure. If the job is a candidate for
+    # Marks this job as a failure. By default, if the job is a candidate for
     # re-scheduling, it will be run again at a later time.
-    def fail(reason = "")
+    def fail(reason = "", *, retry : Bool = true)
+      @should_retry = @should_retry && retry
+
       raise JobFailed.new(reason)
     end
 
