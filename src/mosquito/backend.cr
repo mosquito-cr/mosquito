@@ -1,5 +1,7 @@
 module Mosquito
   abstract class Backend
+    QUEUES = %w(waiting scheduled pending dead)
+
     KEY_PREFIX = {"mosquito"}
 
     def self.named(name)
@@ -37,12 +39,23 @@ module Mosquito
 
       abstract def flush : Nil
 
+      abstract def unlock(key : String, value : String) : Nil
       abstract def lock?(key : String, value : String, ttl : Time::Span) : Bool
     end
 
     macro inherited
       extend ClassMethods
     end
+
+    def self.search_queues
+      QUEUES.first(2)
+    end
+
+    {% for q in QUEUES %}
+      def {{q.id}}_q
+        build_key {{q}}, name
+      end
+    {% end %}
 
     def store(key : String, value : Hash(String, String)) : Nil
       self.class.store key, value

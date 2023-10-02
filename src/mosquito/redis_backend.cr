@@ -33,8 +33,6 @@ module Mosquito
   end
 
   class RedisBackend < Mosquito::Backend
-    QUEUES = %w(waiting scheduled pending dead)
-
     {% for name, script in Scripts::SCRIPTS %}
       def self.{{ name.id }}(*, keys = [] of String, args = [] of String, loadscripts = true)
         script = {{ script }}
@@ -68,12 +66,6 @@ module Mosquito
     def initialize(name : String | Symbol)
       @name = name.to_s
     end
-
-    {% for q in QUEUES %}
-      def {{q.id}}_q
-        build_key {{q}}, name
-      end
-    {% end %}
 
     def self.store(key : String, value : Hash(String, String)) : Nil
       redis.hset key, value
@@ -125,9 +117,7 @@ module Mosquito
     end
 
     def self.list_queues : Array(String)
-      search_queue_prefixes = QUEUES.first(2)
-
-      search_queue_prefixes.map do |search_queue|
+      search_queues.map do |search_queue|
         key = build_key search_queue, "*"
         long_names = redis.keys key
         queue_prefix = build_key(search_queue) + ":"
@@ -155,7 +145,7 @@ module Mosquito
       response == "OK"
     end
 
-    def self.unlock(key : String, value : String)
+    def self.unlock(key : String, value : String) : Nil
       remove_matching_key keys: [key], args: [value]
     end
 
