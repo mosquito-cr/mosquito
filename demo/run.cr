@@ -21,7 +21,7 @@ Signal::INT.trap do
   Mosquito::Runner.stop
 end
 
-Mosquito::Runner.start
+Mosquito::Runner.start(spin: false)
 
 count = 0
 while count <= 20 && Mosquito::Runner.keep_running
