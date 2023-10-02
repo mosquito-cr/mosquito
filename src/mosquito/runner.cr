@@ -7,9 +7,13 @@ module Mosquito
     # Should mosquito continue working?
     class_property keep_running : Bool = true
 
-    def self.start
+    def self.start(spin = true)
       Log.notice { "Mosquito is buzzing..." }
       instance.run
+
+      while spin && @@keep_running
+        sleep 1
+      end
     end
 
     def self.stop
