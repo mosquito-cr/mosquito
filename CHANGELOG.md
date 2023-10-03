@@ -6,7 +6,12 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 
 ## [Pending Release]
 
-## ~~[1.0.1]~~ - [1.0.2]
+## [1.0.2]
+### Fixed
+- Mosquito::Runner.start now captures the thread with a spin lock again. The new
+  behavior of returning imediately can be achieved by calling #start(spin: false)   
+
+## [1.0.1] [YANKED]
 ### Added
 - Implements a distributed lock for scheduler coordination. The behavior is opt-in
   for now, but will become the default in the next release. See #108.
@@ -19,6 +24,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 - The deprecated Redis command [`rpoplpush`](https://redis.io/commands/rpoplpush/)
   is no longer used. This lifts the minimum redis server requirement up to 6.2.0
   and jgaskins redis to > 0.7.0.
+- Mosquito::Runner.start no longer captures the thread with a spin lock. [DEFECT]
 
 ## [1.0.0]
 ### Added
