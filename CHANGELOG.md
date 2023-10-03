@@ -6,8 +6,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 
 ## [Pending Release]
 
-
-## [1.0.1]
+## ~~[1.0.1]~~ - [1.0.2]
 ### Added
 - Implements a distributed lock for scheduler coordination. The behavior is opt-in
   for now, but will become the default in the next release. See #108.
