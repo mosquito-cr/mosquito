@@ -454,7 +454,7 @@ Jobs are pieces of code which run a JobRun.</p>
       </li>
     
       <li class="entry-summary">
-        <a href="#fail%28reason%3D%22%22%29-instance-method" class="signature"><strong>#fail</strong>(reason = <span class="s">&quot;&quot;</span>)</a>
+        <a href="#fail%28reason%3D%22%22%2C%2A%2Cretry%3ABool%3Dtrue%29-instance-method" class="signature"><strong>#fail</strong>(reason = <span class="s">&quot;&quot;</span>, *, retry : Bool = <span class="n">true</span>)</a>
         
           <div class="summary"><p>To be called from inside a #perform Marks this job as a failure.</p></div>
         
@@ -525,6 +525,20 @@ Jobs are pieces of code which run a JobRun.</p>
     
       <li class="entry-summary">
         <a href="#run-instance-method" class="signature"><strong>#run</strong></a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#should_retry%3ABool-instance-method" class="signature"><strong>#should_retry</strong> : Bool</a>
+        
+          <div class="summary"><p>When a job run fails, should it be added to the retry queue? See: #fail(retry: false)</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#should_retry%3D%28should_retry%3ABool%29-instance-method" class="signature"><strong>#should_retry=</strong>(should_retry : Bool)</a>
+        
+          <div class="summary"><p>When a job run fails, should it be added to the retry queue? See: #fail(retry: false)</p></div>
         
       </li>
     
@@ -978,18 +992,18 @@ By default every job has it's own named queue:</p>
       </div>
     </div>
   
-    <div class="entry-detail" id="fail(reason=&quot;&quot;)-instance-method">
+    <div class="entry-detail" id="fail(reason=&quot;&quot;,*,retry:Bool=true)-instance-method">
       <div class="signature">
         
-        def <strong>fail</strong>(reason = <span class="s">&quot;&quot;</span>)
+        def <strong>fail</strong>(reason = <span class="s">&quot;&quot;</span>, *, retry : Bool = <span class="n">true</span>)
 
-        <a class="method-permalink" href="#fail%28reason%3D%22%22%29-instance-method">#</a>
+        <a class="method-permalink" href="#fail%28reason%3D%22%22%2C%2A%2Cretry%3ABool%3Dtrue%29-instance-method">#</a>
       </div>
       
         <div class="doc">
           
           <p>To be called from inside a #perform
-Marks this job as a failure. If the job is a candidate for
+Marks this job as a failure. By default, if the job is a candidate for
 re-scheduling, it will be run again at a later time.</p>
         </div>
       
@@ -1184,6 +1198,46 @@ job attempts be?</p>
 
         <a class="method-permalink" href="#run-instance-method">#</a>
       </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="should_retry:Bool-instance-method">
+      <div class="signature">
+        
+        def <strong>should_retry</strong> : Bool
+
+        <a class="method-permalink" href="#should_retry%3ABool-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>When a job run fails, should it be added to the retry queue?
+See: #fail(retry: false)</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="should_retry=(should_retry:Bool)-instance-method">
+      <div class="signature">
+        
+        def <strong>should_retry=</strong>(should_retry : Bool)
+
+        <a class="method-permalink" href="#should_retry%3D%28should_retry%3ABool%29-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>When a job run fails, should it be added to the retry queue?
+See: #fail(retry: false)</p>
+        </div>
       
       <br/>
       <div>
