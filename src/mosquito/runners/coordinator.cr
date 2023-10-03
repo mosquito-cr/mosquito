@@ -8,9 +8,10 @@ module Mosquito::Runners
     getter instance_id : String
     getter queue_list : QueueList
 
-    def initialize(@queue_list)
+    def initialize(overseer_context, @queue_list)
       @lock_key = Backend.build_key :coordinator, :football
       @instance_id = Random::Secure.hex(8)
+      @publish_context = PublishContext.new(overseer_context, [:coordinator, instance_id])
     end
 
     def runnable_name : String

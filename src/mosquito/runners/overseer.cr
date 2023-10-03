@@ -2,6 +2,7 @@ require "./idle_wait"
 require "./queue_list"
 require "./run_at_most"
 require "../runnable"
+require "uuid"
 
 module Mosquito::Runners
   # The Overseer is responsible for managing:
@@ -15,6 +16,7 @@ module Mosquito::Runners
     include IdleWait
     include RunAtMost
     include Runnable
+    include Metrics::Shorthand
 
     Log = ::Log.for self
 
@@ -30,19 +32,27 @@ module Mosquito::Runners
     getter idle_notifier
 
     # The number of executors to start.
-    getter executor_count = 3
+    getter executor_count = 8
 
     getter idle_wait : Time::Span {
       Mosquito.configuration.idle_wait
     }
 
+    property state : State = State::Starting
+    getter instance_id, queue_list, executors, coordinator, metric_data
+
     def initialize
       @idle_notifier = Channel(Bool).new
 
-      @queue_list = QueueList.new
-      @coordinator = Coordinator.new queue_list
       @executors = [] of Executor
       @work_handout = Channel(Tuple(JobRun, Queue)).new
+
+      @instance_id = Random::Secure.hex(8)
+      @metric_data = metric_data = Metadata.new Mosquito::Backend.build_key("runners", instance_id)
+      @publish_context = PublishContext.new([:overseer, instance_id])
+
+      @queue_list = QueueList.new @publish_context
+      @coordinator = Coordinator.new @publish_context, queue_list
 
       executor_count.times do
         @executors << build_executor
@@ -50,7 +60,7 @@ module Mosquito::Runners
     end
 
     def build_executor : Executor
-      Executor.new(work_handout, idle_notifier)
+      Executor.new work_handout, idle_notifier, @publish_context, metric_data
     end
 
     def runnable_name : String
@@ -65,6 +75,11 @@ module Mosquito::Runners
     # Starts all the subprocesses.
     def pre_run : Nil
       Log.info { "Starting #{@executors.size} executors." }
+
+      metric {
+        publish @publish_context, {event: "starting"}
+      }
+
       @queue_list.run
       @executors.each(&.run)
     end
@@ -77,7 +92,11 @@ module Mosquito::Runners
       end
       work_handout.close
       stopped_notifiers.each(&.receive)
+      metric { publish @publish_context, {event: "stopping-work"} }
       Log.info { "All executors stopped." }
+
+      Log.info { "Overseer #{instance_id} finished for now." }
+      metric { publish @publish_context, {event: "exiting"} }
     end
 
     # The goal for the overseer is to:
@@ -97,13 +116,18 @@ module Mosquito::Runners
         return
       end
 
+      metric {
+        run_at_most every: Mosquito.configuration.heartbeat_interval, label: :heartbeat do
+            beat_heart(metric_data)
+        end
+      }
+
       # If the queue list hasn't run at least once, it won't have any queues to
       # search for so we'll just defer until it's available.
       unless queue_list.state.started?
         Log.debug { "Waiting for the queue list to fetch possible queues" }
         return
       end
-
 
       Log.trace { "Waiting for an idle executor" }
       all_executors_busy = true

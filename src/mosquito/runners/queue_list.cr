@@ -10,10 +10,12 @@ module Mosquito::Runners
     include RunAtMost
     include Runnable
     include IdleWait
+    include Metrics::Shorthand
 
     getter queues : Array(Queue)
 
-    def initialize
+    def initialize(overseer_context : PublishContext)
+      @publish_context = PublishContext.new(overseer_context, [:queue_list])
       @queues = [] of Queue
     end
 
@@ -40,6 +42,10 @@ module Mosquito::Runners
           if queues_which_have_never_been_seen.size > 0
             "found #{queues_which_have_never_been_seen.size} new queues: #{queues_which_have_never_been_seen.map(&.name).join(", ")}"
           end
+        }
+
+        metric {
+          publish @publish_context, {event: "found-queues", queues: @queues.map(&.name).join(", ")}
         }
 
         @queues = new_queue_list

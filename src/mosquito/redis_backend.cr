@@ -88,7 +88,7 @@ module Mosquito
       end
     end
 
-    def self.delete(key : String, in ttl : Time::Span) : Nil
+    def self.delete(key : String, in ttl : Time::Span = 0.seconds) : Nil
       delete key, ttl.to_i
     end
 
@@ -145,6 +145,29 @@ module Mosquito
 
     def self.unlock(key : String, value : String) : Nil
       remove_matching_key keys: [key], args: [value]
+    end
+
+    def self.publish(key : String, value : String) : Nil
+      redis.publish key, value
+    end
+
+    def self.subscribe(key : String) : Channel(Backend::BroadcastMessage)
+      stream = Channel(Backend::BroadcastMessage).new
+
+      spawn do
+        redis.psubscribe(key) do |subscription, connection|
+          subscription.on_message do |channel, message|
+            stream.send(
+              Backend::BroadcastMessage.new(
+                channel: channel,
+                message: message
+              )
+            )
+          end
+        end
+      end
+
+      stream
     end
 
     def schedule(job_run : JobRun, at scheduled_time : Time) : JobRun
@@ -225,10 +248,18 @@ module Mosquito
           raise "don't know how to dump a #{type} for {{name.id}}"
         end
       end
+
+      def {{ name.id }}_size : Int64
+        redis.llen({{name.id}}_q).as(Int64)
+      end
     {% end %}
 
     def scheduled_job_run_time(job_run : JobRun) : String?
       redis.zscore(scheduled_q, job_run.id).as?(String)
+    end
+
+    def increment(key : String, by value : Int32 = 1) : Int64
+      redis.incrby key, value
     end
   end
 end

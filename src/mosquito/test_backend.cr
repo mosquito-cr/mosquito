@@ -54,7 +54,7 @@ module Mosquito
     def self.delete(key : String, in ttl : Int64 = 0) : Nil
     end
 
-    def self.delete(key : String, in ttl : Time::Span) : Nil
+    def self.delete(key : String, in ttl : Time::Span = 0.seconds) : Nil
     end
 
     def self.expires_in(key : String) : Int64
@@ -83,6 +83,13 @@ module Mosquito
     end
 
     def self.unlock(key : String, value : String) : Nil
+    end
+
+    def self.publish(key : String, value : String) : Nil
+    end
+
+    def self.subscribe(key : String) : Channel(BroadcastMessage)
+      Channel(BroadcastMessage).new
     end
 
     struct EnqueuedJob
@@ -143,9 +150,17 @@ module Mosquito
       def dump_{{name.id}}_q : Array(String)
         [] of String
       end
+
+      def {{ name.id }}_size : Int64
+        0_i64
+      end
     {% end %}
 
     def scheduled_job_run_time(job_run : JobRun) : String?
+    end
+
+    def increment(key : String, by value : Int32 = 1) : Int64
+      0_i64
     end
   end
 end
