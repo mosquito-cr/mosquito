@@ -6,6 +6,8 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 
 ## [Pending Release]
 ### Added
+- Adds a test backend, which can be used to inspect jobs that were enqueued and
+  the parameters they were enqueued with.
 - Job#fail now takes an optional `retry` parameter which defaults to true, allowing
   a developer to explicitly mark a job as not retry-able during a job run. Additionally
   a `should_retry` property exists which can be set as well.
