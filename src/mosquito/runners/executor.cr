@@ -23,6 +23,7 @@ module Mosquito::Runners
   class Executor
     include RunAtMost
     include Runnable
+    include Metrics::Shorthand
 
     Log = ::Log.for self
     getter log : ::Log
@@ -38,6 +39,8 @@ module Mosquito::Runners
 
     # Used to notify the overseer that this executor is idle.
     getter idle_bell : Channel(Bool)
+    getter metric_data : Metadata
+    getter instance_id : String
 
     private def state=(state : State)
       # Send a message to the overseer that this executor is idle.
@@ -48,8 +51,10 @@ module Mosquito::Runners
       super
     end
 
-    def initialize(@job_pipeline, @idle_bell)
+    def initialize(@job_pipeline, @idle_bell, overseer_context, @metric_data)
       @log = Log.for(object_id.to_s)
+      @instance_id = Random::Secure.hex(8)
+      @publish_context = PublishContext.new overseer_context, [:executor, instance_id]
     end
 
     # :nodoc:
@@ -85,15 +90,27 @@ module Mosquito::Runners
     def execute(job_run : JobRun, from_queue q : Queue)
       log.info { "#{"Starting:".colorize.magenta} #{job_run} from #{q.name}" }
 
+      metric {
+        metric_data["current_work"] = job_run.id.to_s
+        publish @publish_context, {event: "starting", job_run: job_run.id, from_queue: q.name}
+      }
+
       duration = Time.measure do
         job_run.run
       end.total_seconds
+
+      metric {
+        tick_metrics "executed"
+      }
 
       if job_run.succeeded?
         log.info { "#{"Success:".colorize.green} #{job_run} finished and took #{time_with_units duration}" }
         q.forget job_run
         job_run.delete in: successful_job_ttl
 
+        metric {
+          tick_metrics "suceeded"
+        }
       else
         message = String::Builder.new
         message << "Failure: ".colorize.red
@@ -113,14 +130,30 @@ module Mosquito::Runners
           message << next_execution
           message << ")"
           log.warn { message.to_s }
+          metric {
+            publish(
+              @publish_context,
+              {event: "job-failed", job_run: job_run.id, reschedulable: true}
+            )
+          }
         else
           q.banish job_run
           job_run.delete in: failed_job_ttl
 
           message << "cannot be rescheduled".colorize.yellow
           log.error { message.to_s }
+
+          metric {
+            publish @publish_context, {event: "job-failed", job_run: job_run.id, reschedulable: false}
+          }
         end
       end
+
+      metric {
+        tick_metrics "suceeded"
+        metric_data["current_work"] = ""
+        publish @publish_context, {event: "job-finished", job_run: job_run.id}
+      }
     end
 
     # :nodoc:
