@@ -14,7 +14,7 @@
 <script type="text/javascript" src="../js/doc.js"></script>
 
   <meta name="repository-name" content="mosquito">
-  <title>Mosquito::RedisBackend - mosquito 1.0.2</title>
+  <title>Mosquito::TestBackend - mosquito 1.0.2</title>
   <script type="text/javascript">
     CrystalDocs.base_path = "../";
   </script>
@@ -172,7 +172,7 @@
       
     </li>
   
-  <li class=" current" data-id="mosquito/Mosquito/RedisBackend" data-name="mosquito::redisbackend">
+  <li class=" " data-id="mosquito/Mosquito/RedisBackend" data-name="mosquito::redisbackend">
       <a href="../Mosquito/RedisBackend.html">RedisBackend</a>
       
     </li>
@@ -242,7 +242,7 @@
       
     </li>
   
-  <li class="parent " data-id="mosquito/Mosquito/TestBackend" data-name="mosquito::testbackend">
+  <li class="parent open current" data-id="mosquito/Mosquito/TestBackend" data-name="mosquito::testbackend">
       <a href="../Mosquito/TestBackend.html">TestBackend</a>
       
         <ul>
@@ -271,15 +271,51 @@
 <div class="main-content">
 <h1 class="type-name">
 
-  <span class="kind">class</span> Mosquito::RedisBackend
+  <span class="kind">class</span> Mosquito::TestBackend
 
 </h1>
 
 
-  <ul class="superclass-hierarchy"><li class="superclass"><a href="../Mosquito/RedisBackend.html">Mosquito::RedisBackend</a></li><li class="superclass"><a href="../Mosquito/Backend.html">Mosquito::Backend</a></li><li class="superclass">Reference</li><li class="superclass">Object</li></ul>
+  <ul class="superclass-hierarchy"><li class="superclass"><a href="../Mosquito/TestBackend.html">Mosquito::TestBackend</a></li><li class="superclass"><a href="../Mosquito/Backend.html">Mosquito::Backend</a></li><li class="superclass">Reference</li><li class="superclass">Object</li></ul>
 
 
 
+
+  <h2>
+    <a id="overview" class="anchor" href="#overview">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Overview
+  </h2>
+
+  <p>An in-memory noop backend desigend to be used in application testing.</p>
+<p>The test mode backend simply makes a copy of job_runs at enqueue time and holds them in a class getter array.</p>
+<p>Job run id, config (aka parameters), and runtime class are kept in memory, and a truncate utility function is provided.</p>
+<p>Activate test mode configure the test backend like this:</p>
+<pre><code class="language-crystal"><span class="t">Mosquito</span>.configure <span class="k">do</span> <span class="o">|</span>settings<span class="o">|</span>
+  settings.backend <span class="o">=</span> <span class="t">Mosquito</span><span class="t">::</span><span class="t">TestBackend</span>
+<span class="k">end</span></code></pre>
+<p>Then in your tests:</p>
+<pre><code class="language-crystal">describe <span class="s">&quot;testing&quot;</span> <span class="k">do</span>
+  it <span class="s">&quot;enqueues the job&quot;</span> <span class="k">do</span>
+    <span class="c"># build and enqueue a job</span>
+    job_run <span class="o">=</span> <span class="t">EchoJob</span>.new(text: <span class="s">&quot;hello world&quot;</span>).enqueue
+
+    <span class="c"># assert that the job was enqueued</span>
+    lastest_enqueued_job <span class="o">=</span> <span class="t">Mosquito</span><span class="t">::</span><span class="t">TestBackend</span>.enqueued_jobs.last
+
+    <span class="c"># check the job config</span>
+    assert_equal <span class="s">&quot;hello world&quot;</span>, latest_enqueued_job.config[<span class="s">&quot;text&quot;</span>]
+
+    <span class="c"># check the job_id matches</span>
+    assert_equal job_run.id, latest_enqueued_job.id
+
+    <span class="c"># optionally, truncate the history</span>
+    <span class="t">Mosquito</span><span class="t">::</span><span class="t">TestBackend</span>.flush_enqueued_jobs!
+  <span class="k">end</span>
+<span class="k">end</span></code></pre>
 
 
 
@@ -318,7 +354,7 @@
   </h2>
   
     
-      mosquito/redis_backend.cr
+      mosquito/test_backend.cr
     
     <br/>
   
@@ -326,23 +362,6 @@
 
 
 
-
-  <h2>
-    <a id="constructors" class="anchor" href="#constructors">
-  <svg class="octicon-link" aria-hidden="true">
-    <use href="#octicon-link"/>
-  </svg>
-</a>
-    Constructors
-  </h2>
-  <ul class="list-summary">
-    
-      <li class="entry-summary">
-        <a href="#new%28name%3AString%7CSymbol%29-class-method" class="signature"><strong>.new</strong>(name : String | Symbol)</a>
-        
-      </li>
-    
-  </ul>
 
 
 
@@ -357,19 +376,22 @@
   <ul class="list-summary">
     
       <li class="entry-summary">
-        <a href="#delete%28key%3AString%2Cinttl%3AInt32%3D0%29%3ANil-class-method" class="signature"><strong>.delete</strong>(key : String, in ttl : Int32 = <span class="n">0</span>) : Nil</a>
-        
-          <div class="summary"><p>Overload required for crystal 1.1-1.2.</p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
         <a href="#delete%28key%3AString%2Cinttl%3AInt64%3D0%29%3ANil-class-method" class="signature"><strong>.delete</strong>(key : String, in ttl : Int64 = <span class="n">0</span>) : Nil</a>
         
       </li>
     
       <li class="entry-summary">
         <a href="#delete%28key%3AString%2Cinttl%3ATime%3A%3ASpan%29%3ANil-class-method" class="signature"><strong>.delete</strong>(key : String, in ttl : Time::Span) : Nil</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#enqueued_jobs-class-method" class="signature"><strong>.enqueued_jobs</strong></a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#enqueued_jobs%3D%28enqueued_jobs%3AArray%28Mosquito%3A%3ATestBackend%3A%3AEnqueuedJob%29%29-class-method" class="signature"><strong>.enqueued_jobs=</strong>(enqueued_jobs : Array(Mosquito::TestBackend::EnqueuedJob))</a>
         
       </li>
     
@@ -381,7 +403,10 @@
       <li class="entry-summary">
         <a href="#flush%3ANil-class-method" class="signature"><strong>.flush</strong> : Nil</a>
         
-          <div class="summary"><p>is this even a good idea?</p></div>
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#flush_enqueued_jobs%21-class-method" class="signature"><strong>.flush_enqueued_jobs!</strong></a>
         
       </li>
     
@@ -412,16 +437,6 @@
     
       <li class="entry-summary">
         <a href="#lock%3F%28key%3AString%2Cvalue%3AString%2Cttl%3ATime%3A%3ASpan%29%3ABool-class-method" class="signature"><strong>.lock?</strong>(key : String, value : String, ttl : Time::Span) : Bool</a>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#redis-class-method" class="signature"><strong>.redis</strong></a>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#remove_matching_key%28%2A%2Ckeys%3D%5B%5DofString%2Cargs%3D%5B%5DofString%2Cloadscripts%3Dtrue%29-class-method" class="signature"><strong>.remove_matching_key</strong>(*, keys = <span class="o">[]</span> <span class="k">of</span> <span class="t">String</span>, args = <span class="o">[]</span> <span class="k">of</span> <span class="t">String</span>, loadscripts = <span class="n">true</span>)</a>
         
       </li>
     
@@ -507,11 +522,6 @@
       </li>
     
       <li class="entry-summary">
-        <a href="#redis-instance-method" class="signature"><strong>#redis</strong></a>
-        
-      </li>
-    
-      <li class="entry-summary">
         <a href="#schedule%28job_run%3AJobRun%2Catscheduled_time%3ATime%29%3AJobRun-instance-method" class="signature"><strong>#schedule</strong>(job_run : JobRun, at scheduled_time : Time) : JobRun</a>
         
       </li>
@@ -522,7 +532,7 @@
       </li>
     
       <li class="entry-summary">
-        <a href="#size%28include_dead%3Dtrue%29%3AInt64-instance-method" class="signature"><strong>#size</strong>(include_dead = <span class="n">true</span>) : Int64</a>
+        <a href="#size%28include_dead%3ABool%3Dtrue%29%3AInt64-instance-method" class="signature"><strong>#size</strong>(include_dead : Bool = <span class="n">true</span>) : Int64</a>
         
       </li>
     
@@ -714,30 +724,6 @@
 </div>
 
 
-  <h2>
-    <a id="constructor-detail" class="anchor" href="#constructor-detail">
-  <svg class="octicon-link" aria-hidden="true">
-    <use href="#octicon-link"/>
-  </svg>
-</a>
-    Constructor Detail
-  </h2>
-  
-    <div class="entry-detail" id="new(name:String|Symbol)-class-method">
-      <div class="signature">
-        
-        def self.<strong>new</strong>(name : String | Symbol)
-
-        <a class="method-permalink" href="#new%28name%3AString%7CSymbol%29-class-method">#</a>
-      </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-
 
 
   <h2>
@@ -748,27 +734,6 @@
 </a>
     Class Method Detail
   </h2>
-  
-    <div class="entry-detail" id="delete(key:String,inttl:Int32=0):Nil-class-method">
-      <div class="signature">
-        
-        def self.<strong>delete</strong>(key : String, in ttl : Int32 = <span class="n">0</span>) : Nil
-
-        <a class="method-permalink" href="#delete%28key%3AString%2Cinttl%3AInt32%3D0%29%3ANil-class-method">#</a>
-      </div>
-      
-        <div class="doc">
-          
-          <p>Overload required for crystal 1.1-1.2.
-Soft Deprecation isn't shown, but it's here so this will get cleaned up at some point.
-@[Deprecated(&quot;To be removed when support for 1.1 is dropped. See RedisBackend.delete(String, Int64).&quot;)]</p>
-        </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
   
     <div class="entry-detail" id="delete(key:String,inttl:Int64=0):Nil-class-method">
       <div class="signature">
@@ -790,6 +755,34 @@ Soft Deprecation isn't shown, but it's here so this will get cleaned up at some 
         def self.<strong>delete</strong>(key : String, in ttl : Time::Span) : Nil
 
         <a class="method-permalink" href="#delete%28key%3AString%2Cinttl%3ATime%3A%3ASpan%29%3ANil-class-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="enqueued_jobs-class-method">
+      <div class="signature">
+        
+        def self.<strong>enqueued_jobs</strong>
+
+        <a class="method-permalink" href="#enqueued_jobs-class-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="enqueued_jobs=(enqueued_jobs:Array(Mosquito::TestBackend::EnqueuedJob))-class-method">
+      <div class="signature">
+        
+        def self.<strong>enqueued_jobs=</strong>(enqueued_jobs : Array(<a href="../Mosquito/TestBackend/EnqueuedJob.html">Mosquito::TestBackend::EnqueuedJob</a>))
+
+        <a class="method-permalink" href="#enqueued_jobs%3D%28enqueued_jobs%3AArray%28Mosquito%3A%3ATestBackend%3A%3AEnqueuedJob%29%29-class-method">#</a>
       </div>
       
       <br/>
@@ -820,10 +813,19 @@ Soft Deprecation isn't shown, but it's here so this will get cleaned up at some 
         <a class="method-permalink" href="#flush%3ANil-class-method">#</a>
       </div>
       
-        <div class="doc">
-          
-          <p>is this even a good idea?</p>
-        </div>
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="flush_enqueued_jobs!-class-method">
+      <div class="signature">
+        
+        def self.<strong>flush_enqueued_jobs!</strong>
+
+        <a class="method-permalink" href="#flush_enqueued_jobs%21-class-method">#</a>
+      </div>
       
       <br/>
       <div>
@@ -907,34 +909,6 @@ Soft Deprecation isn't shown, but it's here so this will get cleaned up at some 
         def self.<strong>lock?</strong>(key : String, value : String, ttl : Time::Span) : Bool
 
         <a class="method-permalink" href="#lock%3F%28key%3AString%2Cvalue%3AString%2Cttl%3ATime%3A%3ASpan%29%3ABool-class-method">#</a>
-      </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="redis-class-method">
-      <div class="signature">
-        
-        def self.<strong>redis</strong>
-
-        <a class="method-permalink" href="#redis-class-method">#</a>
-      </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="remove_matching_key(*,keys=[]ofString,args=[]ofString,loadscripts=true)-class-method">
-      <div class="signature">
-        
-        def self.<strong>remove_matching_key</strong>(*, keys = <span class="o">[]</span> <span class="k">of</span> <span class="t">String</span>, args = <span class="o">[]</span> <span class="k">of</span> <span class="t">String</span>, loadscripts = <span class="n">true</span>)
-
-        <a class="method-permalink" href="#remove_matching_key%28%2A%2Ckeys%3D%5B%5DofString%2Cargs%3D%5B%5DofString%2Cloadscripts%3Dtrue%29-class-method">#</a>
       </div>
       
       <br/>
@@ -1146,20 +1120,6 @@ Soft Deprecation isn't shown, but it's here so this will get cleaned up at some 
       </div>
     </div>
   
-    <div class="entry-detail" id="redis-instance-method">
-      <div class="signature">
-        
-        def <strong>redis</strong>
-
-        <a class="method-permalink" href="#redis-instance-method">#</a>
-      </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
     <div class="entry-detail" id="schedule(job_run:JobRun,atscheduled_time:Time):JobRun-instance-method">
       <div class="signature">
         
@@ -1188,12 +1148,12 @@ Soft Deprecation isn't shown, but it's here so this will get cleaned up at some 
       </div>
     </div>
   
-    <div class="entry-detail" id="size(include_dead=true):Int64-instance-method">
+    <div class="entry-detail" id="size(include_dead:Bool=true):Int64-instance-method">
       <div class="signature">
         
-        def <strong>size</strong>(include_dead = <span class="n">true</span>) : Int64
+        def <strong>size</strong>(include_dead : Bool = <span class="n">true</span>) : Int64
 
-        <a class="method-permalink" href="#size%28include_dead%3Dtrue%29%3AInt64-instance-method">#</a>
+        <a class="method-permalink" href="#size%28include_dead%3ABool%3Dtrue%29%3AInt64-instance-method">#</a>
       </div>
       
       <br/>

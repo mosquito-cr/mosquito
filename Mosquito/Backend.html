@@ -242,6 +242,21 @@
       
     </li>
   
+  <li class="parent " data-id="mosquito/Mosquito/TestBackend" data-name="mosquito::testbackend">
+      <a href="../Mosquito/TestBackend.html">TestBackend</a>
+      
+        <ul>
+  
+  <li class=" " data-id="mosquito/Mosquito/TestBackend/EnqueuedJob" data-name="mosquito::testbackend::enqueuedjob">
+      <a href="../Mosquito/TestBackend/EnqueuedJob.html">EnqueuedJob</a>
+      
+    </li>
+  
+</ul>
+
+      
+    </li>
+  
 </ul>
 
       
@@ -286,6 +301,8 @@
     
       <li class="other-type"><a href="../Mosquito/RedisBackend.html">Mosquito::RedisBackend</a></li>
     
+      <li class="other-type"><a href="../Mosquito/TestBackend.html">Mosquito::TestBackend</a></li>
+    
   </ul>
 
 
@@ -324,6 +341,11 @@
     
       <dt class="entry-const" id="KEY_PREFIX">
         <strong>KEY_PREFIX</strong> = <code>{<span class="s">&quot;mosquito&quot;</span>}</code>
+      </dt>
+      
+    
+      <dt class="entry-const" id="QUEUES">
+        <strong>QUEUES</strong> = <code>[<span class="s">&quot;waiting&quot;</span>, <span class="s">&quot;scheduled&quot;</span>, <span class="s">&quot;pending&quot;</span>, <span class="s">&quot;dead&quot;</span>] <span class="k">of</span> <span class="t">::</span><span class="t">String</span></code>
       </dt>
       
     
@@ -370,6 +392,11 @@
         
       </li>
     
+      <li class="entry-summary">
+        <a href="#search_queues-class-method" class="signature"><strong>.search_queues</strong></a>
+        
+      </li>
+    
   </ul>
 
 
@@ -386,6 +413,11 @@
     
       <li class="entry-summary">
         <a href="#build_key%28%2Aparts%29-instance-method" class="signature"><strong>#build_key</strong>(*parts)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#dead_q-instance-method" class="signature"><strong>#dead_q</strong></a>
         
       </li>
     
@@ -447,6 +479,11 @@
       </li>
     
       <li class="entry-summary">
+        <a href="#pending_q-instance-method" class="signature"><strong>#pending_q</strong></a>
+        
+      </li>
+    
+      <li class="entry-summary">
         <a href="#retrieve%28key%3AString%29%3AHash%28String%2CString%29-instance-method" class="signature"><strong>#retrieve</strong>(key : String) : Hash(String, String)</a>
         
       </li>
@@ -462,6 +499,11 @@
       </li>
     
       <li class="entry-summary">
+        <a href="#scheduled_q-instance-method" class="signature"><strong>#scheduled_q</strong></a>
+        
+      </li>
+    
+      <li class="entry-summary">
         <a href="#size%28include_dead%3ABool%3Dtrue%29%3AInt64-instance-method" class="signature"><strong>#size</strong>(include_dead : Bool = <span class="n">true</span>) : Int64</a>
         
       </li>
@@ -473,6 +515,11 @@
     
       <li class="entry-summary">
         <a href="#terminate%28job_run%3AJobRun%29-instance-method" class="signature"><strong>#terminate</strong>(job_run : JobRun)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#waiting_q-instance-method" class="signature"><strong>#waiting_q</strong></a>
         
       </li>
     
@@ -570,6 +617,20 @@
       </div>
     </div>
   
+    <div class="entry-detail" id="search_queues-class-method">
+      <div class="signature">
+        
+        def self.<strong>search_queues</strong>
+
+        <a class="method-permalink" href="#search_queues-class-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
 
 
 
@@ -588,6 +649,20 @@
         def <strong>build_key</strong>(*parts)
 
         <a class="method-permalink" href="#build_key%28%2Aparts%29-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="dead_q-instance-method">
+      <div class="signature">
+        
+        def <strong>dead_q</strong>
+
+        <a class="method-permalink" href="#dead_q-instance-method">#</a>
       </div>
       
       <br/>
@@ -755,6 +830,20 @@
       </div>
     </div>
   
+    <div class="entry-detail" id="pending_q-instance-method">
+      <div class="signature">
+        
+        def <strong>pending_q</strong>
+
+        <a class="method-permalink" href="#pending_q-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
     <div class="entry-detail" id="retrieve(key:String):Hash(String,String)-instance-method">
       <div class="signature">
         
@@ -797,6 +886,20 @@
       </div>
     </div>
   
+    <div class="entry-detail" id="scheduled_q-instance-method">
+      <div class="signature">
+        
+        def <strong>scheduled_q</strong>
+
+        <a class="method-permalink" href="#scheduled_q-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
     <div class="entry-detail" id="size(include_dead:Bool=true):Int64-instance-method">
       <div class="signature">
         abstract 
@@ -831,6 +934,20 @@
         def <strong>terminate</strong>(job_run : <a href="../Mosquito/JobRun.html">JobRun</a>)
 
         <a class="method-permalink" href="#terminate%28job_run%3AJobRun%29-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="waiting_q-instance-method">
+      <div class="signature">
+        
+        def <strong>waiting_q</strong>
+
+        <a class="method-permalink" href="#waiting_q-instance-method">#</a>
       </div>
       
       <br/>
