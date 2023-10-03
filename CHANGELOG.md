@@ -36,6 +36,10 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
   and jgaskins redis to > 0.7.0.
 - Mosquito::Runner.start no longer captures the thread with a spin lock. [DEFECT]
 
+### Removed
+- Mosquito config option `run_cron_scheduler` is no longer present, multiple
+  workers will compete for a distributed lock instead. See #108.
+
 ## [1.0.0]
 ### Added
 - Jobs can now specify their retry/reschedule logic with the #rescheduleable?
@@ -68,8 +72,6 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 - Built in serializer for Granite models, and the Model type alias. See
   Serializers in the documentation if the functionality is necessary.
 - Mosquito no longer depends on luckyframework/habitat.
-- Mosquito config option `run_cron_scheduler` is no longer present, multiple
-  workers will compete for a distributed lock instead. See #108.
 
 ### Fixed
 - Boolean false can now be specified as the default value for a parameter:
