@@ -10,6 +10,10 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
   a developer to explicitly mark a job as not retry-able during a job run. Additionally
   a `should_retry` property exists which can be set as well.
 
+### Changed
+- ** BREAKING ** The QueuedJob `params` macro has been replaced with `param`
+  which declares only one parameter at a time.
+
 ## [1.0.2]
 ### Fixed
 - Mosquito::Runner.start now captures the thread with a spin lock again. The new
