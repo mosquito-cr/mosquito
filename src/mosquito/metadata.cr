@@ -10,8 +10,14 @@ module Mosquito
     def initialize(@root_key : String, @readonly = false)
     end
 
+    # Deletes this metadata immediately.
     def delete : Nil
       Mosquito.backend.delete root_key
+    end
+
+    # Schedule this metadata to be deleted after a time span.
+    def delete(in ttl : Time::Span) : Nil
+      Mosquito.backend.delete root_key, in: ttl
     end
 
     def to_h : Hash(String, String)

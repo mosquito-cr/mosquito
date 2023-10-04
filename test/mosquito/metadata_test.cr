@@ -70,4 +70,23 @@ describe Mosquito::Metadata do
       assert_equal "truth", store[field]?
     end
   end
+
+  it "can be deleted" do
+    clean_slate do
+      store[field] = "truth"
+      assert_equal "truth", store[field]?
+      store.delete
+      assert_equal nil, Metadata.new(store_name)[field]?
+    end
+  end
+
+  it "can be deleted with a ttl" do
+    clean_slate do
+      store[field] = "truth"
+      assert_equal "truth", store[field]?
+      store.delete(in: 1.minute)
+      assert_in_epsilon(60, Mosquito.backend.expires_in(store_name))
+      store.delete
+    end
+  end
 end

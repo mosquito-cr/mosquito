@@ -18,6 +18,14 @@ module Mosquito
 
     def last_executed_at=(time : Time)
       @metadata["last_executed_at"] = time.to_unix.to_s
+
+      case interval_ = interval
+      when Time::Span
+        @metadata.delete(in: interval_ * 3)
+      when Time::MonthSpan
+        seconds_in_an_average_month = 2_635_200.seconds
+        @metadata.delete(in: seconds_in_an_average_month * interval_.value * 3)
+      end
     end
 
     def initialize(@class, @interval)
