@@ -52,7 +52,9 @@ module Mosquito::Runners
     def tick
       delta = Time.measure do
         queue_list.fetch
-        coordinator.bloop
+        run_at_most every: 1.second, label: :coordinator do
+          coordinator.bloop
+        end
         executor.dequeue_and_run_jobs
       end
 
