@@ -12,6 +12,9 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
   a developer to explicitly mark a job as not retry-able during a job run. Additionally
   a `should_retry` property exists which can be set as well.
 
+### Fixed
+- PeriodicJobs are now correctly run once per interval in an environment with many workers.
+
 ### Changed
 - ** BREAKING ** The QueuedJob `params` macro has been replaced with `param`
   which declares only one parameter at a time.
