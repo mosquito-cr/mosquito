@@ -293,6 +293,7 @@
   <p>Provides a real-time metadata store. Data is not cached, which allows
 multiple workers to operate on the same structures in real time.</p>
 <p>Each read or write incurs a round trip to the backend.</p>
+<p>Keys and values are always strings.</p>
 
 
 
@@ -360,30 +361,49 @@ multiple workers to operate on the same structures in real time.</p>
       <li class="entry-summary">
         <a href="#%5B%5D%3D%28key%3AString%2Cvalue%3AString%29-instance-method" class="signature"><strong>#[]=</strong>(key : String, value : String)</a>
         
+          <div class="summary"><p>Writes a value to a key in the metadata.</p></div>
+        
       </li>
     
       <li class="entry-summary">
         <a href="#%5B%5D%3F%28key%3AString%29%3AString%7CNil-instance-method" class="signature"><strong>#[]?</strong>(key : String) : String | Nil</a>
+        
+          <div class="summary"><p>Reads a single key from the metadata.</p></div>
         
       </li>
     
       <li class="entry-summary">
         <a href="#decrement%28key%29-instance-method" class="signature"><strong>#decrement</strong>(key)</a>
         
+          <div class="summary"><p>Decrements a value in the metadata by 1.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#delete%28inttl%3ATime%3A%3ASpan%29%3ANil-instance-method" class="signature"><strong>#delete</strong>(in ttl : Time::Span) : Nil</a>
+        
+          <div class="summary"><p>Schedule this metadata to be deleted after a time span.</p></div>
+        
       </li>
     
       <li class="entry-summary">
         <a href="#delete%3ANil-instance-method" class="signature"><strong>#delete</strong> : Nil</a>
+        
+          <div class="summary"><p>Deletes this metadata immediately.</p></div>
         
       </li>
     
       <li class="entry-summary">
         <a href="#increment%28key%2Cbyincrement%3AInt32%29-instance-method" class="signature"><strong>#increment</strong>(key, by increment : Int32)</a>
         
+          <div class="summary"><p>Parametrically incruments a value in the metadata.</p></div>
+        
       </li>
     
       <li class="entry-summary">
         <a href="#increment%28key%29-instance-method" class="signature"><strong>#increment</strong>(key)</a>
+        
+          <div class="summary"><p>Increments a value in the metadata by 1 by 1 by 1 by 1.</p></div>
         
       </li>
     
@@ -414,6 +434,8 @@ multiple workers to operate on the same structures in real time.</p>
     
       <li class="entry-summary">
         <a href="#to_h%3AHash%28String%2CString%29-instance-method" class="signature"><strong>#to_h</strong> : Hash(String, String)</a>
+        
+          <div class="summary"><p>Reads the metadata and returns it as a hash.</p></div>
         
       </li>
     
@@ -503,6 +525,11 @@ multiple workers to operate on the same structures in real time.</p>
         <a class="method-permalink" href="#%5B%5D%3D%28key%3AString%2Cvalue%3AString%29-instance-method">#</a>
       </div>
       
+        <div class="doc">
+          
+          <p>Writes a value to a key in the metadata.</p>
+        </div>
+      
       <br/>
       <div>
         
@@ -516,6 +543,11 @@ multiple workers to operate on the same structures in real time.</p>
 
         <a class="method-permalink" href="#%5B%5D%3F%28key%3AString%29%3AString%7CNil-instance-method">#</a>
       </div>
+      
+        <div class="doc">
+          
+          <p>Reads a single key from the metadata.</p>
+        </div>
       
       <br/>
       <div>
@@ -531,6 +563,30 @@ multiple workers to operate on the same structures in real time.</p>
         <a class="method-permalink" href="#decrement%28key%29-instance-method">#</a>
       </div>
       
+        <div class="doc">
+          
+          <p>Decrements a value in the metadata by 1.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="delete(inttl:Time::Span):Nil-instance-method">
+      <div class="signature">
+        
+        def <strong>delete</strong>(in ttl : Time::Span) : Nil
+
+        <a class="method-permalink" href="#delete%28inttl%3ATime%3A%3ASpan%29%3ANil-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Schedule this metadata to be deleted after a time span.</p>
+        </div>
+      
       <br/>
       <div>
         
@@ -544,6 +600,11 @@ multiple workers to operate on the same structures in real time.</p>
 
         <a class="method-permalink" href="#delete%3ANil-instance-method">#</a>
       </div>
+      
+        <div class="doc">
+          
+          <p>Deletes this metadata immediately.</p>
+        </div>
       
       <br/>
       <div>
@@ -559,6 +620,11 @@ multiple workers to operate on the same structures in real time.</p>
         <a class="method-permalink" href="#increment%28key%2Cbyincrement%3AInt32%29-instance-method">#</a>
       </div>
       
+        <div class="doc">
+          
+          <p>Parametrically incruments a value in the metadata.</p>
+        </div>
+      
       <br/>
       <div>
         
@@ -572,6 +638,11 @@ multiple workers to operate on the same structures in real time.</p>
 
         <a class="method-permalink" href="#increment%28key%29-instance-method">#</a>
       </div>
+      
+        <div class="doc">
+          
+          <p>Increments a value in the metadata by 1 by 1 by 1 by 1.</p>
+        </div>
       
       <br/>
       <div>
@@ -656,6 +727,11 @@ multiple workers to operate on the same structures in real time.</p>
 
         <a class="method-permalink" href="#to_h%3AHash%28String%2CString%29-instance-method">#</a>
       </div>
+      
+        <div class="doc">
+          
+          <p>Reads the metadata and returns it as a hash.</p>
+        </div>
       
       <br/>
       <div>

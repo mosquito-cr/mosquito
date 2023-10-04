@@ -359,6 +359,8 @@
       <li class="entry-summary">
         <a href="#execute-instance-method" class="signature"><strong>#execute</strong></a>
         
+          <div class="summary"><p>Enqueues the job for execution</p></div>
+        
       </li>
     
       <li class="entry-summary">
@@ -372,17 +374,30 @@
       </li>
     
       <li class="entry-summary">
-        <a href="#last_executed_at%3ATime-instance-method" class="signature"><strong>#last_executed_at</strong> : Time</a>
+        <a href="#last_executed_at-instance-method" class="signature"><strong>#last_executed_at</strong></a>
+        
+          <div class="summary"><p>The last executed timestamp, or &quot;never&quot; if it doesn't exist.</p></div>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#last_executed_at%3D%28last_executed_at%3ATime%29-instance-method" class="signature"><strong>#last_executed_at=</strong>(last_executed_at : Time)</a>
+        <a href="#last_executed_at%3D%28time%3ATime%29-instance-method" class="signature"><strong>#last_executed_at=</strong>(time : Time)</a>
+        
+          <div class="summary"><p>Updates the last executed timestamp in the backend, and schedules the metadata for deletion after 3*interval seconds.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#last_executed_at%3F-instance-method" class="signature"><strong>#last_executed_at?</strong></a>
+        
+          <div class="summary"><p>The last executed timestamp for this periodicjob tracked by the backend.</p></div>
         
       </li>
     
       <li class="entry-summary">
         <a href="#try_to_execute%3ABool-instance-method" class="signature"><strong>#try_to_execute</strong> : Bool</a>
+        
+          <div class="summary"><p>Check the last executed timestamp against the current time, and enqueue the job if it's time to execute.</p></div>
         
       </li>
     
@@ -507,6 +522,11 @@ value.<span class="k">class</span>   <span class="c"># =&gt; String</span>
         <a class="method-permalink" href="#execute-instance-method">#</a>
       </div>
       
+        <div class="doc">
+          
+          <p>Enqueues the job for execution</p>
+        </div>
+      
       <br/>
       <div>
         
@@ -541,13 +561,18 @@ value.<span class="k">class</span>   <span class="c"># =&gt; String</span>
       </div>
     </div>
   
-    <div class="entry-detail" id="last_executed_at:Time-instance-method">
+    <div class="entry-detail" id="last_executed_at-instance-method">
       <div class="signature">
         
-        def <strong>last_executed_at</strong> : Time
+        def <strong>last_executed_at</strong>
 
-        <a class="method-permalink" href="#last_executed_at%3ATime-instance-method">#</a>
+        <a class="method-permalink" href="#last_executed_at-instance-method">#</a>
       </div>
+      
+        <div class="doc">
+          
+          <p>The last executed timestamp, or &quot;never&quot; if it doesn't exist.</p>
+        </div>
       
       <br/>
       <div>
@@ -555,13 +580,42 @@ value.<span class="k">class</span>   <span class="c"># =&gt; String</span>
       </div>
     </div>
   
-    <div class="entry-detail" id="last_executed_at=(last_executed_at:Time)-instance-method">
+    <div class="entry-detail" id="last_executed_at=(time:Time)-instance-method">
       <div class="signature">
         
-        def <strong>last_executed_at=</strong>(last_executed_at : Time)
+        def <strong>last_executed_at=</strong>(time : Time)
 
-        <a class="method-permalink" href="#last_executed_at%3D%28last_executed_at%3ATime%29-instance-method">#</a>
+        <a class="method-permalink" href="#last_executed_at%3D%28time%3ATime%29-instance-method">#</a>
       </div>
+      
+        <div class="doc">
+          
+          <p>Updates the last executed timestamp in the backend,
+and schedules the metadata for deletion after 3*interval
+seconds.</p>
+<p>For Time::Span intervals, the TTL is set to 3 * interval.
+For Time::MonthSpan intervals, the TTL is set to approximately 3 * interval.</p>
+<p>A month is approximated to 2635200 seconds, or 30.5 days.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="last_executed_at?-instance-method">
+      <div class="signature">
+        
+        def <strong>last_executed_at?</strong>
+
+        <a class="method-permalink" href="#last_executed_at%3F-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>The last executed timestamp for this periodicjob tracked by the backend.</p>
+        </div>
       
       <br/>
       <div>
@@ -576,6 +630,12 @@ value.<span class="k">class</span>   <span class="c"># =&gt; String</span>
 
         <a class="method-permalink" href="#try_to_execute%3ABool-instance-method">#</a>
       </div>
+      
+        <div class="doc">
+          
+          <p>Check the last executed timestamp against the current time,
+and enqueue the job if it's time to execute.</p>
+        </div>
       
       <br/>
       <div>

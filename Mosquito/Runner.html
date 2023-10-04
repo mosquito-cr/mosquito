@@ -378,10 +378,14 @@
       <li class="entry-summary">
         <a href="#start%28spin%3Dtrue%29-class-method" class="signature"><strong>.start</strong>(spin = <span class="n">true</span>)</a>
         
+          <div class="summary"><p>Start the mosquito runner.</p></div>
+        
       </li>
     
       <li class="entry-summary">
         <a href="#stop-class-method" class="signature"><strong>.stop</strong></a>
+        
+          <div class="summary"><p>Request the mosquito runner stop.</p></div>
         
       </li>
     
@@ -521,6 +525,13 @@
         <a class="method-permalink" href="#start%28spin%3Dtrue%29-class-method">#</a>
       </div>
       
+        <div class="doc">
+          
+          <p>Start the mosquito runner.</p>
+<p>If spin = true (default) the function will not return until the runner is
+shut down.  Otherwise it will return immediately.</p>
+        </div>
+      
       <br/>
       <div>
         
@@ -534,6 +545,12 @@
 
         <a class="method-permalink" href="#stop-class-method">#</a>
       </div>
+      
+        <div class="doc">
+          
+          <p>Request the mosquito runner stop. The runner will not abort the current job
+but it will not start any new jobs.</p>
+        </div>
       
       <br/>
       <div>
