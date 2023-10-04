@@ -3,6 +3,7 @@ module Mosquito
     property class : Mosquito::PeriodicJob.class
     property interval : Time::Span | Time::MonthSpan
 
+    # The last executed timestamp for this periodicjob tracked by the backend.
     def last_executed_at?
       if timestamp = @metadata["last_executed_at"]?
         Time.unix(timestamp.to_i)
@@ -11,11 +12,19 @@ module Mosquito
       end
     end
 
-    # todo add tests for this distributed tracking
+    # The last executed timestamp, or "never" if it doesn't exist.
     def last_executed_at
       last_executed_at? || Time.unix(0)
     end
 
+    # Updates the last executed timestamp in the backend,
+    # and schedules the metadata for deletion after 3*interval
+    # seconds.
+    #
+    # For Time::Span intervals, the TTL is set to 3 * interval.
+    # For Time::MonthSpan intervals, the TTL is set to approximately 3 * interval.
+    #
+    # A month is approximated to 2635200 seconds, or 30.5 days.
     def last_executed_at=(time : Time)
       @metadata["last_executed_at"] = time.to_unix.to_s
 
@@ -32,6 +41,8 @@ module Mosquito
       @metadata = Metadata.new(Backend.build_key("periodic_jobs", @class.name))
     end
 
+    # Check the last executed timestamp against the current time,
+    # and enqueue the job if it's time to execute.
     def try_to_execute : Bool
       now = Time.utc
 
@@ -45,6 +56,7 @@ module Mosquito
       end
     end
 
+    # Enqueues the job for execution
     def execute
       job = @class.new
       job_run = job.build_job_run
