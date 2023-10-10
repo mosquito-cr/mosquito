@@ -3,25 +3,24 @@ require "../../test_helper"
 describe "Mosquito::Runners::QueueList" do
   getter(queue_list) { MockQueueList.new }
 
-  def mock_queues
-    backend = Mosquito.configuration.backend
-    backend.set "mosquito:waiting:test1", "key", "value"
-    backend.set "mosquito:waiting:test2", "key", "value"
-    backend.set "mosquito:waiting:test3", "key", "value"
+  def enqueue_jobs
+    PassingJob.new.enqueue
+    FailingJob.new.enqueue
+    EchoJob.new(text: "hello world").enqueue
   end
 
   describe "fetch" do
     it "returns a list of queues" do
       clean_slate do
-        mock_queues
+        enqueue_jobs
         queue_list.fetch
-        assert_equal ["test1", "test2", "test3"], queue_list.queues.map(&.name).sort
+        assert_equal ["failing_job", "io_queue", "passing_job"], queue_list.queues.map(&.name).sort
       end
     end
 
     it "logs a message about the number of fetched queues" do
       clean_slate do
-        mock_queues
+        enqueue_jobs
         queue_list.fetch
         assert_logs_match "found 3 queues"
       end
@@ -31,19 +30,19 @@ describe "Mosquito::Runners::QueueList" do
   describe "queue filtering" do
     it "filters the list of queues when a whitelist is present" do
       clean_slate do
-        mock_queues
+        enqueue_jobs
 
-        Mosquito.temp_config(run_from: ["test1", "test3"]) do
+        Mosquito.temp_config(run_from: ["io_queue", "passing_job"]) do
           queue_list.fetch
         end
       end
 
-      assert_equal %w|test1 test3|, queue_list.queues.map(&.name).sort
+      assert_equal ["io_queue", "passing_job"], queue_list.queues.map(&.name).sort
     end
 
     it "logs an error when all queues are filtered out" do
       clean_slate do
-        mock_queues
+        enqueue_jobs
 
         Mosquito.temp_config(run_from: ["test4"]) do
           queue_list.fetch
