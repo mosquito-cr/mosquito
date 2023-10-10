@@ -62,15 +62,6 @@ describe "Backend Queues" do
         assert_equal %w|test1 test2 test3 test4|, backend.list_queues.sort
       end
     end
-
-    it "includes queues prefixed with scheduled and waiting but not pending or dead" do
-      clean_slate do
-        fill_queues
-        fill_uncounted_queues
-
-        assert_equal %w|test1 test2 test3 test4|, backend.list_queues.sort
-      end
-    end
   end
 
   describe "schedule" do

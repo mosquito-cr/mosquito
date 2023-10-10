@@ -33,6 +33,10 @@ module Mosquito
   end
 
   class RedisBackend < Mosquito::Backend
+    LIST_OF_QUEUES_KEY = "queues"
+
+    Log = ::Log.for(self)
+
     {% for name, script in Scripts::SCRIPTS %}
       def self.{{ name.id }}(*, keys = [] of String, args = [] of String, loadscripts = true)
         script = {{ script }}
@@ -117,15 +121,12 @@ module Mosquito
     end
 
     def self.list_queues : Array(String)
-      search_queues.map do |search_queue|
-        key = build_key search_queue, "*"
-        long_names = redis.keys key
-        queue_prefix = build_key(search_queue) + ":"
+      key = build_key(LIST_OF_QUEUES_KEY)
+      list_queues = redis.zrange(key, 0, -1).as(Array)
 
-        long_names.map(&.to_s).map do |long_name|
-          long_name.sub(queue_prefix, "")
-        end
-      end.flatten.uniq
+      return [] of String unless list_queues.any?
+
+      list_queues.compact_map(&.as(String))
     end
 
     def self.list_runners : Array(String)
@@ -167,7 +168,13 @@ module Mosquito
     end
 
     def enqueue(job_run : JobRun) : JobRun
-      redis.lpush waiting_q, job_run.id
+      redis.pipeline do |pipe|
+        # Pushes the job onto the waiting queue.
+        pipe.lpush waiting_q, job_run.id
+
+        # Updates the list of queues to include the current queue
+        pipe.zadd build_key(LIST_OF_QUEUES_KEY), Time.utc.to_unix.to_s, name
+      end
       job_run
     end
 

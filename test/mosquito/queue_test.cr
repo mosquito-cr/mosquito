@@ -39,6 +39,13 @@ describe Queue do
   end
 
   describe "enqueue" do
+    it "adds the queue name to the list of queues" do
+      clean_slate do
+        test_queue.enqueue job_run
+        assert_includes backend.class.list_queues, test_queue.name
+      end
+    end
+
     it "can enqueue a job_run for immediate processing" do
       clean_slate do
         test_queue.enqueue job_run
