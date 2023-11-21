@@ -9,20 +9,21 @@ describe "Mosquito::Runners::QueueList" do
     EchoJob.new(text: "hello world").enqueue
   end
 
-  describe "fetch" do
+  describe "each_run" do
     it "returns a list of queues" do
       clean_slate do
         enqueue_jobs
-        queue_list.fetch
+        queue_list.each_run
         assert_equal ["failing_job", "io_queue", "passing_job"], queue_list.queues.map(&.name).sort
       end
     end
 
     it "logs a message about the number of fetched queues" do
       clean_slate do
+        clear_logs
         enqueue_jobs
-        queue_list.fetch
-        assert_logs_match "found 3 queues"
+        queue_list.each_run
+        assert_logs_match "found 3 new queues"
       end
     end
   end
@@ -33,7 +34,7 @@ describe "Mosquito::Runners::QueueList" do
         enqueue_jobs
 
         Mosquito.temp_config(run_from: ["io_queue", "passing_job"]) do
-          queue_list.fetch
+          queue_list.each_run
         end
       end
 
@@ -45,7 +46,7 @@ describe "Mosquito::Runners::QueueList" do
         enqueue_jobs
 
         Mosquito.temp_config(run_from: ["test4"]) do
-          queue_list.fetch
+          queue_list.each_run
         end
 
         assert_logs_match "No watchable queues found."
@@ -54,7 +55,7 @@ describe "Mosquito::Runners::QueueList" do
 
     it "doesnt log an error when no queues are present" do
       clean_slate do
-        queue_list.fetch
+        queue_list.each_run
         refute_logs_match "No watchable queues found."
       end
     end

@@ -1,8 +1,10 @@
 require "../../test_helper"
 
 describe "Mosquito::Runners::Executor" do
+  getter(executor_pipeline) { Channel(Tuple(JobRun, Queue)).new }
+  getter(idle_notifier) { Channel(Bool).new }
   getter(queue_list) { MockQueueList.new }
-  getter(executor) { Mosquito::Runners::Executor.new queue_list }
+  getter(executor) { MockExecutor.new executor_pipeline, idle_notifier }
   getter(coordinator) { Mosquito::Runners::Coordinator.new queue_list }
 
   def register(job_class : Mosquito::Job.class)
@@ -13,10 +15,31 @@ describe "Mosquito::Runners::Executor" do
   def run_job(job_class : Mosquito::Job.class)
     register job_class
     job_class.reset_performance_counter!
-    job_class.new.enqueue
-    executor.run_next_job job_class.queue
+    job_run = job_class.new.enqueue
+    executor.execute job_run, from_queue: job_class.queue
   end
 
+  describe "status" do
+    it "starts as starting" do
+      assert_equal Runnable::State::Starting, executor.state
+    end
+
+    it "broadcasts a ping when transitioning to idle" do
+      executor.state = Runnable::State::Idle
+
+      select
+      when idle_notifier.receive
+        assert true
+      when timeout(0.5.seconds)
+        refute true, "Timed out waiting for idle notifier"
+      end
+    end
+
+    it "goes idle in pre_run" do
+      executor.pre_run
+      assert_equal Runnable::State::Idle, executor.state
+    end
+  end
 
   describe "running jobs" do
     it "runs a job from a queue" do
@@ -37,7 +60,7 @@ describe "Mosquito::Runners::Executor" do
         FailingJob.queue.enqueue job_run
 
         Timecop.freeze now do
-          executor.run_next_job job.class.queue
+          executor.execute job_run, from_queue: job.class.queue
         end
 
         job_run.reload
@@ -45,7 +68,7 @@ describe "Mosquito::Runners::Executor" do
 
         Timecop.freeze now + job.reschedule_interval(1) do
           coordinator.enqueue_delayed_jobs
-          executor.run_next_job job.class.queue
+          executor.execute job_run, from_queue: job.class.queue
         end
 
         job_run.reload
@@ -62,7 +85,7 @@ describe "Mosquito::Runners::Executor" do
         job_run.store
         NonReschedulableFailingJob.queue.enqueue job_run
 
-        executor.run_next_job NonReschedulableFailingJob.queue
+        executor.execute job_run, from_queue: NonReschedulableFailingJob.queue
 
         actual_ttl = backend.expires_in job_run.config_key
         assert_equal executor.failed_job_ttl, actual_ttl
@@ -78,7 +101,7 @@ describe "Mosquito::Runners::Executor" do
         job_run.store
         QueuedTestJob.queue.enqueue job_run
 
-        executor.run_next_job QueuedTestJob.queue
+        executor.execute job_run, from_queue: QueuedTestJob.queue
 
         assert_logs_match "Success"
 

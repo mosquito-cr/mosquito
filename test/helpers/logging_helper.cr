@@ -1,3 +1,5 @@
+require "log"
+
 class TestingLogBackend < Log::MemoryBackend
   def self.instance
     @@instance ||= new
@@ -42,4 +44,8 @@ class Minitest::Test
   end
 end
 
-Log.builder.bind "*", :debug, TestingLogBackend.instance
+Log.setup do |config|
+  config.bind "*", :debug, TestingLogBackend.instance
+  config.bind "redis.*", :warn, TestingLogBackend.instance
+  config.bind "mosquito.*", :trace, TestingLogBackend.instance
+end

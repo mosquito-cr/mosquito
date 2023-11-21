@@ -1,24 +1,50 @@
+require "./run_at_most"
+require "../runnable"
+require "./idle_wait"
+
 module Mosquito::Runners
   # QueueList handles searching the redis keyspace for named queues.
   class QueueList
+    Log = ::Log.for self
+
     include RunAtMost
+    include Runnable
+    include IdleWait
+
+    getter queues : Array(Queue)
 
     def initialize
       @queues = [] of Queue
     end
 
-    delegate each, to: @queues
+    def runnable_name : String
+      "QueueList<#{object_id}>"
+    end
 
-    def fetch
-      run_at_most every: 0.25.seconds, label: :fetch_queues do |t|
+    delegate each, to: @queues.shuffle
+
+    def each_run : Nil
+      # This idle wait should be at most 1 second. Longer can cause periodic jobs
+      # which are specified at the second-level to be executed aperiodically.
+      # Shorter will generate excess noise in the redis connection.
+      with_idle_wait(1.seconds) do
+        @state = State::Working
+
         candidate_queues = Mosquito.backend.list_queues.map { |name| Queue.new name }
-        @queues = filter_queues candidate_queues
+        new_queue_list = filter_queues candidate_queues
 
-        Log.for("fetch_queues").debug {
-          if @queues.size > 0
-            "found #{@queues.size} queues: #{@queues.map(&.name).join(", ")}"
+        Log.notice {
+          queues_which_were_expected_but_not_found = @queues - new_queue_list
+          queues_which_have_never_been_seen = new_queue_list - @queues
+
+          if queues_which_have_never_been_seen.size > 0
+            "found #{queues_which_have_never_been_seen.size} new queues: #{queues_which_have_never_been_seen.map(&.name).join(", ")}"
           end
         }
+
+        @queues = new_queue_list
+
+        @state = State::Idle
       end
     end
 
@@ -29,7 +55,7 @@ module Mosquito::Runners
         permitted_queues.includes? queue.name
       end
 
-      Log.for("filter_queues").debug {
+      Log.for("filter_queues").notice {
         if filtered_queues.empty?
           filtered_out_queues = present_queues - filtered_queues
 

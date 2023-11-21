@@ -36,7 +36,7 @@ describe Mosquito::QueuedJob do
     it "can be passed in" do
       clear_logs
       EchoJob.new("quack").perform
-      assert_includes logs, "quack"
+      assert_logs_match "quack"
     end
 
     it "can have a boolean false passed as a parameter (and it's not assumed to be a nil)" do

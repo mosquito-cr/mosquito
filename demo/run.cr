@@ -2,9 +2,18 @@ require "../src/mosquito"
 
 Mosquito.configure do |settings|
   settings.redis_url = ENV["REDIS_URL"]? || "redis://localhost:6379/3"
+  settings.idle_wait = 1.second
 end
 
 Mosquito.configuration.backend.flush
+
+Log.setup do |c|
+  backend = Log::IOBackend.new
+
+  c.bind "redis.*", :warn, backend
+  c.bind "mosquito.*", :debug, backend
+  c.bind "mosquito.runners.overseer", :trace, backend
+end
 
 require "./jobs/*"
 
@@ -17,8 +26,15 @@ def expect_run_count(klass, expected)
   end
 end
 
+stopping = false
 Signal::INT.trap do
+  if stopping
+    puts "SIGINT received again, crash-exiting."
+    exit 1
+  end
+
   Mosquito::Runner.stop
+  stopping = true
 end
 
 Mosquito::Runner.start(spin: false)
@@ -29,7 +45,7 @@ while count <= 20 && Mosquito::Runner.keep_running
   count += 1
 end
 
-Mosquito::Runner.stop
+Mosquito::Runner.stop(wait: true)
 
 puts "End of demo."
 puts "----------------------------------"
