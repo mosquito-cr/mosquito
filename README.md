@@ -5,14 +5,15 @@
 
 <img src="https://mosquito-cr.github.io/images/amber-mosquito-small.png" align="right">
 
-Mosquito is a generic background job runner written primarily for Crystal. Significant inspiration from experience with the successes and failings many Ruby gems in this vein.
+Mosquito is a generic background job runner written primarily for Crystal. Significant inspiration from experience with the successes and failings many Ruby gems in this vein. Once compiled, a mosquito binary can start work in about 10 milliseconds.
 
 Mosquito currently provides these features:
-- Delayed execution
-- Scheduled / Periodic execution
+
+- Delayed execution (`SendEmailJob.new(email: :welcome, address: user.email).enqueue(in: 3.minutes)`)
+- Scheduled / Periodic execution (`RunEveryHourJob.new`)
 - Job Storage in Redis
 - Automatic rescheduling of failed jobs
-- Progressively increasing delay of failed jobs
+- Progressively increasing delay of rescheduled failed jobs
 - Dead letter queue of jobs which have failed too many times
 - Rate limited jobs
 

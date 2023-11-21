@@ -49,6 +49,9 @@ module Mosquito
       if last_executed_at + interval <= now
         execute
 
+        # Weaknesses:
+        # - If something interferes with the job run, it won't be correct that it was executed.
+        # - if the worker is backlogged, the start time will be different from the last executed time.
         self.last_executed_at = now
         true
       else

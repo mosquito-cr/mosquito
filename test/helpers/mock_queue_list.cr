@@ -1,3 +1,4 @@
 class MockQueueList < Mosquito::Runners::QueueList
-  getter :queues
+  getter queues
+  setter state
 end

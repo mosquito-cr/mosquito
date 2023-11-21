@@ -1,5 +1,5 @@
 module Mosquito::Runners
-  # primer? loader?
+  # primer? loader? _scheduler_
   class Coordinator
     Log = ::Log.for self
     LockTTL = 10.seconds
@@ -15,7 +15,11 @@ module Mosquito::Runners
       @emitted_scheduling_deprecation_runtime_message = false
     end
 
-    def bloop
+    def runnable_name : String
+      "Coordinator<#{object_id}>"
+    end
+
+    def schedule : Nil
       only_if_coordinator do
         enqueue_periodic_jobs
         enqueue_delayed_jobs
@@ -41,13 +45,13 @@ module Mosquito::Runners
       end
 
       if Mosquito.backend.lock? lock_key, instance_id, LockTTL
-        Log.debug { "Coordinator lock acquired" }
+        Log.trace { "Coordinator lock acquired" }
         duration = Time.measure do
           yield
         end
 
         Mosquito.backend.unlock lock_key, instance_id
-        Log.debug { "Coordinator lock released" }
+        Log.trace { "Coordinator lock released" }
       end
 
       return unless duration > LockTTL
@@ -57,10 +61,6 @@ module Mosquito::Runners
     def enqueue_periodic_jobs
       Base.scheduled_job_runs.each do |scheduled_job_run|
         enqueued = scheduled_job_run.try_to_execute
-
-        Log.for("enqueue_periodic_jobs").info {
-          "enqueued #{scheduled_job_run.class}" if enqueued
-        }
       end
     end
 

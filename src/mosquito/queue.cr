@@ -79,6 +79,8 @@ module Mosquito
     getter? empty : Bool
     property backend : Mosquito::Backend
 
+    Log = ::Log.for self
+
     def initialize(@name : String)
       @empty = false
       @backend = Mosquito.backend.named name
@@ -86,6 +88,7 @@ module Mosquito
     end
 
     def enqueue(job_run : JobRun) : JobRun
+      Log.trace { "Enqueuing #{job_run} for immediate execution" }
       backend.enqueue job_run
     end
 
@@ -94,6 +97,7 @@ module Mosquito
     end
 
     def enqueue(job_run : JobRun, at execute_time : Time) : JobRun
+      Log.trace { "Enqueuing #{job_run} at #{execute_time}" }
       backend.schedule job_run, execute_time
     end
 
