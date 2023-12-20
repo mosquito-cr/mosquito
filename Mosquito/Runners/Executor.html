@@ -177,6 +177,21 @@
       
     </li>
   
+  <li class="parent " data-id="mosquito/Mosquito/Runnable" data-name="mosquito::runnable">
+      <a href="../../Mosquito/Runnable.html">Runnable</a>
+      
+        <ul>
+  
+  <li class=" " data-id="mosquito/Mosquito/Runnable/State" data-name="mosquito::runnable::state">
+      <a href="../../Mosquito/Runnable/State.html">State</a>
+      
+    </li>
+  
+</ul>
+
+      
+    </li>
+  
   <li class=" " data-id="mosquito/Mosquito/Runner" data-name="mosquito::runner">
       <a href="../../Mosquito/Runner.html">Runner</a>
       
@@ -194,6 +209,11 @@
   
   <li class=" current" data-id="mosquito/Mosquito/Runners/Executor" data-name="mosquito::runners::executor">
       <a href="../../Mosquito/Runners/Executor.html">Executor</a>
+      
+    </li>
+  
+  <li class=" " data-id="mosquito/Mosquito/Runners/IdleWait" data-name="mosquito::runners::idlewait">
+      <a href="../../Mosquito/Runners/IdleWait.html">IdleWait</a>
       
     </li>
   
@@ -290,11 +310,20 @@
     Overview
   </h2>
 
-  <p>An Executor is responsible for building Job classes with deserialized
-parameters and calling #run on them. It measures the time it takes to
-run a job and provides detailed log messages about the current status.</p>
-<p>Executor#deqeue_and_run_jobs is the entrypoint and shoud be treated as
-if it will return only after a relative eternity.</p>
+  <p>The executor is the center of work in Mosquito, and it's is the demarcation
+point between Mosquito framework and application code. Above the Executor
+is entirely Mosquito, and below it is application code.</p>
+<p>An Executor is responsible for hydrating Job classes with deserialized
+parameters and calling <code><a href="../../Mosquito/Job.html#run-instance-method">Mosquito::Job#run</a></code> on them. It measures the time it
+takes to run a job and provides detailed log messages about the current
+status.</p>
+<p>An executor is a <code><a href="../../Mosquito/Runnable.html">Mosquito::Runnable</a></code> and should be interacted with according to
+the Runnable API.</p>
+<p>To build an executor, provide a job input channel and an idle bell channel. These
+channels can be shared between all available executors.</p>
+<p>The executor will ring the idle bell when it is ready to accept work and then wait
+for work to show up on the job pipeline. After the job is finished it will ring the
+bell again and wait for more work.</p>
 
 
 
@@ -309,6 +338,8 @@ if it will return only after a relative eternity.</p>
     Included Modules
   </h2>
   <ul class="other-types-list">
+    
+      <li class="other-type"><a href="../../Mosquito/Runnable.html">Mosquito::Runnable</a></li>
     
       <li class="other-type"><a href="../../Mosquito/Runners/RunAtMost.html">Mosquito::Runners::RunAtMost</a></li>
     
@@ -372,7 +403,7 @@ if it will return only after a relative eternity.</p>
   <ul class="list-summary">
     
       <li class="entry-summary">
-        <a href="#new%28queue_list%3AMosquito%3A%3ARunners%3A%3AQueueList%29-class-method" class="signature"><strong>.new</strong>(queue_list : Mosquito::Runners::QueueList)</a>
+        <a href="#new%28job_pipeline%3AChannel%28Tuple%28Mosquito%3A%3AJobRun%2CMosquito%3A%3AQueue%29%29%2Cidle_bell%3AChannel%28Bool%29%29-class-method" class="signature"><strong>.new</strong>(job_pipeline : Channel(Tuple(Mosquito::JobRun, Mosquito::Queue)), idle_bell : Channel(Bool))</a>
         
       </li>
     
@@ -393,7 +424,9 @@ if it will return only after a relative eternity.</p>
   <ul class="list-summary">
     
       <li class="entry-summary">
-        <a href="#dequeue_and_run_jobs-instance-method" class="signature"><strong>#dequeue_and_run_jobs</strong></a>
+        <a href="#execute%28job_run%3AJobRun%2Cfrom_queueq%3AQueue%29-instance-method" class="signature"><strong>#execute</strong>(job_run : JobRun, from_queue q : Queue)</a>
+        
+          <div class="summary"><p>Runs a job from a Queue.</p></div>
         
       </li>
     
@@ -412,12 +445,21 @@ if it will return only after a relative eternity.</p>
       </li>
     
       <li class="entry-summary">
-        <a href="#queue_list%3AQueueList-instance-method" class="signature"><strong>#queue_list</strong> : QueueList</a>
+        <a href="#idle_bell%3AChannel%28Bool%29-instance-method" class="signature"><strong>#idle_bell</strong> : Channel(Bool)</a>
+        
+          <div class="summary"><p>Used to notify the overseer that this executor is idle.</p></div>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#run_next_job%28q%3AQueue%29-instance-method" class="signature"><strong>#run_next_job</strong>(q : Queue)</a>
+        <a href="#job_pipeline%3AChannel%28Tuple%28JobRun%2CQueue%29%29-instance-method" class="signature"><strong>#job_pipeline</strong> : Channel(Tuple(JobRun, Queue))</a>
+        
+          <div class="summary"><p>Where work is received from the overseer.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#log%3A%3A%3ALog-instance-method" class="signature"><strong>#log</strong> : ::Log</a>
         
       </li>
     
@@ -435,11 +477,6 @@ if it will return only after a relative eternity.</p>
         
       </li>
     
-      <li class="entry-summary">
-        <a href="#time_with_units%28seconds%3AFloat64%29-instance-method" class="signature"><strong>#time_with_units</strong>(seconds : Float64)</a>
-        
-      </li>
-    
   </ul>
 
 
@@ -447,6 +484,70 @@ if it will return only after a relative eternity.</p>
 
 
 <div class="methods-inherited">
+  
+    
+
+  <h3>Instance methods inherited from module <code><a href="../../Mosquito/Runnable.html">Mosquito::Runnable</a></code></h3>
+  
+  
+    <a href="../../Mosquito/Runnable.html#dead%3F%3ABool-instance-method" class="tooltip">
+      <span>dead? : Bool</span>
+    dead?</a>, 
+    
+  
+    <a href="../../Mosquito/Runnable.html#each_run%3ANil-instance-method" class="tooltip">
+      <span>each_run : Nil</span>
+    each_run</a>, 
+    
+  
+    <a href="../../Mosquito/Runnable.html#fiber%3AFiber%7CNil-instance-method" class="tooltip">
+      <span>fiber : Fiber | Nil</span>
+    fiber</a>, 
+    
+  
+    <a href="../../Mosquito/Runnable.html#my_name%3AString-instance-method" class="tooltip">
+      <span>my_name : String</span>
+    my_name</a>, 
+    
+  
+    <a href="../../Mosquito/Runnable.html#post_run%3ANil-instance-method" class="tooltip">
+      <span>post_run : Nil</span>
+    post_run</a>, 
+    
+  
+    <a href="../../Mosquito/Runnable.html#pre_run%3ANil-instance-method" class="tooltip">
+      <span>pre_run : Nil</span>
+    pre_run</a>, 
+    
+  
+    <a href="../../Mosquito/Runnable.html#run-instance-method" class="tooltip">
+      <span>run</span>
+    run</a>, 
+    
+  
+    <a href="../../Mosquito/Runnable.html#runnable_name%3AString-instance-method" class="tooltip">
+      <span>runnable_name : String</span>
+    runnable_name</a>, 
+    
+  
+    <a href="../../Mosquito/Runnable.html#state%3AState-instance-method" class="tooltip">
+      <span>state : State</span>
+    state</a>, 
+    
+  
+    <a href="../../Mosquito/Runnable.html#stop%3AChannel%28Bool%29-instance-method" class="tooltip">
+      <span>stop : Channel(Bool)</span>
+    stop</a>
+    
+  
+
+
+    
+
+
+    
+
+
   
     
 
@@ -499,12 +600,12 @@ if it will return only after a relative eternity.</p>
     Constructor Detail
   </h2>
   
-    <div class="entry-detail" id="new(queue_list:Mosquito::Runners::QueueList)-class-method">
+    <div class="entry-detail" id="new(job_pipeline:Channel(Tuple(Mosquito::JobRun,Mosquito::Queue)),idle_bell:Channel(Bool))-class-method">
       <div class="signature">
         
-        def self.<strong>new</strong>(queue_list : <a href="../../Mosquito/Runners/QueueList.html">Mosquito::Runners::QueueList</a>)
+        def self.<strong>new</strong>(job_pipeline : Channel(Tuple(<a href="../../Mosquito/JobRun.html">Mosquito::JobRun</a>, <a href="../../Mosquito/Queue.html">Mosquito::Queue</a>)), idle_bell : Channel(Bool))
 
-        <a class="method-permalink" href="#new%28queue_list%3AMosquito%3A%3ARunners%3A%3AQueueList%29-class-method">#</a>
+        <a class="method-permalink" href="#new%28job_pipeline%3AChannel%28Tuple%28Mosquito%3A%3AJobRun%2CMosquito%3A%3AQueue%29%29%2Cidle_bell%3AChannel%28Bool%29%29-class-method">#</a>
       </div>
       
       <br/>
@@ -527,13 +628,20 @@ if it will return only after a relative eternity.</p>
     Instance Method Detail
   </h2>
   
-    <div class="entry-detail" id="dequeue_and_run_jobs-instance-method">
+    <div class="entry-detail" id="execute(job_run:JobRun,from_queueq:Queue)-instance-method">
       <div class="signature">
         
-        def <strong>dequeue_and_run_jobs</strong>
+        def <strong>execute</strong>(job_run : <a href="../../Mosquito/JobRun.html">JobRun</a>, from_queue q : <a href="../../Mosquito/Queue.html">Queue</a>)
 
-        <a class="method-permalink" href="#dequeue_and_run_jobs-instance-method">#</a>
+        <a class="method-permalink" href="#execute%28job_run%3AJobRun%2Cfrom_queueq%3AQueue%29-instance-method">#</a>
       </div>
+      
+        <div class="doc">
+          
+          <p>Runs a job from a Queue.</p>
+<p>Execution time is measured and logged, and the job is either forgotten
+or, if it fails, rescheduled.</p>
+        </div>
       
       <br/>
       <div>
@@ -579,13 +687,18 @@ if it will return only after a relative eternity.</p>
       </div>
     </div>
   
-    <div class="entry-detail" id="queue_list:QueueList-instance-method">
+    <div class="entry-detail" id="idle_bell:Channel(Bool)-instance-method">
       <div class="signature">
         
-        def <strong>queue_list</strong> : <a href="../../Mosquito/Runners/QueueList.html">QueueList</a>
+        def <strong>idle_bell</strong> : Channel(Bool)
 
-        <a class="method-permalink" href="#queue_list%3AQueueList-instance-method">#</a>
+        <a class="method-permalink" href="#idle_bell%3AChannel%28Bool%29-instance-method">#</a>
       </div>
+      
+        <div class="doc">
+          
+          <p>Used to notify the overseer that this executor is idle.</p>
+        </div>
       
       <br/>
       <div>
@@ -593,12 +706,31 @@ if it will return only after a relative eternity.</p>
       </div>
     </div>
   
-    <div class="entry-detail" id="run_next_job(q:Queue)-instance-method">
+    <div class="entry-detail" id="job_pipeline:Channel(Tuple(JobRun,Queue))-instance-method">
       <div class="signature">
         
-        def <strong>run_next_job</strong>(q : <a href="../../Mosquito/Queue.html">Queue</a>)
+        def <strong>job_pipeline</strong> : Channel(Tuple(<a href="../../Mosquito/JobRun.html">JobRun</a>, <a href="../../Mosquito/Queue.html">Queue</a>))
 
-        <a class="method-permalink" href="#run_next_job%28q%3AQueue%29-instance-method">#</a>
+        <a class="method-permalink" href="#job_pipeline%3AChannel%28Tuple%28JobRun%2CQueue%29%29-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Where work is received from the overseer.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="log:::Log-instance-method">
+      <div class="signature">
+        
+        def <strong>log</strong> : ::Log
+
+        <a class="method-permalink" href="#log%3A%3A%3ALog-instance-method">#</a>
       </div>
       
       <br/>
@@ -638,20 +770,6 @@ if it will return only after a relative eternity.</p>
           
           <p>How long a job config is persisted after success</p>
         </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="time_with_units(seconds:Float64)-instance-method">
-      <div class="signature">
-        
-        def <strong>time_with_units</strong>(seconds : Float64)
-
-        <a class="method-permalink" href="#time_with_units%28seconds%3AFloat64%29-instance-method">#</a>
-      </div>
       
       <br/>
       <div>

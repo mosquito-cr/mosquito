@@ -177,6 +177,21 @@
       
     </li>
   
+  <li class="parent " data-id="mosquito/Mosquito/Runnable" data-name="mosquito::runnable">
+      <a href="../Mosquito/Runnable.html">Runnable</a>
+      
+        <ul>
+  
+  <li class=" " data-id="mosquito/Mosquito/Runnable/State" data-name="mosquito::runnable::state">
+      <a href="../Mosquito/Runnable/State.html">State</a>
+      
+    </li>
+  
+</ul>
+
+      
+    </li>
+  
   <li class=" current" data-id="mosquito/Mosquito/Runner" data-name="mosquito::runner">
       <a href="../Mosquito/Runner.html">Runner</a>
       
@@ -194,6 +209,11 @@
   
   <li class=" " data-id="mosquito/Mosquito/Runners/Executor" data-name="mosquito::runners::executor">
       <a href="../Mosquito/Runners/Executor.html">Executor</a>
+      
+    </li>
+  
+  <li class=" " data-id="mosquito/Mosquito/Runners/IdleWait" data-name="mosquito::runners::idlewait">
+      <a href="../Mosquito/Runners/IdleWait.html">IdleWait</a>
       
     </li>
   
@@ -281,6 +301,38 @@
 
 
 
+  <h2>
+    <a id="overview" class="anchor" href="#overview">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Overview
+  </h2>
+
+  <p>This singleton class serves as a shorthand for starting and managing an Overseer.</p>
+<p>A minimal usage of Mosquito::Runner is:</p>
+<pre><code class="language-crystal"><span class="k">require</span> <span class="s">&quot;mosquito&quot;</span>
+
+<span class="c"># When the process receives sigint, it&#39;ll notify the overseer to shut down gracefully.</span>
+trap(<span class="s">&quot;INT&quot;</span>) <span class="k">do</span>
+  <span class="t">Mosquito</span><span class="t">::</span><span class="t">Runner</span>.stop(wait: <span class="n">true</span>)
+<span class="k">end</span>
+
+<span class="c"># Starts the overseer, and holds the thread captive.</span>
+<span class="t">Mosquito</span><span class="t">::</span><span class="t">Runner</span>.start</code></pre>
+<p>If for some reason you want to manage an overseer or group of overseers yourself, Mosquito::Runner can be omitted entirely:</p>
+<pre><code class="language-crystal"><span class="k">require</span> <span class="s">&quot;mosquito&quot;</span>
+
+mosquito <span class="o">=</span> <span class="t">Mosquito</span><span class="t">::</span><span class="t">Overseer</span>.new
+
+<span class="c"># Spawns a mosquito managed fiber and returns immediately</span>
+mosquito.run
+
+trap <span class="s">&quot;INT&quot;</span> <span class="k">do</span>
+  mosquito.stop.receive
+<span class="k">end</span></code></pre>
+
 
 
 
@@ -332,23 +384,6 @@
 
 
 
-  <h2>
-    <a id="constructors" class="anchor" href="#constructors">
-  <svg class="octicon-link" aria-hidden="true">
-    <use href="#octicon-link"/>
-  </svg>
-</a>
-    Constructors
-  </h2>
-  <ul class="list-summary">
-    
-      <li class="entry-summary">
-        <a href="#new-class-method" class="signature"><strong>.new</strong></a>
-        
-      </li>
-    
-  </ul>
-
 
 
   <h2>
@@ -362,20 +397,6 @@
   <ul class="list-summary">
     
       <li class="entry-summary">
-        <a href="#keep_running%3ABool-class-method" class="signature"><strong>.keep_running</strong> : Bool</a>
-        
-          <div class="summary"><p>Should mosquito continue working?</p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#keep_running%3D%28keep_running%3ABool%29-class-method" class="signature"><strong>.keep_running=</strong>(keep_running : Bool)</a>
-        
-          <div class="summary"><p>Should mosquito continue working?</p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
         <a href="#start%28spin%3Dtrue%29-class-method" class="signature"><strong>.start</strong>(spin = <span class="n">true</span>)</a>
         
           <div class="summary"><p>Start the mosquito runner.</p></div>
@@ -383,7 +404,7 @@
       </li>
     
       <li class="entry-summary">
-        <a href="#stop-class-method" class="signature"><strong>.stop</strong></a>
+        <a href="#stop%28wait%3Dfalse%29-class-method" class="signature"><strong>.stop</strong>(wait = <span class="n">false</span>)</a>
         
           <div class="summary"><p>Request the mosquito runner stop.</p></div>
         
@@ -392,28 +413,6 @@
   </ul>
 
 
-
-  <h2>
-    <a id="instance-method-summary" class="anchor" href="#instance-method-summary">
-  <svg class="octicon-link" aria-hidden="true">
-    <use href="#octicon-link"/>
-  </svg>
-</a>
-    Instance Method Summary
-  </h2>
-  <ul class="list-summary">
-    
-      <li class="entry-summary">
-        <a href="#run-instance-method" class="signature"><strong>#run</strong></a>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#stop-instance-method" class="signature"><strong>#stop</strong></a>
-        
-      </li>
-    
-  </ul>
 
 
 
@@ -444,30 +443,6 @@
 </div>
 
 
-  <h2>
-    <a id="constructor-detail" class="anchor" href="#constructor-detail">
-  <svg class="octicon-link" aria-hidden="true">
-    <use href="#octicon-link"/>
-  </svg>
-</a>
-    Constructor Detail
-  </h2>
-  
-    <div class="entry-detail" id="new-class-method">
-      <div class="signature">
-        
-        def self.<strong>new</strong>
-
-        <a class="method-permalink" href="#new-class-method">#</a>
-      </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-
 
 
   <h2>
@@ -478,44 +453,6 @@
 </a>
     Class Method Detail
   </h2>
-  
-    <div class="entry-detail" id="keep_running:Bool-class-method">
-      <div class="signature">
-        
-        def self.<strong>keep_running</strong> : Bool
-
-        <a class="method-permalink" href="#keep_running%3ABool-class-method">#</a>
-      </div>
-      
-        <div class="doc">
-          
-          <p>Should mosquito continue working?</p>
-        </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="keep_running=(keep_running:Bool)-class-method">
-      <div class="signature">
-        
-        def self.<strong>keep_running=</strong>(keep_running : Bool)
-
-        <a class="method-permalink" href="#keep_running%3D%28keep_running%3ABool%29-class-method">#</a>
-      </div>
-      
-        <div class="doc">
-          
-          <p>Should mosquito continue working?</p>
-        </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
   
     <div class="entry-detail" id="start(spin=true)-class-method">
       <div class="signature">
@@ -538,18 +475,19 @@ shut down.  Otherwise it will return immediately.</p>
       </div>
     </div>
   
-    <div class="entry-detail" id="stop-class-method">
+    <div class="entry-detail" id="stop(wait=false)-class-method">
       <div class="signature">
         
-        def self.<strong>stop</strong>
+        def self.<strong>stop</strong>(wait = <span class="n">false</span>)
 
-        <a class="method-permalink" href="#stop-class-method">#</a>
+        <a class="method-permalink" href="#stop%28wait%3Dfalse%29-class-method">#</a>
       </div>
       
         <div class="doc">
           
           <p>Request the mosquito runner stop. The runner will not abort the current job
 but it will not start any new jobs.</p>
+<p>See <code><a href="../Mosquito/Runnable.html#stop%3AChannel%28Bool%29-instance-method">Mosquito::Runnable#stop</a></code>.</p>
         </div>
       
       <br/>
@@ -560,44 +498,6 @@ but it will not start any new jobs.</p>
   
 
 
-
-  <h2>
-    <a id="instance-method-detail" class="anchor" href="#instance-method-detail">
-  <svg class="octicon-link" aria-hidden="true">
-    <use href="#octicon-link"/>
-  </svg>
-</a>
-    Instance Method Detail
-  </h2>
-  
-    <div class="entry-detail" id="run-instance-method">
-      <div class="signature">
-        
-        def <strong>run</strong>
-
-        <a class="method-permalink" href="#run-instance-method">#</a>
-      </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="stop-instance-method">
-      <div class="signature">
-        
-        def <strong>stop</strong>
-
-        <a class="method-permalink" href="#stop-instance-method">#</a>
-      </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
 
 
 

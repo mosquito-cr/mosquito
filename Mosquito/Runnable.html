@@ -14,7 +14,7 @@
 <script type="text/javascript" src="../js/doc.js"></script>
 
   <meta name="repository-name" content="mosquito">
-  <title>Mosquito::RateLimiter - mosquito 1.0.2</title>
+  <title>Mosquito::Runnable - mosquito 1.0.2</title>
   <script type="text/javascript">
     CrystalDocs.base_path = "../";
   </script>
@@ -157,7 +157,7 @@
       
     </li>
   
-  <li class="parent open current" data-id="mosquito/Mosquito/RateLimiter" data-name="mosquito::ratelimiter">
+  <li class="parent " data-id="mosquito/Mosquito/RateLimiter" data-name="mosquito::ratelimiter">
       <a href="../Mosquito/RateLimiter.html">RateLimiter</a>
       
         <ul>
@@ -177,7 +177,7 @@
       
     </li>
   
-  <li class="parent " data-id="mosquito/Mosquito/Runnable" data-name="mosquito::runnable">
+  <li class="parent open current" data-id="mosquito/Mosquito/Runnable" data-name="mosquito::runnable">
       <a href="../Mosquito/Runnable.html">Runnable</a>
       
         <ul>
@@ -291,7 +291,7 @@
 <div class="main-content">
 <h1 class="type-name">
 
-  <span class="kind">module</span> Mosquito::<wbr>RateLimiter
+  <span class="kind">module</span> Mosquito::<wbr>Runnable
 
 </h1>
 
@@ -299,6 +299,73 @@
 
 
 
+  <h2>
+    <a id="overview" class="anchor" href="#overview">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Overview
+  </h2>
+
+  <p>Runnable implements a general purpose spawn/loop which carries a state
+enum.</p>
+<h2><a id="managing-a-runnable" class="anchor" href="#managing-a-runnable">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>Managing a Runnable</h2>
+<p>The primary purpose of Runnable is to cleanly abstract the details of
+spawning a thread, running a loop, and shutting down when asked.</p>
+<p>A service which manages a Runnable might look like this:</p>
+<pre><code class="language-crystal">runnable <span class="o">=</span> <span class="t">MyRunnable</span>.new
+
+<span class="c"># This will spawn and return immediately.</span>
+runnable.start
+
+puts runnable.state <span class="c"># =&gt; State::Working</span>
+
+<span class="c"># Some time later...</span>
+should_be_stopped <span class="o">=</span> runnable.stop has_stopped <span class="o">=</span>
+should_be_stopped.receive</code></pre>
+<h2><a id="implementing-a-runnable" class="anchor" href="#implementing-a-runnable">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>Implementing a Runnable</h2>
+<p>A runnable implementation needs to implement only two methods: #each_run
+and #runnable_name. In addition, pre_run and post_run are available for
+setup and teardown.</p>
+<p>Runnable state is managed automatically through startup and shutdown, but
+within each_run it can be manually altered with <code>#state=</code>.</p>
+<h3><a id="example" class="anchor" href="#example">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>Example</h3>
+<pre><code class="language-crystal"><span class="k">class</span> <span class="t">MyRunnable</span>
+  <span class="k">include</span> <span class="t">Mosquito</span><span class="t">::</span><span class="t">Runnable</span>
+
+  <span class="c"># Optional</span>
+  <span class="k">def</span> <span class="m">pre_run</span>
+    puts <span class="s">&quot;my runnable is starting&quot;</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="m">each_run</span>
+    puts <span class="s">&quot;my runnable is running&quot;</span>
+  <span class="k">end</span>
+
+  <span class="c"># Optional</span>
+  <span class="k">def</span> <span class="m">post_run</span>
+    puts <span class="s">&quot;my runnable has stopped&quot;</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="m">runnable_name</span>
+    <span class="s">&quot;MyRunnable&quot;</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre>
+<p>Implementation details about what work should be done in the spawned fiber
+are placed in #each_run.</p>
 
 
 
@@ -308,6 +375,25 @@
 
 
 
+
+
+  <h2>
+    <a id="direct-including-types" class="anchor" href="#direct-including-types">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Direct including types
+  </h2>
+  <ul class="other-types-list">
+    
+      <li class="other-type"><a href="../Mosquito/Runners/Executor.html">Mosquito::Runners::Executor</a></li>
+    
+      <li class="other-type"><a href="../Mosquito/Runners/Overseer.html">Mosquito::Runners::Overseer</a></li>
+    
+      <li class="other-type"><a href="../Mosquito/Runners/QueueList.html">Mosquito::Runners::QueueList</a></li>
+    
+  </ul>
 
 
 
@@ -322,7 +408,7 @@
   </h2>
   
     
-      mosquito/rate_limiter.cr
+      mosquito/runnable.cr
     
     <br/>
   
@@ -346,72 +432,68 @@
   <ul class="list-summary">
     
       <li class="entry-summary">
-        <a href="#increment_run_count%3ANil-instance-method" class="signature"><strong>#increment_run_count</strong> : Nil</a>
-        
-          <div class="summary"><p>Increments the run counter.</p></div>
+        <a href="#dead%3F%3ABool-instance-method" class="signature"><strong>#dead?</strong> : Bool</a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#increment_run_count_by%3AInt32-instance-method" class="signature"><strong>#increment_run_count_by</strong> : Int32</a>
+        <a href="#each_run%3ANil-instance-method" class="signature"><strong>#each_run</strong> : Nil</a>
         
-          <div class="summary"><p>How much the run counter should be incremented by.</p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#maxed_rate_for_window%3F%3ABool-instance-method" class="signature"><strong>#maxed_rate_for_window?</strong> : Bool</a>
-        
-          <div class="summary"><p>Has the run count exceeded the ceiling for the current window?</p></div>
+          <div class="summary"><p>Implementation of what this Runnable should do on each cycle.</p></div>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#metadata%3AMetadata-instance-method" class="signature"><strong>#metadata</strong> : Metadata</a>
+        <a href="#fiber%3AFiber%7CNil-instance-method" class="signature"><strong>#fiber</strong> : Fiber | Nil</a>
         
-          <div class="summary"><p>Storage hash for rate limit data.</p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#rate_limited%3F%3ABool-instance-method" class="signature"><strong>#rate_limited?</strong> : Bool</a>
-        
-          <div class="summary"><p>Should this job be cancelled? If not, update the rate limit metadata.</p></div>
+          <div class="summary"><p>After #run has been called this holds a reference to the Fiber which is used to check that the fiber is still running.</p></div>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#reschedule_interval%28retry_count%3AInt32%29%3ATime%3A%3ASpan-instance-method" class="signature"><strong>#reschedule_interval</strong>(retry_count : Int32) : Time::Span</a>
-        
-          <div class="summary"><p>Configure the reschedule interval so that the job_run is not run again until it should be allowed through the rate limiter.</p></div>
+        <a href="#my_name%3AString-instance-method" class="signature"><strong>#my_name</strong> : String</a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#rescheduleable%3F%28retry_count%3AInt32%29%3ABool-instance-method" class="signature"><strong>#rescheduleable?</strong>(retry_count : Int32) : Bool</a>
+        <a href="#post_run%3ANil-instance-method" class="signature"><strong>#post_run</strong> : Nil</a>
         
-          <div class="summary"><p>Configure the rescheduler to always retry if a job is rate limited.</p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#update_window_start%3ANil-instance-method" class="signature"><strong>#update_window_start</strong> : Nil</a>
-        
-          <div class="summary"><p>Resets the run count and logs the start of window.</p></div>
+          <div class="summary"><p>Available to hook any teardown logic after the run loop.</p></div>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#window_expires_at%3ATime%7CNil-instance-method" class="signature"><strong>#window_expires_at</strong> : Time | Nil</a>
+        <a href="#pre_run%3ANil-instance-method" class="signature"><strong>#pre_run</strong> : Nil</a>
         
-          <div class="summary"><p>When does the current rate limit window expire? Returns nil if the window is already expired.</p></div>
+          <div class="summary"><p>Available to hook a one time setup before the run loop.</p></div>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#window_start%3ATime%7CNil-instance-method" class="signature"><strong>#window_start</strong> : Time | Nil</a>
+        <a href="#run-instance-method" class="signature"><strong>#run</strong></a>
         
-          <div class="summary"><p>Calculates the start of the rate limit window.</p></div>
+          <div class="summary"><p>Start the Runnable, and capture the fiber to a property.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#runnable_name%3AString-instance-method" class="signature"><strong>#runnable_name</strong> : String</a>
+        
+          <div class="summary"><p>Used to print a pretty name for logging.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#state%3AState-instance-method" class="signature"><strong>#state</strong> : State</a>
+        
+          <div class="summary"><p>Tracks the state of this runnable.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#stop%3AChannel%28Bool%29-instance-method" class="signature"><strong>#stop</strong> : Channel(Bool)</a>
+        
+          <div class="summary"><p>Request that the next time the run loop cycles it should exit instead.</p></div>
         
       </li>
     
@@ -439,17 +521,33 @@
     Instance Method Detail
   </h2>
   
-    <div class="entry-detail" id="increment_run_count:Nil-instance-method">
+    <div class="entry-detail" id="dead?:Bool-instance-method">
       <div class="signature">
         
-        def <strong>increment_run_count</strong> : Nil
+        def <strong>dead?</strong> : Bool
 
-        <a class="method-permalink" href="#increment_run_count%3ANil-instance-method">#</a>
+        <a class="method-permalink" href="#dead%3F%3ABool-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="each_run:Nil-instance-method">
+      <div class="signature">
+        abstract 
+        def <strong>each_run</strong> : Nil
+
+        <a class="method-permalink" href="#each_run%3ANil-instance-method">#</a>
       </div>
       
         <div class="doc">
           
-          <p>Increments the run counter.</p>
+          <p>Implementation of what this Runnable should do on each cycle.</p>
+<p>Take care that @state is #running? at the end of the method
+unless it is finished and should exit.</p>
         </div>
       
       <br/>
@@ -458,19 +556,18 @@
       </div>
     </div>
   
-    <div class="entry-detail" id="increment_run_count_by:Int32-instance-method">
+    <div class="entry-detail" id="fiber:Fiber|Nil-instance-method">
       <div class="signature">
         
-        def <strong>increment_run_count_by</strong> : Int32
+        def <strong>fiber</strong> : Fiber | Nil
 
-        <a class="method-permalink" href="#increment_run_count_by%3AInt32-instance-method">#</a>
+        <a class="method-permalink" href="#fiber%3AFiber%7CNil-instance-method">#</a>
       </div>
       
         <div class="doc">
           
-          <p>How much the run counter should be incremented by.
-Implemented as a dynamic method so that it can easily be calculated by
-some other metric, eg api calls to a third party library.</p>
+          <p>After #run has been called this holds a reference to the Fiber
+which is used to check that the fiber is still running.</p>
         </div>
       
       <br/>
@@ -479,17 +576,31 @@ some other metric, eg api calls to a third party library.</p>
       </div>
     </div>
   
-    <div class="entry-detail" id="maxed_rate_for_window?:Bool-instance-method">
+    <div class="entry-detail" id="my_name:String-instance-method">
       <div class="signature">
         
-        def <strong>maxed_rate_for_window?</strong> : Bool
+        def <strong>my_name</strong> : String
 
-        <a class="method-permalink" href="#maxed_rate_for_window%3F%3ABool-instance-method">#</a>
+        <a class="method-permalink" href="#my_name%3AString-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="post_run:Nil-instance-method">
+      <div class="signature">
+        
+        def <strong>post_run</strong> : Nil
+
+        <a class="method-permalink" href="#post_run%3ANil-instance-method">#</a>
       </div>
       
         <div class="doc">
           
-          <p>Has the run count exceeded the ceiling for the current window?</p>
+          <p>Available to hook any teardown logic after the run loop.</p>
         </div>
       
       <br/>
@@ -498,17 +609,17 @@ some other metric, eg api calls to a third party library.</p>
       </div>
     </div>
   
-    <div class="entry-detail" id="metadata:Metadata-instance-method">
+    <div class="entry-detail" id="pre_run:Nil-instance-method">
       <div class="signature">
         
-        def <strong>metadata</strong> : <a href="../Mosquito/Metadata.html">Metadata</a>
+        def <strong>pre_run</strong> : Nil
 
-        <a class="method-permalink" href="#metadata%3AMetadata-instance-method">#</a>
+        <a class="method-permalink" href="#pre_run%3ANil-instance-method">#</a>
       </div>
       
         <div class="doc">
           
-          <p>Storage hash for rate limit data.</p>
+          <p>Available to hook a one time setup before the run loop.</p>
         </div>
       
       <br/>
@@ -517,18 +628,20 @@ some other metric, eg api calls to a third party library.</p>
       </div>
     </div>
   
-    <div class="entry-detail" id="rate_limited?:Bool-instance-method">
+    <div class="entry-detail" id="run-instance-method">
       <div class="signature">
         
-        def <strong>rate_limited?</strong> : Bool
+        def <strong>run</strong>
 
-        <a class="method-permalink" href="#rate_limited%3F%3ABool-instance-method">#</a>
+        <a class="method-permalink" href="#run-instance-method">#</a>
       </div>
       
         <div class="doc">
           
-          <p>Should this job be cancelled?
-If not, update the rate limit metadata.</p>
+          <p>Start the Runnable, and capture the fiber to a property.</p>
+<p>The spawned fiber will not return as long as state.running?.</p>
+<p>State can be altered internally or externally to cause it to exit
+but the cleanest way to do that is to call #stop.</p>
         </div>
       
       <br/>
@@ -537,18 +650,17 @@ If not, update the rate limit metadata.</p>
       </div>
     </div>
   
-    <div class="entry-detail" id="reschedule_interval(retry_count:Int32):Time::Span-instance-method">
+    <div class="entry-detail" id="runnable_name:String-instance-method">
       <div class="signature">
-        
-        def <strong>reschedule_interval</strong>(retry_count : Int32) : Time::Span
+        abstract 
+        def <strong>runnable_name</strong> : String
 
-        <a class="method-permalink" href="#reschedule_interval%28retry_count%3AInt32%29%3ATime%3A%3ASpan-instance-method">#</a>
+        <a class="method-permalink" href="#runnable_name%3AString-instance-method">#</a>
       </div>
       
         <div class="doc">
           
-          <p>Configure the reschedule interval so that the job_run is not run again until it
-should be allowed through the rate limiter.</p>
+          <p>Used to print a pretty name for logging.</p>
         </div>
       
       <br/>
@@ -557,17 +669,23 @@ should be allowed through the rate limiter.</p>
       </div>
     </div>
   
-    <div class="entry-detail" id="rescheduleable?(retry_count:Int32):Bool-instance-method">
+    <div class="entry-detail" id="state:State-instance-method">
       <div class="signature">
         
-        def <strong>rescheduleable?</strong>(retry_count : Int32) : Bool
+        def <strong>state</strong> : <a href="../Mosquito/Runnable/State.html">State</a>
 
-        <a class="method-permalink" href="#rescheduleable%3F%28retry_count%3AInt32%29%3ABool-instance-method">#</a>
+        <a class="method-permalink" href="#state%3AState-instance-method">#</a>
       </div>
       
         <div class="doc">
           
-          <p>Configure the rescheduler to always retry if a job is rate limited.</p>
+          <p>Tracks the state of this runnable.</p>
+<p>Initially it will be <code><a href="../Mosquito/Runnable/State.html#Starting">State::Starting</a></code>. After <code><a href="../Mosquito/Runnable.html#run-instance-method">#run</a></code> is called it will
+be <code><a href="../Mosquito/Runnable/State.html#Working">State::Working</a></code>.</p>
+<p>When <code><a href="../Mosquito/Runnable.html#stop%3AChannel%28Bool%29-instance-method">#stop</a></code> is called it will be <code><a href="../Mosquito/Runnable/State.html#Stopping">State::Stopping</a></code>. After <code><a href="../Mosquito/Runnable.html#run-instance-method">#run</a></code> finishes,
+it will be <code><a href="../Mosquito/Runnable/State.html#Finished">State::Finished</a></code>.</p>
+<p>It is not necessary to set this manually, but it's available to an implementation
+if needed. See <code>Mosquito::Runners::Executor#state=</code> (source code) for an example.</p>
         </div>
       
       <br/>
@@ -576,56 +694,23 @@ should be allowed through the rate limiter.</p>
       </div>
     </div>
   
-    <div class="entry-detail" id="update_window_start:Nil-instance-method">
+    <div class="entry-detail" id="stop:Channel(Bool)-instance-method">
       <div class="signature">
         
-        def <strong>update_window_start</strong> : Nil
+        def <strong>stop</strong> : Channel(Bool)
 
-        <a class="method-permalink" href="#update_window_start%3ANil-instance-method">#</a>
+        <a class="method-permalink" href="#stop%3AChannel%28Bool%29-instance-method">#</a>
       </div>
       
         <div class="doc">
           
-          <p>Resets the run count and logs the start of window.</p>
-        </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="window_expires_at:Time|Nil-instance-method">
-      <div class="signature">
-        
-        def <strong>window_expires_at</strong> : Time | Nil
-
-        <a class="method-permalink" href="#window_expires_at%3ATime%7CNil-instance-method">#</a>
-      </div>
-      
-        <div class="doc">
-          
-          <p>When does the current rate limit window expire?
-Returns nil if the window is already expired.</p>
-        </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="window_start:Time|Nil-instance-method">
-      <div class="signature">
-        
-        def <strong>window_start</strong> : Time | Nil
-
-        <a class="method-permalink" href="#window_start%3ATime%7CNil-instance-method">#</a>
-      </div>
-      
-        <div class="doc">
-          
-          <p>Calculates the start of the rate limit window.</p>
+          <p>Request that the next time the run loop cycles it should exit instead.
+The runnable doesn't exit immediately so #stop returns a notification
+channel.</p>
+<p>#stop spawns a fiber which monitors the state and sends a bool in two
+circumstances.  It will stop waiting for the spawn to exit at 25 seconds.
+If the spawn has actually stopped the notification channel will broadcast
+a true, otherwise false.</p>
         </div>
       
       <br/>

@@ -177,6 +177,21 @@
       
     </li>
   
+  <li class="parent " data-id="mosquito/Mosquito/Runnable" data-name="mosquito::runnable">
+      <a href="Mosquito/Runnable.html">Runnable</a>
+      
+        <ul>
+  
+  <li class=" " data-id="mosquito/Mosquito/Runnable/State" data-name="mosquito::runnable::state">
+      <a href="Mosquito/Runnable/State.html">State</a>
+      
+    </li>
+  
+</ul>
+
+      
+    </li>
+  
   <li class=" " data-id="mosquito/Mosquito/Runner" data-name="mosquito::runner">
       <a href="Mosquito/Runner.html">Runner</a>
       
@@ -194,6 +209,11 @@
   
   <li class=" " data-id="mosquito/Mosquito/Runners/Executor" data-name="mosquito::runners::executor">
       <a href="Mosquito/Runners/Executor.html">Executor</a>
+      
+    </li>
+  
+  <li class=" " data-id="mosquito/Mosquito/Runners/IdleWait" data-name="mosquito::runners::idlewait">
+      <a href="Mosquito/Runners/IdleWait.html">IdleWait</a>
       
     </li>
   
@@ -272,14 +292,14 @@
 <img src="logo/logotype_horizontal.svg" alt="mosquito">
 <p><a href="https://tldrlegal.com/license/mit-license"><img src="https://img.shields.io/github/license/mosquito-cr/mosquito.svg?style=for-the-badge" alt="GitHub" /></a></p>
 <img src="https://mosquito-cr.github.io/images/amber-mosquito-small.png" align="right">
-<p>Mosquito is a generic background job runner written primarily for Crystal. Significant inspiration from experience with the successes and failings many Ruby gems in this vein.</p>
+<p>Mosquito is a generic background job runner written primarily for Crystal. Significant inspiration from experience with the successes and failings many Ruby gems in this vein. Once compiled, a mosquito binary can start work in about 10 milliseconds.</p>
 <p>Mosquito currently provides these features:</p>
 <ul>
-<li>Delayed execution</li>
-<li>Scheduled / Periodic execution</li>
+<li>Delayed execution (<code>SendEmailJob.new(email: :welcome, address: user.email).enqueue(in: 3.minutes)</code>)</li>
+<li>Scheduled / Periodic execution (<code>RunEveryHourJob.new</code>)</li>
 <li>Job Storage in Redis</li>
 <li>Automatic rescheduling of failed jobs</li>
-<li>Progressively increasing delay of failed jobs</li>
+<li>Progressively increasing delay of rescheduled failed jobs</li>
 <li>Dead letter queue of jobs which have failed too many times</li>
 <li>Rate limited jobs</li>
 </ul>

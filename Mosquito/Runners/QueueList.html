@@ -177,6 +177,21 @@
       
     </li>
   
+  <li class="parent " data-id="mosquito/Mosquito/Runnable" data-name="mosquito::runnable">
+      <a href="../../Mosquito/Runnable.html">Runnable</a>
+      
+        <ul>
+  
+  <li class=" " data-id="mosquito/Mosquito/Runnable/State" data-name="mosquito::runnable::state">
+      <a href="../../Mosquito/Runnable/State.html">State</a>
+      
+    </li>
+  
+</ul>
+
+      
+    </li>
+  
   <li class=" " data-id="mosquito/Mosquito/Runner" data-name="mosquito::runner">
       <a href="../../Mosquito/Runner.html">Runner</a>
       
@@ -194,6 +209,11 @@
   
   <li class=" " data-id="mosquito/Mosquito/Runners/Executor" data-name="mosquito::runners::executor">
       <a href="../../Mosquito/Runners/Executor.html">Executor</a>
+      
+    </li>
+  
+  <li class=" " data-id="mosquito/Mosquito/Runners/IdleWait" data-name="mosquito::runners::idlewait">
+      <a href="../../Mosquito/Runners/IdleWait.html">IdleWait</a>
       
     </li>
   
@@ -306,6 +326,10 @@
   </h2>
   <ul class="other-types-list">
     
+      <li class="other-type"><a href="../../Mosquito/Runnable.html">Mosquito::Runnable</a></li>
+    
+      <li class="other-type"><a href="../../Mosquito/Runners/IdleWait.html">Mosquito::Runners::IdleWait</a></li>
+    
       <li class="other-type"><a href="../../Mosquito/Runners/RunAtMost.html">Mosquito::Runners::RunAtMost</a></li>
     
   </ul>
@@ -335,6 +359,25 @@
   
 
 
+
+  
+    <h2>
+      <a id="constant-summary" class="anchor" href="#constant-summary">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+      Constant Summary
+    </h2>
+  
+  <dl>
+    
+      <dt class="entry-const" id="Log">
+        <strong>Log</strong> = <code><span class="t">::</span><span class="t">Log</span>.<span class="k">for</span>(<span class="k">self</span>)</code>
+      </dt>
+      
+    
+  </dl>
 
 
 
@@ -380,7 +423,21 @@
       </li>
     
       <li class="entry-summary">
-        <a href="#fetch-instance-method" class="signature"><strong>#fetch</strong></a>
+        <a href="#each_run%3ANil-instance-method" class="signature"><strong>#each_run</strong> : Nil</a>
+        
+          <div class="summary"><p>Implementation of what this Runnable should do on each cycle.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#queues%3AArray%28Queue%29-instance-method" class="signature"><strong>#queues</strong> : Array(Queue)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#runnable_name%3AString-instance-method" class="signature"><strong>#runnable_name</strong> : String</a>
+        
+          <div class="summary"><p>Used to print a pretty name for logging.</p></div>
         
       </li>
     
@@ -391,6 +448,89 @@
 
 
 <div class="methods-inherited">
+  
+    
+
+  <h3>Instance methods inherited from module <code><a href="../../Mosquito/Runners/IdleWait.html">Mosquito::Runners::IdleWait</a></code></h3>
+  
+  
+    <a href="../../Mosquito/Runners/IdleWait.html#with_idle_wait%28idle_wait%3ATime%3A%3ASpan%2C%26%29-instance-method" class="tooltip">
+      <span>with_idle_wait(idle_wait : Time::Span, &)</span>
+    with_idle_wait</a>
+    
+  
+
+
+    
+
+
+    
+
+
+  
+    
+
+  <h3>Instance methods inherited from module <code><a href="../../Mosquito/Runnable.html">Mosquito::Runnable</a></code></h3>
+  
+  
+    <a href="../../Mosquito/Runnable.html#dead%3F%3ABool-instance-method" class="tooltip">
+      <span>dead? : Bool</span>
+    dead?</a>, 
+    
+  
+    <a href="../../Mosquito/Runnable.html#each_run%3ANil-instance-method" class="tooltip">
+      <span>each_run : Nil</span>
+    each_run</a>, 
+    
+  
+    <a href="../../Mosquito/Runnable.html#fiber%3AFiber%7CNil-instance-method" class="tooltip">
+      <span>fiber : Fiber | Nil</span>
+    fiber</a>, 
+    
+  
+    <a href="../../Mosquito/Runnable.html#my_name%3AString-instance-method" class="tooltip">
+      <span>my_name : String</span>
+    my_name</a>, 
+    
+  
+    <a href="../../Mosquito/Runnable.html#post_run%3ANil-instance-method" class="tooltip">
+      <span>post_run : Nil</span>
+    post_run</a>, 
+    
+  
+    <a href="../../Mosquito/Runnable.html#pre_run%3ANil-instance-method" class="tooltip">
+      <span>pre_run : Nil</span>
+    pre_run</a>, 
+    
+  
+    <a href="../../Mosquito/Runnable.html#run-instance-method" class="tooltip">
+      <span>run</span>
+    run</a>, 
+    
+  
+    <a href="../../Mosquito/Runnable.html#runnable_name%3AString-instance-method" class="tooltip">
+      <span>runnable_name : String</span>
+    runnable_name</a>, 
+    
+  
+    <a href="../../Mosquito/Runnable.html#state%3AState-instance-method" class="tooltip">
+      <span>state : State</span>
+    state</a>, 
+    
+  
+    <a href="../../Mosquito/Runnable.html#stop%3AChannel%28Bool%29-instance-method" class="tooltip">
+      <span>stop : Channel(Bool)</span>
+    stop</a>
+    
+  
+
+
+    
+
+
+    
+
+
   
     
 
@@ -499,13 +639,61 @@
       </div>
     </div>
   
-    <div class="entry-detail" id="fetch-instance-method">
+    <div class="entry-detail" id="each_run:Nil-instance-method">
       <div class="signature">
         
-        def <strong>fetch</strong>
+        def <strong>each_run</strong> : Nil
 
-        <a class="method-permalink" href="#fetch-instance-method">#</a>
+        <a class="method-permalink" href="#each_run%3ANil-instance-method">#</a>
       </div>
+      
+        <div class="doc">
+          
+            <div class="doc-inherited">
+              Description copied from module <a href="../../Mosquito/Runnable.html">Mosquito::Runnable</a>
+            </div>
+          
+          <p>Implementation of what this Runnable should do on each cycle.</p>
+<p>Take care that @state is #running? at the end of the method
+unless it is finished and should exit.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="queues:Array(Queue)-instance-method">
+      <div class="signature">
+        
+        def <strong>queues</strong> : Array(<a href="../../Mosquito/Queue.html">Queue</a>)
+
+        <a class="method-permalink" href="#queues%3AArray%28Queue%29-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="runnable_name:String-instance-method">
+      <div class="signature">
+        
+        def <strong>runnable_name</strong> : String
+
+        <a class="method-permalink" href="#runnable_name%3AString-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+            <div class="doc-inherited">
+              Description copied from module <a href="../../Mosquito/Runnable.html">Mosquito::Runnable</a>
+            </div>
+          
+          <p>Used to print a pretty name for logging.</p>
+        </div>
       
       <br/>
       <div>
