@@ -92,8 +92,11 @@ module Mosquito
 
     def enqueue(job_run : JobRun) : JobRun
       Log.trace { "Enqueuing #{job_run} for immediate execution" }
-      metric { publish @publish_context, {title: "enqueue-job", job_run: job_run.id} }
       backend.enqueue job_run
+      metric {
+        publish @publish_context, {title: "enqueue-job", job_run: job_run.id, depth: size}
+      }
+      job_run
     end
 
     def enqueue(job_run : JobRun, in interval : Time::Span) : JobRun
@@ -102,7 +105,9 @@ module Mosquito
 
     def enqueue(job_run : JobRun, at execute_time : Time) : JobRun
       Log.trace { "Enqueuing #{job_run} at #{execute_time}" }
-      metric { publish @publish_context, {title: "defer-job", job_run: job_run.id, until: execute_time} }
+      metric {
+        publish @publish_context, {title: "defer-job", job_run: job_run.id, until: execute_time}
+      }
 
       backend.schedule job_run, execute_time
     end
@@ -111,7 +116,7 @@ module Mosquito
       return if empty?
 
       if job_run = backend.dequeue
-        metric { publish @publish_context, {title: "dequeue", job_run: job_run.id} }
+        metric { publish @publish_context, {title: "dequeue", job_run: job_run.id, depth: size} }
 
         job_run
       else
