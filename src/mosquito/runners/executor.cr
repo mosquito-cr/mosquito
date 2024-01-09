@@ -92,31 +92,39 @@ module Mosquito::Runners
 
       metric {
         metric_data["current_work"] = job_run.id.to_s
-        publish @publish_context, {event: "starting", job_run: job_run.id, from_queue: q.name}
+        publish @publish_context, {
+          event: "starting",
+          job_run: job_run.id,
+          from_queue: q.name,
+          expected_duration_ms: job_duration(job_run.type)
+        }
       }
 
       duration = Time.measure do
         job_run.run
-      end.total_seconds
-
-      metric {
-        tick_metrics "executed"
-      }
+      end
 
       if job_run.succeeded?
-        log.info { "#{"Success:".colorize.green} #{job_run} finished and took #{time_with_units duration}" }
+        log.info { "#{"Success:".colorize.green} #{job_run} finished and took #{time_with_units duration.total_seconds}" }
         q.forget job_run
         job_run.delete in: successful_job_ttl
 
         metric {
-          tick_metrics "suceeded"
+          publish @publish_context, {event: "job-finished", job_run: job_run.id}
+
+          count [@publish_context.context, :success]
+          count [:queue, q.name, :success]
+          count [:job, job_run.type, :success]
+
+          record_job_duration job_run.type, duration
         }
+
       else
         message = String::Builder.new
         message << "Failure: ".colorize.red
         message << job_run
         message << " failed, taking "
-        message << time_with_units duration
+        message << time_with_units duration.total_seconds
         message << " and "
 
         if job_run.rescheduleable?
@@ -130,30 +138,23 @@ module Mosquito::Runners
           message << next_execution
           message << ")"
           log.warn { message.to_s }
-          metric {
-            publish(
-              @publish_context,
-              {event: "job-failed", job_run: job_run.id, reschedulable: true}
-            )
-          }
+
         else
           q.banish job_run
           job_run.delete in: failed_job_ttl
 
           message << "cannot be rescheduled".colorize.yellow
           log.error { message.to_s }
-
-          metric {
-            publish @publish_context, {event: "job-failed", job_run: job_run.id, reschedulable: false}
-          }
         end
-      end
 
-      metric {
-        tick_metrics "suceeded"
-        metric_data["current_work"] = ""
-        publish @publish_context, {event: "job-finished", job_run: job_run.id}
-      }
+        metric {
+          publish @publish_context, {event: "job-failed", job_run: job_run.id, reschedulable: job_run.rescheduleable? }
+
+          count [@publish_context.context, :failed]
+          count [:queue, q.name, :failed]
+          count [:job, job_run.type, :failed]
+        }
+      end
     end
 
     # :nodoc:
