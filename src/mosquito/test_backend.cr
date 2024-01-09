@@ -68,6 +68,10 @@ module Mosquito
       ""
     end
 
+    def self.increment(key : String, by value : Int32 = 1) : Int64
+      0_i64
+    end
+
     def self.increment(key : String, field : String) : Int64
       0_i64
     end
@@ -90,6 +94,13 @@ module Mosquito
 
     def self.subscribe(key : String) : Channel(BroadcastMessage)
       Channel(BroadcastMessage).new
+    end
+
+    def self.average_push(key : String, value : Int32, window_size = 100) : Nil
+    end
+
+    def self.average(key : String) : Int32
+      0_i32
     end
 
     struct EnqueuedJob

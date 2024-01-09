@@ -101,6 +101,10 @@ module Mosquito
       value
     end
 
+    def self.increment(key : String, by value : Int32 = 1) : Int64
+      redis.incrby key, value
+    end
+
     def self.increment(key : String, field : String) : Int64
       increment key, field, by: 1
     end
@@ -168,6 +172,19 @@ module Mosquito
       end
 
       stream
+    end
+
+    def self.average_push(key : String, value : Int32, window_size : Int32 = 100) : Nil
+      redis.lpush key, [value.to_s]
+      redis.ltrim key, 0, 100
+    end
+
+    def self.average(key : String) : Int32
+      stats = redis.lrange key, 0, -1
+      # pp stats
+      # 0_i32
+      return 0_i32 if stats.empty?
+      stats.map(&.as(String)).map(&.to_i32).sum // stats.size
     end
 
     def schedule(job_run : JobRun, at scheduled_time : Time) : JobRun
