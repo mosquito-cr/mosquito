@@ -44,7 +44,7 @@ module Mosquito
       instance.run
 
       while spin && keep_running
-        Fiber.yield
+        sleep 1
       end
     end
 
