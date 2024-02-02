@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Crystal Docs 1.9.2">
+<meta name="generator" content="Crystal Docs 1.10.1">
 <meta name="crystal_docs.project_version" content="1.0.2">
 <meta name="crystal_docs.project_name" content="mosquito">
 
@@ -442,6 +442,37 @@ Jobs are pieces of code which run a JobRun.</p>
 
 
   <h2>
+    <a id="macro-summary" class="anchor" href="#macro-summary">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Macro Summary
+  </h2>
+  <ul class="list-summary">
+    
+      <li class="entry-summary">
+        <a href="#after%28%26block%29-macro" class="signature"><strong>after</strong>(&block)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#before%28%26block%29-macro" class="signature"><strong>before</strong>(&block)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#queue_name%28name%29-macro" class="signature"><strong>queue_name</strong>(name)</a>
+        
+          <div class="summary"><p>Easily override the queue for any job.</p></div>
+        
+      </li>
+    
+  </ul>
+
+
+
+  <h2>
     <a id="instance-method-summary" class="anchor" href="#instance-method-summary">
   <svg class="octicon-link" aria-hidden="true">
     <use href="#octicon-link"/>
@@ -589,37 +620,6 @@ Jobs are pieces of code which run a JobRun.</p>
     
       <li class="entry-summary">
         <a href="#succeeded%3F%28%2Aargs%2C%2A%2Aoptions%2C%26%29-instance-method" class="signature"><strong>#succeeded?</strong>(*args, **options, &)</a>
-        
-      </li>
-    
-  </ul>
-
-
-
-  <h2>
-    <a id="macro-summary" class="anchor" href="#macro-summary">
-  <svg class="octicon-link" aria-hidden="true">
-    <use href="#octicon-link"/>
-  </svg>
-</a>
-    Macro Summary
-  </h2>
-  <ul class="list-summary">
-    
-      <li class="entry-summary">
-        <a href="#after%28%26block%29-macro" class="signature"><strong>after</strong>(&block)</a>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#before%28%26block%29-macro" class="signature"><strong>before</strong>(&block)</a>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#queue_name%28name%29-macro" class="signature"><strong>queue_name</strong>(name)</a>
-        
-          <div class="summary"><p>Easily override the queue for any job.</p></div>
         
       </li>
     
@@ -807,17 +807,26 @@ Jobs are pieces of code which run a JobRun.</p>
     
 
 
-  
-    
-
-
-    
-
-
     
 
 
   
+    
+
+
+    
+
+
+    
+
+
+    
+
+
+  
+    
+
+
     
 
 
@@ -904,6 +913,65 @@ By default every job has it's own named queue:</p>
 <ul>
 <li>EmailTheUniverseJob.queue = &quot;email_the_universe&quot;</li>
 </ul>
+        </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+
+
+
+  <h2>
+    <a id="macro-detail" class="anchor" href="#macro-detail">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Macro Detail
+  </h2>
+  
+    <div class="entry-detail" id="after(&amp;block)-macro">
+      <div class="signature">
+        
+        macro <strong>after</strong>(&block)
+
+        <a class="method-permalink" href="#after%28%26block%29-macro">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="before(&amp;block)-macro">
+      <div class="signature">
+        
+        macro <strong>before</strong>(&block)
+
+        <a class="method-permalink" href="#before%28%26block%29-macro">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="queue_name(name)-macro">
+      <div class="signature">
+        
+        macro <strong>queue_name</strong>(name)
+
+        <a class="method-permalink" href="#queue_name%28name%29-macro">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Easily override the queue for any job.</p>
         </div>
       
       <br/>
@@ -1315,65 +1383,6 @@ See: #fail(retry: false)</p>
 
         <a class="method-permalink" href="#succeeded%3F%28%2Aargs%2C%2A%2Aoptions%2C%26%29-instance-method">#</a>
       </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-
-
-
-  <h2>
-    <a id="macro-detail" class="anchor" href="#macro-detail">
-  <svg class="octicon-link" aria-hidden="true">
-    <use href="#octicon-link"/>
-  </svg>
-</a>
-    Macro Detail
-  </h2>
-  
-    <div class="entry-detail" id="after(&amp;block)-macro">
-      <div class="signature">
-        
-        macro <strong>after</strong>(&block)
-
-        <a class="method-permalink" href="#after%28%26block%29-macro">#</a>
-      </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="before(&amp;block)-macro">
-      <div class="signature">
-        
-        macro <strong>before</strong>(&block)
-
-        <a class="method-permalink" href="#before%28%26block%29-macro">#</a>
-      </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="queue_name(name)-macro">
-      <div class="signature">
-        
-        macro <strong>queue_name</strong>(name)
-
-        <a class="method-permalink" href="#queue_name%28name%29-macro">#</a>
-      </div>
-      
-        <div class="doc">
-          
-          <p>Easily override the queue for any job.</p>
-        </div>
       
       <br/>
       <div>
