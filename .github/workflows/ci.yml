@@ -34,7 +34,7 @@ jobs:
       REDIS_URL: redis://redis:6379/1
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - uses: crystal-lang/install-crystal@v1
       with:
         crystal: ${{matrix.crystal_version}}
