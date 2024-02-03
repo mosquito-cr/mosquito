@@ -38,6 +38,8 @@ module Mosquito
       abstract def store(key : String, value : Hash(String, String)) : Nil
       abstract def retrieve(key : String) : Hash(String, String)
       abstract def list_queues : Array(String)
+      abstract def expiring_list_push(key : String, value : String) : Nil
+      abstract def expiring_list_fetch(key : String, expire_items_older_than : Time) : Array(String)
       abstract def list_runners : Array(String)
 
       abstract def delete(key : String, in ttl : Int64 = 0) : Nil

@@ -67,6 +67,12 @@ module Mosquito::Runners
       "Overseer<#{object_id}>"
     end
 
+    # (Re)registers the overseer with the backend.
+    # This is like a heartbeat and is used to acquire metadata about the overseer fleet.
+    def heartbeat : Nil
+      Mosquito.backend.register_overseer self.runnable_name
+    end
+
     def sleep
       Log.trace { "Going to sleep now for #{idle_wait}" }
       sleep idle_wait
@@ -77,6 +83,7 @@ module Mosquito::Runners
       Log.info { "Starting #{@executors.size} executors." }
 
       metric {
+        heartbeat
         publish @publish_context, {event: "starting"}
       }
 
@@ -118,7 +125,7 @@ module Mosquito::Runners
 
       metric {
         run_at_most every: Mosquito.configuration.heartbeat_interval, label: :heartbeat do
-            beat_heart(metric_data)
+          heartbeat
         end
       }
 

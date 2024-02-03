@@ -1,5 +1,5 @@
 module Mosquito::Inspector
-  class Runner
+  class Overseer
     include Comparable(self)
 
     getter name : String

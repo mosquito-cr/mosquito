@@ -34,6 +34,7 @@ module Mosquito
 
   class RedisBackend < Mosquito::Backend
     LIST_OF_QUEUES_KEY = "queues"
+    LIST_OF_OVERSEERS_KEY = "overseers"
 
     Log = ::Log.for(self)
 
@@ -134,7 +135,27 @@ module Mosquito
         keys << key.as(String).sub(runner_prefix, "")
       end
 
-      keys
+      key = build_key LIST_OF_QUEUES_KEY
+      expiring_list_fetch key, Time.utc - 1.day
+    end
+
+    def self.register_overseer(name : String) : Nil
+      key = build_key LIST_OF_OVERSEERS_KEY
+      expiring_list_push key, name
+    end
+
+    def self.list_overseers : Array(String)
+      key = build_key LIST_OF_OVERSEERS_KEY
+      expiring_list_fetch key, Time.utc - 1.day
+    end
+
+    def self.expiring_list_push(key : String, value : String) : Nil
+      redis.zadd key, Time.utc.to_unix.to_s, value
+    end
+
+    def self.expiring_list_fetch(key : String, expire_items_older_than : Time) : Array(String)
+      redis.zremrangebyscore key, "0", expire_items_older_than.to_unix.to_s
+      redis.zrange(key, "0", "-1").as(Array).map(&.as(String))
     end
 
     # is this even a good idea?
@@ -181,8 +202,6 @@ module Mosquito
 
     def self.average(key : String) : Int32
       stats = redis.lrange key, 0, -1
-      # pp stats
-      # 0_i32
       return 0_i32 if stats.empty?
       stats.map(&.as(String)).map(&.to_i32).sum // stats.size
     end
@@ -205,13 +224,12 @@ module Mosquito
     end
 
     def enqueue(job_run : JobRun) : JobRun
-      redis.pipeline do |pipe|
-        # Pushes the job onto the waiting queue.
-        pipe.lpush waiting_q, job_run.id
+      # Pushes the job onto the waiting queue.
+      redis.lpush waiting_q, job_run.id
 
-        # Updates the list of queues to include the current queue
-        pipe.zadd build_key(LIST_OF_QUEUES_KEY), Time.utc.to_unix.to_s, name
-      end
+      # Updates the list of queues to include the current queue
+      self.class.expiring_list_push build_key(LIST_OF_QUEUES_KEY), name
+
       job_run
     end
 
