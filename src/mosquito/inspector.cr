@@ -6,9 +6,9 @@ module Mosquito::Inspector
       .map { |name| Inspector::Queue.new name }
   end
 
-  def self.list_runners : Array(Runner)
-    Mosquito.backend.list_runners
-      .map { |name| Runner.new name }
+  def self.list_overseers : Array(Runner)
+    Mosquito.backend.list_overseers
+      .map { |name| Overseer.new name }
   end
 
   def self.event_receiver : Channel(Backend::BroadcastMessage)
