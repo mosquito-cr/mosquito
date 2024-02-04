@@ -122,7 +122,7 @@ module Mosquito
 
     def self.list_queues : Array(String)
       key = build_key(LIST_OF_QUEUES_KEY)
-      list_queues = redis.zrange(key, 0, -1).as(Array)
+      list_queues = redis.zrange(key, "0", "-1").as(Array)
 
       return [] of String unless list_queues.any?
 
@@ -221,7 +221,7 @@ module Mosquito
         if type == "list"
           redis.lrange(key, "0", "-1").as(Array(Redis::Value)).map(&.as(String))
         elsif type == "zset"
-          redis.zrange(key, 0, -1).as(Array(Redis::Value)).map(&.as(String))
+          redis.zrange(key, "0", "-1").as(Array(Redis::Value)).map(&.as(String))
         elsif type == "none"
           [] of String
         else
