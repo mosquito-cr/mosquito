@@ -1,6 +1,7 @@
-require "./inspector/*"
+require "./backend"
+require "./api/*"
 
-module Mosquito::Inspector
+module Mosquito::Api
   def self.overseer(id : String) : Overseer
     Overseer.new id
   end
@@ -9,9 +10,9 @@ module Mosquito::Inspector
     Executor.new id
   end
 
-  def self.list_queues : Array(Inspector::Queue)
+  def self.list_queues : Array(Observability::Queue)
     Mosquito.backend.list_queues
-      .map { |name| Inspector::Queue.new name }
+      .map { |name| Observability::Queue.new name }
   end
 
   def self.list_overseers : Array(Overseer)
@@ -23,7 +24,7 @@ module Mosquito::Inspector
     Mosquito.backend.subscribe "mosquito:*"
   end
 
-  def self.queue(name : String) : Inspector::Queue
-    Inspector::Queue.new name
+  def self.queue(name : String) : Queue
+    Queue.new name
   end
 end

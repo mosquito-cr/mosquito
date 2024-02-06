@@ -1,3 +1,5 @@
+require "./observability/concerns/publish_context"
+
 module Mosquito
   # A named Queue.
   #
@@ -87,16 +89,16 @@ module Mosquito
       @empty = false
       @backend = Mosquito.backend.named name
       @config_key = @name
-      @publish_context = PublishContext.new [:queue, name]
+      @publish_context = Observability::PublishContext.new [:queue, name]
     end
 
     def enqueue(job_run : JobRun) : JobRun
       Log.trace { "Enqueuing #{job_run} for immediate execution" }
       backend.enqueue job_run
-      metric {
-        publish @publish_context, {title: "enqueue-job", job_run: job_run.id, depth: size}
-        count [:queue, name, :enqueue]
-      }
+      # metric {
+      #   publish @publish_context, {title: "enqueue-job", job_run: job_run.id, depth: size}
+      #   count [:queue, name, :enqueue]
+      # }
       job_run
     end
 
@@ -106,9 +108,9 @@ module Mosquito
 
     def enqueue(job_run : JobRun, at execute_time : Time) : JobRun
       Log.trace { "Enqueuing #{job_run} at #{execute_time}" }
-      metric {
-        publish @publish_context, {title: "delay-job", job_run: job_run.id, until: execute_time}
-      }
+      # metric {
+      #   publish @publish_context, {title: "delay-job", job_run: job_run.id, until: execute_time}
+      # }
 
       backend.schedule job_run, execute_time
     end
@@ -117,10 +119,10 @@ module Mosquito
       return if empty?
 
       if job_run = backend.dequeue
-        metric {
-          publish @publish_context, {title: "dequeue", job_run: job_run.id, depth: size}
-          count [:queue, name, :dequeue]
-        }
+        # metric {
+        #   publish @publish_context, {title: "dequeue", job_run: job_run.id, depth: size}
+        #   count [:queue, name, :dequeue]
+        # }
 
         job_run
       else

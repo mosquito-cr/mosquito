@@ -1,5 +1,6 @@
-require "./run_at_most"
 require "../runnable"
+
+require "./concerns/run_at_most"
 
 module Mosquito::Runners
   # The executor is the center of work in Mosquito, and it's is the demarcation
@@ -23,10 +24,13 @@ module Mosquito::Runners
   class Executor
     include RunAtMost
     include Runnable
-    include Metrics::Shorthand
 
     Log = ::Log.for self
     getter log : ::Log
+    getter overseer : Overseer
+    getter observer : Observability::Executor {
+      Observability::Executor.new self
+    }
 
     # How long a job config is persisted after success
     property successful_job_ttl : Int32 { Mosquito.configuration.successful_job_ttl }
@@ -39,7 +43,6 @@ module Mosquito::Runners
 
     # Used to notify the overseer that this executor is idle.
     getter idle_bell : Channel(Bool)
-    getter metadata : Metadata
     getter instance_id : String
 
     private def state=(state : State)
@@ -51,15 +54,12 @@ module Mosquito::Runners
       super
     end
 
-    def self.metadata_key(id : String) : String
-      Mosquito::Backend.build_key "executor", id
-    end
+    def initialize(@overseer : Overseer)
+      @instance_id = Random::Secure.hex 8
 
-    def initialize(@job_pipeline, @idle_bell, overseer_context)
-      @log = Log.for(object_id.to_s)
-      @instance_id = Random::Secure.hex(8)
-      @publish_context = PublishContext.new overseer_context, [:executor, instance_id]
-      @metadata = Metadata.new self.class.metadata_key(instance_id)
+      @job_pipeline = overseer.work_handout
+      @idle_bell = overseer.idle_notifier
+      @log = Log.for instance_id
     end
 
     # :nodoc:
@@ -87,8 +87,7 @@ module Mosquito::Runners
       log.trace { "Finished #{job_run} from #{queue.name}" }
       self.state = State::Idle
 
-      @metadata.heartbeat!
-      @metadata.delete in: 1.hour
+      observer.heartbeat!
     end
 
     # Runs a job from a Queue.
@@ -96,92 +95,25 @@ module Mosquito::Runners
     # Execution time is measured and logged, and the job is either forgotten
     # or, if it fails, rescheduled.
     def execute(job_run : JobRun, from_queue q : Queue)
-      log.info { "#{"Starting:".colorize.magenta} #{job_run} from #{q.name}" }
-
-      metric {
-        @metadata["current_job_queue"] = q.name
-        @metadata["current_job"] = job_run.id
-        publish @publish_context, {
-          event: "starting",
-          job_run: job_run.id,
-          from_queue: q.name,
-          expected_duration_ms: job_duration(job_run.type)
-        }
-      }
-
-      duration = Time.measure do
+      observer.start job_run, from: q
+      observer.measure_duration job_run.type do
         job_run.run
       end
 
+      observer.finish success: job_run.succeeded?
+
       if job_run.succeeded?
-        log.info { "#{"Success:".colorize.green} #{job_run} finished and took #{time_with_units duration.total_seconds}" }
         q.forget job_run
         job_run.delete in: successful_job_ttl
-
-        metric {
-          publish @publish_context, {event: "job-finished", job_run: job_run.id}
-          @metadata["current_job"] = nil
-
-          count [@publish_context.context, :success]
-          count [:queue, q.name, :success]
-          count [:job, job_run.type, :success]
-
-          record_job_duration job_run.type, duration
-        }
-
       else
-        message = String::Builder.new
-        message << "Failure: ".colorize.red
-        message << job_run
-        message << " failed, taking "
-        message << time_with_units duration.total_seconds
-        message << " and "
-
         if job_run.rescheduleable?
           next_execution = Time.utc + job_run.reschedule_interval
           q.reschedule job_run, next_execution
-
-          message << "will run again".colorize.cyan
-          message << " in "
-          message << job_run.reschedule_interval
-          message << " (at "
-          message << next_execution
-          message << ")"
-          log.warn { message.to_s }
-
         else
           q.banish job_run
           job_run.delete in: failed_job_ttl
-
-          message << "cannot be rescheduled".colorize.yellow
-          log.error { message.to_s }
         end
-
-        metric {
-          publish @publish_context, {event: "job-failed", job_run: job_run.id, reschedulable: job_run.rescheduleable? }
-          @metadata["current_job"] = nil
-
-          count [@publish_context.context, :failed]
-          count [:queue, q.name, :failed]
-          count [:job, job_run.type, :failed]
-        }
       end
     end
-
-    # :nodoc:
-    def time_with_units(seconds : Float64)
-      if seconds > 0.1
-        "#{(seconds).*(100).trunc./(100)}s".colorize.red
-      elsif seconds > 0.001
-        "#{(seconds * 1_000).trunc}ms".colorize.yellow
-      elsif seconds > 0.000_001
-        "#{(seconds * 100_000).trunc}µs".colorize.green
-      elsif seconds > 0.000_000_001
-        "#{(seconds * 1_000_000_000).trunc}ns".colorize.green
-      else
-        "no discernible time at all".colorize.green
-      end
-    end
-
   end
 end

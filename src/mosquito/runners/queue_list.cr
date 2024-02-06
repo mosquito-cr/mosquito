@@ -1,6 +1,9 @@
-require "./run_at_most"
 require "../runnable"
-require "./idle_wait"
+
+require "../observability/concerns/publish_context"
+
+require "./concerns/run_at_most"
+require "./concerns/idle_wait"
 
 module Mosquito::Runners
   # QueueList handles searching the redis keyspace for named queues.
@@ -14,8 +17,8 @@ module Mosquito::Runners
 
     getter queues : Array(Queue)
 
-    def initialize(overseer_context : PublishContext)
-      @publish_context = PublishContext.new(overseer_context, [:queue_list])
+    def initialize(overseer : Overseer)
+      @publish_context = Observability::PublishContext.new(overseer.observer.publish_context, [:queue_list])
       @queues = [] of Queue
     end
 
@@ -44,12 +47,8 @@ module Mosquito::Runners
           end
         }
 
-        metric {
-          publish @publish_context, {event: "found-queues", queues: @queues.map(&.name).join(", ")}
-        }
-
+        # publish @publish_context, {event: "found-queues", queues: @queues.map(&.name).join(", ")}
         @queues = new_queue_list
-
         @state = State::Idle
       end
     end
