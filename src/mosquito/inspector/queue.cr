@@ -1,7 +1,5 @@
 module Mosquito::Inspector
   class Queue
-    include Comparable(self)
-
     getter name : String
 
     private property backend : Mosquito::Backend

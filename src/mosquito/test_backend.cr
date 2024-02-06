@@ -54,8 +54,11 @@ module Mosquito
       [] of String
     end
 
-    def self.list_runners : Array(String)
+    def self.list_overseers : Array(String)
       [] of String
+    end
+
+    def self.register_overseer(name : String) : Nil
     end
 
     def self.delete(key : String, in ttl : Int64 = 0) : Nil
@@ -73,6 +76,9 @@ module Mosquito
 
     def self.set(key : String, field : String, value : String) : String
       ""
+    end
+
+    def self.delete_field(key : String, field : String) : Nil
     end
 
     def self.increment(key : String, by value : Int32 = 1) : Int64
