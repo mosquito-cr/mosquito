@@ -1,4 +1,4 @@
-module Mosquito::Inspector
+module Mosquito::Api
   class Queue
     getter name : String
 

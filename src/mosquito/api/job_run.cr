@@ -1,4 +1,4 @@
-module Mosquito::Inspector
+module Mosquito::Api
   class JobRun
     getter id : String
 
