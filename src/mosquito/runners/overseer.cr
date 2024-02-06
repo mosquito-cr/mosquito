@@ -39,7 +39,12 @@ module Mosquito::Runners
     }
 
     property state : State = State::Starting
-    getter instance_id, queue_list, executors, coordinator, metric_data
+    getter instance_id, queue_list, executors, coordinator
+    getter metadata : Metadata
+
+    def self.metadata_key(instance_id : String) : String
+      Mosquito::Backend.build_key "overseer", instance_id
+    end
 
     def initialize
       @idle_notifier = Channel(Bool).new
@@ -48,7 +53,7 @@ module Mosquito::Runners
       @work_handout = Channel(Tuple(JobRun, Queue)).new
 
       @instance_id = Random::Secure.hex(8)
-      @metric_data = metric_data = Metadata.new Mosquito::Backend.build_key("runners", instance_id)
+      @metadata = Metadata.new self.class.metadata_key(instance_id)
       @publish_context = PublishContext.new([:overseer, instance_id])
 
       @queue_list = QueueList.new @publish_context
@@ -57,10 +62,16 @@ module Mosquito::Runners
       executor_count.times do
         @executors << build_executor
       end
+
+      update_executor_list
     end
 
     def build_executor : Executor
-      Executor.new work_handout, idle_notifier, @publish_context, metric_data
+      Executor.new work_handout, idle_notifier, @publish_context
+    end
+
+    def update_executor_list : Nil
+      @metadata["executors"] = @executors.map(&.instance_id).join(",")
     end
 
     def runnable_name : String
@@ -70,7 +81,7 @@ module Mosquito::Runners
     # (Re)registers the overseer with the backend.
     # This is like a heartbeat and is used to acquire metadata about the overseer fleet.
     def heartbeat : Nil
-      Mosquito.backend.register_overseer self.runnable_name
+      Mosquito.backend.register_overseer self.instance_id
     end
 
     def sleep
@@ -98,8 +109,8 @@ module Mosquito::Runners
         executor.stop
       end
       work_handout.close
-      stopped_notifiers.each(&.receive)
       metric { publish @publish_context, {event: "stopping-work"} }
+      stopped_notifiers.each(&.receive)
       Log.info { "All executors stopped." }
 
       Log.info { "Overseer #{instance_id} finished for now." }
@@ -174,6 +185,8 @@ module Mosquito::Runners
       end
 
       check_for_deceased_runners
+      metadata.heartbeat!
+      metadata.delete(in: 1.hour)
     end
 
     # Weaknesses: This implementation sometimes starves queues because it doesn't
@@ -204,6 +217,8 @@ module Mosquito::Runners
       (executor_count - executors.size).times do
         executors << build_executor.tap(&.run)
       end
+
+      update_executor_list
 
       if queue_list.dead?
         Log.fatal { "QueueList has died, overseer will stop." }

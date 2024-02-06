@@ -40,7 +40,8 @@ module Mosquito
       abstract def list_queues : Array(String)
       abstract def expiring_list_push(key : String, value : String) : Nil
       abstract def expiring_list_fetch(key : String, expire_items_older_than : Time) : Array(String)
-      abstract def list_runners : Array(String)
+      abstract def list_overseers : Array(String)
+      abstract def register_overseer(name : String) : Nil
 
       abstract def delete(key : String, in ttl : Int64 = 0) : Nil
       abstract def delete(key : String, in ttl : Time::Span) : Nil
@@ -48,6 +49,7 @@ module Mosquito
 
       abstract def get(key : String, field : String) : String?
       abstract def set(key : String, field : String, value : String) : String
+      abstract def delete_field(key : String, field : String) : Nil
       abstract def delete(key : String, in ttl : Time::Span = 0.seconds)
       abstract def increment(key : String, by value : Int32) : Int64
       abstract def increment(key : String, field : String) : Int64

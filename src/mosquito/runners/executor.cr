@@ -39,7 +39,7 @@ module Mosquito::Runners
 
     # Used to notify the overseer that this executor is idle.
     getter idle_bell : Channel(Bool)
-    getter metric_data : Metadata
+    getter metadata : Metadata
     getter instance_id : String
 
     private def state=(state : State)
@@ -51,10 +51,15 @@ module Mosquito::Runners
       super
     end
 
-    def initialize(@job_pipeline, @idle_bell, overseer_context, @metric_data)
+    def self.metadata_key(id : String) : String
+      Mosquito::Backend.build_key "executor", id
+    end
+
+    def initialize(@job_pipeline, @idle_bell, overseer_context)
       @log = Log.for(object_id.to_s)
       @instance_id = Random::Secure.hex(8)
       @publish_context = PublishContext.new overseer_context, [:executor, instance_id]
+      @metadata = Metadata.new self.class.metadata_key(instance_id)
     end
 
     # :nodoc:
@@ -81,6 +86,9 @@ module Mosquito::Runners
       execute job_run, queue
       log.trace { "Finished #{job_run} from #{queue.name}" }
       self.state = State::Idle
+
+      @metadata.heartbeat!
+      @metadata.delete in: 1.hour
     end
 
     # Runs a job from a Queue.
@@ -91,7 +99,8 @@ module Mosquito::Runners
       log.info { "#{"Starting:".colorize.magenta} #{job_run} from #{q.name}" }
 
       metric {
-        metric_data["current_work"] = job_run.id.to_s
+        @metadata["current_job_queue"] = q.name
+        @metadata["current_job"] = job_run.id
         publish @publish_context, {
           event: "starting",
           job_run: job_run.id,
@@ -111,6 +120,7 @@ module Mosquito::Runners
 
         metric {
           publish @publish_context, {event: "job-finished", job_run: job_run.id}
+          @metadata["current_job"] = nil
 
           count [@publish_context.context, :success]
           count [:queue, q.name, :success]
@@ -149,6 +159,7 @@ module Mosquito::Runners
 
         metric {
           publish @publish_context, {event: "job-failed", job_run: job_run.id, reschedulable: job_run.rescheduleable? }
+          @metadata["current_job"] = nil
 
           count [@publish_context.context, :failed]
           count [:queue, q.name, :failed]

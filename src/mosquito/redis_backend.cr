@@ -102,6 +102,10 @@ module Mosquito
       value
     end
 
+    def self.delete_field(key : String, field : String) : Nil
+      redis.hdel key, field
+    end
+
     def self.increment(key : String, by value : Int32 = 1) : Int64
       redis.incrby key, value
     end
@@ -139,14 +143,14 @@ module Mosquito
       expiring_list_fetch key, Time.utc - 1.day
     end
 
-    def self.register_overseer(name : String) : Nil
+    def self.register_overseer(id : String) : Nil
       key = build_key LIST_OF_OVERSEERS_KEY
-      expiring_list_push key, name
+      expiring_list_push key, id
     end
 
     def self.list_overseers : Array(String)
       key = build_key LIST_OF_OVERSEERS_KEY
-      expiring_list_fetch key, Time.utc - 1.day
+      expiring_list_fetch(key, Time.utc - 1.day)
     end
 
     def self.expiring_list_push(key : String, value : String) : Nil
