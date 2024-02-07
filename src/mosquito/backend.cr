@@ -1,5 +1,17 @@
+require "json"
+
 module Mosquito
   abstract class Backend
+    struct BroadcastMessage
+      include JSON::Serializable
+
+      property channel : String
+      property message : String
+
+      def initialize(@channel, @message)
+      end
+    end
+
     QUEUES = %w(waiting scheduled pending dead)
 
     KEY_PREFIX = {"mosquito"}
@@ -26,7 +38,10 @@ module Mosquito
       abstract def store(key : String, value : Hash(String, String)) : Nil
       abstract def retrieve(key : String) : Hash(String, String)
       abstract def list_queues : Array(String)
-      abstract def list_runners : Array(String)
+      abstract def expiring_list_push(key : String, value : String) : Nil
+      abstract def expiring_list_fetch(key : String, expire_items_older_than : Time) : Array(String)
+      abstract def list_overseers : Array(String)
+      abstract def register_overseer(name : String) : Nil
 
       abstract def delete(key : String, in ttl : Int64 = 0) : Nil
       abstract def delete(key : String, in ttl : Time::Span) : Nil
@@ -34,6 +49,9 @@ module Mosquito
 
       abstract def get(key : String, field : String) : String?
       abstract def set(key : String, field : String, value : String) : String
+      abstract def delete_field(key : String, field : String) : Nil
+      abstract def delete(key : String, in ttl : Time::Span = 0.seconds)
+      abstract def increment(key : String, by value : Int32) : Int64
       abstract def increment(key : String, field : String) : Int64
       abstract def increment(key : String, field : String, by value : Int32) : Int64
 
@@ -41,6 +59,11 @@ module Mosquito
 
       abstract def unlock(key : String, value : String) : Nil
       abstract def lock?(key : String, value : String, ttl : Time::Span) : Bool
+      abstract def publish(key : String, value : String) : Nil
+      abstract def subscribe(key : String) : Channel(BroadcastMessage)
+
+      abstract def average_push(key : String, value : Int32, window_size : Int32 = 100) : Nil
+      abstract def average(key : String) : Int32
     end
 
     macro inherited
@@ -51,10 +74,13 @@ module Mosquito
       QUEUES.first(2)
     end
 
-    {% for q in QUEUES %}
-      def {{q.id}}_q
-        build_key {{q}}, name
+    {% for q_name in QUEUES %}
+      def {{q_name.id}}_q
+        build_key {{q_name}}, name
       end
+
+      abstract def dump_{{q_name.id}}_q : Array(String)
+      abstract def {{ q_name.id }}_size : Int64
     {% end %}
 
     def store(key : String, value : Hash(String, String)) : Nil
@@ -73,7 +99,6 @@ module Mosquito
       self.class.expires_in key
     end
 
-    # from queue.cr
     abstract def enqueue(job_run : JobRun) : JobRun
     abstract def dequeue : JobRun?
     abstract def schedule(job_run : JobRun, at scheduled_time : Time) : JobRun
@@ -83,11 +108,8 @@ module Mosquito
     abstract def flush : Nil
     abstract def size(include_dead : Bool = true) : Int64
 
-    {% for name in ["waiting", "scheduled", "pending", "dead"] %}
-      abstract def dump_{{name.id}}_q : Array(String)
-    {% end %}
-
     abstract def scheduled_job_run_time(job_run : JobRun) : String?
 
+    abstract def increment(key : String, by value : Int32 = 1) : Int64
   end
 end

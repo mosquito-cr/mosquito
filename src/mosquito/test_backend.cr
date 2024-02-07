@@ -47,14 +47,24 @@ module Mosquito
       [] of String
     end
 
-    def self.list_runners : Array(String)
+    def self.expiring_list_push(key : String, value : String) : Nil
+    end
+
+    def self.expiring_list_fetch(key : String, expire_items_older_than : Time) : Array(String)
       [] of String
+    end
+
+    def self.list_overseers : Array(String)
+      [] of String
+    end
+
+    def self.register_overseer(name : String) : Nil
     end
 
     def self.delete(key : String, in ttl : Int64 = 0) : Nil
     end
 
-    def self.delete(key : String, in ttl : Time::Span) : Nil
+    def self.delete(key : String, in ttl : Time::Span = 0.seconds) : Nil
     end
 
     def self.expires_in(key : String) : Int64
@@ -66,6 +76,13 @@ module Mosquito
 
     def self.set(key : String, field : String, value : String) : String
       ""
+    end
+
+    def self.delete_field(key : String, field : String) : Nil
+    end
+
+    def self.increment(key : String, by value : Int32 = 1) : Int64
+      0_i64
     end
 
     def self.increment(key : String, field : String) : Int64
@@ -83,6 +100,20 @@ module Mosquito
     end
 
     def self.unlock(key : String, value : String) : Nil
+    end
+
+    def self.publish(key : String, value : String) : Nil
+    end
+
+    def self.subscribe(key : String) : Channel(BroadcastMessage)
+      Channel(BroadcastMessage).new
+    end
+
+    def self.average_push(key : String, value : Int32, window_size = 100) : Nil
+    end
+
+    def self.average(key : String) : Int32
+      0_i32
     end
 
     struct EnqueuedJob
@@ -143,9 +174,17 @@ module Mosquito
       def dump_{{name.id}}_q : Array(String)
         [] of String
       end
+
+      def {{ name.id }}_size : Int64
+        0_i64
+      end
     {% end %}
 
     def scheduled_job_run_time(job_run : JobRun) : String?
+    end
+
+    def increment(key : String, by value : Int32 = 1) : Int64
+      0_i64
     end
   end
 end
