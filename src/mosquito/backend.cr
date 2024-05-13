@@ -9,7 +9,11 @@ module Mosquito
     end
 
     def self.build_key(*parts)
-      KeyBuilder.build KEY_PREFIX, *parts
+      if global_prefix = Mosquito.configuration.global_prefix
+        KeyBuilder.build global_prefix, KEY_PREFIX, *parts
+      else
+        KeyBuilder.build KEY_PREFIX, *parts
+      end
     end
 
     def build_key(*parts)
@@ -78,7 +82,7 @@ module Mosquito
     abstract def dequeue : JobRun?
     abstract def schedule(job_run : JobRun, at scheduled_time : Time) : JobRun
     abstract def deschedule : Array(JobRun)
-    abstract def finish(job_run : JobRun) # should this be called succeed?
+    abstract def finish(job_run : JobRun)    # should this be called succeed?
     abstract def terminate(job_run : JobRun) # should this be called fail?
     abstract def flush : Nil
     abstract def size(include_dead : Bool = true) : Int64
@@ -88,6 +92,5 @@ module Mosquito
     {% end %}
 
     abstract def scheduled_job_run_time(job_run : JobRun) : String?
-
   end
 end
