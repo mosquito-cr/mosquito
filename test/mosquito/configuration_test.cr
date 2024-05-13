@@ -56,6 +56,7 @@ describe "Mosquito Config" do
     Mosquito.temp_config do
       Mosquito.configuration.global_prefix = test_value
       assert_equal test_value, Mosquito.configuration.global_prefix
+      Mosquito.configuration.backend.build_key("test").must_equal "yolo:mosquito:test"
     end
   end
 
@@ -65,6 +66,7 @@ describe "Mosquito Config" do
     Mosquito.temp_config do
       Mosquito.configuration.global_prefix = test_value
       assert_equal test_value, Mosquito.configuration.global_prefix
+      Mosquito.configuration.backend.build_key("test").must_equal "mosquito:test"
     end
   end
 end
