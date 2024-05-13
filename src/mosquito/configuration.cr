@@ -17,6 +17,7 @@ module Mosquito
     property use_distributed_lock : Bool = true
 
     property run_from : Array(String) = [] of String
+    property global_prefix : String? = nil
     property backend : Mosquito::Backend.class = Mosquito::RedisBackend
 
     property validated = false
@@ -45,6 +46,5 @@ module Mosquito
         raise message
       end
     end
-
   end
 end
