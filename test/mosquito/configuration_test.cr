@@ -49,4 +49,22 @@ describe "Mosquito Config" do
       assert_equal test_value, Mosquito.configuration.failed_job_ttl
     end
   end
+
+  it "allows setting global_prefix string" do
+    test_value = "yolo"
+
+    Mosquito.temp_config do
+      Mosquito.configuration.global_prefix = test_value
+      assert_equal test_value, Mosquito.configuration.global_prefix
+    end
+  end
+
+  it "allows setting global_prefix nillable" do
+    test_value = nil
+
+    Mosquito.temp_config do
+      Mosquito.configuration.global_prefix = test_value
+      assert_equal test_value, Mosquito.configuration.global_prefix
+    end
+  end
 end
