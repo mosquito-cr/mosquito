@@ -88,7 +88,7 @@ module Mosquito
     end
 
     def self.delete(key : String, in ttl : Int64 = 0) : Nil
-      if (ttl > 0)
+      if ttl > 0
         redis.expire key, ttl
       else
         redis.del key
