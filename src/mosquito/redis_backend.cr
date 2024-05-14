@@ -130,8 +130,8 @@ module Mosquito
     end
 
     def self.list_runners : Array(String)
-      runner_prefix = "mosquito:runners:"
-      Redis.instance.keys("#{runner_prefix}*")
+      runner_prefix = build_key(LIST_OF_QUEUES_KEY)
+      Redis.instance.keys("#{runner_prefix}:*")
         .map(&.as(String))
         .map(&.sub(runner_prefix, ""))
     end
