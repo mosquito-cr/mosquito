@@ -2,10 +2,11 @@ module Mosquito
   class PeriodicJobRun
     property class : Mosquito::PeriodicJob.class
     property interval : Time::Span | Time::MonthSpan
+    getter metadata : Metadata { Metadata.new(Backend.build_key("periodic_jobs", @class.name)) }
 
     # The last executed timestamp for this periodicjob tracked by the backend.
     def last_executed_at?
-      if timestamp = @metadata["last_executed_at"]?
+      if timestamp = metadata["last_executed_at"]?
         Time.unix(timestamp.to_i)
       else
         nil
@@ -26,19 +27,18 @@ module Mosquito
     #
     # A month is approximated to 2635200 seconds, or 30.5 days.
     def last_executed_at=(time : Time)
-      @metadata["last_executed_at"] = time.to_unix.to_s
+      metadata["last_executed_at"] = time.to_unix.to_s
 
       case interval_ = interval
       when Time::Span
-        @metadata.delete(in: interval_ * 3)
+        metadata.delete(in: interval_ * 3)
       when Time::MonthSpan
         seconds_in_an_average_month = 2_635_200.seconds
-        @metadata.delete(in: seconds_in_an_average_month * interval_.value * 3)
+        metadata.delete(in: seconds_in_an_average_month * interval_.value * 3)
       end
     end
 
     def initialize(@class, @interval)
-      @metadata = Metadata.new(Backend.build_key("periodic_jobs", @class.name))
     end
 
     # Check the last executed timestamp against the current time,
