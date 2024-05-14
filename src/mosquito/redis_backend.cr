@@ -124,7 +124,7 @@ module Mosquito
       key = build_key(LIST_OF_QUEUES_KEY)
       list_queues = redis.zrange(key, 0, -1).as(Array)
 
-      return [] of String unless list_queues.any?
+      return [] of String unless !list_queues.empty?
 
       list_queues.compact_map(&.as(String))
     end
@@ -159,7 +159,7 @@ module Mosquito
       time = Time.utc
       overdue_job_runs = redis.zrangebyscore(scheduled_q, "0", time.to_unix_ms.to_s).as(Array)
 
-      return [] of JobRun unless overdue_job_runs.any?
+      return [] of JobRun unless !overdue_job_runs.empty?
 
       overdue_job_runs.compact_map do |job_run_id|
         redis.zrem scheduled_q, job_run_id.to_s
