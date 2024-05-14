@@ -21,6 +21,8 @@ module Mosquito
           end
         when Number
           id << part.to_s
+        when Nil
+          # do nothing
         else
           raise "#{part.class} is not a keyable type"
         end

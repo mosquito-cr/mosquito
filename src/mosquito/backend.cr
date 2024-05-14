@@ -9,11 +9,7 @@ module Mosquito
     end
 
     def self.build_key(*parts)
-      if global_prefix = Mosquito.configuration.global_prefix
-        KeyBuilder.build global_prefix, KEY_PREFIX, *parts
-      else
-        KeyBuilder.build KEY_PREFIX, *parts
-      end
+      KeyBuilder.build Mosquito.configuration.global_prefix, KEY_PREFIX, *parts
     end
 
     def build_key(*parts)
