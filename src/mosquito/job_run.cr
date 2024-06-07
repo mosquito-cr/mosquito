@@ -62,8 +62,8 @@ module Mosquito
 
     # Deletes this job_run from the backend.
     # Optionally, after a delay in seconds (handled by the backend).
-    def delete(in ttl = 0)
-      Mosquito.backend.delete config_key, ttl
+    def delete(in ttl : Int = 0)
+      Mosquito.backend.delete config_key, ttl.to_i64
     end
 
     # Builds a Job instance from this job_run. Populates the job with config from
