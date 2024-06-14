@@ -21,7 +21,7 @@ describe "Mosquito::Runners::Coordinator" do
   end
 
   def opt_in_to_locking
-    Mosquito.temp_config(run_cron_scheduler: false, use_distributed_lock: true) do
+    Mosquito.temp_config(use_distributed_lock: true) do
       yield
     end
   end
@@ -29,15 +29,6 @@ describe "Mosquito::Runners::Coordinator" do
   describe "only_if_coordinator" do
     getter(coordinator1) { Mosquito::Runners::Coordinator.new queue_list }
     getter(coordinator2) { Mosquito::Runners::Coordinator.new queue_list }
-
-    it "runs when use_cron_scheduler is true" do
-      Mosquito.temp_config(run_cron_scheduler: true, use_distributed_lock: false) do
-        coordinator_ran = true
-        coordinator1.only_if_coordinator do
-          coordinator_ran = false
-        end
-      end
-    end
 
     it "gets a lock from the backend" do
       opt_in_to_locking do
