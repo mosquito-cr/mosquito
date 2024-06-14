@@ -131,9 +131,13 @@ module Mosquito
 
     def self.list_runners : Array(String)
       runner_prefix = build_key(LIST_OF_QUEUES_KEY)
-      Redis.instance.keys("#{runner_prefix}:*")
-        .map(&.as(String))
-        .map(&.sub(runner_prefix, ""))
+      keys = [] of String
+
+      Redis.instance.scan_each("#{runner_prefix}:*") do |key|
+        keys << key.as(String).sub(runner_prefix, "")
+      end
+
+      keys
     end
 
     # is this even a good idea?
