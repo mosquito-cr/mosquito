@@ -4,6 +4,10 @@ module Mosquito::Api
 
     private property backend : Mosquito::Backend
 
+    def self.all : Array(Queue)
+      Mosquito.backend.list_queues.map { |name| new name }
+    end
+
     def initialize(@name)
       @backend = Mosquito.backend.named name
     end

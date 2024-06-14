@@ -1,5 +1,6 @@
 module Mosquito::Observability::Counter
   def count(stage : Array(String | Symbol)) : Nil
+    return
     time = Time.utc
 
     month_key = "month=#{time.month}"

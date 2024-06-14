@@ -1,34 +1,57 @@
+require "./concerns/*"
+
 module Mosquito::Observability
   class Queue
-    getter name : String
+    include Publisher
+    include Counter
 
-    private property backend : Mosquito::Backend
+    private getter name : String
 
-    def initialize(@name)
-      @backend = Mosquito.backend.named name
+    def initialize(@queue : Mosquito::Queue)
+      @name = queue.name
+      @publish_context = PublishContext.new [:queue, queue.name]
     end
 
-    {% for name in Mosquito::Backend::QUEUES %}
-      def {{name.id}}_job_runs : Array(JobRun)
-        backend.dump_{{name.id}}_q
-          .map { |task_id| JobRun.new task_id }
-      end
-
-      def {{name.id}}_size : Int64
-        backend.{{name.id}}_size
-      end
-    {% end %}
-
-    def sizes : Hash(String, Int64)
-      sizes = {} of String => Int64
-      {% for name in Mosquito::Backend::QUEUES %}
-        sizes["{{name.id}}"] = {{name.id}}_size
-      {% end %}
-      sizes
+    def enqueued(job_run : Mosquito::JobRun) : Nil
+      @queue.log.trace { "Enqueuing #{job_run} for immediate execution" }
+      count [:queue, name, :enqueue]
+      publish({title: "enqueue-job", job_run: job_run.id})
+      #, depth: size}
     end
 
-    def <=>(other)
-      name <=> other.name
+    def enqueued(job_run : Mosquito::JobRun, at execute_time : Time) : Nil
+      @queue.log.trace { "Enqueuing #{job_run} for later execution at #{execute_time}" }
+      count [:queue, name, :enqueue]
+      publish({title: "delay-job", job_run: job_run.id})
+      #, depth: size}
+    end
+
+    def dequeued(job_run : Mosquito::JobRun) : Nil
+      @queue.log.trace { "Dequeuing #{job_run} for execution" }
+      count [:queue, name, :dequeue]
+      publish({title: "dequeue", job_run: job_run.id})
+      #, depth: size}
+    end
+
+    def rescheduled(job_run : Mosquito::JobRun, at execute_time : Time) : Nil
+      @queue.log.trace { "Rescheduling #{job_run} for later execution at #{execute_time}" }
+      count [:queue, name, :reschedule]
+      publish({title: "reschedule", job_run: job_run.id})
+      #, depth: size}
+    end
+
+    def forgotten(job_run : Mosquito::JobRun) : Nil
+      @queue.log.trace { "Forgetting #{job_run}" }
+      count [:queue, name, :forget]
+      publish({title: "forget", job_run: job_run.id})
+      #, depth: size})
+    end
+
+    def banished(job_run : Mosquito::JobRun) : Nil
+      @queue.log.trace { "Banishing #{job_run}" }
+      count [:queue, name, :banish]
+      publish({title: "banish", job_run: job_run.id})
+      #, depth: size})
     end
   end
 end

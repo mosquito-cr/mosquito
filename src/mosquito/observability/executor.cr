@@ -56,7 +56,8 @@ module Mosquito::Observability
       self.current_job = job_run
       self.current_job_queue = queue
 
-      expected_duration = Mosquito.backend.average job_run.type
+      # Calculate what the duration _might_ be
+      expected_duration = Mosquito.backend.average average_key(job_run.type)
 
       # Publish an event
       publish({
@@ -70,6 +71,10 @@ module Mosquito::Observability
       executor.log.info { "#{"Starting:".colorize.magenta} #{job_run} from #{queue.name}" }
     end
 
+    def average_key(job_run_type : String) : String
+      Mosquito.backend.build_key "job", job_run_type, "duration"
+    end
+
     # :nodoc:
     # Used internally to measure and calculate the average job duration for a job type.
     def measure_duration(job_run_type : String) : Nil
@@ -77,8 +82,9 @@ module Mosquito::Observability
         yield
       end
 
-      Mosquito.backend.average_push job_run_type, duration.total_milliseconds.to_i
-      Mosquito.backend.delete job_run_type, in: 30.days
+      average_key = average_key(job_run_type)
+      Mosquito.backend.average_push average_key, duration.total_milliseconds.to_i
+      Mosquito.backend.delete average_key, in: 30.days
     end
 
     def finish(success : Bool) : Nil

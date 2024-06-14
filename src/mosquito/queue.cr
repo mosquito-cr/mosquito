@@ -77,28 +77,27 @@ module Mosquito
   # ```
   #
   class Queue
-    include Metrics::Shorthand
+    Log = ::Log.for self
 
     getter name, config_key
     getter? empty : Bool
+    getter log : ::Log
     property backend : Mosquito::Backend
 
-    Log = ::Log.for self
+    getter observer : Observability::Queue {
+      Observability::Queue.new(self)
+    }
 
     def initialize(@name : String)
       @empty = false
       @backend = Mosquito.backend.named name
       @config_key = @name
-      @publish_context = Observability::PublishContext.new [:queue, name]
+      @log = ::Log.for @name
     end
 
     def enqueue(job_run : JobRun) : JobRun
-      Log.trace { "Enqueuing #{job_run} for immediate execution" }
       backend.enqueue job_run
-      # metric {
-      #   publish @publish_context, {title: "enqueue-job", job_run: job_run.id, depth: size}
-      #   count [:queue, name, :enqueue]
-      # }
+      observer.enqueued job_run
       job_run
     end
 
@@ -107,11 +106,7 @@ module Mosquito
     end
 
     def enqueue(job_run : JobRun, at execute_time : Time) : JobRun
-      Log.trace { "Enqueuing #{job_run} at #{execute_time}" }
-      # metric {
-      #   publish @publish_context, {title: "delay-job", job_run: job_run.id, until: execute_time}
-      # }
-
+      observer.enqueued job_run, at: execute_time
       backend.schedule job_run, execute_time
     end
 
@@ -119,11 +114,7 @@ module Mosquito
       return if empty?
 
       if job_run = backend.dequeue
-        # metric {
-        #   publish @publish_context, {title: "dequeue", job_run: job_run.id, depth: size}
-        #   count [:queue, name, :dequeue]
-        # }
-
+        observer.dequeued job_run
         job_run
       else
         @empty = true
