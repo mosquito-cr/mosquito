@@ -4,20 +4,37 @@ The format is based on [Keep a
 Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Pending Release]
+## [2.0.0]
 ### Added
 - Adds a test backend, which can be used to inspect jobs that were enqueued and
   the parameters they were enqueued with.
 - Job#fail now takes an optional `retry` parameter which defaults to true, allowing
   a developer to explicitly mark a job as not retry-able during a job run. Additionally
   a `should_retry` property exists which can be set as well.
+- Mosquito::Configuration now provides `global_prefix` to change the global Redis namespace 
+  prefix, allowing for more than one mosquito app to share a redis instance (thanks @dammer, cf #134).
 
 ### Fixed
 - PeriodicJobs are now correctly run once per interval in an environment with many workers.
+- Running more than ~10 workers no longer causes workers to crash, fixing #137 (cf #138).
+- Mosquito is now more broadly compatible with jgaskins redis, swapping 0.7.0 for 0.7, and
+  forward compatible through 0.8. (thanks @rmarronnier)
+- Mosquito now more gracefully responds to SIGTERM, fixes #122, cf #123.
+- High CPU usage on linux is no longer an issue, fixes #126, cf #128.
 
-### Changed
-- ** BREAKING ** The QueuedJob `params` macro has been replaced with `param`
+### Breaking Changes
+- The QueuedJob `params` macro has been replaced with `param`
   which declares only one parameter at a time.
+- JobRun#delete now explicitly takes an Int, rather than simply defaulting to 0 (thanks @jwoertink, cf #136).
+- removes deprecated Backend.delete(String, Int32), use Backend.delete(String, Int64) instead.
+- removes deprecated Queue#length, use Queue#size instead.
+- removes option to run the cron scheduler declaratively, it is now always on with a distributed lock.
+
+### Performance
+- Dramatically decreases the time spent listing queues #120
+- Replaces #keys with #scan_each to list runners #138
+- Provides for multiple executors operating under a single runner #123
+
 
 ## [1.0.2]
 ### Fixed
