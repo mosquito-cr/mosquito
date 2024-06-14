@@ -134,11 +134,6 @@ module Mosquito
       backend.size
     end
 
-    @[Deprecated("see #size")]
-    def length : Int64
-      backend.size
-    end
-
     def ==(other : self) : Bool
       name == other.name
     end
