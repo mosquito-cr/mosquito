@@ -130,8 +130,8 @@ module Mosquito
       backend.terminate job_run
     end
 
-    def size : Int64
-      backend.size
+    def size(include_dead = true) : Int64
+      backend.size(include_dead)
     end
 
     def ==(other : self) : Bool
