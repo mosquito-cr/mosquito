@@ -130,7 +130,7 @@ module Mosquito
       backend.terminate job_run
     end
 
-    def size(include_dead = true) : Int64
+    def size(*, include_dead : Bool = true) : Int64
       backend.size(include_dead)
     end
 
