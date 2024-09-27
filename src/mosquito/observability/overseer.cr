@@ -48,6 +48,12 @@ module Mosquito::Observability
       publish({event: "exiting"})
     end
 
+    def coordinating
+      # publish({event: "coordinating"})
+      yield
+      # publish({event: "stopping-coordinating"})
+    end
+
     def executor_died(executor : Runners::Executor) : Nil
       Log.fatal do
         <<-MSG
