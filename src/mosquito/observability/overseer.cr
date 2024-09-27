@@ -6,8 +6,6 @@ module Mosquito::Observability
   class Overseer
     include Publisher
 
-    Log = ::Log.for self
-
     getter metadata : Metadata
     getter instance_id : String
     getter overseer : Runners::Overseer
@@ -20,6 +18,7 @@ module Mosquito::Observability
       @instance_id = overseer.instance_id
       @metadata = Metadata.new self.class.metadata_key(instance_id)
       @publish_context = PublishContext.new [:overseer, instance_id]
+      @log = Log.for("overseer<#{instance_id}>")
     end
 
     def heartbeat
@@ -32,41 +31,43 @@ module Mosquito::Observability
     end
 
     def starting
-      Log.info { "Starting #{@overseer.executor_count} executors." }
+      @log.info { "Starting #{@overseer.executor_count} executors." }
       heartbeat
       publish({event: "starting"})
     end
 
     def stopping
-      Log.info { "Stopping #{@overseer.executors.size} executors." }
+      @log.info { "Stopping #{@overseer.executors.size} executors." }
       publish({event: "stopping-work"})
     end
 
     def stopped
-      Log.info { "All executors stopped." }
-      Log.info { "Overseer #{instance_id} finished for now." }
+      @log.info { "All executors stopped." }
+      @log.info { "Overseer #{instance_id} finished for now." }
       publish({event: "exiting"})
     end
 
     def coordinating
+      @log.trace { "Coordinator lock acquired" }
       # publish({event: "coordinating"})
       yield
       # publish({event: "stopping-coordinating"})
+      @log.trace { "Coordinator lock released" }
     end
 
     def executor_died(executor : Runners::Executor) : Nil
-      Log.fatal do
+      @log.fatal do
         <<-MSG
           Executor #{executor.instance_id} died.
           A new executor will be started.
         MSG
       end
 
-      # TODO publish event
+      publish({event: "executor-died", executor: executor.instance_id})
     end
 
     def will_stop(message : String) : Nil
-      Log.fatal { "#{message} Overseer will stop." }
+      @log.fatal { "#{message} Overseer will stop." }
       # TODO publish event
     end
 

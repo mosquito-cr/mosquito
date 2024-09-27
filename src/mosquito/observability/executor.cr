@@ -38,6 +38,7 @@ module Mosquito::Observability
       @instance_id = executor.instance_id
       @metadata = Metadata.new self.class.metadata_key(@instance_id)
       @publish_context = PublishContext.new executor.overseer.observer.publish_context, [:executor, executor.instance_id]
+      @executor.log.info { "Executor starting up" }
     end
 
     # :nodoc:

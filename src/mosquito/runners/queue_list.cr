@@ -8,7 +8,7 @@ require "./concerns/idle_wait"
 module Mosquito::Runners
   # QueueList handles searching the redis keyspace for named queues.
   class QueueList
-    Log = ::Log.for self
+    Log = ::Log.for "mosquito.queue_list"
 
     include RunAtMost
     include Runnable

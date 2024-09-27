@@ -7,8 +7,9 @@ module Mosquito::Runners
     getter lock_key : String
     getter instance_id : String
     getter queue_list : QueueList
+    getter overseer : Overseer
 
-    def initialize(overseer, @queue_list)
+    def initialize(@overseer, @queue_list)
       @lock_key = Backend.build_key :coordinator, :football
       @instance_id = Random::Secure.hex(8)
       # @publish_context = PublishContext.new(overseer_context, [:coordinator, instance_id])
@@ -33,7 +34,6 @@ module Mosquito::Runners
       end
 
       if Mosquito.backend.lock? lock_key, instance_id, LockTTL
-        Log.trace { "Coordinator lock acquired" }
         duration = Time.measure do
           overseer.observer.coordinating do
             yield
@@ -41,7 +41,6 @@ module Mosquito::Runners
         end
 
         Mosquito.backend.unlock lock_key, instance_id
-        Log.trace { "Coordinator lock released" }
       end
 
       return unless duration > LockTTL

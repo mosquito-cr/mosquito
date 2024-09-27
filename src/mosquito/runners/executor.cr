@@ -25,7 +25,7 @@ module Mosquito::Runners
     include RunAtMost
     include Runnable
 
-    Log = ::Log.for self
+    Log = ::Log.for "mosquito.executor"
     getter log : ::Log
     getter overseer : Overseer
     getter observer : Observability::Executor {
