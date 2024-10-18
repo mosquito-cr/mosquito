@@ -27,6 +27,16 @@ module Mosquito
       Mosquito.backend.retrieve root_key
     end
 
+    def [](key : String) : String
+      {%
+        raise "Use #[]? instead"
+      %}
+    end
+
+    def []=(key : String, value : Nil)
+      Mosquito.backend.delete_field root_key, key
+    end
+
     # Reads a single key from the metadata.
     def []?(key : String) : String?
       Mosquito.backend.get root_key, key
@@ -54,6 +64,20 @@ module Mosquito
     def decrement(key)
       raise RuntimeError.new("Cannot write to metadata, readonly=true") if readonly?
       Mosquito.backend.increment root_key, key, by: -1
+    end
+
+    # Sets a heartbeat timestamp in the metadata.
+    def heartbeat!
+      self["heartbeat"] = Time.utc.to_unix.to_s
+    end
+
+    # Returns the heartbeat timestamp from the metadata.
+    def heartbeat? : Time?
+      if time = self["heartbeat"]?
+        Time.unix(time.to_i)
+      else
+        nil
+      end
     end
 
     delegate to_s, inspect, to: to_h

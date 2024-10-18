@@ -96,10 +96,6 @@ module Mosquito
     # which is used to check that the fiber is still running.
     getter fiber : Fiber?
 
-    getter my_name : String {
-      "#{self.class.name.underscore.gsub("::", ".")}.#{self.object_id}"
-    }
-
     private def state=(state : State)
       @state = state
     end

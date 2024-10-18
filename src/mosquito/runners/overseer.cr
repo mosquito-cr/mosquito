@@ -1,7 +1,11 @@
-require "./idle_wait"
-require "./queue_list"
-require "./run_at_most"
+require "uuid"
+
 require "../runnable"
+
+require "./concerns/*"
+require "./coordinator"
+require "./executor"
+require "./queue_list"
 
 module Mosquito::Runners
   # The Overseer is responsible for managing:
@@ -15,46 +19,56 @@ module Mosquito::Runners
     include IdleWait
     include RunAtMost
     include Runnable
+    include Identifiable
 
     Log = ::Log.for self
 
-    getter queue_list : QueueList
-    getter executors
-    getter coordinator
+    getter queue_list : QueueList {
+      QueueList.new self
+    }
+
+    getter executors : Array(Executor) = [] of Executor
+
+    getter coordinator : Coordinator {
+      Coordinator.new self, queue_list
+    }
+
+    getter observer : Observability::Overseer { Observability::Overseer.new(self) }
 
     # The channel where job runs which have been dequeued are sent to executors.
-    getter work_handout
+    getter work_handout : Channel(Tuple(JobRun, Queue))
 
     # When an executor transitions to idle it will send a True here. The Overseer
     # uses this as a signal to check the queues for more work.
-    getter idle_notifier
+    getter idle_notifier : Channel(Bool)
 
     # The number of executors to start.
-    getter executor_count = 3
+    getter executor_count = 8
 
     getter idle_wait : Time::Span {
       Mosquito.configuration.idle_wait
     }
 
+    property state : State = State::Starting
+
     def initialize
       @idle_notifier = Channel(Bool).new
 
-      @queue_list = QueueList.new
-      @coordinator = Coordinator.new queue_list
-      @executors = [] of Executor
       @work_handout = Channel(Tuple(JobRun, Queue)).new
 
       executor_count.times do
         @executors << build_executor
       end
+
+      observer.update_executor_list
     end
 
     def build_executor : Executor
-      Executor.new(work_handout, idle_notifier)
+      Executor.new self
     end
 
     def runnable_name : String
-      "Overseer<#{object_id}>"
+      "Overseer<#{@instance_id}>"
     end
 
     def sleep
@@ -64,20 +78,20 @@ module Mosquito::Runners
 
     # Starts all the subprocesses.
     def pre_run : Nil
-      Log.info { "Starting #{@executors.size} executors." }
-      @queue_list.run
+      observer.starting
+      queue_list.run
       @executors.each(&.run)
     end
 
     # Notify all subprocesses to stop, and wait until they do.
     def post_run : Nil
-      Log.info { "Stopping #{@executors.size} executors." }
+      observer.stopping
       stopped_notifiers = executors.map do |executor|
         executor.stop
       end
       work_handout.close
       stopped_notifiers.each(&.receive)
-      Log.info { "All executors stopped." }
+      observer.stopped
     end
 
     # The goal for the overseer is to:
@@ -92,7 +106,7 @@ module Mosquito::Runners
       # enough that one of these channels closes the whole thing is going to
       # come crashing down and we should just quit now.
       if work_handout.closed? || idle_notifier.closed?
-        Log.fatal { "Executor communication channels closed, overseer will stop." }
+        observer.will_stop "Executor communication channels closed."
         stop
         return
       end
@@ -100,10 +114,9 @@ module Mosquito::Runners
       # If the queue list hasn't run at least once, it won't have any queues to
       # search for so we'll just defer until it's available.
       unless queue_list.state.started?
-        Log.debug { "Waiting for the queue list to fetch possible queues" }
+        Log.trace { "Waiting for the queue list to fetch possible queues" }
         return
       end
-
 
       Log.trace { "Waiting for an idle executor" }
       all_executors_busy = true
@@ -143,6 +156,9 @@ module Mosquito::Runners
       end
 
       check_for_deceased_runners
+      run_at_most every: Mosquito.configuration.heartbeat_interval, label: :heartbeat do
+        observer.heartbeat
+      end
     end
 
     # Weaknesses: This implementation sometimes starves queues because it doesn't
@@ -161,12 +177,7 @@ module Mosquito::Runners
     # catastrophic we can try to recover by spawning a new executor.
     def check_for_deceased_runners : Nil
       executors.select{|e| e.state.started?}.select(&.dead?).each do |dead_executor|
-        Log.fatal do
-          <<-MSG
-            Executor #{dead_executor.runnable_name} died.
-            A new executor will be started.
-          MSG
-        end
+        observer.executor_died dead_executor
         executors.delete dead_executor
       end
 
@@ -174,8 +185,10 @@ module Mosquito::Runners
         executors << build_executor.tap(&.run)
       end
 
+      observer.update_executor_list
+
       if queue_list.dead?
-        Log.fatal { "QueueList has died, overseer will stop." }
+        observer.will_stop("QueueList has died.")
         stop
       end
     end

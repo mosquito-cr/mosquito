@@ -34,6 +34,7 @@ module Mosquito
 
   class RedisBackend < Mosquito::Backend
     LIST_OF_QUEUES_KEY = "queues"
+    LIST_OF_OVERSEERS_KEY = "overseers"
 
     Log = ::Log.for(self)
 
@@ -88,7 +89,7 @@ module Mosquito
       end
     end
 
-    def self.delete(key : String, in ttl : Time::Span) : Nil
+    def self.delete(key : String, in ttl : Time::Span = 0.seconds) : Nil
       delete key, ttl.to_i
     end
 
@@ -99,6 +100,14 @@ module Mosquito
     def self.set(key : String, field : String, value : String) : String
       redis.hset key, field, value
       value
+    end
+
+    def self.delete_field(key : String, field : String) : Nil
+      redis.hdel key, field
+    end
+
+    def self.increment(key : String, by value : Int32 = 1) : Int64
+      redis.incrby key, value
     end
 
     def self.increment(key : String, field : String) : Int64
@@ -130,7 +139,27 @@ module Mosquito
         keys << key.as(String).sub(runner_prefix, "")
       end
 
-      keys
+      key = build_key LIST_OF_QUEUES_KEY
+      expiring_list_fetch key, Time.utc - 1.day
+    end
+
+    def self.register_overseer(id : String) : Nil
+      key = build_key LIST_OF_OVERSEERS_KEY
+      expiring_list_push key, id
+    end
+
+    def self.list_overseers : Array(String)
+      key = build_key LIST_OF_OVERSEERS_KEY
+      expiring_list_fetch(key, Time.utc - 1.day)
+    end
+
+    def self.expiring_list_push(key : String, value : String) : Nil
+      redis.zadd key, Time.utc.to_unix.to_s, value
+    end
+
+    def self.expiring_list_fetch(key : String, expire_items_older_than : Time) : Array(String)
+      redis.zremrangebyscore key, "0", expire_items_older_than.to_unix.to_s
+      redis.zrange(key, "0", "-1").as(Array).map(&.as(String))
     end
 
     # is this even a good idea?
@@ -145,6 +174,40 @@ module Mosquito
 
     def self.unlock(key : String, value : String) : Nil
       remove_matching_key keys: [key], args: [value]
+    end
+
+    def self.publish(key : String, value : String) : Nil
+      redis.publish key, value
+    end
+
+    def self.subscribe(key : String) : Channel(Backend::BroadcastMessage)
+      stream = Channel(Backend::BroadcastMessage).new
+
+      spawn do
+        redis.psubscribe(key) do |subscription, connection|
+          subscription.on_message do |channel, message|
+            stream.send(
+              Backend::BroadcastMessage.new(
+                channel: channel,
+                message: message
+              )
+            )
+          end
+        end
+      end
+
+      stream
+    end
+
+    def self.average_push(key : String, value : Int32, window_size : Int32 = 100) : Nil
+      redis.lpush key, [value.to_s]
+      redis.ltrim key, 0, 100
+    end
+
+    def self.average(key : String) : Int32
+      stats = redis.lrange key, 0, -1
+      return 0_i32 if stats.empty?
+      stats.map(&.as(String)).map(&.to_i32).sum // stats.size
     end
 
     def schedule(job_run : JobRun, at scheduled_time : Time) : JobRun
@@ -165,13 +228,12 @@ module Mosquito
     end
 
     def enqueue(job_run : JobRun) : JobRun
-      redis.pipeline do |pipe|
-        # Pushes the job onto the waiting queue.
-        pipe.lpush waiting_q, job_run.id
+      # Pushes the job onto the waiting queue.
+      redis.lpush waiting_q, job_run.id
 
-        # Updates the list of queues to include the current queue
-        pipe.zadd build_key(LIST_OF_QUEUES_KEY), Time.utc.to_unix.to_s, name
-      end
+      # Updates the list of queues to include the current queue
+      self.class.expiring_list_push build_key(LIST_OF_QUEUES_KEY), name
+
       job_run
     end
 
@@ -225,10 +287,18 @@ module Mosquito
           raise "don't know how to dump a #{type} for {{name.id}}"
         end
       end
+
+      def {{ name.id }}_size : Int64
+        redis.llen({{name.id}}_q).as(Int64)
+      end
     {% end %}
 
     def scheduled_job_run_time(job_run : JobRun) : String?
       redis.zscore(scheduled_q, job_run.id).as?(String)
+    end
+
+    def increment(key : String, by value : Int32 = 1) : Int64
+      redis.incrby key, value
     end
   end
 end

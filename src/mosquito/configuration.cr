@@ -18,6 +18,13 @@ module Mosquito
     property global_prefix : String? = nil
     property backend : Mosquito::Backend.class = Mosquito::RedisBackend
 
+    # Toggles the behaviors to calculate and document metadata about the mosquito
+    # queues and runners.
+    property send_metrics : Bool = true
+
+    # How often a mosquito runner should emit a heartbeat metric.
+    property heartbeat_interval : Time::Span = 20.seconds
+
     property validated = false
 
     def idle_wait=(time_span : Float)

@@ -1,3 +1,5 @@
+require "./observability/concerns/publish_context"
+
 module Mosquito
   # A named Queue.
   #
@@ -75,21 +77,28 @@ module Mosquito
   # ```
   #
   class Queue
+    Log = ::Log.for self
+
     getter name, config_key
     getter? empty : Bool
+    getter log : ::Log
     property backend : Mosquito::Backend
 
-    Log = ::Log.for self
+    getter observer : Observability::Queue {
+      Observability::Queue.new(self)
+    }
 
     def initialize(@name : String)
       @empty = false
       @backend = Mosquito.backend.named name
       @config_key = @name
+      @log = ::Log.for @name
     end
 
     def enqueue(job_run : JobRun) : JobRun
-      Log.trace { "Enqueuing #{job_run} for immediate execution" }
       backend.enqueue job_run
+      observer.enqueued job_run
+      job_run
     end
 
     def enqueue(job_run : JobRun, in interval : Time::Span) : JobRun
@@ -97,7 +106,7 @@ module Mosquito
     end
 
     def enqueue(job_run : JobRun, at execute_time : Time) : JobRun
-      Log.trace { "Enqueuing #{job_run} at #{execute_time}" }
+      observer.enqueued job_run, at: execute_time
       backend.schedule job_run, execute_time
     end
 
@@ -105,6 +114,7 @@ module Mosquito
       return if empty?
 
       if job_run = backend.dequeue
+        observer.dequeued job_run
         job_run
       else
         @empty = true
