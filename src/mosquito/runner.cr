@@ -44,7 +44,7 @@ module Mosquito
       instance.run
 
       while spin && keep_running
-        sleep 1
+        sleep 1.second
       end
     end
 
