@@ -5,6 +5,7 @@ describe Mosquito::QueuedJob do
   getter(name) { "test#{rand(1000)}" }
   getter(job : QueuedTestJob) { QueuedTestJob.new }
   getter(queue : Queue) { QueuedTestJob.queue }
+  getter(queue_hooked_job : QueueHookedTestJob) { QueueHookedTestJob.new }
 
   describe "enqueue" do
     it "enqueues" do
@@ -28,6 +29,43 @@ describe Mosquito::QueuedJob do
         job_run = job.enqueue at: 1.minute.from_now
         enqueued = queue.backend.dump_scheduled_q
         assert_equal [job_run.id], enqueued
+      end
+    end
+
+    it "fires before_enqueue_hook" do
+      clean_slate do
+        job_run = queue_hooked_job.enqueue
+        assert queue_hooked_job.before_hook_ran
+      end
+    end
+
+    it "doesnt enqueue if before_enqueue_hook fails" do
+      clean_slate do
+        queue_hooked_job.fail_before_hook = true
+        job_run = queue_hooked_job.enqueue
+        waiting_q = queue.backend.dump_waiting_q
+        assert_empty waiting_q
+      end
+    end
+
+    it "fires after_enqueue_hook" do
+      clean_slate do
+        job_run = queue_hooked_job.enqueue
+        assert queue_hooked_job.after_hook_ran
+      end
+    end
+
+    it "passes the job config to the before_enqueue_hook" do
+      clean_slate do
+        job_run = queue_hooked_job.enqueue
+        assert_equal job_run, queue_hooked_job.passed_job_config
+      end
+    end
+
+    it "passes the job config to the after_enqueue_hook" do
+      clean_slate do
+        job_run = queue_hooked_job.enqueue
+        assert_equal job_run, queue_hooked_job.passed_job_config
       end
     end
   end

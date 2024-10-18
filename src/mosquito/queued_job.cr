@@ -119,23 +119,70 @@ module Mosquito
     end
 
     def enqueue : JobRun
-      build_job_run.tap do |job_run|
-        job_run.store
-        self.class.queue.enqueue job_run
-      end
+      job_run = build_job_run
+      return job_run unless before_enqueue_hook job_run
+      job_run.store
+      self.class.queue.enqueue job_run
+      after_enqueue_hook job_run
+      job_run
     end
 
     def enqueue(in delay_interval : Time::Span) : JobRun
-      build_job_run.tap do |job_run|
-        job_run.store
-        self.class.queue.enqueue job_run, in: delay_interval
-      end
+      job_run = build_job_run
+      return job_run unless before_enqueue_hook job_run
+      job_run.store
+      self.class.queue.enqueue job_run, in: delay_interval
+      after_enqueue_hook job_run
+      job_run
     end
 
     def enqueue(at execute_time : Time) : JobRun
-      build_job_run.tap do |job_run|
-        job_run.store
-        self.class.queue.enqueue job_run, at: execute_time
+      job_run = build_job_run
+      return job_run unless before_enqueue_hook job_run
+      job_run.store
+      self.class.queue.enqueue job_run, at: execute_time
+      after_enqueue_hook job_run
+      job_run
+    end
+
+    def before_enqueue_hook(job : JobRun) : Bool
+      # intentionally left blank, return true by default
+      true
+    end
+
+    def after_enqueue_hook(job : JobRun) : Nil
+      # intentionally left blank
+    end
+
+    # Fired before a job is enqueued. Allows preventing enqueue at the job level.
+    #
+    # class SomeJob < Mosquito::QueuedJob
+    #   before_enqueue do
+    #     # return false to prevent enqueue
+    #   end
+    # end
+    macro before_enqueue(&block)
+      def before_enqueue_hook(job : Mosquito::JobRun) : Bool
+        {% if @type.methods.map(&.name).includes?(:before_enqueue_hook.id) %}
+          previous_def
+        {% else %}
+          super
+        {% end %}
+
+        {{ yield }}
+      end
+    end
+
+    # Fired after a job is enqueued.
+    macro after_enqueue(&block)
+      def after_enqueue_hook(job : Mosquito::JobRun) : Nil
+        {% if @type.methods.map(&.name).includes?(:after_enqueue_hook.id) %}
+          previous_def
+        {% else %}
+          super
+        {% end %}
+
+        {{ yield }}
       end
     end
   end

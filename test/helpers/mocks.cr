@@ -30,6 +30,32 @@ class QueuedTestJob < Mosquito::QueuedJob
   include PerformanceCounter
 end
 
+class QueueHookedTestJob < Mosquito::QueuedJob
+  include PerformanceCounter
+
+  property fail_before_hook = false
+  property before_hook_ran = false
+  property after_hook_ran = false
+  property passed_job_config : Mosquito::JobRun? = nil
+
+  before_enqueue do
+    self.before_hook_ran = true
+    self.passed_job_config = job
+
+    if fail_before_hook
+      false
+    else
+      true
+    end
+  end
+
+  after_enqueue do
+    self.after_hook_ran = true
+    self.passed_job_config = job
+  end
+end
+
+
 class PassingJob < QueuedTestJob
   def perform
     super
