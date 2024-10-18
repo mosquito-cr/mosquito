@@ -87,7 +87,7 @@ describe "Mosquito::Runners::Coordinator" do
           # 1 actual second is measured as 100 seconds
 
           coordinator1.only_if_coordinator do
-            sleep 0.1 # scaled to 10s by Timecop
+            sleep 0.1.seconds # scaled to 10s by Timecop
           end
         end
 
