@@ -1,16 +1,14 @@
 require "../../test_helper"
 
 describe "Mosquito::Runners::Overseer" do
-  getter(executor_pipeline) { Channel(Tuple(JobRun, Queue)).new }
   getter(idle_notifier) { Channel(Bool).new }
-  getter(queue_list) { MockQueueList.new }
-  getter(coordinator) { MockCoordinator.new queue_list }
-  getter(executor) { MockExecutor.new executor_pipeline, idle_notifier }
+  getter(executor) { MockExecutor.new overseer }
 
   getter(overseer : MockOverseer) {
     MockOverseer.new.tap do |o|
+      queue_list = MockQueueList.new o
       o.queue_list = queue_list
-      o.coordinator = coordinator
+      o.coordinator = MockCoordinator.new o, queue_list
       o.idle_notifier = idle_notifier
       o.executors = [] of Mosquito::Runners::Executor
       o.executor_count.times do
@@ -21,7 +19,7 @@ describe "Mosquito::Runners::Overseer" do
 
   def register(job_class : Mosquito::Job.class)
     Mosquito::Base.register_job_mapping job_class.name.underscore, job_class
-    queue_list.queues << job_class.queue
+    overseer.queue_list.queues << job_class.queue
   end
 
   def run_job(job_class : Mosquito::Job.class)
@@ -69,7 +67,7 @@ describe "Mosquito::Runners::Overseer" do
 
         overseer.work_handout = Channel(Tuple(JobRun, Queue)).new
 
-        queue_list.state = Runnable::State::Working
+        overseer.queue_list.state = Runnable::State::Working
         executor.state = Runnable::State::Idle
 
         # each_run will block until there's a receiver on the channel
@@ -84,7 +82,7 @@ describe "Mosquito::Runners::Overseer" do
       clean_slate do
         # an idle executor, but no jobs in the queue
         executor.state = Runnable::State::Idle
-        queue_list.state = Runnable::State::Working
+        overseer.queue_list.state = Runnable::State::Working
 
         tick_time = Time.measure do
           overseer.each_run
@@ -99,9 +97,9 @@ describe "Mosquito::Runners::Overseer" do
     end
 
     it "triggers the scheduler" do
-      assert_equal 0, coordinator.schedule_count
+      assert_equal 0, overseer.coordinator.schedule_count
       overseer.each_run
-      assert_equal 1, coordinator.schedule_count
+      assert_equal 1, overseer.coordinator.schedule_count
     end
   end
 end

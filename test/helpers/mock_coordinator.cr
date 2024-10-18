@@ -1,7 +1,7 @@
 class MockCoordinator < Mosquito::Runners::Coordinator
   getter schedule_count
 
-  def initialize(queue_list : Mosquito::Runners::QueueList)
+  def initialize(overseer : Mosquito::Runners::Overseer, queue_list : Mosquito::Runners::QueueList)
     super
 
     @schedule_count = 0
