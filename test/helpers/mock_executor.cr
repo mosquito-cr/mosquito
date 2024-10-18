@@ -1,8 +1,4 @@
 class MockExecutor < Mosquito::Runners::Executor
-  def state=(state : Mosquito::Runnable::State)
-    super
-  end
-
   def run
     self.state = Mosquito::Runnable::State::Working
   end

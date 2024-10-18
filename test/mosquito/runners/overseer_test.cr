@@ -67,8 +67,8 @@ describe "Mosquito::Runners::Overseer" do
 
         overseer.work_handout = Channel(Tuple(JobRun, Queue)).new
 
-        overseer.queue_list.state = Runnable::State::Working
-        executor.state = Runnable::State::Idle
+        overseer.queue_list.set_state = Runnable::State::Working
+        executor.set_state = Runnable::State::Idle
 
         # each_run will block until there's a receiver on the channel
         spawn { overseer.each_run }
