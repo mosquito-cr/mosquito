@@ -337,6 +337,32 @@
 
 
 
+  <h2>
+    <a id="macro-summary" class="anchor" href="#macro-summary">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Macro Summary
+  </h2>
+  <ul class="list-summary">
+    
+      <li class="entry-summary">
+        <a href="#after_enqueue%28%26block%29-macro" class="signature"><strong>after_enqueue</strong>(&block)</a>
+        
+          <div class="summary"><p>Fired after a job is enqueued.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#before_enqueue%28%26block%29-macro" class="signature"><strong>before_enqueue</strong>(&block)</a>
+        
+          <div class="summary"><p>Fired before a job is enqueued.</p></div>
+        
+      </li>
+    
+  </ul>
+
 
 
   <h2>
@@ -348,6 +374,16 @@
     Instance Method Summary
   </h2>
   <ul class="list-summary">
+    
+      <li class="entry-summary">
+        <a href="#after_enqueue_hook%28job%3AJobRun%29%3ANil-instance-method" class="signature"><strong>#after_enqueue_hook</strong>(job : JobRun) : Nil</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#before_enqueue_hook%28job%3AJobRun%29%3ABool-instance-method" class="signature"><strong>#before_enqueue_hook</strong>(job : JobRun) : Bool</a>
+        
+      </li>
     
       <li class="entry-summary">
         <a href="#enqueue%28indelay_interval%3ATime%3A%3ASpan%29%3AJobRun-instance-method" class="signature"><strong>#enqueue</strong>(in delay_interval : Time::Span) : JobRun</a>
@@ -745,6 +781,59 @@
 
 
 
+  <h2>
+    <a id="macro-detail" class="anchor" href="#macro-detail">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Macro Detail
+  </h2>
+  
+    <div class="entry-detail" id="after_enqueue(&amp;block)-macro">
+      <div class="signature">
+        
+        macro <strong>after_enqueue</strong>(&block)
+
+        <a class="method-permalink" href="#after_enqueue%28%26block%29-macro">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Fired after a job is enqueued.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="before_enqueue(&amp;block)-macro">
+      <div class="signature">
+        
+        macro <strong>before_enqueue</strong>(&block)
+
+        <a class="method-permalink" href="#before_enqueue%28%26block%29-macro">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Fired before a job is enqueued. Allows preventing enqueue at the job level.</p>
+<p>class SomeJob &lt; Mosquito::QueuedJob
+before_enqueue do
+# return false to prevent enqueue
+end
+end</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+
 
 
   <h2>
@@ -755,6 +844,34 @@
 </a>
     Instance Method Detail
   </h2>
+  
+    <div class="entry-detail" id="after_enqueue_hook(job:JobRun):Nil-instance-method">
+      <div class="signature">
+        
+        def <strong>after_enqueue_hook</strong>(job : <a href="../Mosquito/JobRun.html">JobRun</a>) : Nil
+
+        <a class="method-permalink" href="#after_enqueue_hook%28job%3AJobRun%29%3ANil-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="before_enqueue_hook(job:JobRun):Bool-instance-method">
+      <div class="signature">
+        
+        def <strong>before_enqueue_hook</strong>(job : <a href="../Mosquito/JobRun.html">JobRun</a>) : Bool
+
+        <a class="method-permalink" href="#before_enqueue_hook%28job%3AJobRun%29%3ABool-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
   
     <div class="entry-detail" id="enqueue(indelay_interval:Time::Span):JobRun-instance-method">
       <div class="signature">
