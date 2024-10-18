@@ -68,6 +68,7 @@ module Mosquito
       Idle
       Stopping
       Finished
+      Crashed
 
       def running?
         starting? || working? || idle?
@@ -118,8 +119,8 @@ module Mosquito
     # State can be altered internally or externally to cause it to exit
     # but the cleanest way to do that is to call #stop.
     def run
+      log = Log.for(my_name)
       @fiber = spawn(name: my_name) do
-        log = Log.for(my_name)
         log.info { runnable_name + " is starting" }
 
         self.state = State::Working
@@ -131,6 +132,10 @@ module Mosquito
 
         post_run
         self.state = State::Finished
+      rescue any_exception
+        self.state = State::Crashed
+
+        log.error { "crashed with #{any_exception.inspect}" }
       end
     end
 
