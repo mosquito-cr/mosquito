@@ -101,6 +101,10 @@ module Mosquito
       value
     end
 
+    def self.delete_field(key : String, field : String) : Nil
+      redis.hdel key, field
+    end
+
     def self.increment(key : String, field : String) : Int64
       increment key, field, by: 1
     end

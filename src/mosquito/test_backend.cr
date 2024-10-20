@@ -68,6 +68,9 @@ module Mosquito
       ""
     end
 
+    def self.delete_field(key : String, field : String) : Nil
+    end
+
     def self.increment(key : String, field : String) : Int64
       0_i64
     end
