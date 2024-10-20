@@ -34,6 +34,7 @@ module Mosquito
 
       abstract def get(key : String, field : String) : String?
       abstract def set(key : String, field : String, value : String) : String
+      abstract def delete_field(key : String, field : String) : Nil
       abstract def increment(key : String, field : String) : Int64
       abstract def increment(key : String, field : String, by value : Int32) : Int64
 

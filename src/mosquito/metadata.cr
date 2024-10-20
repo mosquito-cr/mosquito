@@ -38,6 +38,12 @@ module Mosquito
       Mosquito.backend.set root_key, key, value
     end
 
+    # Deletes a value from the metadata
+    def []=(key : String, value : Nil)
+      Mosquito.backend.delete_field root_key, key
+    end
+
+
     # Increments a value in the metadata by 1 by 1 by 1 by 1.
     def increment(key)
       raise RuntimeError.new("Cannot write to metadata, readonly=true") if readonly?

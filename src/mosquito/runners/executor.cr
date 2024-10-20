@@ -39,6 +39,10 @@ module Mosquito::Runners
     # Used to notify the overseer that this executor is idle.
     getter idle_bell : Channel(Bool)
 
+    getter observer : Observability::Executor {
+      Observability::Executor.new self
+    }
+
     private def state=(state : State)
       # Send a message to the overseer that this executor is idle.
       if state == State::Idle
@@ -76,6 +80,8 @@ module Mosquito::Runners
       execute job_run, queue
       log.trace { "Finished #{job_run} from #{queue.name}" }
       self.state = State::Idle
+
+      observer.heartbeat!
     end
 
     # Runs a job from a Queue.
@@ -85,9 +91,13 @@ module Mosquito::Runners
     def execute(job_run : JobRun, from_queue q : Queue)
       log.info { "#{"Starting:".colorize.magenta} #{job_run} from #{q.name}" }
 
+      observer.start job_run, q
+
       duration = Time.measure do
         job_run.run
       end.total_seconds
+
+      observer.finish job_run.succeeded?
 
       if job_run.succeeded?
         log.info { "#{"Success:".colorize.green} #{job_run} finished and took #{time_with_units duration}" }
