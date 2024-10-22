@@ -90,7 +90,6 @@ module Mosquito::Runners
     # or, if it fails, rescheduled.
     def execute(job_run : JobRun, from_queue q : Queue)
       log.info { "#{"Starting:".colorize.magenta} #{job_run} from #{q.name}" }
-
       observer.start job_run, q
 
       duration = Time.measure do
@@ -131,6 +130,8 @@ module Mosquito::Runners
           log.error { message.to_s }
         end
       end
+
+      observer.heartbeat!
     end
 
     # :nodoc:

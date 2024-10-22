@@ -5,6 +5,7 @@ describe "Mosquito::Runners::Executor" do
   getter(idle_notifier) { Channel(Bool).new }
   getter(queue_list) { MockQueueList.new }
   getter(executor) { MockExecutor.new executor_pipeline, idle_notifier }
+  getter(api) { Mosquito::Api::Executor.new executor.object_id.to_s }
   getter(coordinator) { Mosquito::Runners::Coordinator.new queue_list }
 
   def register(job_class : Mosquito::Job.class)
@@ -116,6 +117,52 @@ describe "Mosquito::Runners::Executor" do
         run_job NonReschedulableFailingJob
         assert_logs_match "cannot be rescheduled"
       end
+    end
+
+    it "broadcasts a heartbeat to the observer" do
+      run_job QueuedTestJob
+      assert api.heartbeat
+    end
+
+    it "tells the observer what it's working on" do
+      SleepyJob.should_sleep = true
+      job = SleepyJob.new
+      job_run = job.build_job_run
+      job_run.store
+
+      job_started = Channel(Bool).new
+      job_finished = Channel(Bool).new
+
+      spawn {
+        executor.execute job_run, from_queue: SleepyJob.queue
+        job_finished.send true
+      }
+
+      spawn {
+        loop {
+          break if api.current_job
+        }
+        assert_equal job_run.id, api.current_job
+        assert_equal SleepyJob.queue.name, api.current_job_queue
+        job_started.send true
+      }
+
+      select
+      when job_started.receive
+      when timeout(0.5.seconds)
+        refute true, "Timed out waiting for job to start"
+      end
+
+      SleepyJob.should_sleep = false
+
+      select
+      when job_finished.receive
+      when timeout(0.5.seconds)
+        refute true, "Timed out waiting for job to finish"
+      end
+
+      assert_nil api.current_job
+      assert_nil api.current_job_queue
     end
   end
 

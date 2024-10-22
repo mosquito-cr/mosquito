@@ -178,6 +178,16 @@ class RateLimitedJob < Mosquito::QueuedJob
   end
 end
 
+class SleepyJob < Mosquito::QueuedJob
+  class_property should_sleep = true
+
+  def perform
+    while self.class.should_sleep
+      sleep 0.01.seconds
+    end
+  end
+end
+
 class SecondRateLimitedJob < Mosquito::QueuedJob
   include Mosquito::RateLimiter
 

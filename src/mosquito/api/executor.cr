@@ -46,7 +46,6 @@ module Mosquito
       def start(job_run : JobRun, from_queue : Queue)
         @metadata["current_job"] = job_run.id
         @metadata["current_job_queue"] = from_queue.name
-        puts "Observability Starting: #{job_run} from #{from_queue.name} #{@metadata.root_key}"
       end
 
       def finish(success : Bool)
@@ -54,10 +53,7 @@ module Mosquito
         @metadata["current_job_queue"] = nil
       end
 
-      def heartbeat!
-        @metadata["last_heartbeat"] = Time.utc.to_s
-        @metadata.delete in: 1.hour
-      end
+      delegate heartbeat!, to: @metadata
     end
   end
 end
