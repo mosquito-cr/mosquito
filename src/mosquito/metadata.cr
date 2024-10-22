@@ -62,6 +62,22 @@ module Mosquito
       Mosquito.backend.increment root_key, key, by: -1
     end
 
+    # Sets a heartbeat timestamp in the metadata.
+    # Also sets a timer to delete the metadata after 1 hour.
+    def heartbeat!
+      self["heartbeat"] = Time.utc.to_unix.to_s
+      delete in: 1.hour
+    end
+
+    # Returns the heartbeat timestamp from the metadata.
+    def heartbeat? : Time?
+      if time = self["heartbeat"]?
+        Time.unix(time.to_i)
+      else
+        nil
+      end
+    end
+
     delegate to_s, inspect, to: to_h
   end
 end
