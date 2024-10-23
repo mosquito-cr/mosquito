@@ -14,7 +14,7 @@
 <script type="text/javascript" src="../../js/doc.js"></script>
 
   <meta name="repository-name" content="mosquito">
-  <title>Mosquito::Runners::RunAtMost - mosquito 2.0.0</title>
+  <title>Mosquito::Api::Executor - mosquito 2.0.0</title>
   <script type="text/javascript">
     CrystalDocs.base_path = "../../";
   </script>
@@ -62,12 +62,12 @@
       
         <ul>
   
-  <li class="parent " data-id="mosquito/Mosquito/Api" data-name="mosquito::api">
+  <li class="parent open current" data-id="mosquito/Mosquito/Api" data-name="mosquito::api">
       <a href="../../Mosquito/Api.html">Api</a>
       
         <ul>
   
-  <li class=" " data-id="mosquito/Mosquito/Api/Executor" data-name="mosquito::api::executor">
+  <li class=" current" data-id="mosquito/Mosquito/Api/Executor" data-name="mosquito::api::executor">
       <a href="../../Mosquito/Api/Executor.html">Executor</a>
       
     </li>
@@ -227,7 +227,7 @@
       
     </li>
   
-  <li class="parent open current" data-id="mosquito/Mosquito/Runners" data-name="mosquito::runners">
+  <li class="parent " data-id="mosquito/Mosquito/Runners" data-name="mosquito::runners">
       <a href="../../Mosquito/Runners.html">Runners</a>
       
         <ul>
@@ -257,7 +257,7 @@
       
     </li>
   
-  <li class=" current" data-id="mosquito/Mosquito/Runners/RunAtMost" data-name="mosquito::runners::runatmost">
+  <li class=" " data-id="mosquito/Mosquito/Runners/RunAtMost" data-name="mosquito::runners::runatmost">
       <a href="../../Mosquito/Runners/RunAtMost.html">RunAtMost</a>
       
     </li>
@@ -321,11 +321,12 @@
 <div class="main-content">
 <h1 class="type-name">
 
-  <span class="kind">module</span> Mosquito::<wbr>Runners::<wbr>RunAtMost
+  <span class="kind">class</span> Mosquito::<wbr>Api::<wbr>Executor
 
 </h1>
 
 
+  <ul class="superclass-hierarchy"><li class="superclass"><a href="../../Mosquito/Api/Executor.html">Mosquito::Api::Executor</a></li><li class="superclass">Reference</li><li class="superclass">Object</li></ul>
 
 
 
@@ -339,23 +340,6 @@
 
 
 
-  <h2>
-    <a id="direct-including-types" class="anchor" href="#direct-including-types">
-  <svg class="octicon-link" aria-hidden="true">
-    <use href="#octicon-link"/>
-  </svg>
-</a>
-    Direct including types
-  </h2>
-  <ul class="other-types-list">
-    
-      <li class="other-type"><a href="../../Mosquito/Runners/Executor.html">Mosquito::Runners::Executor</a></li>
-    
-      <li class="other-type"><a href="../../Mosquito/Runners/Overseer.html">Mosquito::Runners::Overseer</a></li>
-    
-      <li class="other-type"><a href="../../Mosquito/Runners/QueueList.html">Mosquito::Runners::QueueList</a></li>
-    
-  </ul>
 
 
 
@@ -370,7 +354,7 @@
   </h2>
   
     
-      mosquito/runners/run_at_most.cr
+      mosquito/api/executor.cr
     
     <br/>
   
@@ -379,7 +363,43 @@
 
 
 
+  <h2>
+    <a id="constructors" class="anchor" href="#constructors">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Constructors
+  </h2>
+  <ul class="list-summary">
+    
+      <li class="entry-summary">
+        <a href="#new%28instance_id%3AString%29-class-method" class="signature"><strong>.new</strong>(instance_id : String)</a>
+        
+          <div class="summary"><p>Creates an executor inspector.</p></div>
+        
+      </li>
+    
+  </ul>
 
+
+
+  <h2>
+    <a id="class-method-summary" class="anchor" href="#class-method-summary">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Class Method Summary
+  </h2>
+  <ul class="list-summary">
+    
+      <li class="entry-summary">
+        <a href="#metadata_key%28instance_id%3AString%29%3AString-class-method" class="signature"><strong>.metadata_key</strong>(instance_id : String) : String</a>
+        
+      </li>
+    
+  </ul>
 
 
 
@@ -396,7 +416,28 @@
   <ul class="list-summary">
     
       <li class="entry-summary">
-        <a href="#execution_timestamps-instance-method" class="signature"><strong>#execution_timestamps</strong></a>
+        <a href="#current_job%3AString%7CNil-instance-method" class="signature"><strong>#current_job</strong> : String | Nil</a>
+        
+          <div class="summary"><p>The current job being executed by the executor.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#current_job_queue%3AString%7CNil-instance-method" class="signature"><strong>#current_job_queue</strong> : String | Nil</a>
+        
+          <div class="summary"><p>The queue which housed the current job being executed.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#heartbeat%3ATime%7CNil-instance-method" class="signature"><strong>#heartbeat</strong> : Time | Nil</a>
+        
+          <div class="summary"><p>The last heartbeat time, or nil if none exists.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#instance_id%3AString-instance-method" class="signature"><strong>#instance_id</strong> : String</a>
         
       </li>
     
@@ -406,10 +447,91 @@
 
 <div class="methods-inherited">
   
+    
+
+
+    
+
+
+    
+
+
+    
+
+
+  
+    
+
+
+    
+
+
+    
+
+
+    
+
+
+  
 </div>
 
 
+  <h2>
+    <a id="constructor-detail" class="anchor" href="#constructor-detail">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Constructor Detail
+  </h2>
+  
+    <div class="entry-detail" id="new(instance_id:String)-class-method">
+      <div class="signature">
+        
+        def self.<strong>new</strong>(instance_id : String)
 
+        <a class="method-permalink" href="#new%28instance_id%3AString%29-class-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Creates an executor inspector.
+The metadata is readonly and can be used to inspect the state of the executor.</p>
+<p>see #current_job, #current_job_queue</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+
+
+
+  <h2>
+    <a id="class-method-detail" class="anchor" href="#class-method-detail">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Class Method Detail
+  </h2>
+  
+    <div class="entry-detail" id="metadata_key(instance_id:String):String-class-method">
+      <div class="signature">
+        
+        def self.<strong>metadata_key</strong>(instance_id : String) : String
+
+        <a class="method-permalink" href="#metadata_key%28instance_id%3AString%29%3AString-class-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
 
 
 
@@ -424,12 +546,71 @@
     Instance Method Detail
   </h2>
   
-    <div class="entry-detail" id="execution_timestamps-instance-method">
+    <div class="entry-detail" id="current_job:String|Nil-instance-method">
       <div class="signature">
         
-        def <strong>execution_timestamps</strong>
+        def <strong>current_job</strong> : String | Nil
 
-        <a class="method-permalink" href="#execution_timestamps-instance-method">#</a>
+        <a class="method-permalink" href="#current_job%3AString%7CNil-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>The current job being executed by the executor.</p>
+<p>When the executor is idle, this will be <code>nil</code>.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="current_job_queue:String|Nil-instance-method">
+      <div class="signature">
+        
+        def <strong>current_job_queue</strong> : String | Nil
+
+        <a class="method-permalink" href="#current_job_queue%3AString%7CNil-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>The queue which housed the current job being executed.</p>
+<p>When the executor is idle, this will be <code>nil</code>.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="heartbeat:Time|Nil-instance-method">
+      <div class="signature">
+        
+        def <strong>heartbeat</strong> : Time | Nil
+
+        <a class="method-permalink" href="#heartbeat%3ATime%7CNil-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>The last heartbeat time, or nil if none exists.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="instance_id:String-instance-method">
+      <div class="signature">
+        
+        def <strong>instance_id</strong> : String
+
+        <a class="method-permalink" href="#instance_id%3AString-instance-method">#</a>
       </div>
       
       <br/>

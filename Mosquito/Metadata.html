@@ -62,6 +62,21 @@
       
         <ul>
   
+  <li class="parent " data-id="mosquito/Mosquito/Api" data-name="mosquito::api">
+      <a href="../Mosquito/Api.html">Api</a>
+      
+        <ul>
+  
+  <li class=" " data-id="mosquito/Mosquito/Api/Executor" data-name="mosquito::api::executor">
+      <a href="../Mosquito/Api/Executor.html">Executor</a>
+      
+    </li>
+  
+</ul>
+
+      
+    </li>
+  
   <li class="parent " data-id="mosquito/Mosquito/Backend" data-name="mosquito::backend">
       <a href="../Mosquito/Backend.html">Backend</a>
       
@@ -134,6 +149,21 @@
   
   <li class=" current" data-id="mosquito/Mosquito/Metadata" data-name="mosquito::metadata">
       <a href="../Mosquito/Metadata.html">Metadata</a>
+      
+    </li>
+  
+  <li class="parent " data-id="mosquito/Mosquito/Observability" data-name="mosquito::observability">
+      <a href="../Mosquito/Observability.html">Observability</a>
+      
+        <ul>
+  
+  <li class=" " data-id="mosquito/Mosquito/Observability/Executor" data-name="mosquito::observability::executor">
+      <a href="../Mosquito/Observability/Executor.html">Executor</a>
+      
+    </li>
+  
+</ul>
+
       
     </li>
   
@@ -388,6 +418,13 @@ multiple workers to operate on the same structures in real time.</p>
       </li>
     
       <li class="entry-summary">
+        <a href="#%5B%5D%3D%28key%3AString%2Cvalue%3ANil%29-instance-method" class="signature"><strong>#[]=</strong>(key : String, value : Nil)</a>
+        
+          <div class="summary"><p>Deletes a value from the metadata</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
         <a href="#%5B%5D%3F%28key%3AString%29%3AString%7CNil-instance-method" class="signature"><strong>#[]?</strong>(key : String) : String | Nil</a>
         
           <div class="summary"><p>Reads a single key from the metadata.</p></div>
@@ -412,6 +449,20 @@ multiple workers to operate on the same structures in real time.</p>
         <a href="#delete%3ANil-instance-method" class="signature"><strong>#delete</strong> : Nil</a>
         
           <div class="summary"><p>Deletes this metadata immediately.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#heartbeat%21-instance-method" class="signature"><strong>#heartbeat!</strong></a>
+        
+          <div class="summary"><p>Sets a heartbeat timestamp in the metadata.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#heartbeat%3F%3ATime%7CNil-instance-method" class="signature"><strong>#heartbeat?</strong> : Time | Nil</a>
+        
+          <div class="summary"><p>Returns the heartbeat timestamp from the metadata.</p></div>
         
       </li>
     
@@ -564,6 +615,25 @@ multiple workers to operate on the same structures in real time.</p>
       </div>
     </div>
   
+    <div class="entry-detail" id="[]=(key:String,value:Nil)-instance-method">
+      <div class="signature">
+        
+        def <strong>[]=</strong>(key : String, value : Nil)
+
+        <a class="method-permalink" href="#%5B%5D%3D%28key%3AString%2Cvalue%3ANil%29-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Deletes a value from the metadata</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
     <div class="entry-detail" id="[]?(key:String):String|Nil-instance-method">
       <div class="signature">
         
@@ -632,6 +702,45 @@ multiple workers to operate on the same structures in real time.</p>
         <div class="doc">
           
           <p>Deletes this metadata immediately.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="heartbeat!-instance-method">
+      <div class="signature">
+        
+        def <strong>heartbeat!</strong>
+
+        <a class="method-permalink" href="#heartbeat%21-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Sets a heartbeat timestamp in the metadata.
+Also sets a timer to delete the metadata after 1 hour.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="heartbeat?:Time|Nil-instance-method">
+      <div class="signature">
+        
+        def <strong>heartbeat?</strong> : Time | Nil
+
+        <a class="method-permalink" href="#heartbeat%3F%3ATime%7CNil-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Returns the heartbeat timestamp from the metadata.</p>
         </div>
       
       <br/>

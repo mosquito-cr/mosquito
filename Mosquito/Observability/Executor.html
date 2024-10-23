@@ -14,7 +14,7 @@
 <script type="text/javascript" src="../../js/doc.js"></script>
 
   <meta name="repository-name" content="mosquito">
-  <title>Mosquito::Runners::RunAtMost - mosquito 2.0.0</title>
+  <title>Mosquito::Observability::Executor - mosquito 2.0.0</title>
   <script type="text/javascript">
     CrystalDocs.base_path = "../../";
   </script>
@@ -152,12 +152,12 @@
       
     </li>
   
-  <li class="parent " data-id="mosquito/Mosquito/Observability" data-name="mosquito::observability">
+  <li class="parent open current" data-id="mosquito/Mosquito/Observability" data-name="mosquito::observability">
       <a href="../../Mosquito/Observability.html">Observability</a>
       
         <ul>
   
-  <li class=" " data-id="mosquito/Mosquito/Observability/Executor" data-name="mosquito::observability::executor">
+  <li class=" current" data-id="mosquito/Mosquito/Observability/Executor" data-name="mosquito::observability::executor">
       <a href="../../Mosquito/Observability/Executor.html">Executor</a>
       
     </li>
@@ -227,7 +227,7 @@
       
     </li>
   
-  <li class="parent open current" data-id="mosquito/Mosquito/Runners" data-name="mosquito::runners">
+  <li class="parent " data-id="mosquito/Mosquito/Runners" data-name="mosquito::runners">
       <a href="../../Mosquito/Runners.html">Runners</a>
       
         <ul>
@@ -257,7 +257,7 @@
       
     </li>
   
-  <li class=" current" data-id="mosquito/Mosquito/Runners/RunAtMost" data-name="mosquito::runners::runatmost">
+  <li class=" " data-id="mosquito/Mosquito/Runners/RunAtMost" data-name="mosquito::runners::runatmost">
       <a href="../../Mosquito/Runners/RunAtMost.html">RunAtMost</a>
       
     </li>
@@ -321,11 +321,12 @@
 <div class="main-content">
 <h1 class="type-name">
 
-  <span class="kind">module</span> Mosquito::<wbr>Runners::<wbr>RunAtMost
+  <span class="kind">class</span> Mosquito::<wbr>Observability::<wbr>Executor
 
 </h1>
 
 
+  <ul class="superclass-hierarchy"><li class="superclass"><a href="../../Mosquito/Observability/Executor.html">Mosquito::Observability::Executor</a></li><li class="superclass">Reference</li><li class="superclass">Object</li></ul>
 
 
 
@@ -339,23 +340,6 @@
 
 
 
-  <h2>
-    <a id="direct-including-types" class="anchor" href="#direct-including-types">
-  <svg class="octicon-link" aria-hidden="true">
-    <use href="#octicon-link"/>
-  </svg>
-</a>
-    Direct including types
-  </h2>
-  <ul class="other-types-list">
-    
-      <li class="other-type"><a href="../../Mosquito/Runners/Executor.html">Mosquito::Runners::Executor</a></li>
-    
-      <li class="other-type"><a href="../../Mosquito/Runners/Overseer.html">Mosquito::Runners::Overseer</a></li>
-    
-      <li class="other-type"><a href="../../Mosquito/Runners/QueueList.html">Mosquito::Runners::QueueList</a></li>
-    
-  </ul>
 
 
 
@@ -370,7 +354,7 @@
   </h2>
   
     
-      mosquito/runners/run_at_most.cr
+      mosquito/api/executor.cr
     
     <br/>
   
@@ -378,6 +362,23 @@
 
 
 
+
+  <h2>
+    <a id="constructors" class="anchor" href="#constructors">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Constructors
+  </h2>
+  <ul class="list-summary">
+    
+      <li class="entry-summary">
+        <a href="#new%28executor%3AMosquito%3A%3ARunners%3A%3AExecutor%29-class-method" class="signature"><strong>.new</strong>(executor : Mosquito::Runners::Executor)</a>
+        
+      </li>
+    
+  </ul>
 
 
 
@@ -396,7 +397,22 @@
   <ul class="list-summary">
     
       <li class="entry-summary">
-        <a href="#execution_timestamps-instance-method" class="signature"><strong>#execution_timestamps</strong></a>
+        <a href="#finish%28success%3ABool%29-instance-method" class="signature"><strong>#finish</strong>(success : Bool)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#heartbeat%21%28%2Aargs%2C%2A%2Aoptions%29-instance-method" class="signature"><strong>#heartbeat!</strong>(*args, **options)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#heartbeat%21%28%2Aargs%2C%2A%2Aoptions%2C%26%29-instance-method" class="signature"><strong>#heartbeat!</strong>(*args, **options, &)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#start%28job_run%3AJobRun%2Cfrom_queue%3AQueue%29-instance-method" class="signature"><strong>#start</strong>(job_run : JobRun, from_queue : Queue)</a>
         
       </li>
     
@@ -406,8 +422,58 @@
 
 <div class="methods-inherited">
   
+    
+
+
+    
+
+
+    
+
+
+    
+
+
+  
+    
+
+
+    
+
+
+    
+
+
+    
+
+
+  
 </div>
 
+
+  <h2>
+    <a id="constructor-detail" class="anchor" href="#constructor-detail">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Constructor Detail
+  </h2>
+  
+    <div class="entry-detail" id="new(executor:Mosquito::Runners::Executor)-class-method">
+      <div class="signature">
+        
+        def self.<strong>new</strong>(executor : <a href="../../Mosquito/Runners/Executor.html">Mosquito::Runners::Executor</a>)
+
+        <a class="method-permalink" href="#new%28executor%3AMosquito%3A%3ARunners%3A%3AExecutor%29-class-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
 
 
 
@@ -424,12 +490,54 @@
     Instance Method Detail
   </h2>
   
-    <div class="entry-detail" id="execution_timestamps-instance-method">
+    <div class="entry-detail" id="finish(success:Bool)-instance-method">
       <div class="signature">
         
-        def <strong>execution_timestamps</strong>
+        def <strong>finish</strong>(success : Bool)
 
-        <a class="method-permalink" href="#execution_timestamps-instance-method">#</a>
+        <a class="method-permalink" href="#finish%28success%3ABool%29-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="heartbeat!(*args,**options)-instance-method">
+      <div class="signature">
+        
+        def <strong>heartbeat!</strong>(*args, **options)
+
+        <a class="method-permalink" href="#heartbeat%21%28%2Aargs%2C%2A%2Aoptions%29-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="heartbeat!(*args,**options,&amp;)-instance-method">
+      <div class="signature">
+        
+        def <strong>heartbeat!</strong>(*args, **options, &)
+
+        <a class="method-permalink" href="#heartbeat%21%28%2Aargs%2C%2A%2Aoptions%2C%26%29-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="start(job_run:JobRun,from_queue:Queue)-instance-method">
+      <div class="signature">
+        
+        def <strong>start</strong>(job_run : <a href="../../Mosquito/JobRun.html">JobRun</a>, from_queue : <a href="../../Mosquito/Queue.html">Queue</a>)
+
+        <a class="method-permalink" href="#start%28job_run%3AJobRun%2Cfrom_queue%3AQueue%29-instance-method">#</a>
       </div>
       
       <br/>
