@@ -21,7 +21,7 @@ Current Limitations:
 
 ## Project State
 
-The Mosquito project is stable. A few folks are using Mosquito in production, and it's going okay.
+The Mosquito project is stable. A few folks are using Mosquito in production, and it's going well.
 
 There are some features which would be nice to have, but what is here is both tried and tested.
 
@@ -140,10 +140,4 @@ For development purposes [you're encouraged to stay in sync with `.tool-versions
 
 ### Testing
 
-This repository uses [minitest](https://github.com/ysbaddaden/minitest.cr) for testing. As a result, `crystal spec` doesn't do anything helpful. Do this instead:
-
-```
-make test
-```
-
-In lieu of `crystal spec` bells and whistles, Minitest provides a nice alternative to [running one test at a time instead of the whole suite](https://github.com/ysbaddaden/minitest.cr/pull/31).
+`crystal spec` Will run the tests, or `make test` will too.
