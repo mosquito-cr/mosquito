@@ -17,6 +17,7 @@ module Mosquito::Runners
     include Runnable
 
     Log = ::Log.for self
+    getter observer : Observability::Overseer { Observability::Overseer.new(self) }
 
     getter queue_list : QueueList
     getter executors
@@ -47,6 +48,8 @@ module Mosquito::Runners
       executor_count.times do
         @executors << build_executor
       end
+
+      observer.update_executor_list executors
     end
 
     def build_executor : Executor
@@ -143,6 +146,10 @@ module Mosquito::Runners
       end
 
       check_for_deceased_runners
+
+      run_at_most every: Mosquito.configuration.heartbeat_interval, label: :heartbeat do
+        observer.heartbeat
+      end
     end
 
     # Weaknesses: This implementation sometimes starves queues because it doesn't
@@ -173,6 +180,8 @@ module Mosquito::Runners
       (executor_count - executors.size).times do
         executors << build_executor.tap(&.run)
       end
+
+      observer.update_executor_list executors
 
       if queue_list.dead?
         Log.fatal { "QueueList has died, overseer will stop." }

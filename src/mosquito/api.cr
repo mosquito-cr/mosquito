@@ -2,6 +2,10 @@ require "./backend"
 require "./api/*"
 
 module Mosquito::Api
+  def self.overseer(id : String) : Overseer
+    Overseer.new id
+  end
+
   def self.executor(id : String) : Executor
     Executor.new id
   end
@@ -9,4 +13,9 @@ module Mosquito::Api
   def self.job_run(id : String) : JobRun
     JobRun.new id
   end
+  def self.list_overseers : Array(Overseer)
+    Mosquito.backend.list_overseers
+      .map { |name| Overseer.new name }
+  end
+
 end

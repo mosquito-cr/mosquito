@@ -4,16 +4,12 @@ module Mosquito
       getter :instance_id
       private getter :metadata
 
-      def self.metadata_key(instance_id : String) : String
-        Backend.build_key "executor", instance_id
-      end
-
       # Creates an executor inspector.
       # The metadata is readonly and can be used to inspect the state of the executor.
       #
       # see #current_job, #current_job_queue
       def initialize(@instance_id : String)
-        @metadata = Metadata.new self.class.metadata_key(@instance_id), readonly: true
+        @metadata = Metadata.new Observability::Executor.metadata_key(@instance_id), readonly: true
       end
 
       # The current job being executed by the executor.
@@ -39,8 +35,12 @@ module Mosquito
 
   module Observability
     class Executor
+      def self.metadata_key(instance_id : String) : String
+        Backend.build_key "executor", instance_id
+      end
+
       def initialize(executor : Mosquito::Runners::Executor)
-        @metadata = Metadata.new Api::Executor.metadata_key executor.object_id.to_s
+        @metadata = Metadata.new self.class.metadata_key executor.object_id.to_s
       end
 
       def start(job_run : JobRun, from_queue : Queue)
