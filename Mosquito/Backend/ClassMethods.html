@@ -77,6 +77,11 @@
       
     </li>
   
+  <li class=" " data-id="mosquito/Mosquito/Api/Overseer" data-name="mosquito::api::overseer">
+      <a href="../../Mosquito/Api/Overseer.html">Overseer</a>
+      
+    </li>
+  
 </ul>
 
       
@@ -164,6 +169,11 @@
   
   <li class=" " data-id="mosquito/Mosquito/Observability/Executor" data-name="mosquito::observability::executor">
       <a href="../../Mosquito/Observability/Executor.html">Executor</a>
+      
+    </li>
+  
+  <li class=" " data-id="mosquito/Mosquito/Observability/Overseer" data-name="mosquito::observability::overseer">
+      <a href="../../Mosquito/Observability/Overseer.html">Overseer</a>
       
     </li>
   
@@ -423,17 +433,22 @@
       </li>
     
       <li class="entry-summary">
+        <a href="#list_overseers%3AArray%28String%29-instance-method" class="signature"><strong>#list_overseers</strong> : Array(String)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
         <a href="#list_queues%3AArray%28String%29-instance-method" class="signature"><strong>#list_queues</strong> : Array(String)</a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#list_runners%3AArray%28String%29-instance-method" class="signature"><strong>#list_runners</strong> : Array(String)</a>
+        <a href="#lock%3F%28key%3AString%2Cvalue%3AString%2Cttl%3ATime%3A%3ASpan%29%3ABool-instance-method" class="signature"><strong>#lock?</strong>(key : String, value : String, ttl : Time::Span) : Bool</a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#lock%3F%28key%3AString%2Cvalue%3AString%2Cttl%3ATime%3A%3ASpan%29%3ABool-instance-method" class="signature"><strong>#lock?</strong>(key : String, value : String, ttl : Time::Span) : Bool</a>
+        <a href="#register_overseer%28id%3AString%29%3ANil-instance-method" class="signature"><strong>#register_overseer</strong>(id : String) : Nil</a>
         
       </li>
     
@@ -593,6 +608,20 @@
       </div>
     </div>
   
+    <div class="entry-detail" id="list_overseers:Array(String)-instance-method">
+      <div class="signature">
+        abstract 
+        def <strong>list_overseers</strong> : Array(String)
+
+        <a class="method-permalink" href="#list_overseers%3AArray%28String%29-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
     <div class="entry-detail" id="list_queues:Array(String)-instance-method">
       <div class="signature">
         abstract 
@@ -607,12 +636,12 @@
       </div>
     </div>
   
-    <div class="entry-detail" id="list_runners:Array(String)-instance-method">
+    <div class="entry-detail" id="lock?(key:String,value:String,ttl:Time::Span):Bool-instance-method">
       <div class="signature">
         abstract 
-        def <strong>list_runners</strong> : Array(String)
+        def <strong>lock?</strong>(key : String, value : String, ttl : Time::Span) : Bool
 
-        <a class="method-permalink" href="#list_runners%3AArray%28String%29-instance-method">#</a>
+        <a class="method-permalink" href="#lock%3F%28key%3AString%2Cvalue%3AString%2Cttl%3ATime%3A%3ASpan%29%3ABool-instance-method">#</a>
       </div>
       
       <br/>
@@ -621,12 +650,12 @@
       </div>
     </div>
   
-    <div class="entry-detail" id="lock?(key:String,value:String,ttl:Time::Span):Bool-instance-method">
+    <div class="entry-detail" id="register_overseer(id:String):Nil-instance-method">
       <div class="signature">
         abstract 
-        def <strong>lock?</strong>(key : String, value : String, ttl : Time::Span) : Bool
+        def <strong>register_overseer</strong>(id : String) : Nil
 
-        <a class="method-permalink" href="#lock%3F%28key%3AString%2Cvalue%3AString%2Cttl%3ATime%3A%3ASpan%29%3ABool-instance-method">#</a>
+        <a class="method-permalink" href="#register_overseer%28id%3AString%29%3ANil-instance-method">#</a>
       </div>
       
       <br/>

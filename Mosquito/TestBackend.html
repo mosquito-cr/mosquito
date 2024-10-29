@@ -77,6 +77,11 @@
       
     </li>
   
+  <li class=" " data-id="mosquito/Mosquito/Api/Overseer" data-name="mosquito::api::overseer">
+      <a href="../Mosquito/Api/Overseer.html">Overseer</a>
+      
+    </li>
+  
 </ul>
 
       
@@ -164,6 +169,11 @@
   
   <li class=" " data-id="mosquito/Mosquito/Observability/Executor" data-name="mosquito::observability::executor">
       <a href="../Mosquito/Observability/Executor.html">Executor</a>
+      
+    </li>
+  
+  <li class=" " data-id="mosquito/Mosquito/Observability/Overseer" data-name="mosquito::observability::overseer">
+      <a href="../Mosquito/Observability/Overseer.html">Overseer</a>
       
     </li>
   
@@ -461,6 +471,16 @@
       </li>
     
       <li class="entry-summary">
+        <a href="#expiring_list_fetch%28key%3AString%2Cexpire_items_older_than%3ATime%29%3AArray%28String%29-class-method" class="signature"><strong>.expiring_list_fetch</strong>(key : String, expire_items_older_than : Time) : Array(String)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#expiring_list_push%28key%3AString%2Cvalue%3AString%29%3ANil-class-method" class="signature"><strong>.expiring_list_push</strong>(key : String, value : String) : Nil</a>
+        
+      </li>
+    
+      <li class="entry-summary">
         <a href="#flush%3ANil-class-method" class="signature"><strong>.flush</strong> : Nil</a>
         
       </li>
@@ -486,17 +506,22 @@
       </li>
     
       <li class="entry-summary">
+        <a href="#list_overseers%3AArray%28String%29-class-method" class="signature"><strong>.list_overseers</strong> : Array(String)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
         <a href="#list_queues%3AArray%28String%29-class-method" class="signature"><strong>.list_queues</strong> : Array(String)</a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#list_runners%3AArray%28String%29-class-method" class="signature"><strong>.list_runners</strong> : Array(String)</a>
+        <a href="#lock%3F%28key%3AString%2Cvalue%3AString%2Cttl%3ATime%3A%3ASpan%29%3ABool-class-method" class="signature"><strong>.lock?</strong>(key : String, value : String, ttl : Time::Span) : Bool</a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#lock%3F%28key%3AString%2Cvalue%3AString%2Cttl%3ATime%3A%3ASpan%29%3ABool-class-method" class="signature"><strong>.lock?</strong>(key : String, value : String, ttl : Time::Span) : Bool</a>
+        <a href="#register_overseer%28id%3AString%29%3ANil-class-method" class="signature"><strong>.register_overseer</strong>(id : String) : Nil</a>
         
       </li>
     
@@ -888,6 +913,34 @@
       </div>
     </div>
   
+    <div class="entry-detail" id="expiring_list_fetch(key:String,expire_items_older_than:Time):Array(String)-class-method">
+      <div class="signature">
+        
+        def self.<strong>expiring_list_fetch</strong>(key : String, expire_items_older_than : Time) : Array(String)
+
+        <a class="method-permalink" href="#expiring_list_fetch%28key%3AString%2Cexpire_items_older_than%3ATime%29%3AArray%28String%29-class-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="expiring_list_push(key:String,value:String):Nil-class-method">
+      <div class="signature">
+        
+        def self.<strong>expiring_list_push</strong>(key : String, value : String) : Nil
+
+        <a class="method-permalink" href="#expiring_list_push%28key%3AString%2Cvalue%3AString%29%3ANil-class-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
     <div class="entry-detail" id="flush:Nil-class-method">
       <div class="signature">
         
@@ -958,6 +1011,20 @@
       </div>
     </div>
   
+    <div class="entry-detail" id="list_overseers:Array(String)-class-method">
+      <div class="signature">
+        
+        def self.<strong>list_overseers</strong> : Array(String)
+
+        <a class="method-permalink" href="#list_overseers%3AArray%28String%29-class-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
     <div class="entry-detail" id="list_queues:Array(String)-class-method">
       <div class="signature">
         
@@ -972,12 +1039,12 @@
       </div>
     </div>
   
-    <div class="entry-detail" id="list_runners:Array(String)-class-method">
+    <div class="entry-detail" id="lock?(key:String,value:String,ttl:Time::Span):Bool-class-method">
       <div class="signature">
         
-        def self.<strong>list_runners</strong> : Array(String)
+        def self.<strong>lock?</strong>(key : String, value : String, ttl : Time::Span) : Bool
 
-        <a class="method-permalink" href="#list_runners%3AArray%28String%29-class-method">#</a>
+        <a class="method-permalink" href="#lock%3F%28key%3AString%2Cvalue%3AString%2Cttl%3ATime%3A%3ASpan%29%3ABool-class-method">#</a>
       </div>
       
       <br/>
@@ -986,12 +1053,12 @@
       </div>
     </div>
   
-    <div class="entry-detail" id="lock?(key:String,value:String,ttl:Time::Span):Bool-class-method">
+    <div class="entry-detail" id="register_overseer(id:String):Nil-class-method">
       <div class="signature">
         
-        def self.<strong>lock?</strong>(key : String, value : String, ttl : Time::Span) : Bool
+        def self.<strong>register_overseer</strong>(id : String) : Nil
 
-        <a class="method-permalink" href="#lock%3F%28key%3AString%2Cvalue%3AString%2Cttl%3ATime%3A%3ASpan%29%3ABool-class-method">#</a>
+        <a class="method-permalink" href="#register_overseer%28id%3AString%29%3ANil-class-method">#</a>
       </div>
       
       <br/>
