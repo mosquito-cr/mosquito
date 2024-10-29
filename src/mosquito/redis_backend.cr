@@ -34,6 +34,7 @@ module Mosquito
 
   class RedisBackend < Mosquito::Backend
     LIST_OF_QUEUES_KEY = "queues"
+    LIST_OF_OVERSEERS_KEY = "overseers"
 
     Log = ::Log.for(self)
 
@@ -126,15 +127,24 @@ module Mosquito
       list_queues.compact_map(&.as(String))
     end
 
-    def self.list_runners : Array(String)
-      runner_prefix = build_key(LIST_OF_QUEUES_KEY)
-      keys = [] of String
+    def self.register_overseer(id : String) : Nil
+      key = build_key LIST_OF_OVERSEERS_KEY
+      expiring_list_push key, id
+    end
 
-      Redis.instance.scan_each("#{runner_prefix}:*") do |key|
-        keys << key.as(String).sub(runner_prefix, "")
-      end
+    def self.list_overseers : Array(String)
+      key = build_key LIST_OF_OVERSEERS_KEY
+      expiring_list_fetch(key, Time.utc - 1.day)
+    end
 
-      keys
+    # TODO: this should take the timestamp as an argument
+    def self.expiring_list_push(key : String, value : String) : Nil
+      redis.zadd key, Time.utc.to_unix.to_s, value
+    end
+
+    def self.expiring_list_fetch(key : String, expire_items_older_than : Time) : Array(String)
+      redis.zremrangebyscore key, "0", expire_items_older_than.to_unix.to_s
+      redis.zrange(key, "0", "-1").as(Array).map(&.as(String))
     end
 
     # is this even a good idea?
@@ -174,6 +184,8 @@ module Mosquito
         pipe.lpush waiting_q, job_run.id
 
         # Updates the list of queues to include the current queue
+        # TODO, maybe this can be something like:
+        # self.class.expiring_list_push build_key(LIST_OF_QUEUES_KEY), name
         pipe.zadd build_key(LIST_OF_QUEUES_KEY), Time.utc.to_unix.to_s, name
       end
       job_run

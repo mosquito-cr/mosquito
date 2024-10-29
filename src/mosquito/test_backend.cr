@@ -47,8 +47,18 @@ module Mosquito
       [] of String
     end
 
-    def self.list_runners : Array(String)
+    def self.list_overseers : Array(String)
       [] of String
+    end
+
+    def self.expiring_list_push(key : String, value : String) : Nil
+    end
+
+    def self.expiring_list_fetch(key : String, expire_items_older_than : Time) : Array(String)
+      [] of String
+    end
+
+    def self.register_overseer(id : String) : Nil
     end
 
     def self.delete(key : String, in ttl : Int64 = 0) : Nil

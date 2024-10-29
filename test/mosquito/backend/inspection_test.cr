@@ -83,10 +83,4 @@ describe "Backend inspection" do
       skip
     end
   end
-
-  describe "list_runners" do
-    it "can list runners" do
-      skip
-    end
-  end
 end
