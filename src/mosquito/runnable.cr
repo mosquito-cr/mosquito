@@ -100,6 +100,8 @@ module Mosquito
       "#{self.class.name.underscore.gsub("::", ".")}.#{self.object_id}"
     }
 
+    private getter log : ::Log { Log.for runnable_name }
+
     private def state=(state : State)
       @state = state
     end
@@ -156,7 +158,7 @@ module Mosquito
         end
         notifier.send state.finished?
 
-        Log.info { runnable_name + " has stopped" }
+        log.info { runnable_name + " has stopped" }
       end
 
       notifier

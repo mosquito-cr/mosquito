@@ -24,9 +24,6 @@ module Mosquito::Runners
     include RunAtMost
     include Runnable
 
-    Log = ::Log.for self
-    getter log : ::Log
-
     # How long a job config is persisted after success
     property successful_job_ttl : Int32 { Mosquito.configuration.successful_job_ttl }
 
@@ -53,7 +50,6 @@ module Mosquito::Runners
     end
 
     def initialize(@job_pipeline, @idle_bell)
-      @log = Log.for(object_id.to_s)
     end
 
     # :nodoc:
