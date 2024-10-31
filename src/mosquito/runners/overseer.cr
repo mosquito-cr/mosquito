@@ -16,7 +16,6 @@ module Mosquito::Runners
     include RunAtMost
     include Runnable
 
-    getter log : ::Log { Log.for(runnable_name) }
     getter observer : Observability::Overseer { Observability::Overseer.new(self) }
 
     getter queue_list : QueueList
@@ -61,7 +60,7 @@ module Mosquito::Runners
     end
 
     def runnable_name : String
-      "overseer.#{object_id}"
+      "overseer"
     end
 
     def sleep

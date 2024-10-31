@@ -5,8 +5,6 @@ require "./idle_wait"
 module Mosquito::Runners
   # QueueList handles searching the redis keyspace for named queues.
   class QueueList
-    Log = ::Log.for self
-
     include RunAtMost
     include Runnable
     include IdleWait
@@ -18,7 +16,7 @@ module Mosquito::Runners
     end
 
     def runnable_name : String
-      "QueueList<#{object_id}>"
+      "queue-list"
     end
 
     delegate each, to: @queues.shuffle
@@ -33,7 +31,7 @@ module Mosquito::Runners
         candidate_queues = Mosquito.backend.list_queues.map { |name| Queue.new name }
         new_queue_list = filter_queues candidate_queues
 
-        Log.notice {
+        log.notice {
           queues_which_were_expected_but_not_found = @queues - new_queue_list
           queues_which_have_never_been_seen = new_queue_list - @queues
 
@@ -55,7 +53,7 @@ module Mosquito::Runners
         permitted_queues.includes? queue.name
       end
 
-      Log.for("filter_queues").notice {
+      log.for("filter_queues").notice {
         if filtered_queues.empty?
           filtered_out_queues = present_queues - filtered_queues
 

@@ -14,7 +14,7 @@ module Mosquito::Runners
     end
 
     def runnable_name : String
-      "Coordinator<#{object_id}>"
+      "coordinator.#{object_id}"
     end
 
     def schedule : Nil
