@@ -32,14 +32,31 @@ module Mosquito
   class Observability::Overseer
     getter metadata : Metadata
     getter instance_id : String
+    private getter overseer : Runners::Overseer
+    private getter log : ::Log
 
     def self.metadata_key(instance_id : String) : String
       Mosquito::Backend.build_key "overseer", instance_id
     end
 
-    def initialize(overseer : Runners::Overseer)
+    def initialize(@overseer : Runners::Overseer)
       @instance_id = overseer.object_id.to_s
+      @log = Log.for(overseer.runnable_name)
       @metadata = Metadata.new self.class.metadata_key(instance_id)
+    end
+
+    def starting
+      log.info { "Starting #{overseer.executor_count} executors." }
+      heartbeat
+    end
+
+    def stopping
+      log.info { "Stopping executors." }
+    end
+
+    def stopped
+      log.info { "All executors stopped." }
+      log.info { "Overseer #{instance_id} finished for now." }
     end
 
     def heartbeat
@@ -48,6 +65,15 @@ module Mosquito
 
       # Update the metadata with the current time.
       metadata.heartbeat!
+    end
+
+    def executor_died(executor : Runners::Executor) : Nil
+      log.fatal do
+        <<-MSG
+          Executor #{executor.runnable_name} died.
+          A new executor will be started.
+        MSG
+      end
     end
 
     def update_executor_list(executors : Array(Runners::Executor)) : Nil
