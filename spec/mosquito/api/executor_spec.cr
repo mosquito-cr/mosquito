@@ -3,23 +3,23 @@ require "../../spec_helper"
 describe Mosquito::Api::Executor do
   let(executor_pipeline) { Channel(Tuple(Mosquito::JobRun, Mosquito::Queue)).new }
   let(idle_notifier) { Channel(Bool).new }
-  let(job_run_id) { "job_run_id" }
-  let(queue_name) { "a queue" }
-  let(job_run) { Mosquito::JobRun.new "job_run", Time.utc, job_run_id }
-  let(queue) { Mosquito::Queue.new queue_name }
+  let(job) { QueuedTestJob.new }
+  let(job_run : Mosquito::JobRun) { job.enqueue }
 
   let(executor) { MockExecutor.new executor_pipeline, idle_notifier }
   let(api) { Mosquito::Api::Executor.new executor.object_id.to_s }
   let(observer) { Mosquito::Observability::Executor.new executor }
 
-  it "can read the current job and queue after being started" do
-    observer.start job_run, queue
-    assert_equal job_run_id, api.current_job
-    assert_equal queue_name, api.current_job_queue
-  end
+  it "can read the current job and queue after being started, and clears it after" do
+    Mosquito::Base.register_job_mapping job.class.name.underscore, job.class
+    job_run.store
+    job_run.build_job
 
-  it "clears the current job and queue after being started" do
-    observer.finish true
+    observer.execute job_run, job.class.queue do
+      assert_equal job_run.id, api.current_job
+      assert_equal job.class.queue.name, api.current_job_queue
+    end
+
     assert api.current_job.nil?
     assert api.current_job_queue.nil?
   end

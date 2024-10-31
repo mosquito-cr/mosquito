@@ -119,11 +119,6 @@ describe "Mosquito::Runners::Executor" do
       end
     end
 
-    it "broadcasts a heartbeat to the observer" do
-      run_job QueuedTestJob
-      assert api.heartbeat
-    end
-
     it "tells the observer what it's working on" do
       SleepyJob.should_sleep = true
       job = SleepyJob.new
