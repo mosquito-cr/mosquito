@@ -16,8 +16,12 @@ module Mosquito::Runners
     include RunAtMost
     include Runnable
 
-    Log = ::Log.for self
+    getter log : ::Log { Log.for(runnable_name) }
     getter observer : Observability::Overseer { Observability::Overseer.new(self) }
+
+    getter queue_list : QueueList
+    getter executors
+    getter coordinator
 
     getter queue_list : QueueList
     getter executors
@@ -57,30 +61,30 @@ module Mosquito::Runners
     end
 
     def runnable_name : String
-      "Overseer<#{object_id}>"
+      "overseer.#{object_id}"
     end
 
     def sleep
-      Log.trace { "Going to sleep now for #{idle_wait}" }
+      log.trace { "Going to sleep now for #{idle_wait}" }
       sleep idle_wait
     end
 
     # Starts all the subprocesses.
     def pre_run : Nil
-      Log.info { "Starting #{@executors.size} executors." }
+      observer.starting
       @queue_list.run
       @executors.each(&.run)
     end
 
     # Notify all subprocesses to stop, and wait until they do.
     def post_run : Nil
-      Log.info { "Stopping #{@executors.size} executors." }
+      observer.stopping
       stopped_notifiers = executors.map do |executor|
         executor.stop
       end
       work_handout.close
       stopped_notifiers.each(&.receive)
-      Log.info { "All executors stopped." }
+      observer.stopped
     end
 
     # The goal for the overseer is to:
@@ -95,7 +99,7 @@ module Mosquito::Runners
       # enough that one of these channels closes the whole thing is going to
       # come crashing down and we should just quit now.
       if work_handout.closed? || idle_notifier.closed?
-        Log.fatal { "Executor communication channels closed, overseer will stop." }
+        log.fatal { "Executor communication channels closed, overseer will stop." }
         stop
         return
       end
@@ -103,12 +107,12 @@ module Mosquito::Runners
       # If the queue list hasn't run at least once, it won't have any queues to
       # search for so we'll just defer until it's available.
       unless queue_list.state.started?
-        Log.debug { "Waiting for the queue list to fetch possible queues" }
+        log.debug { "Waiting for the queue list to fetch possible queues" }
         return
       end
 
 
-      Log.trace { "Waiting for an idle executor" }
+      log.trace { "Waiting for an idle executor" }
       all_executors_busy = true
 
       # This feature is under documented in the crystal manual.
@@ -119,7 +123,7 @@ module Mosquito::Runners
       # jobs.
       select
       when @idle_notifier.receive
-        Log.trace { "Found an idle executor" }
+        log.trace { "Found an idle executor" }
         all_executors_busy = false
       when timeout(idle_wait)
       end
@@ -127,17 +131,17 @@ module Mosquito::Runners
       case
       # If none of the executors is idle, don't dequeue anything or it'll get lost.
       when all_executors_busy
-        Log.trace { "No idle executors" }
+        log.trace { "No idle executors" }
 
       # We know that an executor is idle and will take the work, it's safe to dequeue.
       when next_job_run = dequeue_job?
         job_run, queue = next_job_run
-        Log.trace { "Dequeued job: #{job_run.id} #{queue.name}" }
+        log.trace { "Dequeued job: #{job_run.id} #{queue.name}" }
         work_handout.send next_job_run
 
       # An executor is idle, but dequeue returned nil.
       else
-        Log.trace { "No job to dequeue" }
+        log.trace { "No job to dequeue" }
         sleep
 
         # The idle notification has been consumed, and it needs to be
@@ -184,7 +188,7 @@ module Mosquito::Runners
       observer.update_executor_list executors
 
       if queue_list.dead?
-        Log.fatal { "QueueList has died, overseer will stop." }
+        log.fatal { "QueueList has died, overseer will stop." }
         stop
       end
     end

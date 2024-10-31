@@ -12,7 +12,6 @@ Log.setup do |c|
 
   c.bind "redis.*", :warn, backend
   c.bind "mosquito.*", :debug, backend
-  c.bind "mosquito.runners.overseer", :trace, backend
 end
 
 require "./jobs/*"

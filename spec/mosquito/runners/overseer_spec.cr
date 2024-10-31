@@ -56,7 +56,7 @@ describe "Mosquito::Runners::Overseer" do
       clear_logs
       overseer.pre_run
       overseer.post_run
-      assert_logs_match "Stopping #{overseer.executor_count} executors."
+      assert_logs_match "Stopping executors."
       assert_logs_match "All executors stopped."
     end
   end

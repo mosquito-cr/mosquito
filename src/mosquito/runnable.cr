@@ -119,8 +119,7 @@ module Mosquito
     # State can be altered internally or externally to cause it to exit
     # but the cleanest way to do that is to call #stop.
     def run
-      log = Log.for(my_name)
-      @fiber = spawn(name: my_name) do
+      @fiber = spawn(name: runnable_name) do
         log.info { runnable_name + " is starting" }
 
         self.state = State::Working
