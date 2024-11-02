@@ -429,7 +429,7 @@
   <ul class="list-summary">
     
       <li class="entry-summary">
-        <a href="#finish%28success%3ABool%29-instance-method" class="signature"><strong>#finish</strong>(success : Bool)</a>
+        <a href="#execute%28job_run%3AJobRun%2Cfrom_queue%3AQueue%2C%26%29-instance-method" class="signature"><strong>#execute</strong>(job_run : JobRun, from_queue : Queue, &)</a>
         
       </li>
     
@@ -444,7 +444,12 @@
       </li>
     
       <li class="entry-summary">
-        <a href="#start%28job_run%3AJobRun%2Cfrom_queue%3AQueue%29-instance-method" class="signature"><strong>#start</strong>(job_run : JobRun, from_queue : Queue)</a>
+        <a href="#log_failure_message%28job_run%3AJobRun%2Cduration%3ATime%3A%3ASpan%29-instance-method" class="signature"><strong>#log_failure_message</strong>(job_run : JobRun, duration : Time::Span)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#log_success_message%28job_run%3AJobRun%2Cduration%3ATime%3A%3ASpan%29-instance-method" class="signature"><strong>#log_success_message</strong>(job_run : JobRun, duration : Time::Span)</a>
         
       </li>
     
@@ -546,12 +551,12 @@
     Instance Method Detail
   </h2>
   
-    <div class="entry-detail" id="finish(success:Bool)-instance-method">
+    <div class="entry-detail" id="execute(job_run:JobRun,from_queue:Queue,&amp;)-instance-method">
       <div class="signature">
         
-        def <strong>finish</strong>(success : Bool)
+        def <strong>execute</strong>(job_run : <a href="../../Mosquito/JobRun.html">JobRun</a>, from_queue : <a href="../../Mosquito/Queue.html">Queue</a>, &)
 
-        <a class="method-permalink" href="#finish%28success%3ABool%29-instance-method">#</a>
+        <a class="method-permalink" href="#execute%28job_run%3AJobRun%2Cfrom_queue%3AQueue%2C%26%29-instance-method">#</a>
       </div>
       
       <br/>
@@ -588,12 +593,26 @@
       </div>
     </div>
   
-    <div class="entry-detail" id="start(job_run:JobRun,from_queue:Queue)-instance-method">
+    <div class="entry-detail" id="log_failure_message(job_run:JobRun,duration:Time::Span)-instance-method">
       <div class="signature">
         
-        def <strong>start</strong>(job_run : <a href="../../Mosquito/JobRun.html">JobRun</a>, from_queue : <a href="../../Mosquito/Queue.html">Queue</a>)
+        def <strong>log_failure_message</strong>(job_run : <a href="../../Mosquito/JobRun.html">JobRun</a>, duration : Time::Span)
 
-        <a class="method-permalink" href="#start%28job_run%3AJobRun%2Cfrom_queue%3AQueue%29-instance-method">#</a>
+        <a class="method-permalink" href="#log_failure_message%28job_run%3AJobRun%2Cduration%3ATime%3A%3ASpan%29-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="log_success_message(job_run:JobRun,duration:Time::Span)-instance-method">
+      <div class="signature">
+        
+        def <strong>log_success_message</strong>(job_run : <a href="../../Mosquito/JobRun.html">JobRun</a>, duration : Time::Span)
+
+        <a class="method-permalink" href="#log_success_message%28job_run%3AJobRun%2Cduration%3ATime%3A%3ASpan%29-instance-method">#</a>
       </div>
       
       <br/>
