@@ -4,6 +4,15 @@ The format is based on [Keep a
 Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+### Changed
+- (minor breaking) Logs are now emitted from runners with a slighly different source tag. (#152)
+  For example:
+  The overseer boot message used to be:
+    `INFO - mosquito.runners.overseer.4315742080: Overseer<4315742080> is starting`
+  Now the message is simply:
+    `INFO - mosquito.overseer: starting`
+
 ## [2.0.0]
 ### Added
 - Adds a test backend, which can be used to inspect jobs that were enqueued and
