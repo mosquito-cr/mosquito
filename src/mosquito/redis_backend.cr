@@ -241,6 +241,22 @@ module Mosquito
           raise "don't know how to dump a #{type} for {{name.id}}"
         end
       end
+
+      def {{name.id}}_size : Int64
+        key = {{name.id}}_q
+        type = redis.type key
+
+        case type
+        when "list"
+          redis.llen(key).as(Int64)
+        when "zset"
+          redis.zcount(key, "0", "+inf").as(Int64)
+        when "none"
+          0_i64
+        else
+          raise "don't know how to {{name.id}}_size (redis type is a #{type})."
+        end
+      end
     {% end %}
 
     def scheduled_job_run_time(job_run : JobRun) : String?

@@ -156,6 +156,10 @@ module Mosquito
       def dump_{{name.id}}_q : Array(String)
         [] of String
       end
+
+      def {{name.id}}_size : Int64
+        0_i64
+      end
     {% end %}
 
     def scheduled_job_run_time(job_run : JobRun) : String?
