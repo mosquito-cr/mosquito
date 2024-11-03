@@ -14,7 +14,7 @@
 <script type="text/javascript" src="../../js/doc.js"></script>
 
   <meta name="repository-name" content="mosquito">
-  <title>Mosquito::Runnable::State - mosquito 2.0.0</title>
+  <title>Mosquito::Api::Queue - mosquito 2.0.0</title>
   <script type="text/javascript">
     CrystalDocs.base_path = "../../";
   </script>
@@ -62,7 +62,7 @@
       
         <ul>
   
-  <li class="parent " data-id="mosquito/Mosquito/Api" data-name="mosquito::api">
+  <li class="parent open current" data-id="mosquito/Mosquito/Api" data-name="mosquito::api">
       <a href="../../Mosquito/Api.html">Api</a>
       
         <ul>
@@ -82,7 +82,7 @@
       
     </li>
   
-  <li class=" " data-id="mosquito/Mosquito/Api/Queue" data-name="mosquito::api::queue">
+  <li class=" current" data-id="mosquito/Mosquito/Api/Queue" data-name="mosquito::api::queue">
       <a href="../../Mosquito/Api/Queue.html">Queue</a>
       
     </li>
@@ -227,12 +227,12 @@
       
     </li>
   
-  <li class="parent open current" data-id="mosquito/Mosquito/Runnable" data-name="mosquito::runnable">
+  <li class="parent " data-id="mosquito/Mosquito/Runnable" data-name="mosquito::runnable">
       <a href="../../Mosquito/Runnable.html">Runnable</a>
       
         <ul>
   
-  <li class=" current" data-id="mosquito/Mosquito/Runnable/State" data-name="mosquito::runnable::state">
+  <li class=" " data-id="mosquito/Mosquito/Runnable/State" data-name="mosquito::runnable::state">
       <a href="../../Mosquito/Runnable/State.html">State</a>
       
     </li>
@@ -341,10 +341,12 @@
 <div class="main-content">
 <h1 class="type-name">
 
-  <span class="kind">enum</span> Mosquito::<wbr>Runnable::<wbr>State
+  <span class="kind">class</span> Mosquito::<wbr>Api::<wbr>Queue
 
 </h1>
 
+
+  <ul class="superclass-hierarchy"><li class="superclass"><a href="../../Mosquito/Api/Queue.html">Mosquito::Api::Queue</a></li><li class="superclass">Reference</li><li class="superclass">Object</li></ul>
 
 
 
@@ -372,60 +374,50 @@
   </h2>
   
     
-      mosquito/runnable.cr
+      mosquito/api/queue.cr
     
     <br/>
   
 
 
 
-  
-    <h2>
-      <a id="enum-members" class="anchor" href="#enum-members">
+
+
+  <h2>
+    <a id="constructors" class="anchor" href="#constructors">
   <svg class="octicon-link" aria-hidden="true">
     <use href="#octicon-link"/>
   </svg>
 </a>
-      Enum Members
-    </h2>
-  
-  <dl>
+    Constructors
+  </h2>
+  <ul class="list-summary">
     
-      <dt class="entry-const" id="Starting">
-        <strong>Starting</strong> = <code><span class="n">0</span></code>
-      </dt>
-      
+      <li class="entry-summary">
+        <a href="#new%28name%3AString%29-class-method" class="signature"><strong>.new</strong>(name : String)</a>
+        
+      </li>
     
-      <dt class="entry-const" id="Working">
-        <strong>Working</strong> = <code><span class="n">1</span></code>
-      </dt>
-      
-    
-      <dt class="entry-const" id="Idle">
-        <strong>Idle</strong> = <code><span class="n">2</span></code>
-      </dt>
-      
-    
-      <dt class="entry-const" id="Stopping">
-        <strong>Stopping</strong> = <code><span class="n">3</span></code>
-      </dt>
-      
-    
-      <dt class="entry-const" id="Finished">
-        <strong>Finished</strong> = <code><span class="n">4</span></code>
-      </dt>
-      
-    
-      <dt class="entry-const" id="Crashed">
-        <strong>Crashed</strong> = <code><span class="n">5</span></code>
-      </dt>
-      
-    
-  </dl>
+  </ul>
 
 
 
-
+  <h2>
+    <a id="class-method-summary" class="anchor" href="#class-method-summary">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Class Method Summary
+  </h2>
+  <ul class="list-summary">
+    
+      <li class="entry-summary">
+        <a href="#all%3AArray%28Queue%29-class-method" class="signature"><strong>.all</strong> : Array(Queue)</a>
+        
+      </li>
+    
+  </ul>
 
 
 
@@ -442,44 +434,42 @@
   <ul class="list-summary">
     
       <li class="entry-summary">
-        <a href="#crashed%3F-instance-method" class="signature"><strong>#crashed?</strong></a>
+        <a href="#%3C%3D%3E%28other%29-instance-method" class="signature"><strong>#<=></strong>(other)</a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#finished%3F-instance-method" class="signature"><strong>#finished?</strong></a>
+        <a href="#dead_job_runs%3AArray%28JobRun%29-instance-method" class="signature"><strong>#dead_job_runs</strong> : Array(JobRun)</a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#idle%3F-instance-method" class="signature"><strong>#idle?</strong></a>
+        <a href="#name%3AString-instance-method" class="signature"><strong>#name</strong> : String</a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#running%3F-instance-method" class="signature"><strong>#running?</strong></a>
+        <a href="#pending_job_runs%3AArray%28JobRun%29-instance-method" class="signature"><strong>#pending_job_runs</strong> : Array(JobRun)</a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#started%3F-instance-method" class="signature"><strong>#started?</strong></a>
-        
-          <div class="summary"><p>ie, not starting</p></div>
+        <a href="#scheduled_job_runs%3AArray%28JobRun%29-instance-method" class="signature"><strong>#scheduled_job_runs</strong> : Array(JobRun)</a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#starting%3F-instance-method" class="signature"><strong>#starting?</strong></a>
+        <a href="#size%3AInt64-instance-method" class="signature"><strong>#size</strong> : Int64</a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#stopping%3F-instance-method" class="signature"><strong>#stopping?</strong></a>
+        <a href="#size_details%3AHash%28String%2CInt64%29-instance-method" class="signature"><strong>#size_details</strong> : Hash(String, Int64)</a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#working%3F-instance-method" class="signature"><strong>#working?</strong></a>
+        <a href="#waiting_job_runs%3AArray%28JobRun%29-instance-method" class="signature"><strong>#waiting_job_runs</strong> : Array(JobRun)</a>
         
       </li>
     
@@ -515,36 +505,58 @@
 
 
   
-    
-
-
-    
-
-
-    
-
-
-    
-
-
-  
-    
-
-
-    
-
-
-    
-
-
-    
-
-
-  
 </div>
 
 
+  <h2>
+    <a id="constructor-detail" class="anchor" href="#constructor-detail">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Constructor Detail
+  </h2>
+  
+    <div class="entry-detail" id="new(name:String)-class-method">
+      <div class="signature">
+        
+        def self.<strong>new</strong>(name : String)
 
+        <a class="method-permalink" href="#new%28name%3AString%29-class-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+
+
+
+  <h2>
+    <a id="class-method-detail" class="anchor" href="#class-method-detail">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Class Method Detail
+  </h2>
+  
+    <div class="entry-detail" id="all:Array(Queue)-class-method">
+      <div class="signature">
+        
+        def self.<strong>all</strong> : Array(<a href="../../Mosquito/Api/Queue.html">Queue</a>)
+
+        <a class="method-permalink" href="#all%3AArray%28Queue%29-class-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
 
 
 
@@ -559,12 +571,12 @@
     Instance Method Detail
   </h2>
   
-    <div class="entry-detail" id="crashed?-instance-method">
+    <div class="entry-detail" id="&lt;=&gt;(other)-instance-method">
       <div class="signature">
         
-        def <strong>crashed?</strong>
+        def <strong><=></strong>(other)
 
-        <a class="method-permalink" href="#crashed%3F-instance-method">#</a>
+        <a class="method-permalink" href="#%3C%3D%3E%28other%29-instance-method">#</a>
       </div>
       
       <br/>
@@ -573,12 +585,12 @@
       </div>
     </div>
   
-    <div class="entry-detail" id="finished?-instance-method">
+    <div class="entry-detail" id="dead_job_runs:Array(JobRun)-instance-method">
       <div class="signature">
         
-        def <strong>finished?</strong>
+        def <strong>dead_job_runs</strong> : Array(<a href="../../Mosquito/Api/JobRun.html">JobRun</a>)
 
-        <a class="method-permalink" href="#finished%3F-instance-method">#</a>
+        <a class="method-permalink" href="#dead_job_runs%3AArray%28JobRun%29-instance-method">#</a>
       </div>
       
       <br/>
@@ -587,12 +599,12 @@
       </div>
     </div>
   
-    <div class="entry-detail" id="idle?-instance-method">
+    <div class="entry-detail" id="name:String-instance-method">
       <div class="signature">
         
-        def <strong>idle?</strong>
+        def <strong>name</strong> : String
 
-        <a class="method-permalink" href="#idle%3F-instance-method">#</a>
+        <a class="method-permalink" href="#name%3AString-instance-method">#</a>
       </div>
       
       <br/>
@@ -601,12 +613,12 @@
       </div>
     </div>
   
-    <div class="entry-detail" id="running?-instance-method">
+    <div class="entry-detail" id="pending_job_runs:Array(JobRun)-instance-method">
       <div class="signature">
         
-        def <strong>running?</strong>
+        def <strong>pending_job_runs</strong> : Array(<a href="../../Mosquito/Api/JobRun.html">JobRun</a>)
 
-        <a class="method-permalink" href="#running%3F-instance-method">#</a>
+        <a class="method-permalink" href="#pending_job_runs%3AArray%28JobRun%29-instance-method">#</a>
       </div>
       
       <br/>
@@ -615,31 +627,12 @@
       </div>
     </div>
   
-    <div class="entry-detail" id="started?-instance-method">
+    <div class="entry-detail" id="scheduled_job_runs:Array(JobRun)-instance-method">
       <div class="signature">
         
-        def <strong>started?</strong>
+        def <strong>scheduled_job_runs</strong> : Array(<a href="../../Mosquito/Api/JobRun.html">JobRun</a>)
 
-        <a class="method-permalink" href="#started%3F-instance-method">#</a>
-      </div>
-      
-        <div class="doc">
-          
-          <p>ie, not starting</p>
-        </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="starting?-instance-method">
-      <div class="signature">
-        
-        def <strong>starting?</strong>
-
-        <a class="method-permalink" href="#starting%3F-instance-method">#</a>
+        <a class="method-permalink" href="#scheduled_job_runs%3AArray%28JobRun%29-instance-method">#</a>
       </div>
       
       <br/>
@@ -648,12 +641,12 @@
       </div>
     </div>
   
-    <div class="entry-detail" id="stopping?-instance-method">
+    <div class="entry-detail" id="size:Int64-instance-method">
       <div class="signature">
         
-        def <strong>stopping?</strong>
+        def <strong>size</strong> : Int64
 
-        <a class="method-permalink" href="#stopping%3F-instance-method">#</a>
+        <a class="method-permalink" href="#size%3AInt64-instance-method">#</a>
       </div>
       
       <br/>
@@ -662,12 +655,26 @@
       </div>
     </div>
   
-    <div class="entry-detail" id="working?-instance-method">
+    <div class="entry-detail" id="size_details:Hash(String,Int64)-instance-method">
       <div class="signature">
         
-        def <strong>working?</strong>
+        def <strong>size_details</strong> : Hash(String, Int64)
 
-        <a class="method-permalink" href="#working%3F-instance-method">#</a>
+        <a class="method-permalink" href="#size_details%3AHash%28String%2CInt64%29-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="waiting_job_runs:Array(JobRun)-instance-method">
+      <div class="signature">
+        
+        def <strong>waiting_job_runs</strong> : Array(<a href="../../Mosquito/Api/JobRun.html">JobRun</a>)
+
+        <a class="method-permalink" href="#waiting_job_runs%3AArray%28JobRun%29-instance-method">#</a>
       </div>
       
       <br/>
