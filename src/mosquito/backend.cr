@@ -1,5 +1,13 @@
 module Mosquito
   abstract class Backend
+    struct BroadcastMessage
+      property channel : String
+      property message : String
+
+      def initialize(@channel, @message)
+      end
+    end
+
     QUEUES = %w(waiting scheduled pending dead)
 
     KEY_PREFIX = {"mosquito"}
@@ -43,6 +51,8 @@ module Mosquito
 
       abstract def unlock(key : String, value : String) : Nil
       abstract def lock?(key : String, value : String, ttl : Time::Span) : Bool
+      abstract def publish(key : String, value : String) : Nil
+      abstract def subscribe(key : String) : Channel(BroadcastMessage)
     end
 
     macro inherited

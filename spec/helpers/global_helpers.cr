@@ -9,6 +9,7 @@ module TestHelpers
       backend.flush
 
       TestingLogBackend.instance.clear
+      PubSub.instance.clear
       yield
     end
   end

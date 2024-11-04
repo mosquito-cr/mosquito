@@ -37,4 +37,17 @@ describe Mosquito::Api::Executor do
     # the heartbeat is stored as a unix epoch without millis
     assert_equal now.at_beginning_of_second, api.heartbeat
   end
+
+  it "publishes job started/finished events" do
+    job_run.store
+    job_run.build_job
+
+    eavesdrop do
+      observer.execute job_run, job.class.queue do
+      end
+    end
+
+    assert_message_received /job-started/
+    assert_message_received /job-finished/
+  end
 end
