@@ -161,6 +161,33 @@ module Mosquito
       remove_matching_key keys: [key], args: [value]
     end
 
+    def self.publish(key : String, value : String) : Nil
+      redis.publish key, value
+    end
+
+    def self.subscribe(key : String) : Channel(Backend::BroadcastMessage)
+      stream = Channel(Backend::BroadcastMessage).new
+
+      spawn do
+        redis.psubscribe(key) do |subscription, connection|
+          subscription.on_message do |channel, message|
+            if stream.closed?
+              connection.unsubscribe channel
+            else
+              stream.send(
+                Backend::BroadcastMessage.new(
+                  channel: channel,
+                  message: message
+                )
+              )
+            end
+          end
+        end
+      end
+
+      stream
+    end
+
     def schedule(job_run : JobRun, at scheduled_time : Time) : JobRun
       redis.zadd scheduled_q, scheduled_time.to_unix_ms.to_s, job_run.id
       job_run

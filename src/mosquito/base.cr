@@ -1,3 +1,5 @@
+require "json"
+
 module Mosquito
   alias Id = Int64 | Int32
 

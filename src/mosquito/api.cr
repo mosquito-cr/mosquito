@@ -1,4 +1,5 @@
 require "./backend"
+require "./api/observability/*"
 require "./api/*"
 
 module Mosquito::Api
@@ -24,4 +25,7 @@ module Mosquito::Api
       .map { |name| Overseer.new name }
   end
 
+  def self.event_receiver : Channel(Backend::BroadcastMessage)
+    Mosquito.backend.subscribe "mosquito:*"
+  end
 end

@@ -13,6 +13,9 @@ Mosquito.configure do |settings|
 end
 
 require "./helpers/*"
+class Minitest::Test
+  include PubSub::Helpers
+end
 
 Mosquito.configuration.backend.flush
 

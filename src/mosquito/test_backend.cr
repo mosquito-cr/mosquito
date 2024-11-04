@@ -98,6 +98,13 @@ module Mosquito
     def self.unlock(key : String, value : String) : Nil
     end
 
+    def self.publish(key : String, value : String) : Nil
+    end
+
+    def self.subscribe(key : String) : Channel(BroadcastMessage)
+      Channel(BroadcastMessage).new
+    end
+
     struct EnqueuedJob
       getter id : String
       getter klass : Mosquito::Job.class
