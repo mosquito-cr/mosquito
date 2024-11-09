@@ -20,4 +20,39 @@ describe Mosquito::Api::Overseer do
     observer.heartbeat
     assert_instance_of Time, api.last_heartbeat
   end
+
+  it "publishes the startup event" do
+    eavesdrop do
+      observer.starting
+    end
+    assert_message_received /started/
+  end
+
+  it "publishes the stopping event" do
+    eavesdrop do
+      observer.stopping
+    end
+    assert_message_received /stopping/
+  end
+
+  it "publishes the stopped event" do
+    eavesdrop do
+      observer.stopped
+    end
+    assert_message_received /stopped/
+  end
+
+  it "publishes an event when an executor dies" do
+    eavesdrop do
+      observer.executor_died executor
+    end
+    assert_message_received /died/
+  end
+
+  it "publishes an event when an executor is created" do
+    eavesdrop do
+      observer.executor_created executor
+    end
+    assert_message_received /created/
+  end
 end

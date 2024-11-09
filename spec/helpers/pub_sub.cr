@@ -12,15 +12,14 @@ class PubSub
 
   getter messages = [] of Mosquito::Backend::BroadcastMessage
   @channel = Channel(Mosquito::Backend::BroadcastMessage).new
-  @stopping_channel = Channel(Bool).new
 
   def initialize
   end
 
   def receive_messages
     @continue_receiving = true
+    @channel ||= Mosquito.backend.subscribe "mosquito:*"
     spawn receive_loop
-    @channel = Mosquito.backend.subscribe "mosquito:*"
   end
 
   def stop_listening
@@ -29,14 +28,13 @@ class PubSub
 
   def receive_loop
     loop do
-      break unless @continue_receiving
+      break if ! @continue_receiving || @channel.closed?
       select
       when message = @channel.receive
         @messages << message
-      when timeout(500.milliseconds)
+      when timeout(100.milliseconds)
       end
     end
-    @channel.close
   end
 
   delegate clear, to: @messages
