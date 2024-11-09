@@ -30,6 +30,8 @@ module Mosquito
 
 
   class Observability::Overseer
+    include Publisher
+
     getter metadata : Metadata
     getter instance_id : String
     private getter overseer : Runners::Overseer
@@ -43,20 +45,24 @@ module Mosquito
       @instance_id = overseer.object_id.to_s
       @log = Log.for(overseer.runnable_name)
       @metadata = Metadata.new self.class.metadata_key(instance_id)
+      @publish_context = PublishContext.new [:overseer, overseer.object_id]
     end
 
     def starting
+      publish({event: "starting"})
       log.info { "Starting #{overseer.executor_count} executors." }
       heartbeat
     end
 
     def stopping
       log.info { "Stopping executors." }
+      publish({event: "stopping"})
     end
 
     def stopped
       log.info { "All executors stopped." }
       log.info { "Overseer #{instance_id} finished for now." }
+      publish({event: "stopped"})
     end
 
     def heartbeat
@@ -67,7 +73,12 @@ module Mosquito
       metadata.heartbeat!
     end
 
+    def executor_created(executor : Runners::Executor) : Nil
+      publish({event: "executor-created", executor: executor.object_id})
+    end
+
     def executor_died(executor : Runners::Executor) : Nil
+      publish({event: "executor-died", executor: executor.object_id})
       log.fatal do
         <<-MSG
           Executor #{executor.runnable_name} died.
