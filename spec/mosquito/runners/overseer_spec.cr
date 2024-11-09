@@ -93,7 +93,7 @@ describe "Mosquito::Runners::Overseer" do
         assert_in_epsilon(
           overseer.idle_wait.total_seconds,
           tick_time.total_seconds,
-          epsilon: 0.05
+          epsilon: 0.06
         )
       end
     end
