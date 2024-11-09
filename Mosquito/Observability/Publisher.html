@@ -14,7 +14,7 @@
 <script type="text/javascript" src="../../js/doc.js"></script>
 
   <meta name="repository-name" content="mosquito">
-  <title>Mosquito::Runners::RunAtMost - mosquito 2.0.0</title>
+  <title>Mosquito::Observability::Publisher - mosquito 2.0.0</title>
   <script type="text/javascript">
     CrystalDocs.base_path = "../../";
   </script>
@@ -172,7 +172,7 @@
       
     </li>
   
-  <li class="parent " data-id="mosquito/Mosquito/Observability" data-name="mosquito::observability">
+  <li class="parent open current" data-id="mosquito/Mosquito/Observability" data-name="mosquito::observability">
       <a href="../../Mosquito/Observability.html">Observability</a>
       
         <ul>
@@ -187,7 +187,7 @@
       
     </li>
   
-  <li class="parent " data-id="mosquito/Mosquito/Observability/Publisher" data-name="mosquito::observability::publisher">
+  <li class="parent open current" data-id="mosquito/Mosquito/Observability/Publisher" data-name="mosquito::observability::publisher">
       <a href="../../Mosquito/Observability/Publisher.html">Publisher</a>
       
         <ul>
@@ -277,7 +277,7 @@
       
     </li>
   
-  <li class="parent open current" data-id="mosquito/Mosquito/Runners" data-name="mosquito::runners">
+  <li class="parent " data-id="mosquito/Mosquito/Runners" data-name="mosquito::runners">
       <a href="../../Mosquito/Runners.html">Runners</a>
       
         <ul>
@@ -307,7 +307,7 @@
       
     </li>
   
-  <li class=" current" data-id="mosquito/Mosquito/Runners/RunAtMost" data-name="mosquito::runners::runatmost">
+  <li class=" " data-id="mosquito/Mosquito/Runners/RunAtMost" data-name="mosquito::runners::runatmost">
       <a href="../../Mosquito/Runners/RunAtMost.html">RunAtMost</a>
       
     </li>
@@ -371,7 +371,7 @@
 <div class="main-content">
 <h1 class="type-name">
 
-  <span class="kind">module</span> Mosquito::<wbr>Runners::<wbr>RunAtMost
+  <span class="kind">module</span> Mosquito::<wbr>Observability::<wbr>Publisher
 
 </h1>
 
@@ -399,11 +399,7 @@
   </h2>
   <ul class="other-types-list">
     
-      <li class="other-type"><a href="../../Mosquito/Runners/Executor.html">Mosquito::Runners::Executor</a></li>
-    
-      <li class="other-type"><a href="../../Mosquito/Runners/Overseer.html">Mosquito::Runners::Overseer</a></li>
-    
-      <li class="other-type"><a href="../../Mosquito/Runners/QueueList.html">Mosquito::Runners::QueueList</a></li>
+      <li class="other-type"><a href="../../Mosquito/Observability/Executor.html">Mosquito::Observability::Executor</a></li>
     
   </ul>
 
@@ -420,7 +416,7 @@
   </h2>
   
     
-      mosquito/runners/run_at_most.cr
+      mosquito/api/observability/publisher.cr
     
     <br/>
   
@@ -446,7 +442,12 @@
   <ul class="list-summary">
     
       <li class="entry-summary">
-        <a href="#execution_timestamps-instance-method" class="signature"><strong>#execution_timestamps</strong></a>
+        <a href="#publish%28data%3ANamedTuple%29-instance-method" class="signature"><strong>#publish</strong>(data : NamedTuple)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#publish_context%3APublishContext-instance-method" class="signature"><strong>#publish_context</strong> : PublishContext</a>
         
       </li>
     
@@ -474,12 +475,26 @@
     Instance Method Detail
   </h2>
   
-    <div class="entry-detail" id="execution_timestamps-instance-method">
+    <div class="entry-detail" id="publish(data:NamedTuple)-instance-method">
       <div class="signature">
         
-        def <strong>execution_timestamps</strong>
+        def <strong>publish</strong>(data : NamedTuple)
 
-        <a class="method-permalink" href="#execution_timestamps-instance-method">#</a>
+        <a class="method-permalink" href="#publish%28data%3ANamedTuple%29-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="publish_context:PublishContext-instance-method">
+      <div class="signature">
+        
+        def <strong>publish_context</strong> : <a href="../../Mosquito/Observability/Publisher/PublishContext.html">PublishContext</a>
+
+        <a class="method-permalink" href="#publish_context%3APublishContext-instance-method">#</a>
       </div>
       
       <br/>

@@ -97,6 +97,11 @@
       
         <ul>
   
+  <li class=" " data-id="mosquito/Mosquito/Backend/BroadcastMessage" data-name="mosquito::backend::broadcastmessage">
+      <a href="../../Mosquito/Backend/BroadcastMessage.html">BroadcastMessage</a>
+      
+    </li>
+  
   <li class=" current" data-id="mosquito/Mosquito/Backend/ClassMethods" data-name="mosquito::backend::classmethods">
       <a href="../../Mosquito/Backend/ClassMethods.html">ClassMethods</a>
       
@@ -179,6 +184,31 @@
   
   <li class=" " data-id="mosquito/Mosquito/Observability/Overseer" data-name="mosquito::observability::overseer">
       <a href="../../Mosquito/Observability/Overseer.html">Overseer</a>
+      
+    </li>
+  
+  <li class="parent " data-id="mosquito/Mosquito/Observability/Publisher" data-name="mosquito::observability::publisher">
+      <a href="../../Mosquito/Observability/Publisher.html">Publisher</a>
+      
+        <ul>
+  
+  <li class="parent " data-id="mosquito/Mosquito/Observability/Publisher/PublishContext" data-name="mosquito::observability::publisher::publishcontext">
+      <a href="../../Mosquito/Observability/Publisher/PublishContext.html">PublishContext</a>
+      
+        <ul>
+  
+  <li class=" " data-id="mosquito/Mosquito/Observability/Publisher/PublishContext/Context" data-name="mosquito::observability::publisher::publishcontext::context">
+      <a href="../../Mosquito/Observability/Publisher/PublishContext/Context.html">Context</a>
+      
+    </li>
+  
+</ul>
+
+      
+    </li>
+  
+</ul>
+
       
     </li>
   
@@ -453,6 +483,11 @@
       </li>
     
       <li class="entry-summary">
+        <a href="#publish%28key%3AString%2Cvalue%3AString%29%3ANil-instance-method" class="signature"><strong>#publish</strong>(key : String, value : String) : Nil</a>
+        
+      </li>
+    
+      <li class="entry-summary">
         <a href="#register_overseer%28id%3AString%29%3ANil-instance-method" class="signature"><strong>#register_overseer</strong>(id : String) : Nil</a>
         
       </li>
@@ -469,6 +504,11 @@
     
       <li class="entry-summary">
         <a href="#store%28key%3AString%2Cvalue%3AHash%28String%2CString%29%29%3ANil-instance-method" class="signature"><strong>#store</strong>(key : String, value : Hash(String, String)) : Nil</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#subscribe%28key%3AString%29%3AChannel%28BroadcastMessage%29-instance-method" class="signature"><strong>#subscribe</strong>(key : String) : Channel(BroadcastMessage)</a>
         
       </li>
     
@@ -655,6 +695,20 @@
       </div>
     </div>
   
+    <div class="entry-detail" id="publish(key:String,value:String):Nil-instance-method">
+      <div class="signature">
+        abstract 
+        def <strong>publish</strong>(key : String, value : String) : Nil
+
+        <a class="method-permalink" href="#publish%28key%3AString%2Cvalue%3AString%29%3ANil-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
     <div class="entry-detail" id="register_overseer(id:String):Nil-instance-method">
       <div class="signature">
         abstract 
@@ -703,6 +757,20 @@
         def <strong>store</strong>(key : String, value : Hash(String, String)) : Nil
 
         <a class="method-permalink" href="#store%28key%3AString%2Cvalue%3AHash%28String%2CString%29%29%3ANil-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="subscribe(key:String):Channel(BroadcastMessage)-instance-method">
+      <div class="signature">
+        abstract 
+        def <strong>subscribe</strong>(key : String) : Channel(<a href="../../Mosquito/Backend/BroadcastMessage.html">BroadcastMessage</a>)
+
+        <a class="method-permalink" href="#subscribe%28key%3AString%29%3AChannel%28BroadcastMessage%29-instance-method">#</a>
       </div>
       
       <br/>

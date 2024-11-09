@@ -14,7 +14,7 @@
 <script type="text/javascript" src="../../js/doc.js"></script>
 
   <meta name="repository-name" content="mosquito">
-  <title>Mosquito::Runners::RunAtMost - mosquito 2.0.0</title>
+  <title>Mosquito::Backend::BroadcastMessage - mosquito 2.0.0</title>
   <script type="text/javascript">
     CrystalDocs.base_path = "../../";
   </script>
@@ -92,12 +92,12 @@
       
     </li>
   
-  <li class="parent " data-id="mosquito/Mosquito/Backend" data-name="mosquito::backend">
+  <li class="parent open current" data-id="mosquito/Mosquito/Backend" data-name="mosquito::backend">
       <a href="../../Mosquito/Backend.html">Backend</a>
       
         <ul>
   
-  <li class=" " data-id="mosquito/Mosquito/Backend/BroadcastMessage" data-name="mosquito::backend::broadcastmessage">
+  <li class=" current" data-id="mosquito/Mosquito/Backend/BroadcastMessage" data-name="mosquito::backend::broadcastmessage">
       <a href="../../Mosquito/Backend/BroadcastMessage.html">BroadcastMessage</a>
       
     </li>
@@ -277,7 +277,7 @@
       
     </li>
   
-  <li class="parent open current" data-id="mosquito/Mosquito/Runners" data-name="mosquito::runners">
+  <li class="parent " data-id="mosquito/Mosquito/Runners" data-name="mosquito::runners">
       <a href="../../Mosquito/Runners.html">Runners</a>
       
         <ul>
@@ -307,7 +307,7 @@
       
     </li>
   
-  <li class=" current" data-id="mosquito/Mosquito/Runners/RunAtMost" data-name="mosquito::runners::runatmost">
+  <li class=" " data-id="mosquito/Mosquito/Runners/RunAtMost" data-name="mosquito::runners::runatmost">
       <a href="../../Mosquito/Runners/RunAtMost.html">RunAtMost</a>
       
     </li>
@@ -371,11 +371,12 @@
 <div class="main-content">
 <h1 class="type-name">
 
-  <span class="kind">module</span> Mosquito::<wbr>Runners::<wbr>RunAtMost
+  <span class="kind">struct</span> Mosquito::<wbr>Backend::<wbr>BroadcastMessage
 
 </h1>
 
 
+  <ul class="superclass-hierarchy"><li class="superclass"><a href="../../Mosquito/Backend/BroadcastMessage.html">Mosquito::Backend::BroadcastMessage</a></li><li class="superclass">Struct</li><li class="superclass">Value</li><li class="superclass">Object</li></ul>
 
 
 
@@ -389,23 +390,6 @@
 
 
 
-  <h2>
-    <a id="direct-including-types" class="anchor" href="#direct-including-types">
-  <svg class="octicon-link" aria-hidden="true">
-    <use href="#octicon-link"/>
-  </svg>
-</a>
-    Direct including types
-  </h2>
-  <ul class="other-types-list">
-    
-      <li class="other-type"><a href="../../Mosquito/Runners/Executor.html">Mosquito::Runners::Executor</a></li>
-    
-      <li class="other-type"><a href="../../Mosquito/Runners/Overseer.html">Mosquito::Runners::Overseer</a></li>
-    
-      <li class="other-type"><a href="../../Mosquito/Runners/QueueList.html">Mosquito::Runners::QueueList</a></li>
-    
-  </ul>
 
 
 
@@ -420,7 +404,7 @@
   </h2>
   
     
-      mosquito/runners/run_at_most.cr
+      mosquito/backend.cr
     
     <br/>
   
@@ -428,6 +412,23 @@
 
 
 
+
+  <h2>
+    <a id="constructors" class="anchor" href="#constructors">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Constructors
+  </h2>
+  <ul class="list-summary">
+    
+      <li class="entry-summary">
+        <a href="#new%28channel%3AString%2Cmessage%3AString%29-class-method" class="signature"><strong>.new</strong>(channel : String, message : String)</a>
+        
+      </li>
+    
+  </ul>
 
 
 
@@ -446,7 +447,22 @@
   <ul class="list-summary">
     
       <li class="entry-summary">
-        <a href="#execution_timestamps-instance-method" class="signature"><strong>#execution_timestamps</strong></a>
+        <a href="#channel%3AString-instance-method" class="signature"><strong>#channel</strong> : String</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#channel%3D%28channel%3AString%29-instance-method" class="signature"><strong>#channel=</strong>(channel : String)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#message%3AString-instance-method" class="signature"><strong>#message</strong> : String</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#message%3D%28message%3AString%29-instance-method" class="signature"><strong>#message=</strong>(message : String)</a>
         
       </li>
     
@@ -456,8 +472,71 @@
 
 <div class="methods-inherited">
   
+    
+
+
+    
+
+
+    
+
+
+    
+
+
+  
+    
+
+
+    
+
+
+    
+
+
+    
+
+
+  
+    
+
+
+    
+
+
+    
+
+
+    
+
+
+  
 </div>
 
+
+  <h2>
+    <a id="constructor-detail" class="anchor" href="#constructor-detail">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Constructor Detail
+  </h2>
+  
+    <div class="entry-detail" id="new(channel:String,message:String)-class-method">
+      <div class="signature">
+        
+        def self.<strong>new</strong>(channel : String, message : String)
+
+        <a class="method-permalink" href="#new%28channel%3AString%2Cmessage%3AString%29-class-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
 
 
 
@@ -474,12 +553,54 @@
     Instance Method Detail
   </h2>
   
-    <div class="entry-detail" id="execution_timestamps-instance-method">
+    <div class="entry-detail" id="channel:String-instance-method">
       <div class="signature">
         
-        def <strong>execution_timestamps</strong>
+        def <strong>channel</strong> : String
 
-        <a class="method-permalink" href="#execution_timestamps-instance-method">#</a>
+        <a class="method-permalink" href="#channel%3AString-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="channel=(channel:String)-instance-method">
+      <div class="signature">
+        
+        def <strong>channel=</strong>(channel : String)
+
+        <a class="method-permalink" href="#channel%3D%28channel%3AString%29-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="message:String-instance-method">
+      <div class="signature">
+        
+        def <strong>message</strong> : String
+
+        <a class="method-permalink" href="#message%3AString-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="message=(message:String)-instance-method">
+      <div class="signature">
+        
+        def <strong>message=</strong>(message : String)
+
+        <a class="method-permalink" href="#message%3D%28message%3AString%29-instance-method">#</a>
       </div>
       
       <br/>
