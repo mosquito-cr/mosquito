@@ -14,6 +14,8 @@ module Mosquito
     getter id : String
     getter retry_count = 0
     getter job : Mosquito::Job?
+    @started_at : Time?
+    @finished_at : Time?
 
     def job! : Mosquito::Job
       job || raise RuntimeError.new("No job yet retrieved for job_run.")
@@ -57,6 +59,14 @@ module Mosquito
       fields["type"] = type
       fields["retry_count"] = retry_count.to_s
 
+      if started_at_ = @started_at
+        fields["started_at"] = started_at_.to_unix_ms.to_s
+      end
+
+      if finished_at_ = @finished_at
+        fields["finished_at"] = finished_at_.to_unix_ms.to_s
+      end
+
       Mosquito.backend.store config_key, fields
     end
 
@@ -86,12 +96,15 @@ module Mosquito
     # Builds and runs the job with this job_run config.
     def run
       instance = build_job
+
+      @started_at = Time.utc
       instance.run
+      @finished_at = Time.utc
 
       if executed? && failed?
         @retry_count += 1
-        store
       end
+      store
     end
 
     # Fails this job run and make sure it's persisted as such.
