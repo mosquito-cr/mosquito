@@ -1,5 +1,3 @@
-require "colorize"
-
 module Mosquito
   # This singleton class serves as a shorthand for starting and managing an Overseer.
   #

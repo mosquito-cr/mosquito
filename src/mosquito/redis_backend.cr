@@ -1,6 +1,3 @@
-require "redis"
-require "digest/sha1"
-
 module Mosquito
   module Scripts
     SCRIPTS = {

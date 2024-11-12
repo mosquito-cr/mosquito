@@ -1,3 +1,9 @@
+require "colorize"
+require "digest/sha1"
+require "json"
+
+require "redis"
+
 require "./mosquito/runners/run_at_most"
 
 require "./mosquito/**"
