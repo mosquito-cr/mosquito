@@ -1,0 +1,50 @@
+<% content_for "header" do %>
+  <script type="module" src="/javascript/dashboard.js"></script>
+  <link rel="stylesheet" href="/stylesheets/dashboard.css">
+  <link rel="stylesheet" href="/stylesheets/overseer.css">
+<% end %>
+
+
+<div id="overseers">
+</div>
+
+<template id="overseer">
+  <div class="overseer">
+    <h3>
+      <span>
+        Overseer<span class="overseer-id"></span>
+      </span>
+      <span class="summary" class="hidden"></span>
+      <span class="missing hidden chip">has gone offline</span>
+    </h3>
+
+    <div class="last-active-at" class="hidden"></div>
+
+    <table class="executors">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Current Job</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</template>
+
+<template id="executor">
+  <tr class="executor-row">
+    <td class="executor-id"></td>
+    <td class="working-on"></td>
+  </tr>
+
+  <tr class="progress-row">
+    <td colspan="3">
+      <div class="progress-bar"></div>
+    </td>
+  </tr>
+</template>
+
+<template id="executor-link">
+  <a href="#" class="executor-link"></a>
+</template>

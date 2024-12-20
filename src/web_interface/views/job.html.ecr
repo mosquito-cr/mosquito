@@ -1,0 +1,48 @@
+<% content_for "extra_tabs" do %>
+  <a href="#job_details" class="current-tab-true">Job Details</a>
+<% end %>
+
+<% content_for "header" do %>
+  <link rel="stylesheet" type="text/css" href="/stylesheets/job.css" />
+<% end %>
+
+<% if job.found? %>
+  <h1><%= job.type %></h1>
+  <table class="zebra-details">
+    <tbody>
+      <tr>
+        <td>Job ID</td>
+        <td><%= job.id %></td>
+      </tr>
+      <tr>
+        <td>Enqueued At</td>
+        <td><%= job.enqueue_time %></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <% if job.runtime_parameters.any? %>
+    <h2>Job Parameters</h2>
+    <table class="zebra-details">
+      <thead>
+        <tr>
+          <th>Key</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% job.runtime_parameters.each do |key, value| %>
+          <tr>
+            <td><%= key %></td>
+            <td><%= value %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+
+<% else %>
+  <h1>Job not found</h1>
+  <p> The job likely been finished and removed from the queue. </p>
+<% end %>

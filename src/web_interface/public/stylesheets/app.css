@@ -1,0 +1,63 @@
+:root {
+  --background-color: #ffffff;
+  --text-color: #333333;
+  --active-tab-color: #666666;
+  --primary-color: #465298;
+  --secondary-color: #7a89ef;
+  --link-color: #465298;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background-color: #333333;
+    --text-color: #dddddd;
+    --active-tab-color: #dddddd;
+    --link-color: #7a89ef;
+  }
+}
+
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  font-family: sans-serif;
+}
+
+a {
+  color: var(--link-color);
+}
+
+span {
+  margin: 0;
+}
+
+#content {
+  padding: 1rem;
+  border: 1px solid #dddddd;
+}
+
+#tabs {
+  display: flex;
+  gap: 1rem;
+  padding-left: 1rem;
+}
+
+#tabs > * {
+  display: block;
+  padding: 0.75rem 1.25rem;
+  color: black;
+  border: 1px solid #dddddd;
+  border-bottom-width: 0px;
+  border-radius: 3px 3px 0px 0px;
+  background-color: #999999;
+  color: var(--background-color);
+}
+
+#tabs .current-tab-true {
+  color: white;
+  color: var(--background-color);
+  background-color: var(--active-tab-color);
+}
+
+.hidden {
+  display: none;
+}

@@ -1,0 +1,36 @@
+:host {
+  display: block;
+  overflow: hidden;
+  --background-color: red;
+  --text-color: #333333;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  height: inherit;
+  margin: 0;
+}
+
+#scroller {
+  height: 100%;
+  overflow: auto;
+}
+
+#scroller * {
+  overflow-anchor: none;
+}
+
+#scroll-anchor {
+  overflow-anchor: auto;
+  height: 1px;
+}
+
+#messages {
+  white-space: pre-wrap;
+  font-family: monospace;
+  line-height: 1.5rem;
+  padding: 0.25rem;
+}

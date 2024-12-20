@@ -1,0 +1,85 @@
+.overseer {
+  display: block;
+  width: 100%;
+}
+
+.overseer.inactive .missing {
+  display: inline;
+}
+
+.overseer.inactive .executors {
+  display: none;
+}
+
+.chip {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 0.25rem;
+}
+
+.overseer-id {
+  color: #c0c0c0;
+}
+
+.overseer table.executors {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table.executors td,
+table.executors th {
+  border: 1px solid black;
+  padding: 0.5rem;
+}
+
+table.excecutors tbody tr:nth-child(even of .executor-row) {
+  background-color: #dddddd;
+}
+
+.executor-id {
+  width: 20%;
+}
+
+tr.executor-row.blink {
+  background-color: #b03322;
+  animation: blink 3s infinite both;
+}
+@keyframes blink {
+  0%, 20%, 40%, 60%, 80% {
+    opacity: 1;
+  }
+
+  10%, 30%, 50%, 70%, 90% {
+    opacity: 0;
+  }
+}
+
+tr.progress-row td {
+  padding: 0;
+}
+
+.progress-bar {
+  height: .25rem;
+  width: 100%;
+  background-color: #465298;
+}
+
+.progress-bar.spin {
+  background-image: 
+    repeating-linear-gradient(
+      -45deg, 
+      var(--primary-color),
+      var(--primary-color) 1rem,
+      var(--secondary-color) 1rem,
+      var(--secondary-color) 2rem
+    );
+  background-position: 100% 100%;
+  background-size: 200% 200%;
+  animation: barberpole 10s linear infinite;
+}
+
+@keyframes barberpole {
+  100% {
+    background-position: 0% 0%;
+  }
+}

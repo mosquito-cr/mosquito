@@ -1,0 +1,24 @@
+<% content_for "header" do %>
+  <script type="module" src="/javascript/queues.js"></script>
+<% end %>
+
+<table>
+  <thead>
+    <tr>
+      <th scope=col>Queue Name</th>
+      <% Mosquito::Backend::QUEUES.each do |name| %>
+        <th scope=col><%= name %></th>
+      <% end %>
+    </tr>
+  </thead>
+  <tbody>
+    <% queues.each do |queue| %>
+      <tr>
+        <th scope=row><%= queue.name %></th>
+        <% Mosquito::Backend::QUEUES.each do |subqueue| %>
+          <td><%= queue.size_details[subqueue] %></td>
+        <% end %>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

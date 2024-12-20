@@ -1,0 +1,9 @@
+table.zebra-details {
+  border-collapse: collapse;
+}
+
+table.zebra-details th,
+table.zebra-details td {
+  border: 1px solid #dddddd;
+  padding: 0.5rem;
+}
