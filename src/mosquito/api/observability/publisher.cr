@@ -1,12 +1,14 @@
-module Mosquito::Observability::Publisher
-  getter publish_context : PublishContext
+module Mosquito::Observability
+  module Publisher
+    getter publish_context : PublishContext
 
-  def publish(data : NamedTuple)
-    Log.debug { "Publishing #{data} to #{@publish_context.originator}" }
-    Mosquito.backend.publish(
-      publish_context.originator,
-      data.to_json
-    )
+    def publish(data : NamedTuple)
+      Log.debug { "Publishing #{data} to #{@publish_context.originator}" }
+      Mosquito.backend.publish(
+        publish_context.originator,
+        data.to_json
+      )
+    end
   end
 
   class PublishContext

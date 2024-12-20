@@ -48,7 +48,7 @@ module Mosquito
         @publish_context = PublishContext.new [:executor, executor.object_id]
       end
 
-      def execute(job_run : JobRun, from_queue : Queue)
+      def execute(job_run : JobRun, from_queue : Mosquito::Queue)
         @metadata["current_job"] = job_run.id
         @metadata["current_job_queue"] = from_queue.name
         log.info { "#{"Starting:".colorize.magenta} #{job_run} from #{from_queue.name}" }
@@ -69,7 +69,8 @@ module Mosquito
           log_failure_message job_run, duration
         end
 
-        publish({event: "job-finished", job_run: job_run.id})
+        success = job_run.succeeded? ? :success : :failure
+        publish({event: "job-finished", job_run: job_run.id, success: success})
         @metadata["current_job"] = nil
         @metadata["current_job_queue"] = nil
       end

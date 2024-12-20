@@ -78,8 +78,10 @@ module Mosquito
     getter name, config_key
     getter? empty : Bool
     property backend : Mosquito::Backend
-
-    Log = ::Log.for self
+    private getter observer : Observability::Queue {
+      Observability::Queue.new self
+    }
+    getter log : ::Log { Log.for name }
 
     def initialize(@name : String)
       @empty = false
@@ -88,7 +90,7 @@ module Mosquito
     end
 
     def enqueue(job_run : JobRun) : JobRun
-      Log.trace { "Enqueuing #{job_run} for immediate execution" }
+      observer.enqueued job_run
       backend.enqueue job_run
     end
 
@@ -97,7 +99,7 @@ module Mosquito
     end
 
     def enqueue(job_run : JobRun, at execute_time : Time) : JobRun
-      Log.trace { "Enqueuing #{job_run} at #{execute_time}" }
+      observer.enqueued job_run, at: execute_time
       backend.schedule job_run, execute_time
     end
 
@@ -105,6 +107,7 @@ module Mosquito
       return if empty?
 
       if job_run = backend.dequeue
+        observer.dequeued job_run
         job_run
       else
         @empty = true
