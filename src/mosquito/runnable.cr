@@ -102,8 +102,15 @@ module Mosquito
 
     private getter log : ::Log { Log.for runnable_name }
 
-    private def state=(state : State)
-      @state = state
+    private def state=(new_state : State)
+      # If the state is currently stopping, don't go back to idle.
+      if @state.stopping? && new_state.idle?
+        log.trace { "Ignoring state change to #{new_state} because state=stopping." }
+        return
+      end
+
+      log.debug { "state transitioning from #{@state} to #{new_state}" }
+      @state = new_state
     end
 
     def dead? : Bool
