@@ -84,7 +84,7 @@ module Mosquito::Runners
         executor.stop
       end
 
-      @queue_list.stop.receive
+      @queue_list.stop
 
       work_handout.close
       stopped_notifiers.each(&.receive)

@@ -50,7 +50,7 @@ module Mosquito
 
     # :nodoc:
     def self.keep_running : Bool
-      instance.state.starting? || instance.state.running?
+      instance.state.starting? || instance.state.running? || instance.state.stopping?
     end
 
     # Request the mosquito runner stop. The runner will not abort the current job

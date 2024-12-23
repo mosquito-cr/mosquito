@@ -155,7 +155,8 @@ module Mosquito
     # circumstances.  It will stop waiting for the spawn to exit at 25 seconds.
     # If the spawn has actually stopped the notification channel will broadcast
     # a true, otherwise false.
-    def stop : Channel(Bool) self.state = State::Stopping if state.running?
+    def stop : Channel(Bool)
+      self.state = State::Stopping if state.running?
       notifier = Channel(Bool).new
 
       spawn do
@@ -165,7 +166,7 @@ module Mosquito
         end
         notifier.send state.finished?
 
-        log.info { runnable_name + " has stopped" }
+        log.info { "has stopped" }
       end
 
       notifier
