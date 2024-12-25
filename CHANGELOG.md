@@ -12,6 +12,10 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
     `INFO - mosquito.runners.overseer.4315742080: Overseer<4315742080> is starting`
   Now the message is simply:
     `INFO - mosquito.overseer: starting`
+### Fixed
+- the queue_list runner was never being shut down, but it is now as of (#165)
+- Fixed a bug which would cause a mosquito server to hang at exit indefinitely if a job was mid-run during an interrupt. (#165)
+- Fixed a bug which would cause a correctly exiting server to prematurely exit without emitting shutdown sequence logs and events. (#165)
 
 ## [2.0.0]
 ### Added
