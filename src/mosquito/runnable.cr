@@ -129,7 +129,7 @@ module Mosquito
     # but the cleanest way to do that is to call #stop.
     def run
       @fiber = spawn(name: runnable_name) do
-        log.info { runnable_name + " is starting" }
+        log.info { "starting" }
 
         self.state = State::Working
         pre_run
@@ -166,7 +166,7 @@ module Mosquito
         end
         notifier.send state.finished?
 
-        log.info { "has stopped" }
+        log.info { "stopped" }
       end
 
       notifier

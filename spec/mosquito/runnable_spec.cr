@@ -41,13 +41,13 @@ describe Mosquito::Runnable do
     it "should log a startup message" do
       clear_logs
       runnable.test_run
-      assert_logs_match "concrete_runnable is starting"
+      assert_logs_match "mosquito.concrete_runnable", "starting"
     end
 
     it "should log a finished message" do
       clear_logs
       runnable.test_run
-      assert_logs_match "concrete_runnable has stopped"
+      assert_logs_match "mosquito.concrete_runnable", "stopped"
     end
   end
 
