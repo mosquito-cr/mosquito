@@ -5,6 +5,17 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Mosquito::Api now allows for inspecting the state of the state of a mosquito cluster. Many of these features are disabled by default by the configuration property `config.publish_metrics`.
+    - Executor api implemented in #147
+    - JobRun api implemented in #148 and #161
+    - Overseer api implemented in #150
+    - Queue api implemented in #153
+- Mosquito now publishes a variety of events and metrics to a redis pubsub channel. This behavior is disabled by default with the configuration property `config.publish_metrics`.
+    - Executor events in #154: job-started and job-finished
+    - Overseer events in #160: starting, executor-created, executor-died, stopping, and stopped
+  The Mosquito API can be used to subscribe to these events with `Mosquito::API.event_receiver`
+
 ### Changed
 - (minor breaking) Logs are now emitted from runners with a slighly different source tag. (#152)
   For example:
