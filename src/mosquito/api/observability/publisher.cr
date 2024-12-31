@@ -1,12 +1,21 @@
 module Mosquito::Observability::Publisher
   getter publish_context : PublishContext
 
+  macro metrics(&block)
+    if Mosquito.configuration.metrics?
+      {{ block.body }}
+    end
+  end
+
+  @[AlwaysInline]
   def publish(data : NamedTuple)
-    Log.debug { "Publishing #{data} to #{@publish_context.originator}" }
-    Mosquito.backend.publish(
-      publish_context.originator,
-      data.to_json
-    )
+    metrics do
+      Log.debug { "Publishing #{data} to #{@publish_context.originator}" }
+      Mosquito.backend.publish(
+        publish_context.originator,
+        data.to_json
+      )
+    end
   end
 
   class PublishContext

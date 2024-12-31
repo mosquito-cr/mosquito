@@ -49,8 +49,9 @@ module Mosquito
     end
 
     def starting
-      publish({event: "starting"})
       log.info { "Starting #{overseer.executor_count} executors." }
+
+      publish({event: "starting"})
       heartbeat
     end
 
@@ -79,8 +80,9 @@ module Mosquito
 
     def executor_died(executor : Runners::Executor) : Nil
       publish({event: "executor-died", executor: executor.object_id})
+
       log.fatal do
-        <<-MSG
+       <<-MSG
           Executor #{executor.runnable_name} died.
           A new executor will be started.
         MSG

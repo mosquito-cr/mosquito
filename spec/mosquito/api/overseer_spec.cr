@@ -5,8 +5,8 @@ describe Mosquito::Api::Overseer do
   let(:api) { Mosquito::Api::Overseer.new(overseer.object_id.to_s) }
   let(:observer) { Observability::Overseer.new(overseer) }
   let(:executor) { MockExecutor.new(
-   Channel(Tuple(Mosquito::JobRun, Mosquito::Queue)).new,
-   Channel(Bool).new
+    Channel(Tuple(Mosquito::JobRun, Mosquito::Queue)).new,
+    Channel(Bool).new
   )}
 
   it "allows fetching a list of executors" do

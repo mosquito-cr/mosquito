@@ -18,6 +18,8 @@ module Mosquito
     property global_prefix : String? = nil
     property backend : Mosquito::Backend.class = Mosquito::RedisBackend
 
+    property publish_metrics : Bool = false
+
     # How often a mosquito runner should emit a heartbeat metric.
     property heartbeat_interval : Time::Span = 20.seconds
 
@@ -46,6 +48,10 @@ module Mosquito
 
         raise message
       end
+    end
+
+    def metrics? : Bool
+      publish_metrics
     end
   end
 end

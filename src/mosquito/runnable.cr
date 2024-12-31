@@ -109,7 +109,6 @@ module Mosquito
         return
       end
 
-      log.debug { "state transitioning from #{@state} to #{new_state}" }
       @state = new_state
     end
 
