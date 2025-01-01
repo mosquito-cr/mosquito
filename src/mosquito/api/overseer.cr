@@ -62,7 +62,7 @@ module Mosquito
 
     def stopped
       log.info { "All executors stopped." }
-      log.info { "Overseer #{instance_id} finished for now." }
+      log.info { "Finished for now." }
       publish({event: "stopped"})
     end
 
