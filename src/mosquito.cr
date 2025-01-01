@@ -1,5 +1,6 @@
 require "./mosquito/runners/run_at_most"
 
+require "./mosquito/api"
 require "./mosquito/**"
 
 module Mosquito

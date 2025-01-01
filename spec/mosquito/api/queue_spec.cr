@@ -1,6 +1,6 @@
 require "../../spec_helper"
 
-describe Mosquito::Api::JobRun do
+describe Mosquito::Api::Queue do
   let(job_classes) {
     [QueuedTestJob, PassingJob, FailingJob, QueueHookedTestJob]
   }
@@ -53,5 +53,31 @@ describe Mosquito::Api::JobRun do
         assert_equal job.class.name.underscore, job_runs.first.type
       end
     end
+  end
+
+  it "publishes an event when a job is enqueued" do
+    eavesdrop do
+      queued_test_job.enqueue
+    end
+    assert_message_received /enqueued/
+  end
+
+  it "publishes an event when a job is enqueued for later" do
+    eavesdrop do
+      queued_test_job.enqueue(60.seconds.from_now)
+    end
+    assert_message_received /enqueued/
+  end
+
+  it "publishes an event when a job is dequeued" do
+    clean_slate do
+      queued_test_job.enqueue
+
+      eavesdrop do
+        queued_test_job.class.queue.dequeue
+      end
+    end
+
+    assert_message_received /dequeued/
   end
 end

@@ -1,5 +1,5 @@
-module Mosquito::Api
-  class Queue
+module Mosquito
+  class Api::Queue
     getter name : String
 
     private property backend : Mosquito::Backend
@@ -33,6 +33,33 @@ module Mosquito::Api
 
     def <=>(other)
       name <=> other.name
+    end
+  end
+
+  class Observability::Queue
+    include Publisher
+
+    getter log : ::Log
+    getter publish_context : PublishContext
+
+    def initialize(@queue : Mosquito::Queue)
+      @publish_context = PublishContext.new [:queue, queue.name]
+      @log = Log.for(queue.name)
+    end
+
+    def enqueued(job_run : JobRun)
+      log.trace { "Enqueuing #{job_run.id} for immediate execution" }
+      publish({event: "enqueued", job_run: job_run.id})
+    end
+
+    def enqueued(job_run : JobRun, at execute_time : Time)
+      log.trace { "Enqueuing #{job_run.id} for execution at #{execute_time}" }
+      publish({event: "enqueued", job_run: job_run.id, execute_time: execute_time})
+    end
+
+    def dequeued(job_run : JobRun)
+      log.trace { "Dequeuing #{job_run.id}" }
+      publish({event: "dequeued", job_run: job_run.id})
     end
   end
 end

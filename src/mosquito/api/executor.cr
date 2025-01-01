@@ -48,7 +48,7 @@ module Mosquito
         @publish_context = PublishContext.new [:executor, executor.object_id]
       end
 
-      def execute(job_run : JobRun, from_queue : Queue)
+      def execute(job_run : JobRun, from_queue : Mosquito::Queue)
         metrics do
           @metadata["current_job"] = job_run.id
           @metadata["current_job_queue"] = from_queue.name
