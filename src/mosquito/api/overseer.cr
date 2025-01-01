@@ -1,18 +1,23 @@
 module Mosquito
+  # A utility for inspecting the state of Mosquito Overseers.
   class Api::Overseer
+    # The instance ID of the overseer being inspected.
     getter :instance_id
     private getter :metadata
 
+    # Creates a new Api::Overseer by its instance ID.
     def initialize(@instance_id : String)
       @metadata = Metadata.new Observability::Overseer.metadata_key(@instance_id), readonly: true
     end
 
+    # Retrieves a list of all overseers in the backend.
     def self.all : Array(self)
       Mosquito.backend.list_overseers.map do |id|
         new id
       end
     end
 
+    # Retrieves a list of executors managed by this overseer.
     def executors : Array(Executor)
       if executor_list = @metadata["executors"]?
         executor_list.split(",").map do |name|
@@ -23,6 +28,7 @@ module Mosquito
       end
     end
 
+    # The time the overseer last sent a heartbeat.
     def last_heartbeat : Time?
       metadata.heartbeat?
     end
