@@ -212,6 +212,11 @@
       
     </li>
   
+  <li class=" " data-id="mosquito/Mosquito/Observability/Queue" data-name="mosquito::observability::queue">
+      <a href="../../Mosquito/Observability/Queue.html">Queue</a>
+      
+    </li>
+  
 </ul>
 
       
@@ -381,6 +386,17 @@
 
 
 
+  <h2>
+    <a id="overview" class="anchor" href="#overview">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Overview
+  </h2>
+
+  <p>A utility for inspecting the state of Mosquito Overseers.</p>
+
 
 
 
@@ -426,6 +442,8 @@
       <li class="entry-summary">
         <a href="#new%28instance_id%3AString%29-class-method" class="signature"><strong>.new</strong>(instance_id : String)</a>
         
+          <div class="summary"><p>Creates a new Api::Overseer by its instance ID.</p></div>
+        
       </li>
     
   </ul>
@@ -444,6 +462,8 @@
     
       <li class="entry-summary">
         <a href="#all%3AArray%28self%29-class-method" class="signature"><strong>.all</strong> : Array(<span class="k">self</span>)</a>
+        
+          <div class="summary"><p>Retrieves a list of all overseers in the backend.</p></div>
         
       </li>
     
@@ -466,15 +486,21 @@
       <li class="entry-summary">
         <a href="#executors%3AArray%28Executor%29-instance-method" class="signature"><strong>#executors</strong> : Array(Executor)</a>
         
+          <div class="summary"><p>Retrieves a list of executors managed by this overseer.</p></div>
+        
       </li>
     
       <li class="entry-summary">
         <a href="#instance_id%3AString-instance-method" class="signature"><strong>#instance_id</strong> : String</a>
         
+          <div class="summary"><p>The instance ID of the overseer being inspected.</p></div>
+        
       </li>
     
       <li class="entry-summary">
         <a href="#last_heartbeat%3ATime%7CNil-instance-method" class="signature"><strong>#last_heartbeat</strong> : Time | Nil</a>
+        
+          <div class="summary"><p>The time the overseer last sent a heartbeat.</p></div>
         
       </li>
     
@@ -530,6 +556,11 @@
         <a class="method-permalink" href="#new%28instance_id%3AString%29-class-method">#</a>
       </div>
       
+        <div class="doc">
+          
+          <p>Creates a new Api::Overseer by its instance ID.</p>
+        </div>
+      
       <br/>
       <div>
         
@@ -555,6 +586,11 @@
 
         <a class="method-permalink" href="#all%3AArray%28self%29-class-method">#</a>
       </div>
+      
+        <div class="doc">
+          
+          <p>Retrieves a list of all overseers in the backend.</p>
+        </div>
       
       <br/>
       <div>
@@ -584,6 +620,11 @@
         <a class="method-permalink" href="#executors%3AArray%28Executor%29-instance-method">#</a>
       </div>
       
+        <div class="doc">
+          
+          <p>Retrieves a list of executors managed by this overseer.</p>
+        </div>
+      
       <br/>
       <div>
         
@@ -598,6 +639,11 @@
         <a class="method-permalink" href="#instance_id%3AString-instance-method">#</a>
       </div>
       
+        <div class="doc">
+          
+          <p>The instance ID of the overseer being inspected.</p>
+        </div>
+      
       <br/>
       <div>
         
@@ -611,6 +657,11 @@
 
         <a class="method-permalink" href="#last_heartbeat%3ATime%7CNil-instance-method">#</a>
       </div>
+      
+        <div class="doc">
+          
+          <p>The time the overseer last sent a heartbeat.</p>
+        </div>
       
       <br/>
       <div>

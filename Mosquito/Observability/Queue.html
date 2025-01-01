@@ -14,7 +14,7 @@
 <script type="text/javascript" src="../../js/doc.js"></script>
 
   <meta name="repository-name" content="mosquito">
-  <title>Mosquito::Api::JobRun - mosquito 2.0.0</title>
+  <title>Mosquito::Observability::Queue - mosquito 2.0.0</title>
   <script type="text/javascript">
     CrystalDocs.base_path = "../../";
   </script>
@@ -62,7 +62,7 @@
       
         <ul>
   
-  <li class="parent open current" data-id="mosquito/Mosquito/Api" data-name="mosquito::api">
+  <li class="parent " data-id="mosquito/Mosquito/Api" data-name="mosquito::api">
       <a href="../../Mosquito/Api.html">Api</a>
       
         <ul>
@@ -72,7 +72,7 @@
       
     </li>
   
-  <li class=" current" data-id="mosquito/Mosquito/Api/JobRun" data-name="mosquito::api::jobrun">
+  <li class=" " data-id="mosquito/Mosquito/Api/JobRun" data-name="mosquito::api::jobrun">
       <a href="../../Mosquito/Api/JobRun.html">JobRun</a>
       
     </li>
@@ -172,7 +172,7 @@
       
     </li>
   
-  <li class="parent " data-id="mosquito/Mosquito/Observability" data-name="mosquito::observability">
+  <li class="parent open current" data-id="mosquito/Mosquito/Observability" data-name="mosquito::observability">
       <a href="../../Mosquito/Observability.html">Observability</a>
       
         <ul>
@@ -212,7 +212,7 @@
       
     </li>
   
-  <li class=" " data-id="mosquito/Mosquito/Observability/Queue" data-name="mosquito::observability::queue">
+  <li class=" current" data-id="mosquito/Mosquito/Observability/Queue" data-name="mosquito::observability::queue">
       <a href="../../Mosquito/Observability/Queue.html">Queue</a>
       
     </li>
@@ -376,12 +376,12 @@
 <div class="main-content">
 <h1 class="type-name">
 
-  <span class="kind">class</span> Mosquito::<wbr>Api::<wbr>JobRun
+  <span class="kind">class</span> Mosquito::<wbr>Observability::<wbr>Queue
 
 </h1>
 
 
-  <ul class="superclass-hierarchy"><li class="superclass"><a href="../../Mosquito/Api/JobRun.html">Mosquito::Api::JobRun</a></li><li class="superclass">Reference</li><li class="superclass">Object</li></ul>
+  <ul class="superclass-hierarchy"><li class="superclass"><a href="../../Mosquito/Observability/Queue.html">Mosquito::Observability::Queue</a></li><li class="superclass">Reference</li><li class="superclass">Object</li></ul>
 
 
 
@@ -389,6 +389,20 @@
 
 
 
+
+  <h2>
+    <a id="included-modules" class="anchor" href="#included-modules">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Included Modules
+  </h2>
+  <ul class="other-types-list">
+    
+      <li class="other-type"><a href="../../Mosquito/Observability/Publisher.html">Mosquito::Observability::Publisher</a></li>
+    
+  </ul>
 
 
 
@@ -409,7 +423,7 @@
   </h2>
   
     
-      mosquito/api/job_run.cr
+      mosquito/api/queue.cr
     
     <br/>
   
@@ -429,7 +443,7 @@
   <ul class="list-summary">
     
       <li class="entry-summary">
-        <a href="#new%28id%3AString%29-class-method" class="signature"><strong>.new</strong>(id : String)</a>
+        <a href="#new%28queue%3AMosquito%3A%3AQueue%29-class-method" class="signature"><strong>.new</strong>(queue : Mosquito::Queue)</a>
         
       </li>
     
@@ -452,48 +466,27 @@
   <ul class="list-summary">
     
       <li class="entry-summary">
-        <a href="#enqueue_time%3ATime-instance-method" class="signature"><strong>#enqueue_time</strong> : Time</a>
-        
-          <div class="summary"><p>A Time object representing the moment this job was enqueued.</p></div>
+        <a href="#dequeued%28job_run%3AJobRun%29-instance-method" class="signature"><strong>#dequeued</strong>(job_run : JobRun)</a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#finished_at%3ATime%7CNil-instance-method" class="signature"><strong>#finished_at</strong> : Time | Nil</a>
+        <a href="#enqueued%28job_run%3AJobRun%2Catexecute_time%3ATime%29-instance-method" class="signature"><strong>#enqueued</strong>(job_run : JobRun, at execute_time : Time)</a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#found%3F%3ABool-instance-method" class="signature"><strong>#found?</strong> : Bool</a>
+        <a href="#enqueued%28job_run%3AJobRun%29-instance-method" class="signature"><strong>#enqueued</strong>(job_run : JobRun)</a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#id%3AString-instance-method" class="signature"><strong>#id</strong> : String</a>
+        <a href="#log%3A%3A%3ALog-instance-method" class="signature"><strong>#log</strong> : ::Log</a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#retry_count%3AInt-instance-method" class="signature"><strong>#retry_count</strong> : Int</a>
-        
-          <div class="summary"><p>The number of times this job has been retried.</p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#runtime_parameters%3AHash%28String%2CString%29-instance-method" class="signature"><strong>#runtime_parameters</strong> : Hash(String, String)</a>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#started_at%3ATime%7CNil-instance-method" class="signature"><strong>#started_at</strong> : Time | Nil</a>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#type%3AString-instance-method" class="signature"><strong>#type</strong> : String</a>
-        
-          <div class="summary"><p>The type of job this job run is for.</p></div>
+        <a href="#publish_context%3APublishContext-instance-method" class="signature"><strong>#publish_context</strong> : PublishContext</a>
         
       </li>
     
@@ -502,6 +495,42 @@
 
 
 <div class="methods-inherited">
+  
+    
+
+  <h3>Instance methods inherited from module <code><a href="../../Mosquito/Observability/Publisher.html">Mosquito::Observability::Publisher</a></code></h3>
+  
+  
+    <a href="../../Mosquito/Observability/Publisher.html#publish%28data%3ANamedTuple%29-instance-method" class="tooltip">
+      <span>publish(data : NamedTuple)</span>
+    publish</a>, 
+    
+  
+    <a href="../../Mosquito/Observability/Publisher.html#publish_context%3APublishContext-instance-method" class="tooltip">
+      <span>publish_context : PublishContext</span>
+    publish_context</a>
+    
+  
+
+
+    
+
+
+    
+
+
+    
+
+  <h3>Macros inherited from module <code><a href="../../Mosquito/Observability/Publisher.html">Mosquito::Observability::Publisher</a></code></h3>
+  
+  
+    <a href="../../Mosquito/Observability/Publisher.html#metrics%28%26block%29-macro" class="tooltip">
+      <span>metrics(&block)</span>
+    metrics</a>
+    
+  
+
+
   
     
 
@@ -541,12 +570,12 @@
     Constructor Detail
   </h2>
   
-    <div class="entry-detail" id="new(id:String)-class-method">
+    <div class="entry-detail" id="new(queue:Mosquito::Queue)-class-method">
       <div class="signature">
         
-        def self.<strong>new</strong>(id : String)
+        def self.<strong>new</strong>(queue : <a href="../../Mosquito/Queue.html">Mosquito::Queue</a>)
 
-        <a class="method-permalink" href="#new%28id%3AString%29-class-method">#</a>
+        <a class="method-permalink" href="#new%28queue%3AMosquito%3A%3AQueue%29-class-method">#</a>
       </div>
       
       <br/>
@@ -571,31 +600,12 @@
     Instance Method Detail
   </h2>
   
-    <div class="entry-detail" id="enqueue_time:Time-instance-method">
+    <div class="entry-detail" id="dequeued(job_run:JobRun)-instance-method">
       <div class="signature">
         
-        def <strong>enqueue_time</strong> : Time
+        def <strong>dequeued</strong>(job_run : <a href="../../Mosquito/JobRun.html">JobRun</a>)
 
-        <a class="method-permalink" href="#enqueue_time%3ATime-instance-method">#</a>
-      </div>
-      
-        <div class="doc">
-          
-          <p>A Time object representing the moment this job was enqueued.</p>
-        </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="finished_at:Time|Nil-instance-method">
-      <div class="signature">
-        
-        def <strong>finished_at</strong> : Time | Nil
-
-        <a class="method-permalink" href="#finished_at%3ATime%7CNil-instance-method">#</a>
+        <a class="method-permalink" href="#dequeued%28job_run%3AJobRun%29-instance-method">#</a>
       </div>
       
       <br/>
@@ -604,12 +614,12 @@
       </div>
     </div>
   
-    <div class="entry-detail" id="found?:Bool-instance-method">
+    <div class="entry-detail" id="enqueued(job_run:JobRun,atexecute_time:Time)-instance-method">
       <div class="signature">
         
-        def <strong>found?</strong> : Bool
+        def <strong>enqueued</strong>(job_run : <a href="../../Mosquito/JobRun.html">JobRun</a>, at execute_time : Time)
 
-        <a class="method-permalink" href="#found%3F%3ABool-instance-method">#</a>
+        <a class="method-permalink" href="#enqueued%28job_run%3AJobRun%2Catexecute_time%3ATime%29-instance-method">#</a>
       </div>
       
       <br/>
@@ -618,12 +628,12 @@
       </div>
     </div>
   
-    <div class="entry-detail" id="id:String-instance-method">
+    <div class="entry-detail" id="enqueued(job_run:JobRun)-instance-method">
       <div class="signature">
         
-        def <strong>id</strong> : String
+        def <strong>enqueued</strong>(job_run : <a href="../../Mosquito/JobRun.html">JobRun</a>)
 
-        <a class="method-permalink" href="#id%3AString-instance-method">#</a>
+        <a class="method-permalink" href="#enqueued%28job_run%3AJobRun%29-instance-method">#</a>
       </div>
       
       <br/>
@@ -632,31 +642,12 @@
       </div>
     </div>
   
-    <div class="entry-detail" id="retry_count:Int-instance-method">
+    <div class="entry-detail" id="log:::Log-instance-method">
       <div class="signature">
         
-        def <strong>retry_count</strong> : Int
+        def <strong>log</strong> : ::Log
 
-        <a class="method-permalink" href="#retry_count%3AInt-instance-method">#</a>
-      </div>
-      
-        <div class="doc">
-          
-          <p>The number of times this job has been retried.</p>
-        </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="runtime_parameters:Hash(String,String)-instance-method">
-      <div class="signature">
-        
-        def <strong>runtime_parameters</strong> : Hash(String, String)
-
-        <a class="method-permalink" href="#runtime_parameters%3AHash%28String%2CString%29-instance-method">#</a>
+        <a class="method-permalink" href="#log%3A%3A%3ALog-instance-method">#</a>
       </div>
       
       <br/>
@@ -665,32 +656,13 @@
       </div>
     </div>
   
-    <div class="entry-detail" id="started_at:Time|Nil-instance-method">
+    <div class="entry-detail" id="publish_context:PublishContext-instance-method">
       <div class="signature">
         
-        def <strong>started_at</strong> : Time | Nil
+        def <strong>publish_context</strong> : <a href="../../Mosquito/Observability/Publisher/PublishContext.html">PublishContext</a>
 
-        <a class="method-permalink" href="#started_at%3ATime%7CNil-instance-method">#</a>
+        <a class="method-permalink" href="#publish_context%3APublishContext-instance-method">#</a>
       </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="type:String-instance-method">
-      <div class="signature">
-        
-        def <strong>type</strong> : String
-
-        <a class="method-permalink" href="#type%3AString-instance-method">#</a>
-      </div>
-      
-        <div class="doc">
-          
-          <p>The type of job this job run is for.</p>
-        </div>
       
       <br/>
       <div>

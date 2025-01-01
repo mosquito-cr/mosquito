@@ -212,6 +212,11 @@
       
     </li>
   
+  <li class=" " data-id="mosquito/Mosquito/Observability/Queue" data-name="mosquito::observability::queue">
+      <a href="../../Mosquito/Observability/Queue.html">Queue</a>
+      
+    </li>
+  
 </ul>
 
       
@@ -381,6 +386,17 @@
 
 
 
+  <h2>
+    <a id="overview" class="anchor" href="#overview">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Overview
+  </h2>
+
+  <p>Represents a named queue in the system, and allows querying the state of the queue. For more about the internals of a Queue in Mosquito, see <code><a href="../../Mosquito/Queue.html">Mosquito::Queue</a></code>.</p>
+
 
 
 
@@ -426,6 +442,8 @@
       <li class="entry-summary">
         <a href="#new%28name%3AString%29-class-method" class="signature"><strong>.new</strong>(name : String)</a>
         
+          <div class="summary"><p>Creates an instance of a named queue.</p></div>
+        
       </li>
     
   </ul>
@@ -444,6 +462,8 @@
     
       <li class="entry-summary">
         <a href="#all%3AArray%28Queue%29-class-method" class="signature"><strong>.all</strong> : Array(Queue)</a>
+        
+          <div class="summary"><p>Returns a list of all known named queues in the system.</p></div>
         
       </li>
     
@@ -471,35 +491,49 @@
       <li class="entry-summary">
         <a href="#dead_job_runs%3AArray%28JobRun%29-instance-method" class="signature"><strong>#dead_job_runs</strong> : Array(JobRun)</a>
         
+          <div class="summary"><p>Gets a list of all the job runs in the internal dead queue.</p></div>
+        
       </li>
     
       <li class="entry-summary">
         <a href="#name%3AString-instance-method" class="signature"><strong>#name</strong> : String</a>
+        
+          <div class="summary"><p>The name of the queue.</p></div>
         
       </li>
     
       <li class="entry-summary">
         <a href="#pending_job_runs%3AArray%28JobRun%29-instance-method" class="signature"><strong>#pending_job_runs</strong> : Array(JobRun)</a>
         
+          <div class="summary"><p>Gets a list of all the job runs in the internal pending queue.</p></div>
+        
       </li>
     
       <li class="entry-summary">
         <a href="#scheduled_job_runs%3AArray%28JobRun%29-instance-method" class="signature"><strong>#scheduled_job_runs</strong> : Array(JobRun)</a>
+        
+          <div class="summary"><p>Gets a list of all the job runs in the internal scheduled queue.</p></div>
         
       </li>
     
       <li class="entry-summary">
         <a href="#size%3AInt64-instance-method" class="signature"><strong>#size</strong> : Int64</a>
         
+          <div class="summary"><p>The operating size of the queue, not including dead jobs.</p></div>
+        
       </li>
     
       <li class="entry-summary">
         <a href="#size_details%3AHash%28String%2CInt64%29-instance-method" class="signature"><strong>#size_details</strong> : Hash(String, Int64)</a>
         
+          <div class="summary"><p>The size of the queue, broken out by job state.</p></div>
+        
       </li>
     
       <li class="entry-summary">
         <a href="#waiting_job_runs%3AArray%28JobRun%29-instance-method" class="signature"><strong>#waiting_job_runs</strong> : Array(JobRun)</a>
+        
+          <div class="summary"><p>Gets a list of all the job runs in the internal waiting queue.</p></div>
         
       </li>
     
@@ -555,6 +589,11 @@
         <a class="method-permalink" href="#new%28name%3AString%29-class-method">#</a>
       </div>
       
+        <div class="doc">
+          
+          <p>Creates an instance of a named queue.</p>
+        </div>
+      
       <br/>
       <div>
         
@@ -580,6 +619,11 @@
 
         <a class="method-permalink" href="#all%3AArray%28Queue%29-class-method">#</a>
       </div>
+      
+        <div class="doc">
+          
+          <p>Returns a list of all known named queues in the system.</p>
+        </div>
       
       <br/>
       <div>
@@ -623,6 +667,11 @@
         <a class="method-permalink" href="#dead_job_runs%3AArray%28JobRun%29-instance-method">#</a>
       </div>
       
+        <div class="doc">
+          
+          <p>Gets a list of all the job runs in the internal dead queue.</p>
+        </div>
+      
       <br/>
       <div>
         
@@ -636,6 +685,11 @@
 
         <a class="method-permalink" href="#name%3AString-instance-method">#</a>
       </div>
+      
+        <div class="doc">
+          
+          <p>The name of the queue.</p>
+        </div>
       
       <br/>
       <div>
@@ -651,6 +705,11 @@
         <a class="method-permalink" href="#pending_job_runs%3AArray%28JobRun%29-instance-method">#</a>
       </div>
       
+        <div class="doc">
+          
+          <p>Gets a list of all the job runs in the internal pending queue.</p>
+        </div>
+      
       <br/>
       <div>
         
@@ -664,6 +723,11 @@
 
         <a class="method-permalink" href="#scheduled_job_runs%3AArray%28JobRun%29-instance-method">#</a>
       </div>
+      
+        <div class="doc">
+          
+          <p>Gets a list of all the job runs in the internal scheduled queue.</p>
+        </div>
       
       <br/>
       <div>
@@ -679,6 +743,11 @@
         <a class="method-permalink" href="#size%3AInt64-instance-method">#</a>
       </div>
       
+        <div class="doc">
+          
+          <p>The operating size of the queue, not including dead jobs.</p>
+        </div>
+      
       <br/>
       <div>
         
@@ -693,6 +762,21 @@
         <a class="method-permalink" href="#size_details%3AHash%28String%2CInt64%29-instance-method">#</a>
       </div>
       
+        <div class="doc">
+          
+          <p>The size of the queue, broken out by job state.</p>
+<p>Example:</p>
+<pre><code class="language-crystal"><span class="t">Mosquito</span><span class="t">::</span><span class="t">Api</span><span class="t">::</span><span class="t">Queue</span>.all.first.size_details
+<span class="c"># =&gt; {&quot;waiting&quot; =&gt; 0, &quot;scheduled&quot; =&gt; 0, &quot;pending&quot; =&gt; 0, &quot;dead&quot; =&gt; 0}</span></code></pre>
+<p>The semantics of the keys are described in detail on the <code><a href="../../Mosquito/Queue.html">Mosquito::Queue</a></code> class, but in brief:</p>
+<ul>
+<li><code>scheduled</code> is a list of jobs which are scheduled to be executed at a later time.</li>
+<li><code>waiting</code> is a list of jobs which should be executed ASAP</li>
+<li><code>pending</code> is a list of jobs for which execution has started</li>
+<li><code>dead</code> is a list of jobs which have failed to execute</li>
+</ul>
+        </div>
+      
       <br/>
       <div>
         
@@ -706,6 +790,11 @@
 
         <a class="method-permalink" href="#waiting_job_runs%3AArray%28JobRun%29-instance-method">#</a>
       </div>
+      
+        <div class="doc">
+          
+          <p>Gets a list of all the job runs in the internal waiting queue.</p>
+        </div>
       
       <br/>
       <div>
