@@ -1,5 +1,8 @@
 module Mosquito
   module Api
+    # An interface for an executor.
+    #
+    # This is used to inspect the state of an executor. For more information about executors, see `Mosquito::Runners::Executor`.
     class Executor
       getter :instance_id
       private getter :metadata

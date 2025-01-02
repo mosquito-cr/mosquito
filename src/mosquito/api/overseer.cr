@@ -1,5 +1,7 @@
 module Mosquito
-  # A utility for inspecting the state of Mosquito Overseers.
+  # An interface for inspecting the state of Mosquito Overseers.
+  #
+  # For more information about overseers, see `Mosquito::Runners::Overseer`.
   class Api::Overseer
     # The instance ID of the overseer being inspected.
     getter :instance_id
