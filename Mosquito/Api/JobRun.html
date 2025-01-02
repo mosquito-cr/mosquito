@@ -386,6 +386,19 @@
 
 
 
+  <h2>
+    <a id="overview" class="anchor" href="#overview">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Overview
+  </h2>
+
+  <p>Represents a job run in Mosquito.</p>
+<p>This class is used to inspect a job run stored in the backend.</p>
+<p>For more information about a JobRun, see <code><a href="../../Mosquito/JobRun.html">Mosquito::JobRun</a></code>.</p>
+
 
 
 
@@ -454,22 +467,28 @@
       <li class="entry-summary">
         <a href="#enqueue_time%3ATime-instance-method" class="signature"><strong>#enqueue_time</strong> : Time</a>
         
-          <div class="summary"><p>A Time object representing the moment this job was enqueued.</p></div>
+          <div class="summary"><p>The moment this job was enqueued.</p></div>
         
       </li>
     
       <li class="entry-summary">
         <a href="#finished_at%3ATime%7CNil-instance-method" class="signature"><strong>#finished_at</strong> : Time | Nil</a>
         
+          <div class="summary"><p>The moment this job was finished.</p></div>
+        
       </li>
     
       <li class="entry-summary">
         <a href="#found%3F%3ABool-instance-method" class="signature"><strong>#found?</strong> : Bool</a>
         
+          <div class="summary"><p>Does a JobRun with this ID exist in the backend?</p></div>
+        
       </li>
     
       <li class="entry-summary">
         <a href="#id%3AString-instance-method" class="signature"><strong>#id</strong> : String</a>
+        
+          <div class="summary"><p>The id of the job run.</p></div>
         
       </li>
     
@@ -483,10 +502,14 @@
       <li class="entry-summary">
         <a href="#runtime_parameters%3AHash%28String%2CString%29-instance-method" class="signature"><strong>#runtime_parameters</strong> : Hash(String, String)</a>
         
+          <div class="summary"><p>Get the parameters the job was enqueued with.</p></div>
+        
       </li>
     
       <li class="entry-summary">
         <a href="#started_at%3ATime%7CNil-instance-method" class="signature"><strong>#started_at</strong> : Time | Nil</a>
+        
+          <div class="summary"><p>The moment this job was started.</p></div>
         
       </li>
     
@@ -581,7 +604,7 @@
       
         <div class="doc">
           
-          <p>A Time object representing the moment this job was enqueued.</p>
+          <p>The moment this job was enqueued.</p>
         </div>
       
       <br/>
@@ -598,6 +621,11 @@
         <a class="method-permalink" href="#finished_at%3ATime%7CNil-instance-method">#</a>
       </div>
       
+        <div class="doc">
+          
+          <p>The moment this job was finished.</p>
+        </div>
+      
       <br/>
       <div>
         
@@ -612,6 +640,11 @@
         <a class="method-permalink" href="#found%3F%3ABool-instance-method">#</a>
       </div>
       
+        <div class="doc">
+          
+          <p>Does a JobRun with this ID exist in the backend?</p>
+        </div>
+      
       <br/>
       <div>
         
@@ -625,6 +658,11 @@
 
         <a class="method-permalink" href="#id%3AString-instance-method">#</a>
       </div>
+      
+        <div class="doc">
+          
+          <p>The id of the job run.</p>
+        </div>
       
       <br/>
       <div>
@@ -659,6 +697,11 @@
         <a class="method-permalink" href="#runtime_parameters%3AHash%28String%2CString%29-instance-method">#</a>
       </div>
       
+        <div class="doc">
+          
+          <p>Get the parameters the job was enqueued with.</p>
+        </div>
+      
       <br/>
       <div>
         
@@ -672,6 +715,11 @@
 
         <a class="method-permalink" href="#started_at%3ATime%7CNil-instance-method">#</a>
       </div>
+      
+        <div class="doc">
+          
+          <p>The moment this job was started.</p>
+        </div>
       
       <br/>
       <div>
