@@ -53,8 +53,10 @@ module Mosquito
 
       def execute(job_run : JobRun, from_queue : Mosquito::Queue)
         metrics do
-          @metadata["current_job"] = job_run.id
-          @metadata["current_job_queue"] = from_queue.name
+          @metadata.set({
+            "current_job" => job_run.id,
+            "current_job_queue" => from_queue.name
+          })
         end
 
         log.info { "#{"Starting:".colorize.magenta} #{job_run} from #{from_queue.name}" }
@@ -78,8 +80,10 @@ module Mosquito
         publish({event: "job-finished", job_run: job_run.id})
 
         metrics do
-          @metadata["current_job"] = nil
-          @metadata["current_job_queue"] = nil
+          @metadata.set(
+            current_job: nil,
+            current_job_queue: nil
+          )
         end
       end
 

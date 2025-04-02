@@ -71,6 +71,28 @@ describe Mosquito::Metadata do
     end
   end
 
+  describe "with a hash" do
+    it "can set and read a hash" do
+      clean_slate do
+        store.set({"one" => "1", "two" => "2", "three" => "3"})
+        assert_equal "1", store["one"]?
+        assert_equal "2", store["two"]?
+        assert_equal "3", store["three"]?
+      end
+    end
+
+    it "can set a hash and delete a value from the hash" do
+      clean_slate do
+        store.set({"one" => "1", "two" => "2", "three" => "3"})
+        store.set({"two" => nil, "six" => "6"})
+        assert_equal "1", store["one"]?
+        assert_equal nil, store["two"]?
+        assert_equal "3", store["three"]?
+        assert_equal "6", store["six"]?
+      end
+    end
+  end
+
   it "can be deleted" do
     clean_slate do
       store[field] = "truth"

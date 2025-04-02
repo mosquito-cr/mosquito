@@ -21,4 +21,10 @@ describe Mosquito::Backend do
   it "can be initialized with a symbol name" do
     Mosquito.backend.named :symbol_backend
   end
+
+  it "can update a key with a hash" do
+    Mosquito.backend.set "key", {"field" => "value", "field2" => "value2"}
+    assert_equal "value", Mosquito.backend.get("key", "field")
+    assert_equal "value2", Mosquito.backend.get("key", "field2")
+  end
 end

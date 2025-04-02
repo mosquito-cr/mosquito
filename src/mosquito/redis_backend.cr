@@ -102,6 +102,20 @@ module Mosquito
       value
     end
 
+    def self.set(key : String, values : Hash(String, String?) | Hash(String, Nil) | Hash(String, String)) : Nil
+      redis.multi do |multi|
+        non_nil_key_values = values.compact
+        if non_nil_key_values.is_a?(Hash(String, String))
+          multi.hset key, non_nil_key_values
+        end
+
+        keys_for_nil_values = values.select{|_,v| v.nil?}.keys
+        keys_for_nil_values.each do |nil_key|
+          multi.hdel key, nil_key
+        end
+      end
+    end
+
     def self.delete_field(key : String, field : String) : Nil
       redis.hdel key, field
     end

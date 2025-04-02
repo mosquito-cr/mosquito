@@ -156,8 +156,8 @@ describe "Mosquito::Runners::Executor" do
         refute true, "Timed out waiting for job to finish"
       end
 
-      assert_nil api.current_job
-      assert_nil api.current_job_queue
+      assert_nil api.current_job, "Job should be cleared after finishing"
+      assert_nil api.current_job_queue, "Queue should be cleared after finishing"
     end
   end
 

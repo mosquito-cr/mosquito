@@ -78,6 +78,9 @@ module Mosquito
       ""
     end
 
+    def self.set(key : String, values : Hash(String, String?) | Hash(String, Nil) | Hash(String, String)) : Nil
+    end
+
     def self.delete_field(key : String, field : String) : Nil
     end
 
