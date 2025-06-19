@@ -23,6 +23,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
     `INFO - mosquito.runners.overseer.4315742080: Overseer<4315742080> is starting`
   Now the message is simply:
     `INFO - mosquito.overseer: starting`
+- Mosquito now runs CI checks for compatibility with Crystal 1.6
 ### Fixed
 - the queue_list runner was never being shut down, but it is now as of (#165)
 - Fixed a bug which would cause a mosquito server to hang at exit indefinitely if a job was mid-run during an interrupt. (#165)
