@@ -94,7 +94,7 @@ puts "Testing connection pooling with concurrent operations..."
 
 concurrent_time = Benchmark.measure do
   channel = Channel(Nil).new
-  
+
   20.times do |i|
     spawn do
       job = Mosquito::JobRun.new("concurrent_#{i}").tap(&.store)
@@ -102,7 +102,7 @@ concurrent_time = Benchmark.measure do
       channel.send(nil)
     end
   end
-  
+
   20.times { channel.receive }
 end
 

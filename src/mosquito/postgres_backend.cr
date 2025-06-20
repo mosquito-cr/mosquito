@@ -43,14 +43,14 @@ module Mosquito
       @@db ||= begin
         url = URI.parse(connection_url)
         params = url.query_params
-        
+
         # Set pool configuration from environment or defaults
         params["initial_pool_size"] = ENV["MOSQUITO_PG_POOL_INITIAL"]? || "1"
         params["max_pool_size"] = ENV["MOSQUITO_PG_POOL_MAX"]? || "5"
         params["max_idle_pool_size"] = ENV["MOSQUITO_PG_POOL_IDLE"]? || "1"
         params["checkout_timeout"] = ENV["MOSQUITO_PG_TIMEOUT"]? || "5"
         params["retry_attempts"] = ENV["MOSQUITO_PG_RETRY"]? || "1"
-        
+
         url.query_params = params
         DB.open(url.to_s)
       end
@@ -271,7 +271,7 @@ module Mosquito
         with_connection do |db|
           storage_deleted = db.exec("DELETE FROM mosquito_storage WHERE expires_at IS NOT NULL AND expires_at < CURRENT_TIMESTAMP")
           locks_deleted = db.exec("DELETE FROM mosquito_locks WHERE expires_at < CURRENT_TIMESTAMP")
-          
+
           storage_deleted.rows_affected.to_i32 + locks_deleted.rows_affected.to_i32
         end
       end
@@ -383,7 +383,7 @@ module Mosquito
     # Batch enqueue for better performance when enqueueing multiple jobs
     def enqueue_batch(job_runs : Array(JobRun)) : Array(JobRun)
       return [] of JobRun if job_runs.empty?
-      
+
       with_connection do |db|
         db.transaction do |tx|
           conn = tx.connection

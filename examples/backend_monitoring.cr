@@ -10,7 +10,7 @@ end
 # Create some test jobs
 class MonitoringTestJob < Mosquito::QueuedJob
   param message : String
-  
+
   def perform
     log "Processing: #{message}"
   end
@@ -88,7 +88,7 @@ puts "6. Job Search"
 if remaining_job = backend.dequeue
   job_id = remaining_job.id
   backend.finish(remaining_job) # Put it back
-  
+
   if found = backend.find_job(job_id)
     puts "   ✓ Found job #{job_id}"
   else
@@ -104,11 +104,11 @@ backend.transaction do
   parent = MonitoringTestJob.new(message: "Parent job").build_job_run
   parent.store
   backend.enqueue(parent)
-  
+
   child = MonitoringTestJob.new(message: "Child job").build_job_run
   child.store
   backend.enqueue(child)
-  
+
   puts "   ✓ Transaction complete"
 end
 puts
