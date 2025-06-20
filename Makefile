@@ -7,7 +7,7 @@ all: test
 
 .PHONY: test
 test:
-	crystal spec --error-trace -- --chaos
+	./scripts/test-ci.sh
 
 .PHONY: demo
 demo:

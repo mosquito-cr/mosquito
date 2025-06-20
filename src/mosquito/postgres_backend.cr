@@ -57,7 +57,7 @@ module Mosquito
     end
 
     private def with_connection(&)
-      self.class.connection_pool.using_connection do |conn|
+      self.class.with_connection do |conn|
         yield conn
       end
     end
