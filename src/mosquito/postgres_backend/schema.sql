@@ -1,4 +1,10 @@
 -- Mosquito PostgreSQL Backend Schema
+-- 
+-- Performance recommendations:
+-- 1. Adjust shared_buffers and work_mem for your workload
+-- 2. Consider partitioning mosquito_queues by created_at for high-volume systems
+-- 3. Run ANALYZE periodically on mosquito_queues table
+-- 4. Consider using pg_stat_statements to monitor query performance
 
 -- Key-value storage table for general data (metadata, job data, etc.)
 CREATE TABLE IF NOT EXISTS mosquito_storage (

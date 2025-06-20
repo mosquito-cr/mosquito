@@ -24,7 +24,7 @@ export DATABASE_URL="postgres://mosquito:mosquito@localhost:5433/mosquito_test"
 
 # Run the PostgreSQL backend tests
 echo "Running PostgreSQL backend tests..."
-crystal spec spec/mosquito/postgres_backend_spec.cr --no-color
+crystal spec spec/mosquito/postgres_backend_spec.cr spec/mosquito/postgres_backend_batch_spec.cr --no-color
 
 # Cleanup
 echo "Cleaning up..."

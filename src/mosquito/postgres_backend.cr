@@ -5,40 +5,73 @@ require "json"
 module Mosquito
   class PostgresBackend < Backend
     @@connection_url : String?
+    @@db : DB::Database?
+
+    # Common SQL queries as constants for better performance
+    UPSERT_STORAGE_SQL = <<-SQL
+      INSERT INTO mosquito_storage (key, data)
+      VALUES ($1, $2::jsonb)
+      ON CONFLICT (key) DO UPDATE
+      SET data = $2::jsonb, updated_at = CURRENT_TIMESTAMP
+    SQL
+
+    UPSERT_FIELD_SQL = <<-SQL
+      INSERT INTO mosquito_storage (key, data)
+      VALUES ($1, jsonb_build_object($2::text, $3::text))
+      ON CONFLICT (key) DO UPDATE
+      SET data = mosquito_storage.data || jsonb_build_object($2::text, $3::text),
+          updated_at = CURRENT_TIMESTAMP
+    SQL
 
     def initialize(name : String | Symbol)
       super(name)
     end
 
     def self.connection_url=(url : String)
+      # Close existing connection pool if URL changes
+      @@db.try(&.close) if @@connection_url && @@connection_url != url
       @@connection_url = url
+      @@db = nil
     end
 
     def self.connection_url
       @@connection_url ||= ENV["DATABASE_URL"]? || raise "PostgresBackend requires DATABASE_URL or explicit connection_url configuration"
     end
 
-    private def with_connection(&)
-      DB.open(self.class.connection_url) do |db|
-        yield db
+    def self.connection_pool : DB::Database
+      # Build connection URL with pool parameters
+      @@db ||= begin
+        url = URI.parse(connection_url)
+        params = url.query_params
+        
+        # Set pool configuration from environment or defaults
+        params["initial_pool_size"] = ENV["MOSQUITO_PG_POOL_INITIAL"]? || "1"
+        params["max_pool_size"] = ENV["MOSQUITO_PG_POOL_MAX"]? || "5"
+        params["max_idle_pool_size"] = ENV["MOSQUITO_PG_POOL_IDLE"]? || "1"
+        params["checkout_timeout"] = ENV["MOSQUITO_PG_TIMEOUT"]? || "5"
+        params["retry_attempts"] = ENV["MOSQUITO_PG_RETRY"]? || "1"
+        
+        url.query_params = params
+        DB.open(url.to_s)
       end
     end
 
-    private def self.with_connection(&)
-      DB.open(connection_url) do |db|
-        yield db
+    private def with_connection(&)
+      self.class.connection_pool.using_connection do |conn|
+        yield conn
+      end
+    end
+
+    def self.with_connection(&)
+      connection_pool.using_connection do |conn|
+        yield conn
       end
     end
 
     module ClassMethods
       def store(key : String, value : Hash(String, String)) : Nil
         with_connection do |db|
-          db.exec(<<-SQL, key, value.to_json)
-            INSERT INTO mosquito_storage (key, data)
-            VALUES ($1, $2::jsonb)
-            ON CONFLICT (key) DO UPDATE
-            SET data = $2::jsonb, updated_at = CURRENT_TIMESTAMP
-          SQL
+          db.exec(UPSERT_STORAGE_SQL, key, value.to_json)
         end
       end
 
@@ -139,13 +172,7 @@ module Mosquito
 
       def set(key : String, field : String, value : String) : String
         with_connection do |db|
-          db.exec(<<-SQL, key, field, value)
-            INSERT INTO mosquito_storage (key, data)
-            VALUES ($1, jsonb_build_object($2::text, $3::text))
-            ON CONFLICT (key) DO UPDATE
-            SET data = mosquito_storage.data || jsonb_build_object($2::text, $3::text),
-                updated_at = CURRENT_TIMESTAMP
-          SQL
+          db.exec(UPSERT_FIELD_SQL, key, field, value)
         end
         value
       end
@@ -236,6 +263,16 @@ module Mosquito
       def flush : Nil
         with_connection do |db|
           db.exec("TRUNCATE mosquito_storage, mosquito_queues, mosquito_locks, mosquito_notifications")
+        end
+      end
+
+      # Clean up expired entries - useful for periodic maintenance
+      def cleanup_expired : Int32
+        with_connection do |db|
+          storage_deleted = db.exec("DELETE FROM mosquito_storage WHERE expires_at IS NOT NULL AND expires_at < CURRENT_TIMESTAMP")
+          locks_deleted = db.exec("DELETE FROM mosquito_locks WHERE expires_at < CURRENT_TIMESTAMP")
+          
+          storage_deleted.rows_affected.to_i32 + locks_deleted.rows_affected.to_i32
         end
       end
 
@@ -341,6 +378,24 @@ module Mosquito
         SQL
       end
       job_run
+    end
+
+    # Batch enqueue for better performance when enqueueing multiple jobs
+    def enqueue_batch(job_runs : Array(JobRun)) : Array(JobRun)
+      return [] of JobRun if job_runs.empty?
+      
+      with_connection do |db|
+        db.transaction do |tx|
+          conn = tx.connection
+          job_runs.each do |job_run|
+            conn.exec(<<-SQL, @name, job_run.id)
+              INSERT INTO mosquito_queues (queue_name, queue_type, job_data)
+              VALUES ($1, 'waiting', $2)
+            SQL
+          end
+        end
+      end
+      job_runs
     end
 
     def dequeue : JobRun?
