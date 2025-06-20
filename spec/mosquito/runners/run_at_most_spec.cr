@@ -29,7 +29,7 @@ describe "Mosquito::yielder#run_at_most" do
     count = 0
     moment = Time.utc
     yielder
-    incrementy = ->() do
+    incrementy = -> do
       yielder.yield_once_a_second do
         count += 1
       end

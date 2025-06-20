@@ -59,5 +59,65 @@ module Mosquito::Api
     def retry_count : Int
       config["retry_count"].to_i
     end
+
+    # The duration of the job run if it has finished.
+    def duration : Time::Span?
+      if (start_time = started_at) && (end_time = finished_at)
+        end_time - start_time
+      end
+    end
+
+    # The current state of the job run.
+    def state : String
+      if finished_at
+        "finished"
+      elsif started_at
+        "running"
+      else
+        "queued"
+      end
+    end
+
+    # Check if the job run was successful.
+    def successful? : Bool
+      !!finished_at && !dead?
+    end
+
+    # Check if the job run failed.
+    def failed? : Bool
+      dead?
+    end
+
+    # Check if the job run is in the dead queue.
+    def dead? : Bool
+      # Check if this job exists in any dead queue
+      Mosquito.backend.list_queues.any? do |queue_name|
+        backend = Mosquito.backend.named(queue_name)
+        backend.dump_dead_q.includes?(id)
+      end
+    end
+
+    # Get the queue this job belongs to.
+    def queue_name : String?
+      config["queue"]?
+    end
+
+    # JSON representation of the job run for API responses.
+    def to_h
+      {
+        "id"                 => id,
+        "type"               => type,
+        "state"              => state,
+        "queue_name"         => queue_name,
+        "enqueue_time"       => enqueue_time,
+        "started_at"         => started_at,
+        "finished_at"        => finished_at,
+        "duration"           => duration.try(&.total_milliseconds.to_i64),
+        "retry_count"        => retry_count,
+        "successful"         => successful?,
+        "failed"             => failed?,
+        "runtime_parameters" => runtime_parameters,
+      }
+    end
   end
 end

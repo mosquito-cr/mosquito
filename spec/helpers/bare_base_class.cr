@@ -10,11 +10,9 @@ module Mosquito
       @@mapping = {} of String => Job.class
 
       yield
-
     ensure
       @@mapping = mapping unless mapping.nil?
       @@scheduled_job_runs = scheduled_job_runs unless scheduled_job_runs.nil?
     end
   end
 end
-

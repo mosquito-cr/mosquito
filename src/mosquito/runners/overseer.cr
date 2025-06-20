@@ -115,7 +115,6 @@ module Mosquito::Runners
         return
       end
 
-
       log.trace { "Waiting for an idle executor" }
       all_executors_busy = true
 
@@ -136,14 +135,13 @@ module Mosquito::Runners
       # If none of the executors is idle, don't dequeue anything or it'll get lost.
       when all_executors_busy
         log.trace { "No idle executors" }
-
-      # We know that an executor is idle and will take the work, it's safe to dequeue.
+        # We know that an executor is idle and will take the work, it's safe to dequeue.
       when next_job_run = dequeue_job?
         job_run, queue = next_job_run
         log.trace { "Dequeued job: #{job_run.id} #{queue.name}" }
         work_handout.send next_job_run
 
-      # An executor is idle, but dequeue returned nil.
+        # An executor is idle, but dequeue returned nil.
       else
         log.trace { "No job to dequeue" }
         sleep
@@ -165,7 +163,7 @@ module Mosquito::Runners
     def dequeue_job? : Tuple(JobRun, Queue)?
       queue_list.each do |q|
         if job_run = q.dequeue
-          return { job_run, q }
+          return {job_run, q}
         end
       end
     end
@@ -175,7 +173,7 @@ module Mosquito::Runners
     # When a job fails any exceptions are caught and logged. If a job causes something more
     # catastrophic we can try to recover by spawning a new executor.
     def check_for_deceased_runners : Nil
-      executors.select{|e| e.state.started?}.select(&.dead?).each do |dead_executor|
+      executors.select { |e| e.state.started? }.select(&.dead?).each do |dead_executor|
         Log.fatal do
           <<-MSG
             Executor #{dead_executor.runnable_name} died.

@@ -44,9 +44,8 @@ module Mosquito
       @type : String,
       @enqueue_time : Time = Time.utc,
       id : String? = nil,
-      @retry_count : Int32 = 0
+      @retry_count : Int32 = 0,
     )
-
       @id = id || KeyBuilder.build @enqueue_time.to_unix_ms.to_s, rand(1000)
       @config = {} of String => String
       @job = nil

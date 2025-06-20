@@ -44,7 +44,7 @@ describe Mosquito::Metadata do
 
   it "dumps to a hash" do
     clean_slate do
-      expected = { "one" => "1", "two" => "2", "three" => "3" }
+      expected = {"one" => "1", "two" => "2", "three" => "3"}
 
       expected.each { |key, value| store[key] = value }
 

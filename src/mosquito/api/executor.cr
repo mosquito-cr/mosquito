@@ -41,6 +41,7 @@ module Mosquito
       include Publisher
 
       private getter log : ::Log
+
       def self.metadata_key(instance_id : String) : String
         Backend.build_key "executor", instance_id
       end
@@ -51,21 +52,23 @@ module Mosquito
         @publish_context = PublishContext.new [:executor, executor.object_id]
       end
 
-      def execute(job_run : JobRun, from_queue : Mosquito::Queue)
+      def execute(job_run : JobRun, from_queue : Mosquito::Queue, &)
         metrics do
           @metadata.set({
-            "current_job" => job_run.id,
-            "current_job_queue" => from_queue.name
+            "current_job"       => job_run.id,
+            "current_job_queue" => from_queue.name,
           })
         end
 
         log.info { "#{"Starting:".colorize.magenta} #{job_run} from #{from_queue.name}" }
-        publish({
-          event: "job-started",
-          job_run: job_run.id,
+        start_data = {
+          event:      "job-started",
+          job_run:    job_run.id,
           from_queue: from_queue.name,
           # expected_duration_ms: expected_duration
-        })
+        }
+        publish(start_data)
+        track_metrics(start_data)
 
         duration = Time.measure do
           yield
@@ -77,7 +80,9 @@ module Mosquito
           log_failure_message job_run, duration
         end
 
-        publish({event: "job-finished", job_run: job_run.id})
+        finish_data = {event: "job-finished", job_run: job_run.id}
+        publish(finish_data)
+        track_metrics(finish_data)
 
         metrics do
           @metadata.set(

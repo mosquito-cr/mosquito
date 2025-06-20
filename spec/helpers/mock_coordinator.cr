@@ -7,7 +7,7 @@ class MockCoordinator < Mosquito::Runners::Coordinator
     @schedule_count = 0
   end
 
-  def only_if_coordinator : Nil
+  def only_if_coordinator(&) : Nil
     if @always_coordinator
       yield
     else

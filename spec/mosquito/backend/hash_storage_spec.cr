@@ -1,7 +1,7 @@
 require "../../spec_helper"
 
 describe "Backend hash storage" do
-  getter sample_data : Hash(String,String) { { "test" => "#{rand(1000)}" } }
+  getter sample_data : Hash(String, String) { {"test" => "#{rand(1000)}"} }
   getter key : String { "key-#{rand 1000}" }
   getter field : String { "field-#{rand 1000}" }
 

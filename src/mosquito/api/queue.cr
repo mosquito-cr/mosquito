@@ -29,6 +29,18 @@ module Mosquito
       backend.size(include_dead: false)
     end
 
+    # The total size of the queue, including all states.
+    def total_size : Int64
+      backend.size(include_dead: true)
+    end
+
+    # Individual queue state sizes
+    {% for name in Mosquito::Backend::QUEUES %}
+      def {{name.id}}_size : Int64
+        backend.{{name.id}}_size
+      end
+    {% end %}
+
     # The size of the queue, broken out by job state.
     #
     # Example:
@@ -70,17 +82,23 @@ module Mosquito
 
     def enqueued(job_run : JobRun)
       log.trace { "Enqueuing #{job_run.id} for immediate execution" }
-      publish({event: "enqueued", job_run: job_run.id})
+      data = {event: "enqueued", job_run: job_run.id}
+      publish(data)
+      track_metrics(data)
     end
 
     def enqueued(job_run : JobRun, at execute_time : Time)
       log.trace { "Enqueuing #{job_run.id} for execution at #{execute_time}" }
-      publish({event: "enqueued", job_run: job_run.id, execute_time: execute_time})
+      data = {event: "enqueued", job_run: job_run.id, execute_time: execute_time}
+      publish(data)
+      track_metrics(data)
     end
 
     def dequeued(job_run : JobRun)
       log.trace { "Dequeuing #{job_run.id}" }
-      publish({event: "dequeued", job_run: job_run.id})
+      data = {event: "dequeued", job_run: job_run.id}
+      publish(data)
+      track_metrics(data)
     end
   end
 end

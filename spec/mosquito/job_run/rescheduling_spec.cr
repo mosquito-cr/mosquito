@@ -9,7 +9,7 @@ describe "job_run rescheduling" do
       1 => 2,
       2 => 8,
       3 => 18,
-      4 => 32
+      4 => 32,
     }
 
     intervals.each do |count, delay|
