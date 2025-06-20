@@ -54,6 +54,37 @@ module Mosquito
       abstract def lock?(key : String, value : String, ttl : Time::Span) : Bool
       abstract def publish(key : String, value : String) : Nil
       abstract def subscribe(key : String) : Channel(BroadcastMessage)
+      
+      # Health check - backends can override to provide actual health status
+      def healthy? : Bool
+        true
+      end
+      
+      # Connection info - backends can provide connection pool stats, etc.
+      def connection_info : Hash(String, String | Int32 | Float64)
+        {} of String => String | Int32 | Float64
+      end
+      
+      # Maintenance operations - backends can implement cleanup logic
+      def cleanup_expired : Int32
+        0
+      end
+      
+      # Global queue statistics across all queues
+      def queue_stats : Hash(String, Hash(String, Int64))
+        stats = {} of String => Hash(String, Int64)
+        list_queues.each do |queue_name|
+          backend = named(queue_name)
+          stats[queue_name] = {
+            "waiting" => backend.waiting_size,
+            "scheduled" => backend.scheduled_size,
+            "pending" => backend.pending_size,
+            "dead" => backend.dead_size,
+            "total" => backend.size(include_dead: true)
+          }
+        end
+        stats
+      end
     end
 
     macro inherited
@@ -101,5 +132,62 @@ module Mosquito
     {% end %}
 
     abstract def scheduled_job_run_time(job_run : JobRun) : String?
+    
+    # Queue-specific size methods for efficiency
+    abstract def waiting_size : Int64
+    abstract def scheduled_size : Int64
+    abstract def pending_size : Int64
+    abstract def dead_size : Int64
+    
+    # Batch operations with default implementations
+    # Backends can override for better performance
+    def enqueue_batch(job_runs : Array(JobRun)) : Array(JobRun)
+      job_runs.each { |job_run| enqueue(job_run) }
+      job_runs
+    end
+    
+    def dequeue_batch(limit : Int32 = 10) : Array(JobRun)
+      jobs = [] of JobRun
+      limit.times do
+        if job = dequeue
+          jobs << job
+        else
+          break
+        end
+      end
+      jobs
+    end
+    
+    # Transaction support for backends that support it
+    def transaction(&block : -> T) : T forall T
+      yield # Default implementation, backends can wrap with actual transactions
+    end
+    
+    # Find a specific job across all queues
+    def find_job(job_id : String) : JobRun?
+      {% for queue_type in ["waiting", "scheduled", "pending", "dead"] %}
+        dump_{{queue_type.id}}_q.each do |job_data|
+          if job_run = JobRun.retrieve(job_data)
+            return job_run if job_run.id == job_id
+          end
+        end
+      {% end %}
+      nil
+    end
+    
+    # Move a job from dead queue back to waiting
+    def resurrect_job(job_id : String) : Bool
+      dead_jobs = dump_dead_q
+      dead_jobs.each do |job_data|
+        if job_run = JobRun.retrieve(job_data)
+          if job_run.id == job_id
+            # This would need backend-specific implementation
+            # For now, return false as it needs to be implemented per backend
+            return false
+          end
+        end
+      end
+      false
+    end
   end
 end
