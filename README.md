@@ -10,7 +10,7 @@ Mosquito currently provides these features:
 
 - Delayed execution (`SendEmailJob.new(email: :welcome, address: user.email).enqueue(in: 3.minutes)`)
 - Scheduled / Periodic execution (`RunEveryHourJob.new`)
-- Job Storage in Redis
+- Job Storage in Redis or PostgreSQL
 - Automatic rescheduling of failed jobs
 - Progressively increasing delay of rescheduled failed jobs
 - Dead letter queue of jobs which have failed too many times
@@ -67,6 +67,12 @@ PutsJob.new(message: "ohai background job").enqueue
 Mosquito.configure do |settings|
   settings.redis_url = ENV["REDIS_URL"]
 end
+
+# Or use PostgreSQL backend (requires adding `pg` shard dependency)
+# Mosquito.configure do |settings|
+#   settings.backend = Mosquito::PostgresBackend
+# end
+# Mosquito::PostgresBackend.connection_url = ENV["DATABASE_URL"]
 
 Mosquito::Runner.start
 ```

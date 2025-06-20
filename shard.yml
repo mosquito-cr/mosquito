@@ -18,7 +18,11 @@ targets:
 dependencies:
   redis:
     github: jgaskins/redis
-    version: ~> 0.7
+    version: ~> 0.8
+
+  pg:
+    github: will/crystal-pg
+    version: ~> 0.27.0
 
 development_dependencies:
   minitest:

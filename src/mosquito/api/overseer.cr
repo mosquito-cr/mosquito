@@ -36,7 +36,6 @@ module Mosquito
     end
   end
 
-
   class Observability::Overseer
     include Publisher
 
@@ -90,7 +89,7 @@ module Mosquito
       publish({event: "executor-died", executor: executor.object_id})
 
       log.fatal do
-       <<-MSG
+        <<-MSG
           Executor #{executor.runnable_name} died.
           A new executor will be started.
         MSG

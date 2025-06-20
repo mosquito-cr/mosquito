@@ -7,7 +7,7 @@ describe Mosquito::Api::Overseer do
   let(:executor) { MockExecutor.new(
     Channel(Tuple(Mosquito::JobRun, Mosquito::Queue)).new,
     Channel(Bool).new
-  )}
+  ) }
 
   it "allows fetching a list of executors" do
     assert_equal overseer.executor_count, api.executors.size

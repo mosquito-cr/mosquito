@@ -33,7 +33,7 @@ module Mosquito
   end
 
   class RedisBackend < Mosquito::Backend
-    LIST_OF_QUEUES_KEY = "queues"
+    LIST_OF_QUEUES_KEY    = "queues"
     LIST_OF_OVERSEERS_KEY = "overseers"
 
     Log = ::Log.for(self)
@@ -109,7 +109,7 @@ module Mosquito
           multi.hset key, non_nil_key_values
         end
 
-        keys_for_nil_values = values.select{|_,v| v.nil?}.keys
+        keys_for_nil_values = values.select { |_, v| v.nil? }.keys
         keys_for_nil_values.each do |nil_key|
           multi.hdel key, nil_key
         end

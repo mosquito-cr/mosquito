@@ -1,0 +1,58 @@
+name: PostgreSQL Backend Tests
+
+on:
+  push:
+    branches: [ master, main ]
+    paths:
+      - 'src/mosquito/postgres_backend.cr'
+      - 'src/mosquito/postgres_backend/**'
+      - 'spec/mosquito/postgres_backend_spec.cr'
+      - '.github/workflows/postgres-tests.yml'
+  pull_request:
+    branches: [ master, main ]
+    paths:
+      - 'src/mosquito/postgres_backend.cr'
+      - 'src/mosquito/postgres_backend/**'
+      - 'spec/mosquito/postgres_backend_spec.cr'
+      - '.github/workflows/postgres-tests.yml'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: mosquito
+          POSTGRES_PASSWORD: mosquito
+          POSTGRES_DB: mosquito_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Install Crystal
+      uses: crystal-lang/install-crystal@v1
+      with:
+        crystal: latest
+    
+    - name: Install dependencies
+      run: shards install
+    
+    - name: Setup PostgreSQL schema
+      run: |
+        PGPASSWORD=mosquito psql -h localhost -U mosquito -d mosquito_test -f src/mosquito/postgres_backend/schema.sql
+      env:
+        PGPASSWORD: mosquito
+    
+    - name: Run PostgreSQL backend tests
+      run: crystal spec spec/mosquito/postgres_backend_spec.cr
+      env:
+        DATABASE_URL: postgres://mosquito:mosquito@localhost:5432/mosquito_test

@@ -20,7 +20,7 @@ describe "Mosquito::Runners::Coordinator" do
     job_run
   end
 
-  def opt_in_to_locking
+  def opt_in_to_locking(&)
     Mosquito.temp_config(use_distributed_lock: true) do
       yield
     end
@@ -165,6 +165,5 @@ describe "Mosquito::Runners::Coordinator" do
         assert_logs_match "1 delayed jobs ready"
       end
     end
-
   end
 end

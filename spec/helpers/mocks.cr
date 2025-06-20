@@ -55,7 +55,6 @@ class QueueHookedTestJob < Mosquito::QueuedJob
   end
 end
 
-
 class PassingJob < QueuedTestJob
   def perform
     super
@@ -76,7 +75,7 @@ class FailingJob < QueuedTestJob
     case
     when fail_with_exception
       raise exception_message
-    when ! fail_with_retry
+    when !fail_with_retry
       fail exception_message, retry: false
     else
       fail exception_message

@@ -141,5 +141,4 @@ describe Queue do
       assert_includes dead_job_runs, job_run.id
     end
   end
-
 end

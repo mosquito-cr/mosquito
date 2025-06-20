@@ -19,7 +19,7 @@ module Mosquito
   #
   # If for some reason you want to manage an overseer or group of overseers yourself, Mosquito::Runner can be omitted entirely:
   #
-  # ```crystal
+  # ```
   # require "mosquito"
   #
   # mosquito = Mosquito::Overseer.new

@@ -9,7 +9,7 @@ module Mosquito
   #
   # A service which manages a Runnable might look like this:
   #
-  # ```crystal
+  # ```
   # runnable = MyRunnable.new
   #
   # # This will spawn and return immediately.
@@ -34,7 +34,7 @@ module Mosquito
   #
   # ### Example
   #
-  # ```crystal
+  # ```
   # class MyRunnable
   #   include Mosquito::Runnable
   #
@@ -181,9 +181,9 @@ module Mosquito
     abstract def each_run : Nil
 
     # Available to hook a one time setup before the run loop.
-    def pre_run : Nil ; end
+    def pre_run : Nil; end
 
     # Available to hook any teardown logic after the run loop.
-    def post_run : Nil ; end
+    def post_run : Nil; end
   end
 end

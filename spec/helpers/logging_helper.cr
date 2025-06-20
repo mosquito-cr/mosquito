@@ -57,7 +57,7 @@ class Minitest::Test
   end
 
   def assert_logs_match(source : String, expected : Regex)
-    assert logs_match(source, expected), "Expected to logs to include #{expected}. Logs contained: \n#{log_entries.map{|e| e.source + " " + e.message}.join("\n")}"
+    assert logs_match(source, expected), "Expected to logs to include #{expected}. Logs contained: \n#{log_entries.map { |e| e.source + " " + e.message }.join("\n")}"
   end
 
   def refute_logs_match(source : String, expected : String)
@@ -65,7 +65,7 @@ class Minitest::Test
   end
 
   def refute_logs_match(source : String, expected : Regex)
-    refute logs_match(source, expected), "Expected to logs to not include #{expected}. Logs contained: \n#{log_entries.map{|e| e.source + " " + e.message}.join("\n")}"
+    refute logs_match(source, expected), "Expected to logs to not include #{expected}. Logs contained: \n#{log_entries.map { |e| e.source + " " + e.message }.join("\n")}"
   end
 
   def clear_logs

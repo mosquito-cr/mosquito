@@ -3,7 +3,7 @@ class PubSub
     @@instance ||= new
   end
 
-  def self.eavesdrop : Array(Mosquito::Backend::BroadcastMessage)
+  def self.eavesdrop(&) : Array(Mosquito::Backend::BroadcastMessage)
     instance.receive_messages
     yield
     instance.stop_listening
@@ -28,7 +28,7 @@ class PubSub
 
   def receive_loop
     loop do
-      break if ! @continue_receiving || @channel.closed?
+      break if !@continue_receiving || @channel.closed?
       select
       when message = @channel.receive
         @messages << message
@@ -41,6 +41,7 @@ class PubSub
 
   module Helpers
     delegate eavesdrop, to: PubSub
+
     def assert_message_received(matcher : Regex) : Nil
       PubSub.instance.messages.find do |message|
         matcher === message.message

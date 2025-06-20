@@ -1,6 +1,6 @@
 module Mosquito::Runners
   module IdleWait
-    def with_idle_wait(idle_wait : Time::Span)
+    def with_idle_wait(idle_wait : Time::Span, &)
       delta = Time.measure do
         yield
       end

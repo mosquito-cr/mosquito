@@ -1,4 +1,3 @@
-
 require "../../spec_helper"
 
 describe "Backend deleting" do
@@ -6,7 +5,7 @@ describe "Backend deleting" do
   getter queue : Mosquito::Backend { backend.named queue_name }
 
   getter sample_data do
-    { "test" => "#{rand(1000)}" }
+    {"test" => "#{rand(1000)}"}
   end
 
   getter key : String { "key-#{rand 1000}" }

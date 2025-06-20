@@ -86,8 +86,6 @@ end
 
 Mosquito::Runner.stop wait: true
 
-
-
 puts
 print "Total events: #{event_count} | "
 print "Rate: #{events.size.to_f./(events.last.-(events.first).to_f).round(2)} events/sec"

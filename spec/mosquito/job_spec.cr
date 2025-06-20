@@ -82,14 +82,13 @@ describe Mosquito::Job do
         1 => 2,
         2 => 8,
         3 => 18,
-        4 => 32
+        4 => 32,
       }
 
       intervals.each do |count, delay|
         assert_equal delay.seconds, passing_job.reschedule_interval(count)
       end
     end
-
 
     it "allows overriding the reschedule interval" do
       intervals = 1..4

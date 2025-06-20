@@ -1,7 +1,7 @@
 module Mosquito::Runners
   # primer? loader? _scheduler_
   class Coordinator
-    Log = ::Log.for self
+    Log     = ::Log.for self
     LockTTL = 10.seconds
 
     getter lock_key : String
@@ -24,7 +24,7 @@ module Mosquito::Runners
       end
     end
 
-    def only_if_coordinator : Nil
+    def only_if_coordinator(&) : Nil
       duration = 0.seconds
 
       unless Mosquito.configuration.use_distributed_lock
@@ -62,6 +62,5 @@ module Mosquito::Runners
         end
       end
     end
-
   end
 end

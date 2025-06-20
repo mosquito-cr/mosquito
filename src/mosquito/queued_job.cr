@@ -14,7 +14,7 @@ module Mosquito
           {%
             a = "multiline macro hack"
 
-            if ! parameter.is_a?(TypeDeclaration) || parameter.type.nil? || parameter.type.is_a?(Generic) || parameter.type.is_a?(Union)
+            if !parameter.is_a?(TypeDeclaration) || parameter.type.nil? || parameter.type.is_a?(Generic) || parameter.type.is_a?(Union)
               message = <<-TEXT
               Mosquito::QueuedJob: Unable to build parameter serialization for `#{parameter.type}` in param declaration `#{parameter}`.
 
@@ -42,13 +42,13 @@ module Mosquito
             type = parameter.type
             simplified_type = type.resolve
 
-            method_suffix = simplified_type.stringify.underscore.gsub(/::/,"__").id
+            method_suffix = simplified_type.stringify.underscore.gsub(/::/, "__").id
 
             PARAMETERS << {
-              name: name,
-              value: value,
-              type: type,
-              method_suffix: method_suffix
+              name:          name,
+              value:         value,
+              type:          type,
+              method_suffix: method_suffix,
             }
           %}
 
@@ -82,13 +82,13 @@ module Mosquito
           def initialize; end
 
           def initialize({{
-              PARAMETERS.map do |parameter|
-                assignment = "@#{parameter["name"]}"
-                assignment = assignment + " : #{parameter["type"]}" if parameter["type"]
-                assignment = assignment + " = #{parameter["value"]}" unless parameter["value"].is_a? Nop
-                assignment
-              end.join(", ").id
-            }})
+                           PARAMETERS.map do |parameter|
+                             assignment = "@#{parameter["name"]}"
+                             assignment = assignment + " : #{parameter["type"]}" if parameter["type"]
+                             assignment = assignment + " = #{parameter["value"]}" unless parameter["value"].is_a? Nop
+                             assignment
+                           end.join(", ").id
+                         }})
           end
 
           # Methods declared in here have the side effect over overwriting any overrides which may have been implemented
