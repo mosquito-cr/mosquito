@@ -63,6 +63,12 @@ module Mosquito
     getter log : ::Log
     getter publish_context : PublishContext
 
+    delegate name, to: @queue
+
+    def initialize(queue : String)
+      initialize(Mosquito::Queue.new queue)
+    end
+
     def initialize(@queue : Mosquito::Queue)
       @publish_context = PublishContext.new [:queue, queue.name]
       @log = Log.for(queue.name)
