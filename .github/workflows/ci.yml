@@ -32,6 +32,7 @@ jobs:
 
     env:
       REDIS_URL: redis://redis:6379/1
+      NO_COLOR: 1
 
     steps:
     - uses: actions/checkout@v4
