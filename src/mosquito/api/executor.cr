@@ -59,12 +59,15 @@ module Mosquito
           })
         end
 
+        # Calculate what the duration _might_ be
+        expected_duration = Mosquito.backend.average average_key(job_run.type)
+
         log.info { "#{"Starting:".colorize.magenta} #{job_run} from #{from_queue.name}" }
         publish({
           event: "job-started",
           job_run: job_run.id,
           from_queue: from_queue.name,
-          # expected_duration_ms: expected_duration
+          expected_duration_ms: expected_duration
         })
 
         duration = Time.measure do
@@ -80,11 +83,19 @@ module Mosquito
         publish({event: "job-finished", job_run: job_run.id})
 
         metrics do
+          key = average_key(job_run.type)
+          Mosquito.backend.average_push key, duration.total_milliseconds.to_i
+          Mosquito.backend.delete key, in: 30.days
+
           @metadata.set(
             current_job: nil,
             current_job_queue: nil
           )
         end
+      end
+
+      def average_key(job_run_type : String) : String
+        Mosquito.backend.build_key "job", job_run_type, "duration"
       end
 
       def log_success_message(job_run : JobRun, duration : Time::Span)

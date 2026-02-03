@@ -108,6 +108,14 @@ module Mosquito
       Channel(BroadcastMessage).new
     end
 
+    def self.average_push(key : String, value : Int32, window_size : Int32 = 100) : Nil
+    end
+
+    def self.average(key : String) : Int32
+      0_i32
+    end
+
+
     struct EnqueuedJob
       getter id : String
       getter klass : Mosquito::Job.class
