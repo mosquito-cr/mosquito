@@ -118,6 +118,7 @@ module Mosquito
     def reschedule(job_run : JobRun, execution_time)
       backend.finish job_run
       enqueue(job_run, at: execution_time)
+      observer.rescheduled(job_run, to: execution_time)
     end
 
     def dequeue_scheduled : Array(JobRun)
@@ -126,11 +127,13 @@ module Mosquito
 
     def forget(job_run : JobRun)
       backend.finish job_run
+      observer.forgotten job_run
     end
 
     def banish(job_run : JobRun)
       backend.finish job_run
       backend.terminate job_run
+      observer.banished job_run
     end
 
     def size(*, include_dead : Bool = true) : Int64

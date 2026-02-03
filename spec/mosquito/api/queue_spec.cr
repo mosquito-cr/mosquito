@@ -6,6 +6,8 @@ describe Mosquito::Api::Queue do
   }
   let(queued_test_job) { QueuedTestJob.new }
   let(passing_job) { PassingJob.new }
+  let(queue : Mosquito::Queue) { queued_test_job.class.queue }
+  let(observer : Mosquito::Observability::Queue) { queue.observer }
 
   it "can fetch a list of current queues" do
     clean_slate do
@@ -74,10 +76,47 @@ describe Mosquito::Api::Queue do
       queued_test_job.enqueue
 
       eavesdrop do
-        queued_test_job.class.queue.dequeue
+        queue.dequeue
       end
     end
 
     assert_message_received /dequeued/
+  end
+
+  it "publishes an event when a job is rescheduled" do
+    clean_slate do
+      job_run = queued_test_job.build_job_run
+
+      eavesdrop do
+        queue.enqueue job_run
+        queue.reschedule job_run, 60.seconds.from_now
+      end
+    end
+
+    assert_message_received /rescheduled/
+  end
+
+  it "publishes an event when a job is forgotten" do
+    clean_slate do
+      job_run = queued_test_job.build_job_run
+
+      eavesdrop do
+        queue.forget job_run
+      end
+    end
+
+    assert_message_received /forgotten/
+  end
+
+  it "publishes an even when a job is banished" do
+    clean_slate do
+      job_run = queued_test_job.build_job_run
+
+      eavesdrop do
+        queue.banish job_run
+      end
+    end
+
+    assert_message_received /banished/
   end
 end
