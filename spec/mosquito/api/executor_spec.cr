@@ -50,4 +50,23 @@ describe Mosquito::Api::Executor do
     assert_message_received /job-started/
     assert_message_received /job-finished/
   end
+
+  it "measures and records average job duration" do
+    job_run.store
+    job_run.build_job
+
+    # 100x the sleep duration below
+    Timecop.scale(100) do
+      observer.execute job_run, job.class.queue do
+        sleep 0.01.seconds
+      end
+    end
+
+    average_key = observer.average_key(job_run.type)
+    average = Mosquito.backend.average(average_key)
+    Mosquito.backend.delete average_key
+    # assert that something > 0 comes back from the average.
+    # backend tests cover calculating the average itself.
+    assert average > 0
+  end
 end

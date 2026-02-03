@@ -202,6 +202,17 @@ module Mosquito
       stream
     end
 
+    def self.average_push(key : String, value : Int32, window_size : Int32 = 100) : Nil
+      redis.lpush key, [value.to_s]
+      redis.ltrim key, 0, window_size - 1
+    end
+
+    def self.average(key : String) : Int32
+      stats = redis.lrange key, 0, -1
+      return 0_i32 if stats.empty?
+      stats.map(&.as(String).to_i32).sum // stats.size
+    end
+
     def schedule(job_run : JobRun, at scheduled_time : Time) : JobRun
       redis.zadd scheduled_q, scheduled_time.to_unix_ms.to_s, job_run.id
       job_run
