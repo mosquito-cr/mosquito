@@ -88,5 +88,20 @@ module Mosquito
       log.trace { "Dequeuing #{job_run.id}" }
       publish({event: "dequeued", job_run: job_run.id})
     end
+
+    def rescheduled(job_run : JobRun, to execute_time : Time)
+      log.trace { "Rescheduling #{job_run.id} to execute at #{execute_time}" }
+      publish({event: "rescheduled", job_run: job_run.id, execute_time: execute_time})
+    end
+
+    def forgotten(job_run : JobRun)
+      log.trace { "Forgetting #{job_run.id}" }
+      publish({event: "forgotten", job_run: job_run.id})
+    end
+
+    def banished(job_run : JobRun)
+      log.trace { "Banishing #{job_run.id} to dead queue" }
+      publish({event: "banished", job_run: job_run.id})
+    end
   end
 end
