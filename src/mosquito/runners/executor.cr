@@ -36,6 +36,7 @@ module Mosquito::Runners
     # Used to notify the overseer that this executor is idle.
     getter idle_bell : Channel(Bool)
 
+    getter overseer : Overseer
     getter observer : Observability::Executor {
       Observability::Executor.new self
     }
@@ -49,7 +50,9 @@ module Mosquito::Runners
       super
     end
 
-    def initialize(@job_pipeline, @idle_bell)
+    def initialize(@overseer : Overseer)
+      @job_pipeline = overseer.work_handout
+      @idle_bell = overseer.idle_notifier
     end
 
     # :nodoc:

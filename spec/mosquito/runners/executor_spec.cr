@@ -1,10 +1,9 @@
 require "../../spec_helper"
 
 describe "Mosquito::Runners::Executor" do
-  getter(executor_pipeline) { Channel(Tuple(JobRun, Queue)).new }
-  getter(idle_notifier) { Channel(Bool).new }
   getter(queue_list) { MockQueueList.new }
-  getter(executor) { MockExecutor.new executor_pipeline, idle_notifier }
+  getter(overseer) { MockOverseer.new }
+  getter(executor) { MockExecutor.new overseer.as(Mosquito::Runners::Overseer) }
   getter(api) { Mosquito::Api::Executor.new executor.object_id.to_s }
   getter(coordinator) { Mosquito::Runners::Coordinator.new queue_list }
 
@@ -29,7 +28,7 @@ describe "Mosquito::Runners::Executor" do
       executor.state = Runnable::State::Idle
 
       select
-      when idle_notifier.receive
+      when overseer.idle_notifier.receive
         assert true
       when timeout(0.5.seconds)
         refute true, "Timed out waiting for idle notifier"
