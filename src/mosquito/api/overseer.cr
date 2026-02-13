@@ -59,19 +59,19 @@ module Mosquito
     def starting
       log.info { "Starting #{overseer.executor_count} executors." }
 
-      publish({event: "starting"})
+      publish({event: "started"})
       heartbeat
     end
 
     def stopping
       log.info { "Stopping executors." }
-      publish({event: "stopping"})
+      publish({event: "stopped"})
     end
 
     def stopped
       log.info { "All executors stopped." }
       log.info { "Finished for now." }
-      publish({event: "stopped"})
+      publish({event: "exited"})
     end
 
     def heartbeat
