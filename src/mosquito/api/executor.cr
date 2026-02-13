@@ -133,7 +133,7 @@ module Mosquito
         elsif seconds > 0.001
           "#{(seconds * 1_000).trunc}ms".colorize.yellow
         elsif seconds > 0.000_001
-          "#{(seconds * 100_000).trunc}µs".colorize.green
+          "#{(seconds * 1_000_000).trunc}µs".colorize.green
         elsif seconds > 0.000_000_001
           "#{(seconds * 1_000_000_000).trunc}ns".colorize.green
         else
