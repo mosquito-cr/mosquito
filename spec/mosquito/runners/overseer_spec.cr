@@ -1,23 +1,10 @@
 require "../../spec_helper"
 
 describe "Mosquito::Runners::Overseer" do
-  getter(executor_pipeline) { Channel(Tuple(JobRun, Queue)).new }
-  getter(idle_notifier) { Channel(Bool).new }
-  getter(queue_list) { MockQueueList.new }
-  getter(coordinator) { MockCoordinator.new queue_list }
-  getter(executor) { MockExecutor.new executor_pipeline, idle_notifier }
-
-  getter(overseer : MockOverseer) {
-    MockOverseer.new.tap do |o|
-      o.queue_list = queue_list
-      o.coordinator = coordinator
-      o.idle_notifier = idle_notifier
-      o.executors = [] of Mosquito::Runners::Executor
-      o.executor_count.times do
-        o.executors << executor.as(Mosquito::Runners::Executor)
-      end
-    end
-  }
+  getter(overseer : MockOverseer) { MockOverseer.new }
+  getter(queue_list : MockQueueList ) { overseer.queue_list.as(MockQueueList) }
+  getter(coordinator : MockCoordinator ) { overseer.coordinator.as(MockCoordinator) }
+  getter(executor : MockExecutor) { overseer.executors.first.as(MockExecutor) }
 
   def register(job_class : Mosquito::Job.class)
     Mosquito::Base.register_job_mapping job_class.name.underscore, job_class

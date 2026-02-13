@@ -6,9 +6,20 @@ describe Mosquito::Api::Executor do
   let(job) { QueuedTestJob.new }
   let(job_run : Mosquito::JobRun) { job.enqueue }
 
-  let(executor) { MockExecutor.new executor_pipeline, idle_notifier }
+  let(overseer) { MockOverseer.new }
+  let(executor) { MockExecutor.new overseer.as(Mosquito::Runners::Overseer) }
   let(api) { Mosquito::Api::Executor.new executor.object_id.to_s }
   let(observer) { Mosquito::Observability::Executor.new executor }
+
+  describe "publish context" do
+    it "includes object_id" do
+      assert_equal "executor:#{executor.object_id}", observer.publish_context.context
+    end
+
+    it "is nested under the overseer publish context" do
+      assert_equal "mosquito:overseer:#{overseer.object_id}:executor:#{executor.object_id}", observer.publish_context.originator
+    end
+  end
 
   it "can read the current job and queue after being started, and clears it after" do
     Mosquito::Base.register_job_mapping job.class.name.underscore, job.class

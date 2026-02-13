@@ -9,6 +9,13 @@ describe Mosquito::Api::Queue do
   let(queue : Mosquito::Queue) { queued_test_job.class.queue }
   let(observer : Mosquito::Observability::Queue) { queue.observer }
 
+  describe "publish context" do
+    it "includes the queue name" do
+      assert_equal "queue:queued_test_job", observer.publish_context.context
+      assert_equal "mosquito:queue:queued_test_job", observer.publish_context.originator
+    end
+  end
+
   it "can fetch a list of current queues" do
     clean_slate do
       queued_test_job.enqueue
@@ -108,7 +115,7 @@ describe Mosquito::Api::Queue do
     assert_message_received /forgotten/
   end
 
-  it "publishes an even when a job is banished" do
+  it "publishes an event when a job is banished" do
     clean_slate do
       job_run = queued_test_job.build_job_run
 

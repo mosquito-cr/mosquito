@@ -48,7 +48,11 @@ module Mosquito
       def initialize(executor : Mosquito::Runners::Executor)
         @metadata = Metadata.new self.class.metadata_key executor.object_id.to_s
         @log = Log.for(executor.runnable_name)
-        @publish_context = PublishContext.new [:executor, executor.object_id]
+        overseer_publish_context = executor.overseer.observer.publish_context
+        @publish_context = PublishContext.new(
+          overseer_publish_context,
+          [:executor, executor.object_id]
+        )
       end
 
       def execute(job_run : JobRun, from_queue : Mosquito::Queue)

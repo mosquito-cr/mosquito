@@ -56,7 +56,7 @@ module Mosquito::Runners
     end
 
     def build_executor : Executor
-      Executor.new(work_handout, idle_notifier).tap do |executor|
+      Executor.new(overseer: self).tap do |executor|
         observer.executor_created executor
       end
     end

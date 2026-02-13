@@ -4,15 +4,19 @@ describe Mosquito::Api::Overseer do
   let(:overseer) { MockOverseer.new }
   let(:api) { Mosquito::Api::Overseer.new(overseer.object_id.to_s) }
   let(:observer) { Observability::Overseer.new(overseer) }
-  let(:executor) { MockExecutor.new(
-    Channel(Tuple(Mosquito::JobRun, Mosquito::Queue)).new,
-    Channel(Bool).new
-  )}
+  let(:executor) { MockExecutor.new(overseer.as(Mosquito::Runners::Overseer))}
+
+  describe "publish context" do
+    it "includes object_id" do
+      assert_equal "overseer:#{overseer.object_id}", observer.publish_context.context
+      assert_equal "mosquito:overseer:#{overseer.object_id}", observer.publish_context.originator
+    end
+  end
 
   it "allows fetching a list of executors" do
-    assert_equal overseer.executor_count, api.executors.size
-    observer.update_executor_list([executor])
     assert_equal 1, api.executors.size
+    observer.update_executor_list([executor, executor])
+    assert_equal 2, api.executors.size
   end
 
   it "allows getting the latest heartbeat" do
