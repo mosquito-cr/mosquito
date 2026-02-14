@@ -127,6 +127,11 @@ describe "Mosquito::Runners::Executor" do
       job_started = Channel(Bool).new
       job_finished = Channel(Bool).new
 
+      # Eagerly evaluate to avoid race condition in lazy
+      # getter initialization across fibers.
+      executor
+      api
+
       spawn {
         executor.execute job_run, from_queue: SleepyJob.queue
         job_finished.send true
