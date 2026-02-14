@@ -19,7 +19,7 @@ module Mosquito
     {% for name in Mosquito::Backend::QUEUES %}
       # Gets a list of all the job runs in the internal {{name.id}} queue.
       def {{name.id}}_job_runs : Array(JobRun)
-        backend.dump_{{name.id}}_q
+        backend.list_{{name.id}}
           .map { |task_id| JobRun.new task_id }
       end
     {% end %}

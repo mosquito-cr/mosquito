@@ -58,10 +58,10 @@ describe "Backend deleting" do
         queue.flush
         empty_set = [] of String
 
-        assert_equal empty_set, queue.dump_waiting_q
-        assert_equal empty_set, queue.dump_scheduled_q
-        assert_equal empty_set, queue.dump_pending_q
-        assert_equal empty_set, queue.dump_dead_q
+        assert_equal empty_set, queue.list_waiting
+        assert_equal empty_set, queue.list_scheduled
+        assert_equal empty_set, queue.list_pending
+        assert_equal empty_set, queue.list_dead
       end
     end
 

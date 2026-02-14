@@ -8,13 +8,10 @@ module Mosquito
       end
     end
 
+    # The lifecycle states a job run passes through in any backend.
     QUEUES = %w(waiting scheduled pending dead)
 
     KEY_PREFIX = {"mosquito"}
-
-    def self.search_queues
-      QUEUES.first(2)
-    end
 
     def build_key(*parts)
       KeyBuilder.build Mosquito.configuration.global_prefix, KEY_PREFIX, *parts
@@ -69,12 +66,6 @@ module Mosquito
       def initialize(@backend, @name : String)
       end
 
-      {% for q in QUEUES %}
-        def {{q.id}}_q
-          backend.build_key {{q}}, name
-        end
-      {% end %}
-
       # Queue operations
       abstract def enqueue(job_run : JobRun) : JobRun
       abstract def dequeue : JobRun?
@@ -86,14 +77,14 @@ module Mosquito
       abstract def size(include_dead : Bool = true) : Int64
 
       {% for name in ["waiting", "scheduled", "pending", "dead"] %}
-        abstract def dump_{{name.id}}_q : Array(String)
+        abstract def list_{{name.id}} : Array(String)
         abstract def {{name.id}}_size : Int64
       {% end %}
 
       abstract def scheduled_job_run_time(job_run : JobRun) : String?
 
       # Convenience delegations to backend
-      delegate store, retrieve, delete, expires_in, build_key, to: backend
+      delegate store, retrieve, delete, expires_in, to: backend
     end
   end
 end

@@ -222,6 +222,12 @@ module Mosquito
         redis_backend.redis
       end
 
+      {% for q in QUEUES %}
+        private def {{q.id}}_q
+          backend.build_key {{q}}, name
+        end
+      {% end %}
+
       def schedule(job_run : JobRun, at scheduled_time : Time) : JobRun
         redis.zadd scheduled_q, scheduled_time.to_unix_ms.to_s, job_run.id
         job_run
@@ -242,7 +248,7 @@ module Mosquito
       def enqueue(job_run : JobRun) : JobRun
         redis.pipeline do |pipe|
           pipe.lpush waiting_q, job_run.id
-          pipe.zadd build_key(LIST_OF_QUEUES_KEY), Time.utc.to_unix.to_s, name
+          pipe.zadd backend.build_key(LIST_OF_QUEUES_KEY), Time.utc.to_unix.to_s, name
         end
         job_run
       end
@@ -283,7 +289,7 @@ module Mosquito
       end
 
       {% for name in ["waiting", "scheduled", "pending", "dead"] %}
-        def dump_{{name.id}}_q : Array(String)
+        def list_{{name.id}} : Array(String)
           key = {{name.id}}_q
           type = redis.type key
 

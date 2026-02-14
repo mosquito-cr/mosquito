@@ -49,7 +49,7 @@ describe Queue do
     it "can enqueue a job_run for immediate processing" do
       clean_slate do
         test_queue.enqueue job_run
-        job_run_ids = backend.dump_waiting_q
+        job_run_ids = backend.list_waiting
         assert_includes job_run_ids, job_run.id
       end
     end
@@ -86,7 +86,7 @@ describe Queue do
 
       assert_equal job_run.id, stored_job_run.not_nil!.id
 
-      pending_job_runs = backend.dump_pending_q
+      pending_job_runs = backend.list_pending
       assert_includes pending_job_runs, job_run.id
     end
 
@@ -109,7 +109,7 @@ describe Queue do
       assert_equal job_run1.id, overdue_job_runs.first.id
 
       # check to make sure job_run2 is still scheduled
-      scheduled_job_runs = backend.dump_scheduled_q
+      scheduled_job_runs = backend.list_scheduled
       refute_includes scheduled_job_runs, job_run1.id
       assert_includes scheduled_job_runs, job_run2.id
     end
@@ -118,11 +118,11 @@ describe Queue do
   it "can forget about a pending job_run" do
     test_queue.enqueue job_run
     test_queue.dequeue
-    pending_job_runs = backend.dump_pending_q
+    pending_job_runs = backend.list_pending
     assert_includes pending_job_runs, job_run.id
 
     test_queue.forget job_run
-    pending_job_runs = backend.dump_pending_q
+    pending_job_runs = backend.list_pending
     refute_includes pending_job_runs, job_run.id
   end
 
@@ -130,14 +130,14 @@ describe Queue do
     it "can banish a pending job_run, adding it to the dead q" do
       test_queue.enqueue job_run
       test_queue.dequeue
-      pending_job_runs = backend.dump_pending_q
+      pending_job_runs = backend.list_pending
       assert_includes pending_job_runs, job_run.id
 
       test_queue.banish job_run
-      pending_job_runs = backend.dump_pending_q
+      pending_job_runs = backend.list_pending
       refute_includes pending_job_runs, job_run.id
 
-      dead_job_runs = backend.dump_dead_q
+      dead_job_runs = backend.list_dead
       assert_includes dead_job_runs, job_run.id
     end
   end

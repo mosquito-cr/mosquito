@@ -11,7 +11,7 @@ describe Mosquito::QueuedJob do
     it "enqueues" do
       clean_slate do
         job_run = job.enqueue
-        enqueued = queue.backend.dump_waiting_q
+        enqueued = queue.backend.list_waiting
         assert_equal [job_run.id], enqueued
       end
     end
@@ -19,7 +19,7 @@ describe Mosquito::QueuedJob do
     it "enqueues with a delay" do
       clean_slate do
         job_run = job.enqueue in: 1.minute
-        enqueued = queue.backend.dump_scheduled_q
+        enqueued = queue.backend.list_scheduled
         assert_equal [job_run.id], enqueued
       end
     end
@@ -27,7 +27,7 @@ describe Mosquito::QueuedJob do
     it "enqueues with a target time" do
       clean_slate do
         job_run = job.enqueue at: 1.minute.from_now
-        enqueued = queue.backend.dump_scheduled_q
+        enqueued = queue.backend.list_scheduled
         assert_equal [job_run.id], enqueued
       end
     end
@@ -43,7 +43,7 @@ describe Mosquito::QueuedJob do
       clean_slate do
         queue_hooked_job.fail_before_hook = true
         job_run = queue_hooked_job.enqueue
-        waiting_q = queue.backend.dump_waiting_q
+        waiting_q = queue.backend.list_waiting
         assert_empty waiting_q
       end
     end

@@ -175,7 +175,7 @@ module Mosquito
       end
 
       {% for name in ["waiting", "scheduled", "pending", "dead"] %}
-        def dump_{{name.id}}_q : Array(String)
+        def list_{{name.id}} : Array(String)
           [] of String
         end
 
