@@ -14,7 +14,7 @@ module TestHelpers
     end
   end
 
-  def backend : Mosquito::Backend.class
+  def backend : Mosquito::Backend
     Mosquito.configuration.backend
   end
 end

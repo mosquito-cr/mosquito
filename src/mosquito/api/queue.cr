@@ -4,7 +4,7 @@ module Mosquito
     # The name of the queue.
     getter name : String
 
-    private property backend : Mosquito::Backend
+    private property backend : Mosquito::Backend::Queue
 
     # Returns a list of all known named queues in the system.
     def self.all : Array(Queue)
@@ -13,13 +13,13 @@ module Mosquito
 
     # Creates an instance of a named queue.
     def initialize(@name : String)
-      @backend = Mosquito.backend.named name
+      @backend = Mosquito.backend.queue name
     end
 
     {% for name in Mosquito::Backend::QUEUES %}
       # Gets a list of all the job runs in the internal {{name.id}} queue.
       def {{name.id}}_job_runs : Array(JobRun)
-        backend.dump_{{name.id}}_q
+        backend.list_{{name.id}}
           .map { |task_id| JobRun.new task_id }
       end
     {% end %}

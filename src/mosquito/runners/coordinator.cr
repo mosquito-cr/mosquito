@@ -9,7 +9,7 @@ module Mosquito::Runners
     getter queue_list : QueueList
 
     def initialize(@queue_list)
-      @lock_key = Backend.build_key :coordinator, :football
+      @lock_key = Mosquito.backend.build_key :coordinator, :football
       @instance_id = Random::Secure.hex(8)
     end
 

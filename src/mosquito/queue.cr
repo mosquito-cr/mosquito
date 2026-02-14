@@ -76,14 +76,14 @@ module Mosquito
   #
   class Queue
     getter name, config_key
-    property backend : Mosquito::Backend
+    property backend : Mosquito::Backend::Queue
 
     getter observer : Observability::Queue { Observability::Queue.new self }
 
     Log = ::Log.for self
 
     def initialize(@name : String)
-      @backend = Mosquito.backend.named name
+      @backend = Mosquito.backend.queue name
       @config_key = @name
     end
 
