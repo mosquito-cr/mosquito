@@ -75,11 +75,13 @@ module Mosquito
     end
 
     def heartbeat
-      # (Re)registers the overseer with the backend.
-      Mosquito.backend.register_overseer self.instance_id
+      metrics do
+        # (Re)registers the overseer with the backend.
+        Mosquito.backend.register_overseer self.instance_id
 
-      # Update the metadata with the current time.
-      metadata.heartbeat!
+        # Update the metadata with the current time.
+        metadata.heartbeat!
+      end
     end
 
     def executor_created(executor : Runners::Executor) : Nil
@@ -98,7 +100,9 @@ module Mosquito
     end
 
     def update_executor_list(executors : Array(Runners::Executor)) : Nil
-      metadata["executors"] = executors.map(&.object_id).join(",")
+      metrics do
+        metadata["executors"] = executors.map(&.object_id).join(",")
+      end
     end
   end
 end
