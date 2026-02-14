@@ -49,6 +49,24 @@ describe Mosquito::Api::Executor do
     assert_equal now.at_beginning_of_second, api.heartbeat
   end
 
+  it "doesn't publish a heartbeat when metrics are disabled" do
+    now = Time.utc
+
+    Timecop.freeze now do
+      executor.observer.heartbeat!
+    end
+
+    later = Time.utc + 1.minute
+    Mosquito.temp_config(publish_metrics: false) do
+      Timecop.freeze later do
+        executor.observer.heartbeat!
+      end
+    end
+
+    api = Mosquito::Api::Executor.new executor.object_id.to_s
+    assert_equal now.at_beginning_of_second, api.heartbeat
+  end
+
   it "publishes job started/finished events" do
     job_run.store
     job_run.build_job

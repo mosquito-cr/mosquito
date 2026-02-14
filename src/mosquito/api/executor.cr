@@ -145,7 +145,11 @@ module Mosquito
         end
       end
 
-      delegate heartbeat!, to: @metadata
+      def heartbeat!
+        metrics do
+          @metadata.heartbeat!
+        end
+      end
     end
   end
 end
