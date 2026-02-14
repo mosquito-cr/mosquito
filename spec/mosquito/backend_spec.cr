@@ -15,11 +15,11 @@ describe Mosquito::Backend do
   end
 
   it "can be initialized with a string name" do
-    Mosquito.backend.named "string_backend"
+    Mosquito.backend.queue "string_backend"
   end
 
   it "can be initialized with a symbol name" do
-    Mosquito.backend.named :symbol_backend
+    Mosquito.backend.queue :symbol_backend
   end
 
   it "can update a key with a hash" do

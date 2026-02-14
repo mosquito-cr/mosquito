@@ -235,7 +235,7 @@ module Mosquito::Runners
       total = 0
       queue_names.each do |name|
         q = Queue.new(name)
-        q.backend.dump_pending_q.each do |job_run_id|
+        q.backend.list_pending.each do |job_run_id|
           job_run = JobRun.retrieve(job_run_id)
 
           unless job_run

@@ -125,7 +125,7 @@ describe "Mosquito::Runners::Overseer" do
         job_run.claimed_by dead_overseer
 
         # Verify job is stuck in pending
-        assert_includes QueuedTestJob.queue.backend.dump_pending_q, job_run.id
+        assert_includes QueuedTestJob.queue.backend.list_pending, job_run.id
         assert_equal 0, job_run.retry_count
 
         # Register only the *live* overseer
@@ -135,8 +135,8 @@ describe "Mosquito::Runners::Overseer" do
         overseer.cleanup_orphaned_pending_jobs
 
         # Job should be removed from pending and rescheduled
-        assert_empty QueuedTestJob.queue.backend.dump_pending_q
-        assert_includes QueuedTestJob.queue.backend.dump_scheduled_q, job_run.id
+        assert_empty QueuedTestJob.queue.backend.list_pending
+        assert_includes QueuedTestJob.queue.backend.list_scheduled, job_run.id
 
         # Retry count should be incremented
         job_run.reload
@@ -158,12 +158,12 @@ describe "Mosquito::Runners::Overseer" do
         Mosquito.backend.register_overseer overseer.observer.instance_id
         job_run.claimed_by overseer
 
-        assert_includes QueuedTestJob.queue.backend.dump_pending_q, job_run.id
+        assert_includes QueuedTestJob.queue.backend.list_pending, job_run.id
 
         overseer.cleanup_orphaned_pending_jobs
 
         # Job should still be in pending — its overseer is alive
-        assert_includes QueuedTestJob.queue.backend.dump_pending_q, job_run.id
+        assert_includes QueuedTestJob.queue.backend.list_pending, job_run.id
       end
     end
 
@@ -179,13 +179,13 @@ describe "Mosquito::Runners::Overseer" do
 
         # No claim — simulates a job from before this feature
         assert_nil job_run.overseer_id
-        assert_includes QueuedTestJob.queue.backend.dump_pending_q, job_run.id
+        assert_includes QueuedTestJob.queue.backend.list_pending, job_run.id
 
         Mosquito.backend.register_overseer overseer.observer.instance_id
         overseer.cleanup_orphaned_pending_jobs
 
         # Job should still be in pending (not recovered)
-        assert_includes QueuedTestJob.queue.backend.dump_pending_q, job_run.id
+        assert_includes QueuedTestJob.queue.backend.list_pending, job_run.id
 
         # But it should now be claimed by this overseer
         job_run.reload
@@ -208,16 +208,16 @@ describe "Mosquito::Runners::Overseer" do
         QueuedTestJob.queue.dequeue
         job_run.claimed_by dead_overseer
 
-        assert_includes QueuedTestJob.queue.backend.dump_pending_q, job_run.id
+        assert_includes QueuedTestJob.queue.backend.list_pending, job_run.id
 
         Mosquito.backend.register_overseer overseer.observer.instance_id
         overseer.cleanup_orphaned_pending_jobs
 
         # Job should be removed from pending and moved to dead
-        assert_empty QueuedTestJob.queue.backend.dump_pending_q
-        assert_empty QueuedTestJob.queue.backend.dump_waiting_q
-        assert_empty QueuedTestJob.queue.backend.dump_scheduled_q
-        assert_includes QueuedTestJob.queue.backend.dump_dead_q, job_run.id
+        assert_empty QueuedTestJob.queue.backend.list_pending
+        assert_empty QueuedTestJob.queue.backend.list_waiting
+        assert_empty QueuedTestJob.queue.backend.list_scheduled
+        assert_includes QueuedTestJob.queue.backend.list_dead, job_run.id
       end
     end
   end

@@ -1,7 +1,7 @@
 require "../../spec_helper"
 
 describe "job_run storage" do
-  getter backend : Mosquito::Backend = Mosquito.backend.named("testing")
+  getter backend : Mosquito::Backend::Queue = Mosquito.backend.queue("testing")
 
   getter config = {
     "year" => "1752",
@@ -30,21 +30,21 @@ describe "job_run storage" do
   end
 
   it "stores job_runs in the backend" do
-    stored_job_run = backend.retrieve Mosquito::JobRun.config_key(job_run.id)
+    stored_job_run = backend.backend.retrieve Mosquito::JobRun.config_key(job_run.id)
     stored_config = stored_job_run.reject! %w|type enqueue_time retry_count|
     assert_equal config, stored_config
   end
 
   it "can delete a job_run" do
     job_run.delete
-    saved_config = Mosquito.backend.retrieve job_run.config_key
+    saved_config = backend.backend.retrieve job_run.config_key
     assert_empty saved_config
   end
 
   it "can set a timed delete on a job_run" do
     ttl = 10
     job_run.delete(in: ttl)
-    set_ttl = backend.expires_in job_run.config_key
+    set_ttl = backend.backend.expires_in job_run.config_key
     assert_equal ttl, set_ttl
   end
 

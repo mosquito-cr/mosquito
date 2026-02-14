@@ -16,7 +16,7 @@ describe "Mosquito::Runners::Coordinator" do
       job_run = test_job.enqueue in: 3.seconds
     end
 
-    assert_includes queue.backend.dump_scheduled_q, job_run.id
+    assert_includes queue.backend.list_scheduled, job_run.id
     job_run
   end
 
@@ -107,11 +107,11 @@ describe "Mosquito::Runners::Coordinator" do
           coordinator.enqueue_periodic_jobs
         end
 
-        queued_job_runs = queue.backend.dump_waiting_q
+        queued_job_runs = queue.backend.list_waiting
         assert queued_job_runs.size >= 1
 
         last_job_run = queued_job_runs.last
-        job_run_metadata = queue.backend.retrieve JobRun.config_key(last_job_run)
+        job_run_metadata = Mosquito.backend.retrieve JobRun.config_key(last_job_run)
 
         assert_equal enqueue_time.to_unix_ms.to_s, job_run_metadata["enqueue_time"]
       end
@@ -128,11 +128,11 @@ describe "Mosquito::Runners::Coordinator" do
           coordinator.enqueue_delayed_jobs
         end
 
-        queued_job_runs = queue.backend.dump_waiting_q
+        queued_job_runs = queue.backend.list_waiting
         assert_includes queued_job_runs, job_run.id
 
         last_job_run = queued_job_runs.last
-        job_run_metadata = queue.backend.retrieve JobRun.config_key(last_job_run)
+        job_run_metadata = Mosquito.backend.retrieve JobRun.config_key(last_job_run)
 
         assert_equal queue.name, job_run_metadata["type"]?
       end
@@ -148,7 +148,7 @@ describe "Mosquito::Runners::Coordinator" do
           coordinator.enqueue_delayed_jobs
         end
 
-        queued_job_runs = queue.backend.dump_waiting_q
+        queued_job_runs = queue.backend.list_waiting
 
         # does not deschedule and enqueue anything
         assert_equal 0, queued_job_runs.size

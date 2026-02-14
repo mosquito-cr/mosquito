@@ -18,7 +18,7 @@ module Mosquito
 
     property run_from : Array(String) = [] of String
     property global_prefix : String? = nil
-    property backend : Mosquito::Backend.class = Mosquito::RedisBackend
+    property backend : Mosquito::Backend = Mosquito::RedisBackend.new
 
     property dequeue_adapter : Mosquito::DequeueAdapter = Mosquito::ShuffleDequeueAdapter.new
 

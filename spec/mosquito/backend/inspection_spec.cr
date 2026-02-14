@@ -2,7 +2,7 @@ require "../../spec_helper"
 
 describe "Backend inspection" do
   getter backend_name : String { "test#{rand(1000)}" }
-  getter queue : Mosquito::Backend { backend.named backend_name }
+  getter queue : Mosquito::Backend::Queue { backend.queue backend_name }
 
   getter job : QueuedTestJob { QueuedTestJob.new }
   getter job_run : Mosquito::JobRun { Mosquito::JobRun.new("mock_job_run") }
@@ -38,48 +38,48 @@ describe "Backend inspection" do
     end
   end
 
-  describe "dump_q" do
-    it "can dump the waiting q" do
+  describe "list" do
+    it "can list the waiting jobs" do
       clean_slate do
         expected_job_runs = Array(Mosquito::JobRun).new(3) { Mosquito::JobRun.new("mock_job_run") }
         expected_job_runs.each { |job_run| queue.enqueue job_run }
         expected_job_run_ids = expected_job_runs.map { |job_run| job_run.id }.sort
 
-        actual_job_runs = queue.dump_waiting_q.sort
+        actual_job_runs = queue.list_waiting.sort
         assert_equal 3, actual_job_runs.size
 
         assert_equal expected_job_run_ids, actual_job_runs
       end
     end
 
-    it "can dump the scheduled q" do
+    it "can list the scheduled jobs" do
       clean_slate do
         expected_job_runs = Array(Mosquito::JobRun).new(3) { Mosquito::JobRun.new("mock_job_run") }
         expected_job_runs.each { |job_run| queue.schedule job_run, at: 1.second.from_now }
         expected_job_run_ids = expected_job_runs.map { |job_run| job_run.id }.sort
 
-        actual_job_runs = queue.dump_scheduled_q.sort
+        actual_job_runs = queue.list_scheduled.sort
         assert_equal 3, actual_job_runs.size
 
         assert_equal expected_job_run_ids, actual_job_runs
       end
     end
 
-    it "can dump the pending q" do
+    it "can list the pending jobs" do
       clean_slate do
         expected_job_runs = Array(Mosquito::JobRun).new(3) { Mosquito::JobRun.new("mock_job_run").tap(&.store) }
 
         expected_job_runs.each { |job_run| queue.enqueue job_run }
         expected_job_run_ids = 3.times.map { queue.dequeue.not_nil!.id }.to_a.sort
 
-        actual_job_runs = queue.dump_pending_q.sort
+        actual_job_runs = queue.list_pending.sort
         assert_equal 3, actual_job_runs.size
 
         assert_equal expected_job_run_ids, actual_job_runs
       end
     end
 
-    it "can dump the dead q" do
+    it "can list the dead jobs" do
       skip
     end
   end

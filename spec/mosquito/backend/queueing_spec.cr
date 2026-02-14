@@ -2,51 +2,33 @@ require "../../spec_helper"
 
 describe "Backend Queues" do
   getter backend_name : String { "test#{rand(1000)}" }
-  getter queue : Mosquito::Backend { backend.named backend_name }
+  getter queue : Mosquito::Backend::Queue { backend.queue backend_name }
 
   getter job : QueuedTestJob { QueuedTestJob.new }
   getter job_run : Mosquito::JobRun { Mosquito::JobRun.new("mock_job_run") }
-
-  describe "queue_names" do
-    it "builds a waiting queue" do
-      assert_equal "mosquito:waiting:#{backend_name}", queue.waiting_q
-    end
-
-    it "builds a scheduled queue" do
-      assert_equal "mosquito:scheduled:#{backend_name}", queue.scheduled_q
-    end
-
-    it "builds a pending queue" do
-      assert_equal "mosquito:pending:#{backend_name}", queue.pending_q
-    end
-
-    it "builds a dead queue" do
-      assert_equal "mosquito:dead:#{backend_name}", queue.dead_q
-    end
-  end
 
   describe "list_queues" do
     def fill_queues
       names = %w|test1 test2 test3 test4|
 
       names[0..3].each do |queue_name|
-        backend.named(queue_name).enqueue job_run
+        backend.queue(queue_name).enqueue job_run
       end
 
-      backend.named(names.last).schedule job_run, at: 1.second.from_now
+      backend.queue(names.last).schedule job_run, at: 1.second.from_now
     end
 
     def fill_uncounted_queues
       names = %w|test5 test6 test7 test8|
 
       names[0..3].each do |queue_name|
-        backend.named(queue_name).tap do |q|
+        backend.queue(queue_name).tap do |q|
           q.enqueue job_run
           q.dequeue
         end
       end
 
-      backend.named(names.last).terminate job_run
+      backend.queue(names.last).terminate job_run
     end
 
     it "can get a list of available queues" do
@@ -70,7 +52,7 @@ describe "Backend Queues" do
         timestamp = 2.seconds.from_now
         job_run = job.build_job_run
         queue.schedule job_run, at: timestamp
-        assert_equal timestamp.to_unix_ms.to_s, queue.scheduled_job_run_time job_run
+        assert_equal Time.unix_ms(timestamp.to_unix_ms), queue.scheduled_job_run_time job_run
       end
     end
   end
@@ -113,7 +95,7 @@ describe "Backend Queues" do
       clean_slate do
         job_run = job.build_job_run
         queue.enqueue job_run
-        waiting_job_runs = queue.dump_waiting_q
+        waiting_job_runs = queue.list_waiting
         assert_equal [job_run.id], waiting_job_runs
       end
     end
@@ -136,7 +118,7 @@ describe "Backend Queues" do
         job_run.store
         queue.enqueue job_run
         waiting_job_run = queue.dequeue
-        pending_job_runs = queue.dump_pending_q
+        pending_job_runs = queue.list_pending
         assert_equal [job_run.id], pending_job_runs
       end
     end
@@ -172,7 +154,7 @@ describe "Backend Queues" do
         # now finish it
         queue.finish job_run
 
-        pending_job_runs = queue.dump_pending_q
+        pending_job_runs = queue.list_pending
         assert_empty pending_job_runs
       end
     end
@@ -192,7 +174,7 @@ describe "Backend Queues" do
         # now terminate it
         queue.terminate job_run
 
-        dead_job_runs = queue.dump_dead_q
+        dead_job_runs = queue.list_dead
         assert_equal [job_run.id], dead_job_runs
       end
     end
