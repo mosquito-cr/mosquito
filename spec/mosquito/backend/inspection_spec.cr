@@ -2,7 +2,7 @@ require "../../spec_helper"
 
 describe "Backend inspection" do
   getter backend_name : String { "test#{rand(1000)}" }
-  getter queue : Mosquito::Backend { backend.named backend_name }
+  getter queue : Mosquito::Backend::Queue { backend.queue backend_name }
 
   getter job : QueuedTestJob { QueuedTestJob.new }
   getter job_run : Mosquito::JobRun { Mosquito::JobRun.new("mock_job_run") }

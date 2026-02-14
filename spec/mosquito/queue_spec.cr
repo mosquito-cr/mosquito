@@ -12,8 +12,8 @@ describe Queue do
     Mosquito::JobRun.new("mock_job_run").tap(&.store)
   end
 
-  getter backend : Mosquito::Backend do
-    TestHelpers.backend.named name
+  getter backend : Mosquito::Backend::Queue do
+    TestHelpers.backend.queue name
   end
 
   describe "config_key" do
@@ -42,7 +42,7 @@ describe Queue do
     it "adds the queue name to the list of queues" do
       clean_slate do
         test_queue.enqueue job_run
-        assert_includes backend.class.list_queues, test_queue.name
+        assert_includes Mosquito.backend.list_queues, test_queue.name
       end
     end
 

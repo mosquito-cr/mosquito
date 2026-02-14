@@ -77,7 +77,7 @@ module Mosquito
   class Queue
     getter name, config_key
     getter? empty : Bool
-    property backend : Mosquito::Backend
+    property backend : Mosquito::Backend::Queue
 
     getter observer : Observability::Queue { Observability::Queue.new self }
 
@@ -85,7 +85,7 @@ module Mosquito
 
     def initialize(@name : String)
       @empty = false
-      @backend = Mosquito.backend.named name
+      @backend = Mosquito.backend.queue name
       @config_key = @name
     end
 

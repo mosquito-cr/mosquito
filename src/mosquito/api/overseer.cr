@@ -46,7 +46,7 @@ module Mosquito
     private getter log : ::Log
 
     def self.metadata_key(instance_id : String) : String
-      Mosquito::Backend.build_key "overseer", instance_id
+      Mosquito.backend.build_key "overseer", instance_id
     end
 
     def initialize(@overseer : Runners::Overseer)

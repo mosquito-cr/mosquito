@@ -16,7 +16,15 @@ module Mosquito
 
     property run_from : Array(String) = [] of String
     property global_prefix : String? = nil
-    property backend : Mosquito::Backend.class = Mosquito::RedisBackend
+    @backend : Mosquito::Backend?
+
+    def backend : Mosquito::Backend
+      @backend ||= Mosquito::RedisBackend.new
+    end
+
+    def backend=(value : Mosquito::Backend)
+      @backend = value
+    end
 
     property publish_metrics : Bool = false
 

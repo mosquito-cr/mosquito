@@ -2,7 +2,7 @@ require "../../spec_helper"
 
 describe "Backend Queues" do
   getter backend_name : String { "test#{rand(1000)}" }
-  getter queue : Mosquito::Backend { backend.named backend_name }
+  getter queue : Mosquito::Backend::Queue { backend.queue backend_name }
 
   getter job : QueuedTestJob { QueuedTestJob.new }
   getter job_run : Mosquito::JobRun { Mosquito::JobRun.new("mock_job_run") }
@@ -30,23 +30,23 @@ describe "Backend Queues" do
       names = %w|test1 test2 test3 test4|
 
       names[0..3].each do |queue_name|
-        backend.named(queue_name).enqueue job_run
+        backend.queue(queue_name).enqueue job_run
       end
 
-      backend.named(names.last).schedule job_run, at: 1.second.from_now
+      backend.queue(names.last).schedule job_run, at: 1.second.from_now
     end
 
     def fill_uncounted_queues
       names = %w|test5 test6 test7 test8|
 
       names[0..3].each do |queue_name|
-        backend.named(queue_name).tap do |q|
+        backend.queue(queue_name).tap do |q|
           q.enqueue job_run
           q.dequeue
         end
       end
 
-      backend.named(names.last).terminate job_run
+      backend.queue(names.last).terminate job_run
     end
 
     it "can get a list of available queues" do

@@ -42,7 +42,7 @@ module Mosquito
 
       private getter log : ::Log
       def self.metadata_key(instance_id : String) : String
-        Backend.build_key "executor", instance_id
+        Mosquito.backend.build_key "executor", instance_id
       end
 
       def initialize(executor : Mosquito::Runners::Executor)

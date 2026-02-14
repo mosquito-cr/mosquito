@@ -1,7 +1,7 @@
 require "../../spec_helper"
 
 describe "job_run storage" do
-  getter backend : Mosquito::Backend = Mosquito.backend.named("testing")
+  getter backend : Mosquito::Backend::Queue = Mosquito.backend.queue("testing")
 
   getter config = {
     "year" => "1752",

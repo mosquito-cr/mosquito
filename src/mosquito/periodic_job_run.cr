@@ -2,7 +2,7 @@ module Mosquito
   class PeriodicJobRun
     property class : Mosquito::PeriodicJob.class
     property interval : Time::Span | Time::MonthSpan
-    getter metadata : Metadata { Metadata.new(Backend.build_key("periodic_jobs", @class.name)) }
+    getter metadata : Metadata { Metadata.new(Mosquito.backend.build_key("periodic_jobs", @class.name)) }
 
     # The last executed timestamp for this periodicjob tracked by the backend.
     def last_executed_at?

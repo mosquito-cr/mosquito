@@ -3,7 +3,7 @@ require "../../spec_helper"
 
 describe "Backend deleting" do
   getter queue_name : String { "test#{rand(1000)}" }
-  getter queue : Mosquito::Backend { backend.named queue_name }
+  getter queue : Mosquito::Backend::Queue { backend.queue queue_name }
 
   getter sample_data do
     { "test" => "#{rand(1000)}" }
