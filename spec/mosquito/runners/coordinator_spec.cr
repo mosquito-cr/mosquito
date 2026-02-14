@@ -111,7 +111,7 @@ describe "Mosquito::Runners::Coordinator" do
         assert queued_job_runs.size >= 1
 
         last_job_run = queued_job_runs.last
-        job_run_metadata = queue.backend.retrieve JobRun.config_key(last_job_run)
+        job_run_metadata = Mosquito.backend.retrieve JobRun.config_key(last_job_run)
 
         assert_equal enqueue_time.to_unix_ms.to_s, job_run_metadata["enqueue_time"]
       end
@@ -132,7 +132,7 @@ describe "Mosquito::Runners::Coordinator" do
         assert_includes queued_job_runs, job_run.id
 
         last_job_run = queued_job_runs.last
-        job_run_metadata = queue.backend.retrieve JobRun.config_key(last_job_run)
+        job_run_metadata = Mosquito.backend.retrieve JobRun.config_key(last_job_run)
 
         assert_equal queue.name, job_run_metadata["type"]?
       end

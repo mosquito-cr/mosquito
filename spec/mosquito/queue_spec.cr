@@ -58,11 +58,11 @@ describe Queue do
       Timecop.freeze(Time.utc) do
         clean_slate do
           offset = 3.seconds
-          timestamp = offset.from_now.to_unix_ms
+          timestamp = offset.from_now
           test_queue.enqueue job_run, in: offset
 
           stored_time = backend.scheduled_job_run_time job_run
-          assert_equal stored_time, timestamp.to_s
+          assert_equal Time.unix_ms(timestamp.to_unix_ms), stored_time
         end
       end
     end
@@ -73,7 +73,7 @@ describe Queue do
           timestamp = 3.seconds.from_now
           test_queue.enqueue job_run, at: timestamp
           stored_time = backend.scheduled_job_run_time job_run
-          assert_equal timestamp.to_unix_ms.to_s, stored_time
+          assert_equal Time.unix_ms(timestamp.to_unix_ms), stored_time
         end
       end
     end

@@ -30,7 +30,7 @@ describe "job_run storage" do
   end
 
   it "stores job_runs in the backend" do
-    stored_job_run = backend.retrieve Mosquito::JobRun.config_key(job_run.id)
+    stored_job_run = Mosquito.backend.retrieve Mosquito::JobRun.config_key(job_run.id)
     stored_config = stored_job_run.reject! %w|type enqueue_time retry_count|
     assert_equal config, stored_config
   end
@@ -44,7 +44,7 @@ describe "job_run storage" do
   it "can set a timed delete on a job_run" do
     ttl = 10
     job_run.delete(in: ttl)
-    set_ttl = backend.expires_in job_run.config_key
+    set_ttl = Mosquito.backend.expires_in job_run.config_key
     assert_equal ttl, set_ttl
   end
 

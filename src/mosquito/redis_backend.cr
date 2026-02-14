@@ -321,8 +321,10 @@ module Mosquito
         end
       {% end %}
 
-      def scheduled_job_run_time(job_run : JobRun) : String?
-        redis.zscore(scheduled_q, job_run.id).as?(String)
+      def scheduled_job_run_time(job_run : JobRun) : Time?
+        if score = redis.zscore(scheduled_q, job_run.id).as?(String)
+          Time.unix_ms(score.to_i64)
+        end
       end
     end
   end

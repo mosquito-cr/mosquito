@@ -55,10 +55,6 @@ module Mosquito
     abstract def average_push(key : String, value : Int32, window_size : Int32 = 100) : Nil
     abstract def average(key : String) : Int32
 
-    # Expiring lists
-    abstract def expiring_list_push(key : String, value : String) : Nil
-    abstract def expiring_list_fetch(key : String, expire_items_older_than : Time) : Array(String)
-
     abstract class Queue
       getter backend : Backend
       private getter name : String
@@ -81,10 +77,8 @@ module Mosquito
         abstract def {{name.id}}_size : Int64
       {% end %}
 
-      abstract def scheduled_job_run_time(job_run : JobRun) : String?
+      abstract def scheduled_job_run_time(job_run : JobRun) : Time?
 
-      # Convenience delegations to backend
-      delegate store, retrieve, delete, expires_in, to: backend
     end
   end
 end

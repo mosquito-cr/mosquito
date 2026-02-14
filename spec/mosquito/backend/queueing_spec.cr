@@ -52,7 +52,7 @@ describe "Backend Queues" do
         timestamp = 2.seconds.from_now
         job_run = job.build_job_run
         queue.schedule job_run, at: timestamp
-        assert_equal timestamp.to_unix_ms.to_s, queue.scheduled_job_run_time job_run
+        assert_equal Time.unix_ms(timestamp.to_unix_ms), queue.scheduled_job_run_time job_run
       end
     end
   end

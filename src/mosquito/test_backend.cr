@@ -51,13 +51,6 @@ module Mosquito
       [] of String
     end
 
-    def expiring_list_push(key : String, value : String) : Nil
-    end
-
-    def expiring_list_fetch(key : String, expire_items_older_than : Time) : Array(String)
-      [] of String
-    end
-
     def register_overseer(id : String) : Nil
     end
 
@@ -184,7 +177,7 @@ module Mosquito
         end
       {% end %}
 
-      def scheduled_job_run_time(job_run : JobRun) : String?
+      def scheduled_job_run_time(job_run : JobRun) : Time?
       end
     end
   end
