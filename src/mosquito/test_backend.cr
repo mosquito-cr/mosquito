@@ -61,6 +61,9 @@ module Mosquito
     def self.register_overseer(id : String) : Nil
     end
 
+    def self.deregister_overseer(id : String) : Nil
+    end
+
     def self.delete(key : String, in ttl : Int64 = 0) : Nil
     end
 

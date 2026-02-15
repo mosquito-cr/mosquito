@@ -72,6 +72,9 @@ module Mosquito
       log.info { "All executors stopped." }
       log.info { "Finished for now." }
       publish({event: "exited"})
+
+      Mosquito.backend.deregister_overseer self.instance_id
+      metadata.delete
     end
 
     def heartbeat
