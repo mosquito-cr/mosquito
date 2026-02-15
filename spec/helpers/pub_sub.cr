@@ -1,39 +1,43 @@
+module Mosquito::Observability::Publisher
+  @[AlwaysInline]
+  def publish(data : NamedTuple)
+    metrics do
+      Log.debug { "Publishing #{data} to #{@publish_context.originator}" }
+      PubSub.instance.capture_message(@publish_context.originator, data.to_json)
+    end
+  end
+end
+
 class PubSub
   def self.instance
     @@instance ||= new
   end
 
   def self.eavesdrop : Array(Mosquito::Backend::BroadcastMessage)
-    instance.receive_messages
+    instance.listen
     yield
-    instance.stop_listening
     instance.messages
+  ensure
+    instance.stop_listening
   end
 
   getter messages = [] of Mosquito::Backend::BroadcastMessage
-  @channel = Channel(Mosquito::Backend::BroadcastMessage).new
 
   def initialize
+    @listening = false
   end
 
-  def receive_messages
-    @continue_receiving = true
-    @channel ||= Mosquito.backend.subscribe "mosquito:*"
-    spawn receive_loop
+  def listen
+    @listening = true
   end
 
   def stop_listening
-    @continue_receiving = false
+    @listening = false
   end
 
-  def receive_loop
-    loop do
-      break if ! @continue_receiving || @channel.closed?
-      select
-      when message = @channel.receive
-        @messages << message
-      when timeout(100.milliseconds)
-      end
+  def capture_message(originator : String, message : String)
+    if @listening
+      @messages << Mosquito::Backend::BroadcastMessage.new(originator, message)
     end
   end
 
@@ -41,10 +45,13 @@ class PubSub
 
   module Helpers
     delegate eavesdrop, to: PubSub
+
     def assert_message_received(matcher : Regex) : Nil
-      PubSub.instance.messages.find do |message|
+      found = PubSub.instance.messages.find do |message|
         matcher === message.message
       end
+
+      assert found, "Expected to find a message matching #{matcher.inspect}, but only found: #{PubSub.instance.messages.map(&.message).inspect}"
     end
   end
 end
