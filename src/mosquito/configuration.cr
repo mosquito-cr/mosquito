@@ -9,7 +9,7 @@ module Mosquito
     property redis_url : String?
 
     property idle_wait : Time::Span = 100.milliseconds
-    property successful_job_ttl : Int32 = 1
+    property successful_job_ttl : Int32 = 1.minute.total_seconds.to_i
     property failed_job_ttl : Int32 = 86400
 
     property use_distributed_lock : Bool = true
