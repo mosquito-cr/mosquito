@@ -146,6 +146,11 @@ module Mosquito
       expiring_list_push key, id
     end
 
+    def self.deregister_overseer(id : String) : Nil
+      key = build_key LIST_OF_OVERSEERS_KEY
+      redis.zrem key, id
+    end
+
     def self.list_overseers : Array(String)
       key = build_key LIST_OF_OVERSEERS_KEY
       expiring_list_fetch(key, Time.utc - 1.day)

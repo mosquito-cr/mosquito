@@ -36,6 +36,7 @@ module Mosquito
       abstract def list_queues : Array(String)
       abstract def list_overseers : Array(String)
       abstract def register_overseer(id : String) : Nil
+      abstract def deregister_overseer(id : String) : Nil
 
       abstract def delete(key : String, in ttl : Int64 = 0) : Nil
       abstract def delete(key : String, in ttl : Time::Span) : Nil
