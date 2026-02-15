@@ -1,3 +1,5 @@
+require "../spec_helper"
+
 class Namespace::ConcreteRunnable
   include Mosquito::Runnable
 
