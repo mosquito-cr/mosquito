@@ -33,9 +33,9 @@ module Mosquito::Runners
 
       if Mosquito.backend.lock? lock_key, instance_id, LockTTL
         Log.trace { "Coordinator lock acquired" }
-        duration = Time.measure do
-          yield
-        end
+        started_at = Time.utc
+        yield
+        duration = Time.utc - started_at
 
         Mosquito.backend.unlock lock_key, instance_id
         Log.trace { "Coordinator lock released" }
