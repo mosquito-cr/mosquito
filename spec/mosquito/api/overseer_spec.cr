@@ -36,14 +36,14 @@ describe Mosquito::Api::Overseer do
     eavesdrop do
       observer.stopping
     end
-    assert_message_received /stopping/
+    assert_message_received /stopped/
   end
 
   it "publishes the stopped event" do
     eavesdrop do
       observer.stopped
     end
-    assert_message_received /stopped/
+    assert_message_received /exited/
   end
 
   it "publishes an event when an executor dies" do
