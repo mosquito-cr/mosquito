@@ -39,7 +39,7 @@ end
 Mosquito::Runner.start(spin: false)
 
 count = 0
-while count <= 20 && Mosquito::Runner.keep_running
+while count <= 19 && Mosquito::Runner.keep_running
   sleep 1.second
   count += 1
 end
