@@ -96,6 +96,9 @@ module Mosquito
     # which is used to check that the fiber is still running.
     getter fiber : Fiber?
 
+    # Signaled when the run loop exits (finished or crashed).
+    getter done = Channel(Nil).new
+
     getter my_name : String {
       "#{self.class.name.underscore.gsub("::", ".")}.#{self.object_id}"
     }
@@ -143,6 +146,8 @@ module Mosquito
         self.state = State::Crashed
 
         log.error { "crashed with #{any_exception.inspect}" }
+      ensure
+        done.close
       end
     end
 
@@ -150,21 +155,15 @@ module Mosquito
     # The runnable doesn't exit immediately so #stop returns a notification
     # channel.
     #
-    # #stop spawns a fiber which monitors the state and sends a bool in two
-    # circumstances.  It will stop waiting for the spawn to exit at 25 seconds.
-    # If the spawn has actually stopped the notification channel will broadcast
-    # a true, otherwise false.
+    # #stop spawns a fiber which waits for the run loop to finish. The
+    # notification channel broadcasts true if the runnable finished cleanly.
     def stop : Channel(Bool)
       self.state = State::Stopping if state.running?
       notifier = Channel(Bool).new
 
       spawn do
-        start = Time.utc
-        while state.stopping? && (Time.utc - start) < 25.seconds
-          Fiber.yield
-        end
+        done.receive?
         notifier.send state.finished?
-
         log.info { "stopped" }
       end
 

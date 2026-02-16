@@ -63,6 +63,10 @@ module Mosquito
       heartbeat
     end
 
+    def shutting_down
+      log.info { "Shutting down." }
+    end
+
     def stopping
       log.info { "Stopping executors." }
       publish({event: "stopped"})

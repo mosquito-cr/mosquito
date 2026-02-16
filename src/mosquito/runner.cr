@@ -10,7 +10,7 @@ module Mosquito
   #
   # # When the process receives sigint, it'll notify the overseer to shut down gracefully.
   # trap("INT") do
-  #   Mosquito::Runner.stop(wait: true)
+  #   Mosquito::Runner.stop
   # end
   #
   # # Starts the overseer, and holds the thread captive.
@@ -43,9 +43,7 @@ module Mosquito
       Log.notice { "Mosquito is buzzing..." }
       instance.run
 
-      while spin && keep_running
-        sleep 1.second
-      end
+      instance.overseer.done.receive? if spin
     end
 
     # :nodoc:
@@ -61,9 +59,7 @@ module Mosquito
       Log.notice { "Mosquito is shutting down..." }
       finished_notifier = instance.stop
 
-      if wait
-        finished_notifier.receive
-      end
+      finished_notifier.receive if wait
     end
 
     private def self.instance : self

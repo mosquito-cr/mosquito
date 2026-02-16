@@ -160,6 +160,10 @@ module Mosquito
       raise "Mosquito: attempted to deschedule a job from the testing backend."
     end
 
+    def undequeue : JobRun?
+      raise "Mosquito: attempted to undequeue a job from the testing backend."
+    end
+
     def finish(job_run : JobRun) # should this be called succeed?
     end
 

@@ -257,6 +257,13 @@ module Mosquito
       end
     end
 
+    def undequeue : JobRun?
+      if id = redis.rpop pending_q
+        redis.rpush waiting_q, id.to_s
+        JobRun.retrieve id.to_s
+      end
+    end
+
     def finish(job_run : JobRun)
       redis.lrem pending_q, 0, job_run.id
     end
