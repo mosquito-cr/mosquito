@@ -41,6 +41,10 @@ module Mosquito::Runners
       Observability::Executor.new self
     }
 
+    # Tracks the job currently being executed. Used by the overseer to
+    # recover orphaned jobs when an executor crashes mid-execution.
+    getter current_job : Tuple(JobRun, Queue)? = nil
+
     private def state=(state : State)
       # Send a message to the overseer that this executor is idle.
       if state == State::Idle
@@ -75,8 +79,10 @@ module Mosquito::Runners
 
       self.state = State::Working
       job_run, queue = dequeue
+      @current_job = {job_run, queue}
       log.trace { "Dequeued #{job_run} from #{queue.name}" }
       execute job_run, queue
+      @current_job = nil
       log.trace { "Finished #{job_run} from #{queue.name}" }
       self.state = State::Idle
 

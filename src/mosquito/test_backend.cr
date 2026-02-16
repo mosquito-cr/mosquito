@@ -173,6 +173,10 @@ module Mosquito
       0_i64
     end
 
+    def recover_pending : Int64
+      0_i64
+    end
+
     {% for name in ["waiting", "scheduled", "pending", "dead"] %}
       def dump_{{name.id}}_q : Array(String)
         [] of String

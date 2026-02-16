@@ -198,4 +198,52 @@ describe "Backend Queues" do
     end
   end
 
+  describe "recover_pending" do
+    it "moves pending jobs back to waiting" do
+      clean_slate do
+        job_run = job.build_job_run
+        job_run.store
+        queue.enqueue job_run
+        queue.dequeue
+
+        # job is now in pending
+        assert_equal [job_run.id], queue.dump_pending_q
+        assert_empty queue.dump_waiting_q
+
+        count = queue.recover_pending
+        assert_equal 1_i64, count
+
+        # job should be back in waiting, pending should be empty
+        assert_equal [job_run.id], queue.dump_waiting_q
+        assert_empty queue.dump_pending_q
+      end
+    end
+
+    it "returns 0 when pending queue is empty" do
+      clean_slate do
+        count = queue.recover_pending
+        assert_equal 0_i64, count
+      end
+    end
+
+    it "recovers multiple pending jobs" do
+      clean_slate do
+        job_runs = (1..3).map do |i|
+          jr = job.build_job_run
+          jr.store
+          queue.enqueue jr
+          queue.dequeue
+          jr
+        end
+
+        assert_equal 3, queue.dump_pending_q.size
+        count = queue.recover_pending
+
+        assert_equal 3_i64, count
+        assert_empty queue.dump_pending_q
+        assert_equal 3, queue.dump_waiting_q.size
+      end
+    end
+  end
+
 end

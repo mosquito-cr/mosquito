@@ -98,6 +98,7 @@ module Mosquito
     abstract def terminate(job_run : JobRun) # should this be called fail?
     abstract def flush : Nil
     abstract def size(include_dead : Bool = true) : Int64
+    abstract def recover_pending : Int64
 
     {% for name in ["waiting", "scheduled", "pending", "dead"] %}
       abstract def dump_{{name.id}}_q : Array(String)

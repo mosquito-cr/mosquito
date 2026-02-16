@@ -71,7 +71,13 @@ module Mosquito::Runners
     end
 
     # Starts all the subprocesses.
+    #
+    # Before starting executors, recovers any orphaned jobs left in
+    # pending queues from a previous process that crashed or was killed
+    # before finishing them. These jobs are moved back to the waiting
+    # queue so they can be re-executed.
     def pre_run : Nil
+      recover_orphaned_pending_jobs
       observer.starting
       @queue_list.run
       @executors.each(&.run)
@@ -174,14 +180,13 @@ module Mosquito::Runners
     #
     # When a job fails any exceptions are caught and logged. If a job causes something more
     # catastrophic we can try to recover by spawning a new executor.
+    #
+    # When a dead executor is found, any job it was working on is moved from
+    # the pending queue back to the waiting queue so it can be retried.
     def check_for_deceased_runners : Nil
       executors.select{|e| e.state.started?}.select(&.dead?).each do |dead_executor|
-        Log.fatal do
-          <<-MSG
-            Executor #{dead_executor.runnable_name} died.
-            A new executor will be started.
-          MSG
-        end
+        observer.executor_died dead_executor
+        recover_job_from dead_executor
         executors.delete dead_executor
       end
 
@@ -194,6 +199,34 @@ module Mosquito::Runners
       if queue_list.dead?
         log.fatal { "QueueList has died, overseer will stop." }
         stop
+      end
+    end
+
+    # When a process starts (or restarts), any jobs left in a pending queue
+    # are orphans from the previous run. Move them all back to waiting.
+    private def recover_orphaned_pending_jobs : Nil
+      queue_names = Mosquito.backend.list_queues
+      return if queue_names.empty?
+
+      total = 0_i64
+      queue_names.each do |name|
+        q = Queue.new(name)
+        total += q.recover_pending
+      end
+
+      if total > 0
+        log.warn { "Recovered #{total} orphaned job(s) from pending queues" }
+      end
+    end
+
+    # If a dead executor was working on a job, move it from pending back
+    # to waiting so it can be picked up again.
+    private def recover_job_from(dead_executor : Executor) : Nil
+      if current = dead_executor.current_job
+        job_run, queue = current
+        log.warn { "Recovering job #{job_run.id} from dead executor #{dead_executor.runnable_name}" }
+        queue.backend.finish job_run
+        queue.enqueue job_run
       end
     end
   end
