@@ -51,4 +51,50 @@ describe "job_run storage" do
   it "can reload a job_run" do
     job_run.reload
   end
+
+  describe "timestamp retrieval" do
+    # the job run timestamps are stored as a unix epoch with millis, so nanosecond precision is lost.
+    def at_beginning_of_millisecond(time)
+      time - (time.nanosecond.nanoseconds) + (time.millisecond.milliseconds)
+    end
+
+    it "retrieves started_at and finished_at timestamps" do
+      now = at_beginning_of_millisecond Time.utc
+      job_run = create_job_run
+      Timecop.freeze now do
+        job_run.run
+      end
+
+      retrieved = Mosquito::JobRun.retrieve job_run.id
+      if retrieved
+        assert_equal now, retrieved.started_at
+        assert_equal now, retrieved.finished_at
+      else
+        flunk "Could not retrieve job_run"
+      end
+    end
+
+    it "does not include timestamps in config after retrieve" do
+      job_run = create_job_run
+      job_run.run
+
+      retrieved = Mosquito::JobRun.retrieve job_run.id
+      if retrieved
+        refute retrieved.config.has_key?("started_at")
+        refute retrieved.config.has_key?("finished_at")
+      else
+        flunk "Could not retrieve job_run"
+      end
+    end
+
+    it "retrieves nil timestamps for unexecuted job runs" do
+      retrieved = Mosquito::JobRun.retrieve job_run.id
+      if retrieved
+        assert_nil retrieved.started_at
+        assert_nil retrieved.finished_at
+      else
+        flunk "Could not retrieve job_run"
+      end
+    end
+  end
 end

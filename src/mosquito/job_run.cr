@@ -14,8 +14,8 @@ module Mosquito
     getter id : String
     getter retry_count = 0
     getter job : Mosquito::Job?
-    @started_at : Time?
-    @finished_at : Time?
+    getter started_at : Time?
+    getter finished_at : Time?
 
     def job! : Mosquito::Job
       job || raise RuntimeError.new("No job yet retrieved for job_run.")
@@ -44,7 +44,9 @@ module Mosquito
       @type : String,
       @enqueue_time : Time = Time.utc,
       id : String? = nil,
-      @retry_count : Int32 = 0
+      @retry_count : Int32 = 0,
+      @started_at : Time? = nil,
+      @finished_at : Time? = nil
     )
 
       @id = id || KeyBuilder.build @enqueue_time.to_unix_ms.to_s, rand(1000)
@@ -133,8 +135,13 @@ module Mosquito
       return unless name = fields.delete "type"
       return unless timestamp = fields.delete "enqueue_time"
       retry_count = (fields.delete("retry_count") || 0).to_i
+      started_at_raw = fields.delete("started_at")
+      finished_at_raw = fields.delete("finished_at")
 
-      instance = new(name, Time.unix_ms(timestamp.to_i64), id, retry_count)
+      started_at = started_at_raw ? Time.unix_ms(started_at_raw.to_i64) : nil
+      finished_at = finished_at_raw ? Time.unix_ms(finished_at_raw.to_i64) : nil
+
+      instance = new(name, Time.unix_ms(timestamp.to_i64), id, retry_count, started_at, finished_at)
       instance.config = fields
 
       instance

@@ -43,14 +43,14 @@ module Mosquito::Api
 
     # The moment this job was started.
     def started_at : Time?
-      if time = config["started_at"]
+      if time = config["started_at"]?
         Time.unix_ms time.to_i64
       end
     end
 
     # The moment this job was finished.
     def finished_at : Time?
-      if time = config["finished_at"]
+      if time = config["finished_at"]?
         Time.unix_ms time.to_i64
       end
     end
