@@ -121,6 +121,10 @@ module Mosquito
       observer.rescheduled(job_run, to: execution_time)
     end
 
+    def undequeue : JobRun?
+      backend.undequeue
+    end
+
     def dequeue_scheduled : Array(JobRun)
       backend.deschedule
     end

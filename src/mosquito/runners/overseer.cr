@@ -77,18 +77,38 @@ module Mosquito::Runners
       @executors.each(&.run)
     end
 
+    def stop : Channel(Bool)
+      observer.shutting_down if state.running?
+      super
+    end
+
     # Notify all subprocesses to stop, and wait until they do.
+    # After executors finish, any jobs left in the pending queue are
+    # moved back to waiting so another worker can pick them up.
     def post_run : Nil
       observer.stopping
+
+      work_handout.close
+
       stopped_notifiers = executors.map do |executor|
         executor.stop
       end
 
       @queue_list.stop
 
-      work_handout.close
       stopped_notifiers.each(&.receive)
+
+      requeue_pending_jobs
+
       observer.stopped
+    end
+
+    private def requeue_pending_jobs
+      queue_list.each do |q|
+        while job_run = q.undequeue
+          log.info { "Requeuing pending job #{job_run.id} to #{q.name}" }
+        end
+      end
     end
 
     # The goal for the overseer is to:
@@ -96,6 +116,9 @@ module Mosquito::Runners
     # - Wait for an executor to be idle, and dequeue work if possible.
     # - Monitor the executor pool for unexpected termination and respawn.
     def each_run : Nil
+      # When shutting down, stop dequeuing new work immediately.
+      return if state.stopping?
+
       coordinator.schedule
 
       # I cannot imagine a situation where this happens in the normal flow of
