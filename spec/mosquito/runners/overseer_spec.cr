@@ -93,7 +93,7 @@ describe "Mosquito::Runners::Overseer" do
   end
 
   describe "pre_run recovers orphaned pending jobs" do
-    it "moves orphaned pending jobs back to waiting on startup" do
+    it "increments retry count and reschedules an orphaned pending job" do
       clean_slate do
         register QueuedTestJob
 
@@ -105,49 +105,45 @@ describe "Mosquito::Runners::Overseer" do
         QueuedTestJob.queue.enqueue job_run
         QueuedTestJob.queue.dequeue
 
-        # Verify job is stuck in pending
+        # Verify job is stuck in pending with retry_count=0
         assert_equal [job_run.id], QueuedTestJob.queue.backend.dump_pending_q
-        assert_empty QueuedTestJob.queue.backend.dump_waiting_q
+        assert_equal 0, job_run.retry_count
 
-        # pre_run should recover it
+        # pre_run should recover it with retry logic
         overseer.pre_run
 
-        # Job should be back in waiting
+        # Job should be removed from pending
         assert_empty QueuedTestJob.queue.backend.dump_pending_q
-        assert_equal [job_run.id], QueuedTestJob.queue.backend.dump_waiting_q
+
+        # Job should be rescheduled (not in waiting — in scheduled with a delay)
+        assert_empty QueuedTestJob.queue.backend.dump_waiting_q
+
+        # Retry count should be incremented
+        job_run.reload
+        assert_equal 1, job_run.retry_count
       end
     end
-  end
 
-  describe "check_for_deceased_runners" do
-    it "recovers a job from a dead executor" do
+    it "banishes an orphaned job that has exhausted retries" do
       clean_slate do
         register QueuedTestJob
 
-        job = QueuedTestJob.new
-        job_run = job.build_job_run
+        # Create a job_run with retry_count=4 so the next failure (count=5)
+        # exceeds the default rescheduleable? limit of < 5.
+        job_run = Mosquito::JobRun.new("queued_test_job", retry_count: 4)
         job_run.store
+
         QueuedTestJob.queue.enqueue job_run
         QueuedTestJob.queue.dequeue
 
-        # Simulate the executor having a current_job and being dead
-        dead_executor = executor
-        dead_executor.state = Runnable::State::Working
-        dead_executor.run # start the fiber so dead? can detect it
-
-        # Manually set the current_job via the executor's instance variable
-        # by calling each_run would be too complex; instead we test recover_job_from
-        # indirectly via the queue state.
-
-        # Verify the job is stuck in pending
         assert_equal [job_run.id], QueuedTestJob.queue.backend.dump_pending_q
 
-        # Since we can't easily simulate a dead fiber with a current_job in
-        # tests, we verify the recover_pending mechanism at the queue level
-        count = QueuedTestJob.queue.recover_pending
-        assert_equal 1_i64, count
+        overseer.pre_run
+
+        # Job should be removed from pending and moved to dead
         assert_empty QueuedTestJob.queue.backend.dump_pending_q
-        assert_equal [job_run.id], QueuedTestJob.queue.backend.dump_waiting_q
+        assert_empty QueuedTestJob.queue.backend.dump_waiting_q
+        assert_equal [job_run.id], QueuedTestJob.queue.backend.dump_dead_q
       end
     end
   end

@@ -181,8 +181,8 @@ module Mosquito::Runners
     # When a job fails any exceptions are caught and logged. If a job causes something more
     # catastrophic we can try to recover by spawning a new executor.
     #
-    # When a dead executor is found, any job it was working on is moved from
-    # the pending queue back to the waiting queue so it can be retried.
+    # When a dead executor is found, any job it was working on has its
+    # failure counter incremented and follows the standard retry logic.
     def check_for_deceased_runners : Nil
       executors.select{|e| e.state.started?}.select(&.dead?).each do |dead_executor|
         observer.executor_died dead_executor
@@ -203,15 +203,27 @@ module Mosquito::Runners
     end
 
     # When a process starts (or restarts), any jobs left in a pending queue
-    # are orphans from the previous run. Move them all back to waiting.
+    # are orphans from the previous run. Each orphaned job has its failure
+    # counter incremented and follows the standard retry logic: rescheduled
+    # with backoff if retries remain, or banished to the dead queue if not.
     private def recover_orphaned_pending_jobs : Nil
       queue_names = Mosquito.backend.list_queues
       return if queue_names.empty?
 
-      total = 0_i64
+      total = 0
       queue_names.each do |name|
         q = Queue.new(name)
-        total += q.recover_pending
+        pending_ids = q.backend.dump_pending_q
+        pending_ids.each do |job_run_id|
+          if job_run = JobRun.retrieve(job_run_id)
+            retry_or_banish job_run, q
+          else
+            # Job config is gone (expired/deleted), just clean up the
+            # dangling reference in the pending queue.
+            q.backend.finish JobRun.new("_cleanup", id: job_run_id)
+          end
+          total += 1
+        end
       end
 
       if total > 0
@@ -219,14 +231,28 @@ module Mosquito::Runners
       end
     end
 
-    # If a dead executor was working on a job, move it from pending back
-    # to waiting so it can be picked up again.
+    # If a dead executor was working on a job, increment its failure
+    # counter and follow the standard retry logic.
     private def recover_job_from(dead_executor : Executor) : Nil
       if current = dead_executor.current_job
         job_run, queue = current
         log.warn { "Recovering job #{job_run.id} from dead executor #{dead_executor.runnable_name}" }
-        queue.backend.finish job_run
-        queue.enqueue job_run
+        retry_or_banish job_run, queue
+      end
+    end
+
+    # Treats a recovered pending job as a failure: increments the retry
+    # count and either reschedules with backoff or banishes to dead queue.
+    private def retry_or_banish(job_run : JobRun, queue : Queue) : Nil
+      job_run.fail
+      job_run.build_job
+
+      if job_run.rescheduleable?
+        next_execution = Time.utc + job_run.reschedule_interval
+        queue.reschedule job_run, next_execution
+      else
+        queue.banish job_run
+        job_run.delete in: Mosquito.configuration.failed_job_ttl
       end
     end
   end
