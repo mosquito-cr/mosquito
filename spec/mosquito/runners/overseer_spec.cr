@@ -91,4 +91,60 @@ describe "Mosquito::Runners::Overseer" do
       assert_equal 1, coordinator.schedule_count
     end
   end
+
+  describe "pre_run recovers orphaned pending jobs" do
+    it "increments retry count and reschedules an orphaned pending job" do
+      clean_slate do
+        register QueuedTestJob
+
+        # Simulate a previous process crash: enqueue a job and move it
+        # to pending (as if it was dequeued but never finished).
+        job = QueuedTestJob.new
+        job_run = job.build_job_run
+        job_run.store
+        QueuedTestJob.queue.enqueue job_run
+        QueuedTestJob.queue.dequeue
+
+        # Verify job is stuck in pending with retry_count=0
+        assert_equal [job_run.id], QueuedTestJob.queue.backend.dump_pending_q
+        assert_equal 0, job_run.retry_count
+
+        # pre_run should recover it with retry logic
+        overseer.pre_run
+
+        # Job should be removed from pending
+        assert_empty QueuedTestJob.queue.backend.dump_pending_q
+
+        # Job should be rescheduled (not in waiting — in scheduled with a delay)
+        assert_empty QueuedTestJob.queue.backend.dump_waiting_q
+
+        # Retry count should be incremented
+        job_run.reload
+        assert_equal 1, job_run.retry_count
+      end
+    end
+
+    it "banishes an orphaned job that has exhausted retries" do
+      clean_slate do
+        register QueuedTestJob
+
+        # Create a job_run with retry_count=4 so the next failure (count=5)
+        # exceeds the default rescheduleable? limit of < 5.
+        job_run = Mosquito::JobRun.new("queued_test_job", retry_count: 4)
+        job_run.store
+
+        QueuedTestJob.queue.enqueue job_run
+        QueuedTestJob.queue.dequeue
+
+        assert_equal [job_run.id], QueuedTestJob.queue.backend.dump_pending_q
+
+        overseer.pre_run
+
+        # Job should be removed from pending and moved to dead
+        assert_empty QueuedTestJob.queue.backend.dump_pending_q
+        assert_empty QueuedTestJob.queue.backend.dump_waiting_q
+        assert_equal [job_run.id], QueuedTestJob.queue.backend.dump_dead_q
+      end
+    end
+  end
 end

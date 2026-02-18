@@ -265,6 +265,14 @@ module Mosquito
       redis.lpush dead_q, job_run.id
     end
 
+    def recover_pending : Int64
+      count = 0_i64
+      while redis.lmove(pending_q, waiting_q, :left, :right)
+        count += 1
+      end
+      count
+    end
+
     def flush : Nil
       redis.del(
         waiting_q,

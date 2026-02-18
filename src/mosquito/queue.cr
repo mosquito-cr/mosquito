@@ -144,6 +144,15 @@ module Mosquito
       name == other.name
     end
 
+    def recover_pending : Int64
+      count = backend.recover_pending
+      if count > 0
+        @empty = false
+        Log.warn { "Recovered #{count} orphaned pending job(s) from #{name}" }
+      end
+      count
+    end
+
     def flush
       backend.flush
     end
