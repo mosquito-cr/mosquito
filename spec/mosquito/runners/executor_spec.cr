@@ -16,7 +16,9 @@ describe "Mosquito::Runners::Executor" do
     register job_class
     job_class.reset_performance_counter!
     job_run = job_class.new.enqueue
-    executor.execute job_run, from_queue: job_class.queue
+    executor.job_run = job_run
+    executor.queue = job_class.queue
+    executor.execute
   end
 
   describe "status" do
@@ -60,7 +62,9 @@ describe "Mosquito::Runners::Executor" do
         FailingJob.queue.enqueue job_run
 
         Timecop.freeze now do
-          executor.execute job_run, from_queue: job.class.queue
+          executor.job_run = job_run
+          executor.queue = FailingJob.queue
+          executor.execute
         end
 
         job_run.reload
@@ -68,7 +72,9 @@ describe "Mosquito::Runners::Executor" do
 
         Timecop.freeze now + job.reschedule_interval(1) do
           coordinator.enqueue_delayed_jobs
-          executor.execute job_run, from_queue: job.class.queue
+          executor.job_run = job_run
+          executor.queue = FailingJob.queue
+          executor.execute
         end
 
         job_run.reload
@@ -85,7 +91,9 @@ describe "Mosquito::Runners::Executor" do
         job_run.store
         NonReschedulableFailingJob.queue.enqueue job_run
 
-        executor.execute job_run, from_queue: NonReschedulableFailingJob.queue
+        executor.job_run = job_run
+        executor.queue = NonReschedulableFailingJob.queue
+        executor.execute
 
         actual_ttl = backend.expires_in job_run.config_key
         assert_equal executor.failed_job_ttl, actual_ttl
@@ -101,7 +109,9 @@ describe "Mosquito::Runners::Executor" do
         job_run.store
         QueuedTestJob.queue.enqueue job_run
 
-        executor.execute job_run, from_queue: QueuedTestJob.queue
+        executor.job_run = job_run
+        executor.queue = QueuedTestJob.queue
+        executor.execute
 
         assert_logs_match "Success"
 
@@ -133,7 +143,9 @@ describe "Mosquito::Runners::Executor" do
       api
 
       spawn {
-        executor.execute job_run, from_queue: SleepyJob.queue
+        executor.job_run = job_run
+        executor.queue = SleepyJob.queue
+        executor.execute
         job_finished.send true
       }
 
