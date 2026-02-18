@@ -32,6 +32,8 @@ module Mosquito::Runners
 
     # Where work is received from the overseer.
     getter job_pipeline : Channel(Tuple(JobRun, Queue))
+    getter! job_run : JobRun
+    getter! queue : Queue
 
     # Used to notify the overseer that this executor is idle.
     getter idle_bell : Channel(Bool)
@@ -75,9 +77,9 @@ module Mosquito::Runners
       return if overseer.state.stopping?
 
       self.state = State::Working
-      job_run, queue = dequeue
+      @job_run, @queue = dequeue
       log.trace { "Dequeued #{job_run} from #{queue.name}" }
-      execute job_run, queue
+      execute
       log.trace { "Finished #{job_run} from #{queue.name}" }
       self.state = State::Idle
 
@@ -88,20 +90,20 @@ module Mosquito::Runners
     #
     # Execution time is measured and logged, and the job is either forgotten
     # or, if it fails, rescheduled.
-    def execute(job_run : JobRun, from_queue q : Queue)
-      observer.execute job_run, q do
+    def execute
+      observer.execute job_run, queue do
         job_run.run
       end
 
       if job_run.succeeded?
-        q.forget job_run
+        queue.forget job_run
         job_run.delete in: successful_job_ttl
       else
         if job_run.rescheduleable?
           next_execution = Time.utc + job_run.reschedule_interval
-          q.reschedule job_run, next_execution
+          queue.reschedule job_run, next_execution
         else
-          q.banish job_run
+          queue.banish job_run
           job_run.delete in: failed_job_ttl
         end
       end
