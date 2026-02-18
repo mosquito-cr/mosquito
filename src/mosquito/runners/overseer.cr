@@ -22,10 +22,6 @@ module Mosquito::Runners
     getter executors
     getter coordinator
 
-    getter queue_list : QueueList
-    getter executors
-    getter coordinator
-
     # The channel where job runs which have been dequeued are sent to executors.
     getter work_handout
 
@@ -90,25 +86,13 @@ module Mosquito::Runners
 
       work_handout.close
 
-      stopped_notifiers = executors.map do |executor|
-        executor.stop
-      end
+      stopped_notifiers = executors.map(&.stop)
 
       @queue_list.stop
 
       stopped_notifiers.each(&.receive)
 
-      requeue_pending_jobs
-
       observer.stopped
-    end
-
-    private def requeue_pending_jobs
-      queue_list.each do |q|
-        while job_run = q.undequeue
-          log.info { "Requeuing pending job #{job_run.id} to #{q.name}" }
-        end
-      end
     end
 
     # The goal for the overseer is to:
@@ -153,9 +137,11 @@ module Mosquito::Runners
         log.trace { "Found an idle executor" }
         all_executors_busy = false
       when timeout(idle_wait)
+        log.trace { "Idled for #{idle_wait.total_seconds}s" }
       end
 
       case
+      when state.stopping?
       # If none of the executors is idle, don't dequeue anything or it'll get lost.
       when all_executors_busy
         log.trace { "No idle executors" }

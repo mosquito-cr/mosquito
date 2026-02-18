@@ -74,7 +74,6 @@ module Mosquito::Runners
     def each_run : Nil
       dequeue = job_pipeline.receive?
       return if dequeue.nil?
-      return if overseer.state.stopping?
 
       self.state = State::Working
       @job_run, @queue = dequeue
