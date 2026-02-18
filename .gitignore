@@ -8,3 +8,4 @@
 docs
 # Claude Code local user config (not hooks/settings which are shared)
 .claude/local/
+CLAUD.local.md
