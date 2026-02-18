@@ -6,7 +6,10 @@ if [ "${CLAUDE_CODE_REMOTE:-}" != "true" ]; then
   exit 0
 fi
 
-CRYSTAL_VERSION="1.19.1"
+echo '{"async": true, "asyncTimeout": 300000}'
+
+# Read Crystal version from .tool-versions
+CRYSTAL_VERSION=$(grep '^crystal ' "$CLAUDE_PROJECT_DIR/.tool-versions" | awk '{print $2}')
 
 # Install Crystal compiler if not already present
 if ! command -v crystal &> /dev/null; then
