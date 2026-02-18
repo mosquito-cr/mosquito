@@ -179,20 +179,17 @@ module Mosquito::Runners
       end
     end
 
-    # If an executor dies, it's probably because a bug exists somewhere in Mosquito itself.
-    #
     # When a job fails any exceptions are caught and logged. If a job causes something more
     # catastrophic we can try to recover by spawning a new executor.
+    #
+    # This happens, for example, when a new version of a worker is deployed and work is still
+    # in the queue that references job classes that no longer exist.
     def check_for_deceased_runners : Nil
-      executors.select{|e| e.state.started?}.select(&.dead?).each do |dead_executor|
-        Log.fatal do
-          <<-MSG
-            Executor #{dead_executor.runnable_name} died.
-            A new executor will be started.
-          MSG
+      executors.select {|executor| executor.dead? || executor.state.crashed? }
+        .each do |dead_executor|
+          Log.fatal { "Executor #{dead_executor.runnable_name} died." }
+          executors.delete dead_executor
         end
-        executors.delete dead_executor
-      end
 
       (executor_count - executors.size).times do
         executors << build_executor.tap(&.run)
