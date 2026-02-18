@@ -1,4 +1,6 @@
 module Mosquito::Observability::Publisher
+  Log = ::Log.for("mosquito.events")
+
   getter publish_context : PublishContext
 
   macro metrics(&block)
