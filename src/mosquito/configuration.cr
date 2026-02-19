@@ -20,6 +20,8 @@ module Mosquito
     property global_prefix : String? = nil
     property backend : Mosquito::Backend.class = Mosquito::RedisBackend
 
+    property dequeue_adapter : Mosquito::DequeueAdapter = Mosquito::ShuffleDequeueAdapter.new
+
     property publish_metrics : Bool = false
 
     # How often a mosquito runner should emit a heartbeat metric.
