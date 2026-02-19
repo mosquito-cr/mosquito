@@ -21,6 +21,7 @@ module Mosquito::Runners
     getter queue_list : QueueList
     getter executors
     getter coordinator
+    getter dequeue_adapter : Mosquito::DequeueAdapter
 
     # The channel where job runs which have been dequeued are sent to executors.
     getter work_handout
@@ -43,6 +44,7 @@ module Mosquito::Runners
 
       @queue_list = QueueList.new
       @coordinator = Coordinator.new queue_list
+      @dequeue_adapter = Mosquito.configuration.dequeue_adapter
       @executors = [] of Executor
       @work_handout = Channel(Tuple(JobRun, Queue)).new
 
@@ -171,14 +173,12 @@ module Mosquito::Runners
       end
     end
 
-    # Weaknesses: This implementation sometimes starves queues because it doesn't
-    # round robin, prioritize queues, or anything else.
+    # Delegates job dequeue to the configured `DequeueAdapter`.
+    #
+    # The adapter can be swapped via `Mosquito.configuration.dequeue_adapter`
+    # to implement custom strategies (priority, round-robin, rate limiting, etc).
     def dequeue_job? : Tuple(JobRun, Queue)?
-      queue_list.each do |q|
-        if job_run = q.dequeue
-          return { job_run, q }
-        end
-      end
+      dequeue_adapter.dequeue(queue_list)
     end
 
     # When a job fails any exceptions are caught and logged. If a job causes something more
