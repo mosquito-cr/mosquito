@@ -19,7 +19,7 @@ module Mosquito::Runners
       "queue-list"
     end
 
-    delegate each, to: @queues.shuffle
+    delegate each, to: @queues
 
     def each_run : Nil
       # This idle wait should be at most 1 second. Longer can cause periodic jobs
