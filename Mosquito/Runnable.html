@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Crystal Docs 1.16.3">
+<meta name="generator" content="Crystal Docs 1.18.2">
 <meta name="crystal_docs.project_version" content="2.0.0">
 <meta name="crystal_docs.project_name" content="mosquito">
 
@@ -529,6 +529,13 @@ are placed in #each_run.</p>
       </li>
     
       <li class="entry-summary">
+        <a href="#done-instance-method" class="signature"><strong>#done</strong></a>
+        
+          <div class="summary"><p>Signaled when the run loop exits (finished or crashed).</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
         <a href="#each_run%3ANil-instance-method" class="signature"><strong>#each_run</strong> : Nil</a>
         
           <div class="summary"><p>Implementation of what this Runnable should do on each cycle.</p></div>
@@ -620,6 +627,25 @@ are placed in #each_run.</p>
 
         <a class="method-permalink" href="#dead%3F%3ABool-instance-method">#</a>
       </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="done-instance-method">
+      <div class="signature">
+        
+        def <strong>done</strong>
+
+        <a class="method-permalink" href="#done-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Signaled when the run loop exits (finished or crashed).</p>
+        </div>
       
       <br/>
       <div>
@@ -799,10 +825,8 @@ if needed. See <code>Mosquito::Runners::Executor#state=</code> (source code) for
           <p>Request that the next time the run loop cycles it should exit instead.
 The runnable doesn't exit immediately so #stop returns a notification
 channel.</p>
-<p>#stop spawns a fiber which monitors the state and sends a bool in two
-circumstances.  It will stop waiting for the spawn to exit at 25 seconds.
-If the spawn has actually stopped the notification channel will broadcast
-a true, otherwise false.</p>
+<p>#stop spawns a fiber which waits for the run loop to finish. The
+notification channel broadcasts true if the runnable finished cleanly.</p>
         </div>
       
       <br/>

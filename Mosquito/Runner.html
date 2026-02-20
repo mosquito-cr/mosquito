@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Crystal Docs 1.16.3">
+<meta name="generator" content="Crystal Docs 1.18.2">
 <meta name="crystal_docs.project_version" content="2.0.0">
 <meta name="crystal_docs.project_name" content="mosquito">
 
@@ -403,7 +403,7 @@
 
 <span class="c"># When the process receives sigint, it&#39;ll notify the overseer to shut down gracefully.</span>
 trap(<span class="s">&quot;INT&quot;</span>) <span class="k">do</span>
-  <span class="t">Mosquito</span><span class="t">::</span><span class="t">Runner</span>.stop(wait: <span class="n">true</span>)
+  <span class="t">Mosquito</span><span class="t">::</span><span class="t">Runner</span>.stop
 <span class="k">end</span>
 
 <span class="c"># Starts the overseer, and holds the thread captive.</span>

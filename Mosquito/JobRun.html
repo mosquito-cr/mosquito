@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Crystal Docs 1.16.3">
+<meta name="generator" content="Crystal Docs 1.18.2">
 <meta name="crystal_docs.project_version" content="2.0.0">
 <meta name="crystal_docs.project_name" content="mosquito">
 
@@ -473,7 +473,7 @@ JobRuns know how to:</p>
   <ul class="list-summary">
     
       <li class="entry-summary">
-        <a href="#new%28type%3AString%2Cenqueue_time%3ATime%3DTime.utc%2Cid%3AString%7CNil%3Dnil%2Cretry_count%3AInt32%3D0%29-class-method" class="signature"><strong>.new</strong>(type : String, enqueue_time : Time = <span class="t">Time</span>.utc, id : String | Nil = <span class="n">nil</span>, retry_count : Int32 = <span class="n">0</span>)</a>
+        <a href="#new%28type%3AString%2Cenqueue_time%3ATime%3DTime.utc%2Cid%3AString%7CNil%3Dnil%2Cretry_count%3AInt32%3D0%2Cstarted_at%3ATime%7CNil%3Dnil%2Cfinished_at%3ATime%7CNil%3Dnil%29-class-method" class="signature"><strong>.new</strong>(type : String, enqueue_time : Time = <span class="t">Time</span>.utc, id : String | Nil = <span class="n">nil</span>, retry_count : Int32 = <span class="n">0</span>, started_at : Time | Nil = <span class="n">nil</span>, finished_at : Time | Nil = <span class="n">nil</span>)</a>
         
       </li>
     
@@ -562,6 +562,11 @@ JobRuns know how to:</p>
       </li>
     
       <li class="entry-summary">
+        <a href="#finished_at%3ATime%7CNil-instance-method" class="signature"><strong>#finished_at</strong> : Time | Nil</a>
+        
+      </li>
+    
+      <li class="entry-summary">
         <a href="#id%3AString-instance-method" class="signature"><strong>#id</strong> : String</a>
         
       </li>
@@ -606,6 +611,11 @@ JobRuns know how to:</p>
         <a href="#run-instance-method" class="signature"><strong>#run</strong></a>
         
           <div class="summary"><p>Builds and runs the job with this job_run config.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#started_at%3ATime%7CNil-instance-method" class="signature"><strong>#started_at</strong> : Time | Nil</a>
         
       </li>
     
@@ -672,12 +682,12 @@ JobRuns know how to:</p>
     Constructor Detail
   </h2>
   
-    <div class="entry-detail" id="new(type:String,enqueue_time:Time=Time.utc,id:String|Nil=nil,retry_count:Int32=0)-class-method">
+    <div class="entry-detail" id="new(type:String,enqueue_time:Time=Time.utc,id:String|Nil=nil,retry_count:Int32=0,started_at:Time|Nil=nil,finished_at:Time|Nil=nil)-class-method">
       <div class="signature">
         
-        def self.<strong>new</strong>(type : String, enqueue_time : Time = <span class="t">Time</span>.utc, id : String | Nil = <span class="n">nil</span>, retry_count : Int32 = <span class="n">0</span>)
+        def self.<strong>new</strong>(type : String, enqueue_time : Time = <span class="t">Time</span>.utc, id : String | Nil = <span class="n">nil</span>, retry_count : Int32 = <span class="n">0</span>, started_at : Time | Nil = <span class="n">nil</span>, finished_at : Time | Nil = <span class="n">nil</span>)
 
-        <a class="method-permalink" href="#new%28type%3AString%2Cenqueue_time%3ATime%3DTime.utc%2Cid%3AString%7CNil%3Dnil%2Cretry_count%3AInt32%3D0%29-class-method">#</a>
+        <a class="method-permalink" href="#new%28type%3AString%2Cenqueue_time%3ATime%3DTime.utc%2Cid%3AString%7CNil%3Dnil%2Cretry_count%3AInt32%3D0%2Cstarted_at%3ATime%7CNil%3Dnil%2Cfinished_at%3ATime%7CNil%3Dnil%29-class-method">#</a>
       </div>
       
       <br/>
@@ -865,6 +875,20 @@ Optionally, after a delay in seconds (handled by the backend).</p>
       </div>
     </div>
   
+    <div class="entry-detail" id="finished_at:Time|Nil-instance-method">
+      <div class="signature">
+        
+        def <strong>finished_at</strong> : Time | Nil
+
+        <a class="method-permalink" href="#finished_at%3ATime%7CNil-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
     <div class="entry-detail" id="id:String-instance-method">
       <div class="signature">
         
@@ -990,6 +1014,20 @@ Optionally, after a delay in seconds (handled by the backend).</p>
           
           <p>Builds and runs the job with this job_run config.</p>
         </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="started_at:Time|Nil-instance-method">
+      <div class="signature">
+        
+        def <strong>started_at</strong> : Time | Nil
+
+        <a class="method-permalink" href="#started_at%3ATime%7CNil-instance-method">#</a>
+      </div>
       
       <br/>
       <div>

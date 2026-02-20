@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Crystal Docs 1.16.3">
+<meta name="generator" content="Crystal Docs 1.18.2">
 <meta name="crystal_docs.project_version" content="2.0.0">
 <meta name="crystal_docs.project_name" content="mosquito">
 
@@ -474,7 +474,7 @@ bell again and wait for more work.</p>
   <ul class="list-summary">
     
       <li class="entry-summary">
-        <a href="#new%28job_pipeline%3AChannel%28Tuple%28Mosquito%3A%3AJobRun%2CMosquito%3A%3AQueue%29%29%2Cidle_bell%3AChannel%28Bool%29%29-class-method" class="signature"><strong>.new</strong>(job_pipeline : Channel(Tuple(Mosquito::JobRun, Mosquito::Queue)), idle_bell : Channel(Bool))</a>
+        <a href="#new%28overseer%3AOverseer%29-class-method" class="signature"><strong>.new</strong>(overseer : Overseer)</a>
         
       </li>
     
@@ -497,7 +497,7 @@ bell again and wait for more work.</p>
   <ul class="list-summary">
     
       <li class="entry-summary">
-        <a href="#execute%28job_run%3AJobRun%2Cfrom_queueq%3AQueue%29-instance-method" class="signature"><strong>#execute</strong>(job_run : JobRun, from_queue q : Queue)</a>
+        <a href="#execute-instance-method" class="signature"><strong>#execute</strong></a>
         
           <div class="summary"><p>Runs a job from a Queue.</p></div>
         
@@ -532,7 +532,32 @@ bell again and wait for more work.</p>
       </li>
     
       <li class="entry-summary">
+        <a href="#job_run%3AJobRun-instance-method" class="signature"><strong>#job_run</strong> : JobRun</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#job_run%3F%3AJobRun%7CNil-instance-method" class="signature"><strong>#job_run?</strong> : JobRun | Nil</a>
+        
+      </li>
+    
+      <li class="entry-summary">
         <a href="#observer%3AObservability%3A%3AExecutor-instance-method" class="signature"><strong>#observer</strong> : Observability::Executor</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#overseer%3AOverseer-instance-method" class="signature"><strong>#overseer</strong> : Overseer</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#queue%3AQueue-instance-method" class="signature"><strong>#queue</strong> : Queue</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#queue%3F%3AQueue%7CNil-instance-method" class="signature"><strong>#queue?</strong> : Queue | Nil</a>
         
       </li>
     
@@ -564,6 +589,11 @@ bell again and wait for more work.</p>
     <a href="../../Mosquito/Runnable.html#dead%3F%3ABool-instance-method" class="tooltip">
       <span>dead? : Bool</span>
     dead?</a>, 
+    
+  
+    <a href="../../Mosquito/Runnable.html#done-instance-method" class="tooltip">
+      <span>done</span>
+    done</a>, 
     
   
     <a href="../../Mosquito/Runnable.html#each_run%3ANil-instance-method" class="tooltip">
@@ -683,12 +713,12 @@ bell again and wait for more work.</p>
     Constructor Detail
   </h2>
   
-    <div class="entry-detail" id="new(job_pipeline:Channel(Tuple(Mosquito::JobRun,Mosquito::Queue)),idle_bell:Channel(Bool))-class-method">
+    <div class="entry-detail" id="new(overseer:Overseer)-class-method">
       <div class="signature">
         
-        def self.<strong>new</strong>(job_pipeline : Channel(Tuple(<a href="../../Mosquito/JobRun.html">Mosquito::JobRun</a>, <a href="../../Mosquito/Queue.html">Mosquito::Queue</a>)), idle_bell : Channel(Bool))
+        def self.<strong>new</strong>(overseer : <a href="../../Mosquito/Runners/Overseer.html">Overseer</a>)
 
-        <a class="method-permalink" href="#new%28job_pipeline%3AChannel%28Tuple%28Mosquito%3A%3AJobRun%2CMosquito%3A%3AQueue%29%29%2Cidle_bell%3AChannel%28Bool%29%29-class-method">#</a>
+        <a class="method-permalink" href="#new%28overseer%3AOverseer%29-class-method">#</a>
       </div>
       
       <br/>
@@ -713,12 +743,12 @@ bell again and wait for more work.</p>
     Instance Method Detail
   </h2>
   
-    <div class="entry-detail" id="execute(job_run:JobRun,from_queueq:Queue)-instance-method">
+    <div class="entry-detail" id="execute-instance-method">
       <div class="signature">
         
-        def <strong>execute</strong>(job_run : <a href="../../Mosquito/JobRun.html">JobRun</a>, from_queue q : <a href="../../Mosquito/Queue.html">Queue</a>)
+        def <strong>execute</strong>
 
-        <a class="method-permalink" href="#execute%28job_run%3AJobRun%2Cfrom_queueq%3AQueue%29-instance-method">#</a>
+        <a class="method-permalink" href="#execute-instance-method">#</a>
       </div>
       
         <div class="doc">
@@ -810,12 +840,82 @@ or, if it fails, rescheduled.</p>
       </div>
     </div>
   
+    <div class="entry-detail" id="job_run:JobRun-instance-method">
+      <div class="signature">
+        
+        def <strong>job_run</strong> : <a href="../../Mosquito/JobRun.html">JobRun</a>
+
+        <a class="method-permalink" href="#job_run%3AJobRun-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="job_run?:JobRun|Nil-instance-method">
+      <div class="signature">
+        
+        def <strong>job_run?</strong> : <a href="../../Mosquito/JobRun.html">JobRun</a> | Nil
+
+        <a class="method-permalink" href="#job_run%3F%3AJobRun%7CNil-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
     <div class="entry-detail" id="observer:Observability::Executor-instance-method">
       <div class="signature">
         
         def <strong>observer</strong> : <a href="../../Mosquito/Observability/Executor.html">Observability::Executor</a>
 
         <a class="method-permalink" href="#observer%3AObservability%3A%3AExecutor-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="overseer:Overseer-instance-method">
+      <div class="signature">
+        
+        def <strong>overseer</strong> : <a href="../../Mosquito/Runners/Overseer.html">Overseer</a>
+
+        <a class="method-permalink" href="#overseer%3AOverseer-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="queue:Queue-instance-method">
+      <div class="signature">
+        
+        def <strong>queue</strong> : <a href="../../Mosquito/Queue.html">Queue</a>
+
+        <a class="method-permalink" href="#queue%3AQueue-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="queue?:Queue|Nil-instance-method">
+      <div class="signature">
+        
+        def <strong>queue?</strong> : <a href="../../Mosquito/Queue.html">Queue</a> | Nil
+
+        <a class="method-permalink" href="#queue%3F%3AQueue%7CNil-instance-method">#</a>
       </div>
       
       <br/>
