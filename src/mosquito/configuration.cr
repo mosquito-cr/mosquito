@@ -14,6 +14,8 @@ module Mosquito
 
     property use_distributed_lock : Bool = true
 
+    property executor_count : Int32 = 6
+
     property run_from : Array(String) = [] of String
     property global_prefix : String? = nil
     property backend : Mosquito::Backend.class = Mosquito::RedisBackend
