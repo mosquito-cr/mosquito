@@ -30,14 +30,8 @@ module Mosquito::Runners
     getter idle_notifier
 
     # The number of executors to start.
-    # Defaults to 6, overridable by Mosquito.configuration.executor_count
-    # or the MOSQUITO_EXECUTOR_COUNT environment variable.
     getter executor_count : Int32 {
-      if count = ENV["MOSQUITO_EXECUTOR_COUNT"]?
-        count.to_i
-      else
-        Mosquito.configuration.executor_count
-      end
+      Mosquito.configuration.executor_count
     }
 
     getter idle_wait : Time::Span {
