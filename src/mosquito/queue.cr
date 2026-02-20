@@ -76,7 +76,6 @@ module Mosquito
   #
   class Queue
     getter name, config_key
-    getter? empty : Bool
     property backend : Mosquito::Backend
 
     getter observer : Observability::Queue { Observability::Queue.new self }
@@ -84,7 +83,6 @@ module Mosquito
     Log = ::Log.for self
 
     def initialize(@name : String)
-      @empty = false
       @backend = Mosquito.backend.named name
       @config_key = @name
     end
@@ -104,14 +102,9 @@ module Mosquito
     end
 
     def dequeue : JobRun?
-      return if empty?
-
       if job_run = backend.dequeue
         observer.dequeued job_run
         job_run
-      else
-        @empty = true
-        nil
       end
     end
 
