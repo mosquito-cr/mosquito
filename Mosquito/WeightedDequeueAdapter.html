@@ -14,7 +14,7 @@
 <script type="text/javascript" src="../js/doc.js"></script>
 
   <meta name="repository-name" content="mosquito">
-  <title>Mosquito::JobFailed - mosquito 2.0.0</title>
+  <title>Mosquito::WeightedDequeueAdapter - mosquito 2.0.0</title>
   <script type="text/javascript">
     CrystalDocs.base_path = "../";
   </script>
@@ -157,7 +157,7 @@
       
     </li>
   
-  <li class=" current" data-id="mosquito/Mosquito/JobFailed" data-name="mosquito::jobfailed">
+  <li class=" " data-id="mosquito/Mosquito/JobFailed" data-name="mosquito::jobfailed">
       <a href="../Mosquito/JobFailed.html">JobFailed</a>
       
     </li>
@@ -372,7 +372,7 @@
       
     </li>
   
-  <li class=" " data-id="mosquito/Mosquito/WeightedDequeueAdapter" data-name="mosquito::weighteddequeueadapter">
+  <li class=" current" data-id="mosquito/Mosquito/WeightedDequeueAdapter" data-name="mosquito::weighteddequeueadapter">
       <a href="../Mosquito/WeightedDequeueAdapter.html">WeightedDequeueAdapter</a>
       
     </li>
@@ -393,12 +393,12 @@
 
   <span class="kind">
     class
-  </span> Mosquito::<wbr>JobFailed
+  </span> Mosquito::<wbr>WeightedDequeueAdapter
 
 </h1>
 
 
-  <ul class="superclass-hierarchy"><li class="superclass"><a href="../Mosquito/JobFailed.html">Mosquito::JobFailed</a></li><li class="superclass">Exception</li><li class="superclass">Reference</li><li class="superclass">Object</li></ul>
+  <ul class="superclass-hierarchy"><li class="superclass"><a href="../Mosquito/WeightedDequeueAdapter.html">Mosquito::WeightedDequeueAdapter</a></li><li class="superclass"><a href="../Mosquito/DequeueAdapter.html">Mosquito::DequeueAdapter</a></li><li class="superclass">Reference</li><li class="superclass">Object</li></ul>
 
 
 
@@ -412,7 +412,29 @@
     Overview
   </h2>
 
-  <p>When a job fails</p>
+  <p>A dequeue adapter that checks queues according to configured weights.</p>
+<p>Higher-weight queues are given proportionally more chances to be dequeued
+from. On each call to <code><a href="../Mosquito/WeightedDequeueAdapter.html#dequeue%28queue_list%3ARunners%3A%3AQueueList%29%3ATuple%28JobRun%2CQueue%29%7CNil-instance-method">#dequeue</a></code>, the adapter picks a queue at random
+(weighted by its configured value). If that queue is empty, it is removed
+from consideration and another weighted pick is made, ensuring each queue
+is checked at most once per dequeue call.</p>
+<p>The weight map is built fresh on each dequeue call from the current
+queue list, ensuring newly discovered queues are picked up immediately.</p>
+<p>Queues not present in the weights table are assigned a default weight of 1.</p>
+<h2><a id="example" class="anchor" href="#example">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>Example</h2>
+<pre><code class="language-crystal"><span class="t">Mosquito</span>.configure <span class="k">do</span> <span class="o">|</span>settings<span class="o">|</span>
+  settings.dequeue_adapter <span class="o">=</span> <span class="t">Mosquito</span><span class="t">::</span><span class="t">WeightedDequeueAdapter</span>.new({
+    <span class="s">&quot;critical&quot;</span> <span class="o">=&gt;</span> <span class="n">5</span>,
+    <span class="s">&quot;default&quot;</span>  <span class="o">=&gt;</span> <span class="n">2</span>,
+    <span class="s">&quot;bulk&quot;</span>     <span class="o">=&gt;</span> <span class="n">1</span>,
+  })
+<span class="k">end</span></code></pre>
+<p>In this configuration the &quot;critical&quot; queue will be checked roughly 5x as
+often as &quot;bulk&quot; and 2.5x as often as &quot;default&quot;.</p>
 
 
 
@@ -439,7 +461,7 @@
   </h2>
   
     
-      mosquito/exceptions.cr
+      mosquito/dequeue_adapters/weighted_dequeue_adapter.cr
     
     <br/>
   
@@ -449,17 +471,67 @@
 
 
   
+  <h2>
+    <a id="constructors" class="anchor" href="#constructors">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Constructors
+  </h2>
+  <ul class="list-summary">
+    
+      <li class="entry-summary">
+        <a href="#new%28weights%3AHash%28String%2CInt32%29%2Cdefault_weight%3AInt32%3D1%29-class-method" class="signature"><strong>.new</strong>(weights : Hash(String, Int32), default_weight : Int32 = <span class="n">1</span>)</a>
+        
+      </li>
+    
+  </ul>
+
 
   
 
   
 
   
+  <h2>
+    <a id="instance-method-summary" class="anchor" href="#instance-method-summary">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Instance Method Summary
+  </h2>
+  <ul class="list-summary">
+    
+      <li class="entry-summary">
+        <a href="#dequeue%28queue_list%3ARunners%3A%3AQueueList%29%3ATuple%28JobRun%2CQueue%29%7CNil-instance-method" class="signature"><strong>#dequeue</strong>(queue_list : Runners::QueueList) : Tuple(JobRun, Queue) | Nil</a>
+        
+          <div class="summary"><p>Attempt to dequeue a job from one of the queues managed by <code>queue_list</code>.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#weights%3AHash%28String%2CInt32%29-instance-method" class="signature"><strong>#weights</strong> : Hash(String, Int32)</a>
+        
+      </li>
+    
+  </ul>
+
 
 
   <div class="methods-inherited">
     
       
+
+  <h3>Instance methods inherited from class <code><a href="../Mosquito/DequeueAdapter.html">Mosquito::DequeueAdapter</a></code></h3>
+  
+  
+    <a href="../Mosquito/DequeueAdapter.html#dequeue%28queue_list%3ARunners%3A%3AQueueList%29%3ATuple%28JobRun%2CQueue%29%7CNil-instance-method" class="tooltip">
+      <span>dequeue(queue_list : Runners::QueueList) : Tuple(JobRun, Queue) | Nil</span>
+    dequeue</a>
+    
+  
 
 
       
@@ -501,12 +573,85 @@
   </div>
 
   
+  <h2>
+    <a id="constructor-detail" class="anchor" href="#constructor-detail">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Constructor Detail
+  </h2>
+  
+    <div class="entry-detail" id="new(weights:Hash(String,Int32),default_weight:Int32=1)-class-method">
+      <div class="signature">
+        
+        def self.<strong>new</strong>(weights : Hash(String, Int32), default_weight : Int32 = <span class="n">1</span>)
+
+        <a class="method-permalink" href="#new%28weights%3AHash%28String%2CInt32%29%2Cdefault_weight%3AInt32%3D1%29-class-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+
 
   
 
   
 
   
+  <h2>
+    <a id="instance-method-detail" class="anchor" href="#instance-method-detail">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Instance Method Detail
+  </h2>
+  
+    <div class="entry-detail" id="dequeue(queue_list:Runners::QueueList):Tuple(JobRun,Queue)|Nil-instance-method">
+      <div class="signature">
+        
+        def <strong>dequeue</strong>(queue_list : <a href="../Mosquito/Runners/QueueList.html">Runners::QueueList</a>) : Tuple(<a href="../Mosquito/JobRun.html">JobRun</a>, <a href="../Mosquito/Queue.html">Queue</a>) | Nil
+
+        <a class="method-permalink" href="#dequeue%28queue_list%3ARunners%3A%3AQueueList%29%3ATuple%28JobRun%2CQueue%29%7CNil-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+            <div class="doc-inherited">
+              Description copied from class <a href="../Mosquito/DequeueAdapter.html">Mosquito::DequeueAdapter</a>
+            </div>
+          
+          <p>Attempt to dequeue a job from one of the queues managed by <code>queue_list</code>.</p>
+<p>Returns a tuple of <code>{<a href="../Mosquito/JobRun.html">JobRun</a>, <a href="../Mosquito/Queue.html">Queue</a>}</code> when a job is available, or <code>nil</code>
+when all queues are empty.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="weights:Hash(String,Int32)-instance-method">
+      <div class="signature">
+        
+        def <strong>weights</strong> : Hash(String, Int32)
+
+        <a class="method-permalink" href="#weights%3AHash%28String%2CInt32%29-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+
 
 
 </div>

@@ -122,6 +122,11 @@
       
     </li>
   
+  <li class=" " data-id="mosquito/Mosquito/DequeueAdapter" data-name="mosquito::dequeueadapter">
+      <a href="../../Mosquito/DequeueAdapter.html">DequeueAdapter</a>
+      
+    </li>
+  
   <li class=" " data-id="mosquito/Mosquito/DoubleRun" data-name="mosquito::doublerun">
       <a href="../../Mosquito/DoubleRun.html">DoubleRun</a>
       
@@ -347,6 +352,11 @@
       
     </li>
   
+  <li class=" " data-id="mosquito/Mosquito/ShuffleDequeueAdapter" data-name="mosquito::shuffledequeueadapter">
+      <a href="../../Mosquito/ShuffleDequeueAdapter.html">ShuffleDequeueAdapter</a>
+      
+    </li>
+  
   <li class="parent " data-id="mosquito/Mosquito/TestBackend" data-name="mosquito::testbackend">
       <a href="../../Mosquito/TestBackend.html">TestBackend</a>
       
@@ -359,6 +369,11 @@
   
 </ul>
 
+      
+    </li>
+  
+  <li class=" " data-id="mosquito/Mosquito/WeightedDequeueAdapter" data-name="mosquito::weighteddequeueadapter">
+      <a href="../../Mosquito/WeightedDequeueAdapter.html">WeightedDequeueAdapter</a>
       
     </li>
   
@@ -510,9 +525,14 @@
       </li>
     
       <li class="entry-summary">
+        <a href="#dequeue_adapter%3AMosquito%3A%3ADequeueAdapter-instance-method" class="signature"><strong>#dequeue_adapter</strong> : Mosquito::DequeueAdapter</a>
+        
+      </li>
+    
+      <li class="entry-summary">
         <a href="#dequeue_job%3F%3ATuple%28JobRun%2CQueue%29%7CNil-instance-method" class="signature"><strong>#dequeue_job?</strong> : Tuple(JobRun, Queue) | Nil</a>
         
-          <div class="summary"><p>Weaknesses: This implementation sometimes starves queues because it doesn't round robin, prioritize queues, or anything else.</p></div>
+          <div class="summary"><p>Delegates job dequeue to the configured <code><a href="../../Mosquito/DequeueAdapter.html">DequeueAdapter</a></code>.</p></div>
         
       </li>
     
@@ -837,6 +857,20 @@ in the queue that references job classes that no longer exist.</p>
       </div>
     </div>
   
+    <div class="entry-detail" id="dequeue_adapter:Mosquito::DequeueAdapter-instance-method">
+      <div class="signature">
+        
+        def <strong>dequeue_adapter</strong> : <a href="../../Mosquito/DequeueAdapter.html">Mosquito::DequeueAdapter</a>
+
+        <a class="method-permalink" href="#dequeue_adapter%3AMosquito%3A%3ADequeueAdapter-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
     <div class="entry-detail" id="dequeue_job?:Tuple(JobRun,Queue)|Nil-instance-method">
       <div class="signature">
         
@@ -847,8 +881,9 @@ in the queue that references job classes that no longer exist.</p>
       
         <div class="doc">
           
-          <p>Weaknesses: This implementation sometimes starves queues because it doesn't
-round robin, prioritize queues, or anything else.</p>
+          <p>Delegates job dequeue to the configured <code><a href="../../Mosquito/DequeueAdapter.html">DequeueAdapter</a></code>.</p>
+<p>The adapter can be swapped via <code><a href="../../Mosquito.html#configuration-class-method">Mosquito.configuration</a>.dequeue_adapter</code>
+to implement custom strategies (priority, round-robin, rate limiting, etc).</p>
         </div>
       
       <br/>

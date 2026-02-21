@@ -14,7 +14,7 @@
 <script type="text/javascript" src="../js/doc.js"></script>
 
   <meta name="repository-name" content="mosquito">
-  <title>Mosquito::JobFailed - mosquito 2.0.0</title>
+  <title>Mosquito::ShuffleDequeueAdapter - mosquito 2.0.0</title>
   <script type="text/javascript">
     CrystalDocs.base_path = "../";
   </script>
@@ -157,7 +157,7 @@
       
     </li>
   
-  <li class=" current" data-id="mosquito/Mosquito/JobFailed" data-name="mosquito::jobfailed">
+  <li class=" " data-id="mosquito/Mosquito/JobFailed" data-name="mosquito::jobfailed">
       <a href="../Mosquito/JobFailed.html">JobFailed</a>
       
     </li>
@@ -352,7 +352,7 @@
       
     </li>
   
-  <li class=" " data-id="mosquito/Mosquito/ShuffleDequeueAdapter" data-name="mosquito::shuffledequeueadapter">
+  <li class=" current" data-id="mosquito/Mosquito/ShuffleDequeueAdapter" data-name="mosquito::shuffledequeueadapter">
       <a href="../Mosquito/ShuffleDequeueAdapter.html">ShuffleDequeueAdapter</a>
       
     </li>
@@ -393,12 +393,12 @@
 
   <span class="kind">
     class
-  </span> Mosquito::<wbr>JobFailed
+  </span> Mosquito::<wbr>ShuffleDequeueAdapter
 
 </h1>
 
 
-  <ul class="superclass-hierarchy"><li class="superclass"><a href="../Mosquito/JobFailed.html">Mosquito::JobFailed</a></li><li class="superclass">Exception</li><li class="superclass">Reference</li><li class="superclass">Object</li></ul>
+  <ul class="superclass-hierarchy"><li class="superclass"><a href="../Mosquito/ShuffleDequeueAdapter.html">Mosquito::ShuffleDequeueAdapter</a></li><li class="superclass"><a href="../Mosquito/DequeueAdapter.html">Mosquito::DequeueAdapter</a></li><li class="superclass">Reference</li><li class="superclass">Object</li></ul>
 
 
 
@@ -412,7 +412,10 @@
     Overview
   </h2>
 
-  <p>When a job fails</p>
+  <p>The default dequeue adapter. Shuffles the queue list on each pass and
+returns the first available job.</p>
+<p>The shuffle provides rough fairness across queues, preventing any single
+queue from being consistently checked first.</p>
 
 
 
@@ -439,7 +442,7 @@
   </h2>
   
     
-      mosquito/exceptions.cr
+      mosquito/dequeue_adapters/shuffle_dequeue_adapter.cr
     
     <br/>
   
@@ -455,11 +458,39 @@
   
 
   
+  <h2>
+    <a id="instance-method-summary" class="anchor" href="#instance-method-summary">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Instance Method Summary
+  </h2>
+  <ul class="list-summary">
+    
+      <li class="entry-summary">
+        <a href="#dequeue%28queue_list%3ARunners%3A%3AQueueList%29%3ATuple%28JobRun%2CQueue%29%7CNil-instance-method" class="signature"><strong>#dequeue</strong>(queue_list : Runners::QueueList) : Tuple(JobRun, Queue) | Nil</a>
+        
+          <div class="summary"><p>Attempt to dequeue a job from one of the queues managed by <code>queue_list</code>.</p></div>
+        
+      </li>
+    
+  </ul>
+
 
 
   <div class="methods-inherited">
     
       
+
+  <h3>Instance methods inherited from class <code><a href="../Mosquito/DequeueAdapter.html">Mosquito::DequeueAdapter</a></code></h3>
+  
+  
+    <a href="../Mosquito/DequeueAdapter.html#dequeue%28queue_list%3ARunners%3A%3AQueueList%29%3ATuple%28JobRun%2CQueue%29%7CNil-instance-method" class="tooltip">
+      <span>dequeue(queue_list : Runners::QueueList) : Tuple(JobRun, Queue) | Nil</span>
+    dequeue</a>
+    
+  
 
 
       
@@ -507,6 +538,41 @@
   
 
   
+  <h2>
+    <a id="instance-method-detail" class="anchor" href="#instance-method-detail">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Instance Method Detail
+  </h2>
+  
+    <div class="entry-detail" id="dequeue(queue_list:Runners::QueueList):Tuple(JobRun,Queue)|Nil-instance-method">
+      <div class="signature">
+        
+        def <strong>dequeue</strong>(queue_list : <a href="../Mosquito/Runners/QueueList.html">Runners::QueueList</a>) : Tuple(<a href="../Mosquito/JobRun.html">JobRun</a>, <a href="../Mosquito/Queue.html">Queue</a>) | Nil
+
+        <a class="method-permalink" href="#dequeue%28queue_list%3ARunners%3A%3AQueueList%29%3ATuple%28JobRun%2CQueue%29%7CNil-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+            <div class="doc-inherited">
+              Description copied from class <a href="../Mosquito/DequeueAdapter.html">Mosquito::DequeueAdapter</a>
+            </div>
+          
+          <p>Attempt to dequeue a job from one of the queues managed by <code>queue_list</code>.</p>
+<p>Returns a tuple of <code>{<a href="../Mosquito/JobRun.html">JobRun</a>, <a href="../Mosquito/Queue.html">Queue</a>}</code> when a job is available, or <code>nil</code>
+when all queues are empty.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+
 
 
 </div>
