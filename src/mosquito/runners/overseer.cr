@@ -80,14 +80,13 @@ module Mosquito::Runners
     # Notify all subprocesses to stop, and wait until they do.
     def post_run : Nil
       observer.stopping
-      stopped_notifiers = executors.map do |executor|
-        executor.stop
-      end
 
-      @queue_list.stop
+      wg = WaitGroup.new(executors.size + 1)
+      executors.each { |e| e.stop(wg) }
+      @queue_list.stop(wg)
 
       work_handout.close
-      stopped_notifiers.each(&.receive)
+      wg.wait
       observer.stopped
     end
 

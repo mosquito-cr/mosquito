@@ -11,7 +11,9 @@ class Namespace::ConcreteRunnable
   def test_run : Nil
     run
     first_run_notifier.receive
-    stop.receive
+    wg = WaitGroup.new(1)
+    stop(wg)
+    wg.wait
   end
 
   def runnable_name : String
@@ -26,7 +28,7 @@ class Namespace::ConcreteRunnable
     Fiber.yield
   end
 
-  def stop
+  def stop(wait_group : WaitGroup? = nil)
     first_run_notifier.close
     super
   end
@@ -56,7 +58,7 @@ describe Mosquito::Runnable do
   describe "stop" do
     it "should set the stopping flag" do
       runnable.state = Mosquito::Runnable::State::Working
-      notifier = runnable.stop
+      runnable.stop
       assert_equal Mosquito::Runnable::State::Stopping, runnable.state
     end
 

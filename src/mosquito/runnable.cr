@@ -18,8 +18,9 @@ module Mosquito
   # puts runnable.state # => State::Working
   #
   # # Some time later...
-  # should_be_stopped = runnable.stop has_stopped =
-  # should_be_stopped.receive
+  # wg = WaitGroup.new(1)
+  # runnable.stop(wg)
+  # wg.wait
   # ```
   #
   #
@@ -147,28 +148,23 @@ module Mosquito
     end
 
     # Request that the next time the run loop cycles it should exit instead.
-    # The runnable doesn't exit immediately so #stop returns a notification
-    # channel.
+    # The runnable doesn't exit immediately so #stop spawns a fiber to
+    # monitor the state transition.
     #
-    # #stop spawns a fiber which monitors the state and sends a bool in two
-    # circumstances.  It will stop waiting for the spawn to exit at 25 seconds.
-    # If the spawn has actually stopped the notification channel will broadcast
-    # a true, otherwise false.
-    def stop : Channel(Bool)
+    # If a `WaitGroup` is provided, it will be decremented when the
+    # runnable has finished (or after 25 seconds).
+    def stop(wait_group : WaitGroup? = nil) : Nil
       self.state = State::Stopping if state.running?
-      notifier = Channel(Bool).new
 
       spawn do
         start = Time.utc
         while state.stopping? && (Time.utc - start) < 25.seconds
           Fiber.yield
         end
-        notifier.send state.finished?
 
         log.info { "stopped" }
+        wait_group.try &.done
       end
-
-      notifier
     end
 
     # Used to print a pretty name for logging.
