@@ -14,7 +14,7 @@ module Mosquito
 
     property use_distributed_lock : Bool = true
 
-    property executor_count : Int32 = ENV["MOSQUITO_EXECUTOR_COUNT"]?.try(&.to_i) || 6
+    property executor_count : Int32 = ENV.fetch("MOSQUITO_EXECUTOR_COUNT", "6").to_i
 
     property run_from : Array(String) = [] of String
     property global_prefix : String? = nil
