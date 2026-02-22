@@ -520,6 +520,13 @@
       </li>
     
       <li class="entry-summary">
+        <a href="#cleanup_orphaned_pending_jobs%3ANil-instance-method" class="signature"><strong>#cleanup_orphaned_pending_jobs</strong> : Nil</a>
+        
+          <div class="summary"><p>Scans pending queues for jobs owned by overseers that are no longer alive.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
         <a href="#coordinator%3AMosquito%3A%3ARunners%3A%3ACoordinator-instance-method" class="signature"><strong>#coordinator</strong> : Mosquito::Runners::Coordinator</a>
         
       </li>
@@ -835,6 +842,34 @@
 catastrophic we can try to recover by spawning a new executor.</p>
 <p>This happens, for example, when a new version of a worker is deployed and work is still
 in the queue that references job classes that no longer exist.</p>
+<p>When a dead executor is found, any job it was working on has its
+failure counter incremented and follows the standard retry logic.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="cleanup_orphaned_pending_jobs:Nil-instance-method">
+      <div class="signature">
+        
+        def <strong>cleanup_orphaned_pending_jobs</strong> : Nil
+
+        <a class="method-permalink" href="#cleanup_orphaned_pending_jobs%3ANil-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Scans pending queues for jobs owned by overseers that are no longer
+alive. Each orphaned job has its failure counter incremented and
+follows the standard retry logic.</p>
+<p>An overseer is considered alive if it has registered a heartbeat
+within the configured dead_overseer_threshold. Jobs with no overseer_id (pre-
+dating this feature) are claimed by this overseer so they become
+recoverable when this overseer later dies.
+:nodoc:</p>
         </div>
       
       <br/>

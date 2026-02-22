@@ -551,6 +551,13 @@ JobRuns know how to:</p>
       </li>
     
       <li class="entry-summary">
+        <a href="#claimed_by%28overseer%3ARunners%3A%3AOverseer%29-instance-method" class="signature"><strong>#claimed_by</strong>(overseer : Runners::Overseer)</a>
+        
+          <div class="summary"><p>Marks this job run as claimed by the given overseer and persists the association to the backend.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
         <a href="#config_key-instance-method" class="signature"><strong>#config_key</strong></a>
         
           <div class="summary"><p>The config key is the backend storage key for the metadata of this job_run.</p></div>
@@ -597,6 +604,11 @@ JobRuns know how to:</p>
       </li>
     
       <li class="entry-summary">
+        <a href="#overseer_id%3AString%7CNil-instance-method" class="signature"><strong>#overseer_id</strong> : String | Nil</a>
+        
+      </li>
+    
+      <li class="entry-summary">
         <a href="#reload%3ANil-instance-method" class="signature"><strong>#reload</strong> : Nil</a>
         
           <div class="summary"><p>Updates this job_run config from the backend.</p></div>
@@ -619,6 +631,13 @@ JobRuns know how to:</p>
     
       <li class="entry-summary">
         <a href="#retry_count%3AInt32-instance-method" class="signature"><strong>#retry_count</strong> : Int32</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#retry_or_banish%28queue%3AQueue%29%3ANil-instance-method" class="signature"><strong>#retry_or_banish</strong>(queue : Queue) : Nil</a>
+        
+          <div class="summary"><p>Treats this job run as a failure: increments the retry count and either reschedules with backoff or banishes to the dead queue.</p></div>
         
       </li>
     
@@ -818,6 +837,27 @@ the backend.</p>
       </div>
     </div>
   
+    <div class="entry-detail" id="claimed_by(overseer:Runners::Overseer)-instance-method">
+      <div class="signature">
+        
+        def <strong>claimed_by</strong>(overseer : <a href="../Mosquito/Runners/Overseer.html">Runners::Overseer</a>)
+
+        <a class="method-permalink" href="#claimed_by%28overseer%3ARunners%3A%3AOverseer%29-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Marks this job run as claimed by the given overseer and persists
+the association to the backend. Used by the pending cleanup to
+determine whether the owning overseer is still alive.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
     <div class="entry-detail" id="config_key-instance-method">
       <div class="signature">
         
@@ -881,7 +921,8 @@ Optionally, after a delay in seconds (handled by the backend).</p>
       
         <div class="doc">
           
-          <p>Fails this job run and make sure it's persisted as such.</p>
+          <p>Fails this job run and make sure it's persisted as such.
+Clears the overseer_id since the job is no longer in-flight.</p>
         </div>
       
       <br/>
@@ -938,6 +979,20 @@ Optionally, after a delay in seconds (handled by the backend).</p>
         def <strong>job!</strong> : <a href="../Mosquito/Job.html">Mosquito::Job</a>
 
         <a class="method-permalink" href="#job%21%3AMosquito%3A%3AJob-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="overseer_id:String|Nil-instance-method">
+      <div class="signature">
+        
+        def <strong>overseer_id</strong> : String | Nil
+
+        <a class="method-permalink" href="#overseer_id%3AString%7CNil-instance-method">#</a>
       </div>
       
       <br/>
@@ -1017,6 +1072,26 @@ Optionally, after a delay in seconds (handled by the backend).</p>
       </div>
     </div>
   
+    <div class="entry-detail" id="retry_or_banish(queue:Queue):Nil-instance-method">
+      <div class="signature">
+        
+        def <strong>retry_or_banish</strong>(queue : <a href="../Mosquito/Queue.html">Queue</a>) : Nil
+
+        <a class="method-permalink" href="#retry_or_banish%28queue%3AQueue%29%3ANil-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Treats this job run as a failure: increments the retry count and
+either reschedules with backoff or banishes to the dead queue.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
     <div class="entry-detail" id="run-instance-method">
       <div class="signature">
         
@@ -1060,7 +1135,8 @@ Optionally, after a delay in seconds (handled by the backend).</p>
       
         <div class="doc">
           
-          <p>Stores this job run configuration and metadata in the backend.</p>
+          <p>Stores this job run configuration and metadata in the backend.
+Nil-valued fields are deleted from the backend hash.</p>
         </div>
       
       <br/>
