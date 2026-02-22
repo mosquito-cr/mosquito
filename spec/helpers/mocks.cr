@@ -218,6 +218,42 @@ class SecondRateLimitedJob < Mosquito::QueuedJob
   end
 end
 
+class UniqueTestJob < Mosquito::QueuedJob
+  include Mosquito::UniqueJob
+
+  unique_for 1.hour
+
+  param user_id : Int64
+  param email_type : String
+
+  def perform
+    log "UniqueTestJob performed"
+  end
+end
+
+class UniqueWithKeyJob < Mosquito::QueuedJob
+  include Mosquito::UniqueJob
+
+  unique_for 30.seconds, key: [:user_id]
+
+  param user_id : Int64
+  param message : String
+
+  def perform
+    log "UniqueWithKeyJob performed"
+  end
+end
+
+class UniqueNoParamsJob < Mosquito::QueuedJob
+  include Mosquito::UniqueJob
+
+  unique_for 1.minute
+
+  def perform
+    log "UniqueNoParamsJob performed"
+  end
+end
+
 Mosquito::Base.register_job_mapping "job_with_config", JobWithConfig
 Mosquito::Base.register_job_mapping "job_with_performance_counter", JobWithPerformanceCounter
 Mosquito::Base.register_job_mapping "failing_job", FailingJob
