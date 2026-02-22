@@ -127,6 +127,7 @@ describe Mosquito::RateLimiter do
       job = RateLimitedJob.new
       job.run
       refute job.executed?
+      assert job.preempted?
     end
 
     it "allows a job to execute when the limit hasn't been reached" do

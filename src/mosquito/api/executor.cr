@@ -80,6 +80,8 @@ module Mosquito
 
         if job_run.succeeded?
           log_success_message job_run, duration
+        elsif job_run.preempted?
+          log_preempted_message job_run, duration
         else
           log_failure_message job_run, duration
         end
@@ -104,6 +106,26 @@ module Mosquito
 
       def log_success_message(job_run : JobRun, duration : Time::Span)
         log.info { "#{"Success:".colorize.green} #{job_run} finished and took #{time_with_units duration}" }
+      end
+
+      def log_preempted_message(job_run : JobRun, duration : Time::Span)
+        message = String::Builder.new
+        message << "Preempted: ".colorize.cyan
+        message << job_run
+        message << " was preempted after "
+        message << time_with_units duration
+
+        if job_run.rescheduleable?
+          next_execution = Time.utc + job_run.reschedule_interval
+          message << " and will run again".colorize.cyan
+          message << " in "
+          message << job_run.reschedule_interval
+          message << " (at "
+          message << next_execution
+          message << ")"
+        end
+
+        log.info { message.to_s }
       end
 
       def log_failure_message(job_run : JobRun, duration : Time::Span)
