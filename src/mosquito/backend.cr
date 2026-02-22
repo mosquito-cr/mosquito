@@ -53,6 +53,7 @@ module Mosquito
 
       abstract def unlock(key : String, value : String) : Nil
       abstract def lock?(key : String, value : String, ttl : Time::Span) : Bool
+      abstract def renew_lock?(key : String, value : String, ttl : Time::Span) : Bool
       abstract def publish(key : String, value : String) : Nil
       abstract def subscribe(key : String) : Channel(BroadcastMessage)
       abstract def average_push(key : String, value : Int32, window_size : Int32 = 100) : Nil

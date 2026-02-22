@@ -88,6 +88,7 @@ module Mosquito::Runners
     def post_run : Nil
       observer.stopping
 
+      coordinator.release_leadership
       work_handout.close
 
       stopped_notifiers = executors.map(&.stop)

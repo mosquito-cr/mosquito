@@ -2,11 +2,12 @@ module Mosquito::Runners
   # primer? loader? _scheduler_
   class Coordinator
     Log = ::Log.for self
-    LockTTL = 10.seconds
+    LockTTL = 30.seconds
 
     getter lock_key : String
     getter instance_id : String
     getter queue_list : QueueList
+    getter? is_leader : Bool = false
 
     def initialize(@queue_list)
       @lock_key = Backend.build_key :coordinator, :football
@@ -25,24 +26,26 @@ module Mosquito::Runners
     end
 
     def only_if_coordinator : Nil
-      duration = 0.seconds
-
       unless Mosquito.configuration.use_distributed_lock
+        yield
         return
       end
 
-      if Mosquito.backend.lock? lock_key, instance_id, LockTTL
-        Log.trace { "Coordinator lock acquired" }
-        started_at = Time.utc
+      maintain_leadership
+
+      if is_leader?
         yield
-        duration = Time.utc - started_at
-
-        Mosquito.backend.unlock lock_key, instance_id
-        Log.trace { "Coordinator lock released" }
       end
+    end
 
-      return unless duration > LockTTL
-      Log.warn { "Coordination activities took longer than LockTTL (#{duration} > #{LockTTL}) " }
+    # Releases the coordinator lease. Call during shutdown so another
+    # instance can take over immediately instead of waiting for the
+    # TTL to expire.
+    def release_leadership : Nil
+      return unless @is_leader
+      Mosquito.backend.unlock lock_key, instance_id
+      @is_leader = false
+      Log.info { "Coordinator lease released" }
     end
 
     def enqueue_periodic_jobs
@@ -63,5 +66,23 @@ module Mosquito::Runners
       end
     end
 
+    private def maintain_leadership : Nil
+      if @is_leader
+        unless Mosquito.backend.renew_lock? lock_key, instance_id, LockTTL
+          Log.info { "Lost coordinator lease" }
+          @is_leader = false
+          try_acquire
+        end
+      else
+        try_acquire
+      end
+    end
+
+    private def try_acquire : Nil
+      if Mosquito.backend.lock? lock_key, instance_id, LockTTL
+        Log.info { "Coordinator lease acquired" }
+        @is_leader = true
+      end
+    end
   end
 end

@@ -176,6 +176,19 @@ module Mosquito
       response == "OK"
     end
 
+    RENEW_LOCK_SCRIPT = <<-LUA
+      if redis.call("get",KEYS[1]) == ARGV[1] then
+          return redis.call("expire",KEYS[1],ARGV[2])
+      else
+          return 0
+      end
+    LUA
+
+    def self.renew_lock?(key : String, value : String, ttl : Time::Span) : Bool
+      result = redis.eval RENEW_LOCK_SCRIPT, keys: [key], args: [value, ttl.to_i.to_s]
+      result == 1_i64
+    end
+
     def self.unlock(key : String, value : String) : Nil
       remove_matching_key keys: [key], args: [value]
     end
