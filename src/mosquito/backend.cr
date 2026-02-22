@@ -35,6 +35,7 @@ module Mosquito
       abstract def retrieve(key : String) : Hash(String, String)
       abstract def list_queues : Array(String)
       abstract def list_overseers : Array(String)
+      abstract def list_active_overseers(since : Time) : Array(String)
       abstract def register_overseer(id : String) : Nil
       abstract def deregister_overseer(id : String) : Nil
 

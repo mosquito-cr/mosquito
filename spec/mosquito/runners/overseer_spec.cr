@@ -91,4 +91,21 @@ describe "Mosquito::Runners::Overseer" do
       assert_equal 1, coordinator.schedule_count
     end
   end
+
+  describe "dequeue_job? stamps overseer_id" do
+    it "claims the job run with the overseer's instance id on dequeue" do
+      clean_slate do
+        register QueuedTestJob
+        job_run = QueuedTestJob.new.enqueue
+
+        queue_list.state = Runnable::State::Working
+
+        result = overseer.dequeue_job?
+        assert result
+        dequeued_job_run, _queue = result.not_nil!
+
+        assert_equal overseer.observer.instance_id, dequeued_job_run.overseer_id
+      end
+    end
+  end
 end

@@ -15,6 +15,7 @@ describe Mosquito::Api::Publisher do
     job_run.store
     job_run.build_job
 
+    PubSub.instance.clear
     published_messages = eavesdrop do
       Mosquito.temp_config(publish_metrics: false) do
         observer.execute job_run, job.class.queue do

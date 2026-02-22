@@ -82,11 +82,11 @@ module Mosquito
     end
 
     def heartbeat
-      metrics do
-        # (Re)registers the overseer with the backend.
-        Mosquito.backend.register_overseer self.instance_id
+      # Registration must always happen so that the pending job cleanup
+      # mechanism can determine which overseers are still alive.
+      Mosquito.backend.register_overseer self.instance_id
 
-        # Update the metadata with the current time.
+      metrics do
         metadata.heartbeat!
       end
     end
