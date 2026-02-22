@@ -158,6 +158,10 @@ module Mosquito::Runners
       run_at_most every: Mosquito.configuration.heartbeat_interval, label: :heartbeat do
         observer.heartbeat
       end
+
+      run_at_most every: Mosquito.configuration.heartbeat_interval * 3, label: :pending_cleanup do
+        cleanup_orphaned_pending_jobs
+      end
     end
 
     # Weaknesses: This implementation sometimes starves queues because it doesn't
@@ -165,6 +169,7 @@ module Mosquito::Runners
     def dequeue_job? : Tuple(JobRun, Queue)?
       queue_list.each do |q|
         if job_run = q.dequeue
+          job_run.claimed_by self
           return { job_run, q }
         end
       end
@@ -174,14 +179,13 @@ module Mosquito::Runners
     #
     # When a job fails any exceptions are caught and logged. If a job causes something more
     # catastrophic we can try to recover by spawning a new executor.
+    #
+    # When a dead executor is found, any job it was working on has its
+    # failure counter incremented and follows the standard retry logic.
     def check_for_deceased_runners : Nil
       executors.select{|e| e.state.started?}.select(&.dead?).each do |dead_executor|
-        Log.fatal do
-          <<-MSG
-            Executor #{dead_executor.runnable_name} died.
-            A new executor will be started.
-          MSG
-        end
+        observer.executor_died dead_executor
+        recover_job_from dead_executor
         executors.delete dead_executor
       end
 
@@ -194,6 +198,84 @@ module Mosquito::Runners
       if queue_list.dead?
         log.fatal { "QueueList has died, overseer will stop." }
         stop
+      end
+    end
+
+    # Scans pending queues for jobs owned by overseers that are no longer
+    # alive. Each orphaned job has its failure counter incremented and
+    # follows the standard retry logic.
+    #
+    # An overseer is considered alive if it has registered a heartbeat
+    # within 5x the heartbeat interval. Jobs with no overseer_id (pre-
+    # dating this feature) are claimed by this overseer so they become
+    # recoverable if this overseer later dies.
+    # :nodoc:
+    def cleanup_orphaned_pending_jobs : Nil
+      threshold = Mosquito.configuration.heartbeat_interval * 5
+      live_overseers = Mosquito.backend.list_active_overseers(
+        since: Time.utc - threshold
+      ).to_set
+
+      queue_names = Mosquito.backend.list_queues
+      return if queue_names.empty?
+
+      total = 0
+      queue_names.each do |name|
+        q = Queue.new(name)
+        pending_ids = q.backend.dump_pending_q
+        pending_ids.each do |job_run_id|
+          job_run = JobRun.retrieve(job_run_id)
+
+          unless job_run
+            # Job config is gone (expired/deleted), just clean up the
+            # dangling reference in the pending queue.
+            q.backend.finish JobRun.new("_cleanup", id: job_run_id)
+            total += 1
+            next
+          end
+
+          # Jobs without an overseer_id predate this feature. Claim them
+          # so a future cleanup cycle can detect if this overseer dies.
+          unless oid = job_run.overseer_id
+            job_run.claimed_by self
+            next
+          end
+
+          next if live_overseers.includes?(oid)
+
+          log.warn { "Recovering orphaned job #{job_run.id} from dead overseer #{oid}" }
+          retry_or_banish job_run, q
+          total += 1
+        end
+      end
+
+      if total > 0
+        log.warn { "Recovered #{total} orphaned job(s) from pending queues" }
+      end
+    end
+
+    # If a dead executor was working on a job, increment its failure
+    # counter and follow the standard retry logic.
+    private def recover_job_from(dead_executor : Executor) : Nil
+      if current = dead_executor.current_job
+        job_run, queue = current
+        log.warn { "Recovering job #{job_run.id} from dead executor #{dead_executor.runnable_name}" }
+        retry_or_banish job_run, queue
+      end
+    end
+
+    # Treats a recovered pending job as a failure: increments the retry
+    # count and either reschedules with backoff or banishes to dead queue.
+    private def retry_or_banish(job_run : JobRun, queue : Queue) : Nil
+      job_run.fail
+      job_run.build_job
+
+      if job_run.rescheduleable?
+        next_execution = Time.utc + job_run.reschedule_interval
+        queue.reschedule job_run, next_execution
+      else
+        queue.banish job_run
+        job_run.delete in: Mosquito.configuration.failed_job_ttl
       end
     end
   end

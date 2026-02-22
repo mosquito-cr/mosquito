@@ -36,7 +36,7 @@ module Mosquito
   # end
   # ```
   class TestBackend < Mosquito::Backend
-    def self.store(key : String, value : Hash(String, String)) : Nil
+    def self.store(key : String, value : Hash(String, String?) | Hash(String, String)) : Nil
     end
 
     def self.retrieve(key : String) : Hash(String, String)
@@ -48,6 +48,10 @@ module Mosquito
     end
 
     def self.list_overseers : Array(String)
+      [] of String
+    end
+
+    def self.list_active_overseers(since : Time) : Array(String)
       [] of String
     end
 
@@ -170,6 +174,10 @@ module Mosquito
     end
 
     def size(include_dead : Bool = true) : Int64
+      0_i64
+    end
+
+    def recover_pending : Int64
       0_i64
     end
 

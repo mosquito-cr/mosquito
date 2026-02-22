@@ -14,6 +14,7 @@ module Mosquito
     getter id : String
     getter retry_count = 0
     getter job : Mosquito::Job?
+    getter overseer_id : String?
     @started_at : Time?
     @finished_at : Time?
 
@@ -53,11 +54,14 @@ module Mosquito
     end
 
     # Stores this job run configuration and metadata in the backend.
+    # Nil-valued fields are deleted from the backend hash.
     def store
-      fields = config.dup
+      fields = {} of String => String?
+      config.each { |k, v| fields[k] = v }
       fields["enqueue_time"] = enqueue_time.to_unix_ms.to_s
       fields["type"] = type
       fields["retry_count"] = retry_count.to_s
+      fields["overseer_id"] = @overseer_id
 
       if started_at_ = @started_at
         fields["started_at"] = started_at_.to_unix_ms.to_s
@@ -107,9 +111,24 @@ module Mosquito
       store
     end
 
+    # :nodoc:
+    protected def overseer_id=(id : String?)
+      @overseer_id = id
+    end
+
+    # Marks this job run as claimed by the given overseer and persists
+    # the association to the backend. Used by the pending cleanup to
+    # determine whether the owning overseer is still alive.
+    def claimed_by(overseer : Runners::Overseer)
+      @overseer_id = overseer.observer.instance_id
+      Mosquito.backend.set config_key, "overseer_id", @overseer_id.not_nil!
+    end
+
     # Fails this job run and make sure it's persisted as such.
+    # Clears the overseer_id since the job is no longer in-flight.
     def fail
       @retry_count += 1
+      @overseer_id = nil
       store
     end
 
@@ -134,8 +153,11 @@ module Mosquito
       return unless timestamp = fields.delete "enqueue_time"
       retry_count = (fields.delete("retry_count") || 0).to_i
 
+      overseer_id = fields.delete("overseer_id")
+
       instance = new(name, Time.unix_ms(timestamp.to_i64), id, retry_count)
       instance.config = fields
+      instance.overseer_id = overseer_id
 
       instance
     end

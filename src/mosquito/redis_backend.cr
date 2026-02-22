@@ -72,8 +72,8 @@ module Mosquito
       @name = name.to_s
     end
 
-    def self.store(key : String, value : Hash(String, String)) : Nil
-      redis.hset key, value
+    def self.store(key : String, value : Hash(String, String?) | Hash(String, String)) : Nil
+      set key, value
     end
 
     def self.retrieve(key : String) : Hash(String, String)
@@ -154,6 +154,11 @@ module Mosquito
     def self.list_overseers : Array(String)
       key = build_key LIST_OF_OVERSEERS_KEY
       expiring_list_fetch(key, Time.utc - 1.day)
+    end
+
+    def self.list_active_overseers(since : Time) : Array(String)
+      key = build_key LIST_OF_OVERSEERS_KEY
+      redis.zrangebyscore(key, since.to_unix.to_s, "+inf").as(Array).map(&.as(String))
     end
 
     # TODO: this should take the timestamp as an argument
@@ -263,6 +268,14 @@ module Mosquito
 
     def terminate(job_run : JobRun)
       redis.lpush dead_q, job_run.id
+    end
+
+    def recover_pending : Int64
+      count = 0_i64
+      while redis.lmove(pending_q, waiting_q, :left, :right)
+        count += 1
+      end
+      count
     end
 
     def flush : Nil

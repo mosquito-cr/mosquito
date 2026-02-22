@@ -31,10 +31,11 @@ module Mosquito
     end
 
     module ClassMethods
-      abstract def store(key : String, value : Hash(String, String)) : Nil
+      abstract def store(key : String, value : Hash(String, String?) | Hash(String, String)) : Nil
       abstract def retrieve(key : String) : Hash(String, String)
       abstract def list_queues : Array(String)
       abstract def list_overseers : Array(String)
+      abstract def list_active_overseers(since : Time) : Array(String)
       abstract def register_overseer(id : String) : Nil
       abstract def deregister_overseer(id : String) : Nil
 
@@ -73,7 +74,7 @@ module Mosquito
       end
     {% end %}
 
-    def store(key : String, value : Hash(String, String)) : Nil
+    def store(key : String, value : Hash(String, String?) | Hash(String, String)) : Nil
       self.class.store key, value
     end
 
@@ -98,6 +99,7 @@ module Mosquito
     abstract def terminate(job_run : JobRun) # should this be called fail?
     abstract def flush : Nil
     abstract def size(include_dead : Bool = true) : Int64
+    abstract def recover_pending : Int64
 
     {% for name in ["waiting", "scheduled", "pending", "dead"] %}
       abstract def dump_{{name.id}}_q : Array(String)

@@ -91,4 +91,132 @@ describe "Mosquito::Runners::Overseer" do
       assert_equal 1, coordinator.schedule_count
     end
   end
+
+  describe "dequeue_job? stamps overseer_id" do
+    it "claims the job run with the overseer's instance id on dequeue" do
+      clean_slate do
+        register QueuedTestJob
+        job_run = QueuedTestJob.new.enqueue
+
+        queue_list.state = Runnable::State::Working
+
+        result = overseer.dequeue_job?
+        assert result
+        dequeued_job_run, _queue = result.not_nil!
+
+        assert_equal overseer.observer.instance_id, dequeued_job_run.overseer_id
+      end
+    end
+  end
+
+  describe "cleanup_orphaned_pending_jobs" do
+    it "recovers a pending job whose overseer is dead" do
+      clean_slate do
+        register QueuedTestJob
+
+        # Use a separate overseer that won't be registered as alive.
+        dead_overseer = MockOverseer.new
+
+        job = QueuedTestJob.new
+        job_run = job.build_job_run
+        job_run.store
+        QueuedTestJob.queue.enqueue job_run
+        QueuedTestJob.queue.dequeue
+        job_run.claimed_by dead_overseer
+
+        # Verify job is stuck in pending
+        assert_equal [job_run.id], QueuedTestJob.queue.backend.dump_pending_q
+        assert_equal 0, job_run.retry_count
+
+        # Register only the *live* overseer
+        Mosquito.backend.register_overseer overseer.observer.instance_id
+
+        # Run cleanup — dead_overseer's id won't be in the active set
+        overseer.cleanup_orphaned_pending_jobs
+
+        # Job should be removed from pending
+        assert_empty QueuedTestJob.queue.backend.dump_pending_q
+
+        # Retry count should be incremented
+        job_run.reload
+        assert_equal 1, job_run.retry_count
+      end
+    end
+
+    it "does not touch pending jobs from a live overseer" do
+      clean_slate do
+        register QueuedTestJob
+
+        job = QueuedTestJob.new
+        job_run = job.build_job_run
+        job_run.store
+        QueuedTestJob.queue.enqueue job_run
+        QueuedTestJob.queue.dequeue
+
+        # Claim with the live overseer
+        Mosquito.backend.register_overseer overseer.observer.instance_id
+        job_run.claimed_by overseer
+
+        assert_equal [job_run.id], QueuedTestJob.queue.backend.dump_pending_q
+
+        overseer.cleanup_orphaned_pending_jobs
+
+        # Job should still be in pending — its overseer is alive
+        assert_equal [job_run.id], QueuedTestJob.queue.backend.dump_pending_q
+      end
+    end
+
+    it "claims unclaimed pending jobs without recovering them" do
+      clean_slate do
+        register QueuedTestJob
+
+        job = QueuedTestJob.new
+        job_run = job.build_job_run
+        job_run.store
+        QueuedTestJob.queue.enqueue job_run
+        QueuedTestJob.queue.dequeue
+
+        # No claim — simulates a job from before this feature
+        assert_nil job_run.overseer_id
+        assert_equal [job_run.id], QueuedTestJob.queue.backend.dump_pending_q
+
+        Mosquito.backend.register_overseer overseer.observer.instance_id
+        overseer.cleanup_orphaned_pending_jobs
+
+        # Job should still be in pending (not recovered)
+        assert_equal [job_run.id], QueuedTestJob.queue.backend.dump_pending_q
+
+        # But it should now be claimed by this overseer
+        job_run.reload
+        assert_equal overseer.observer.instance_id, job_run.overseer_id
+      end
+    end
+
+    it "banishes an orphaned job that has exhausted retries" do
+      clean_slate do
+        register QueuedTestJob
+
+        dead_overseer = MockOverseer.new
+
+        # Create a job_run with retry_count=4 so the next failure (count=5)
+        # exceeds the default rescheduleable? limit of < 5.
+        job_run = Mosquito::JobRun.new("queued_test_job", retry_count: 4)
+        job_run.store
+
+        QueuedTestJob.queue.enqueue job_run
+        QueuedTestJob.queue.dequeue
+        job_run.claimed_by dead_overseer
+
+        assert_equal [job_run.id], QueuedTestJob.queue.backend.dump_pending_q
+
+        Mosquito.backend.register_overseer overseer.observer.instance_id
+        overseer.cleanup_orphaned_pending_jobs
+
+        # Job should be removed from pending and moved to dead
+        assert_empty QueuedTestJob.queue.backend.dump_pending_q
+        assert_empty QueuedTestJob.queue.backend.dump_waiting_q
+        assert_equal [job_run.id], QueuedTestJob.queue.backend.dump_dead_q
+      end
+    end
+  end
 end
