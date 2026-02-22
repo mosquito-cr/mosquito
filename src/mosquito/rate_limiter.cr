@@ -70,7 +70,9 @@ module Mosquito::RateLimiter
 
     before do
       update_window_start
-      preempt "rate limited" if rate_limited?
+      if rate_limited?
+        preempt "rate limited", until: window_expires_at
+      end
     end
 
     after do
@@ -142,24 +144,4 @@ module Mosquito::RateLimiter
     @@rate_limit_increment
   end
 
-  # Configure the reschedule interval so that the job_run is not run again until it
-  # should be allowed through the rate limiter.
-  def reschedule_interval(retry_count : Int32) : Time::Span
-    if preempted? && (window_expiration = window_expires_at)
-      next_window = window_expiration - Time.utc
-      log "Rate limited: will run again in #{next_window}"
-      next_window
-    else
-      super
-    end
-  end
-
-  # Configure the rescheduler to always retry if a job is preempted by rate limiting.
-  def rescheduleable?(retry_count : Int32) : Bool
-    if preempted?
-      true
-    else
-      super
-    end
-  end
 end

@@ -33,6 +33,10 @@ module Mosquito
 
     delegate executed?, succeeded?, failed?, aborted?, preempted?, to: state
 
+    # When a job is preempted with an `until` parameter, this is the time
+    # at which the job should be retried.
+    getter preempted_until : Time?
+
     # When a job fails and raises an exception, it will be saved into this attribute.
     getter exception : Exception?
 
@@ -75,13 +79,14 @@ module Mosquito
     def run
       begin
         before_hook
-      rescue e : JobPreempted
-        Log.info(exception: e) { "Before hook preempted, job will not be executed" }
-        @state = State::Preempted
-        return
       rescue e : Exception
         Log.error(exception: e) { "Before hook raised, job will not be executed" }
         @state = State::Aborted
+        return
+      end
+
+      if preempted?
+        Log.info { "Before hook preempted, job will not be executed" }
         return
       end
 
@@ -115,8 +120,10 @@ module Mosquito
 
     # To be called from inside a before hook.
     # Preempts this job, preventing execution. The job will be rescheduled.
-    def preempt(reason = "")
-      raise JobPreempted.new(reason)
+    #
+    # The optional `until` parameter specifies when the job should be retried.
+    def preempt(reason = "", *, until @preempted_until : Time? = nil)
+      @state = State::Preempted
     end
 
     macro before(&block)
@@ -126,6 +133,8 @@ module Mosquito
         {% else %}
           super
         {% end %}
+
+        return if preempted?
 
         {{ yield }}
       end
@@ -169,6 +178,7 @@ module Mosquito
     #
     # For a given retry count, is this job rescheduleable?
     def rescheduleable?(retry_count : Int32) : Bool
+      return true if preempted?
       rescheduleable? && retry_count < 5
     end
 
@@ -177,6 +187,11 @@ module Mosquito
     # For a given retry count, how long should the delay between
     # job attempts be?
     def reschedule_interval(retry_count : Int32) : Time::Span
+      if preempted? && (wait_until = @preempted_until)
+        delay = wait_until - Time.utc
+        return delay if delay > Time::Span.zero
+      end
+
       2.seconds * (retry_count ** 2)
       # retry 1 = 2 minutes
       #       2 = 8

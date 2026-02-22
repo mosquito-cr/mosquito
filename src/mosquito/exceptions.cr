@@ -3,10 +3,6 @@ module Mosquito
   class JobFailed < Exception
   end
 
-  # When a before hook intentionally preempts execution
-  class JobPreempted < Exception
-  end
-
   # When a job_run tries to run twice
   class DoubleRun < Exception
   end
