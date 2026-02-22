@@ -31,6 +31,9 @@ if ! redis-cli ping &> /dev/null 2>&1; then
   redis-server --daemonize yes
 fi
 
+# Disable RDB persistence to avoid dump.rdb noise in the project directory
+redis-cli config set save "" > /dev/null 2>&1
+
 # Install Crystal shard dependencies
 cd "$CLAUDE_PROJECT_DIR"
 shards install
