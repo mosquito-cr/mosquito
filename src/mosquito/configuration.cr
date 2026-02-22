@@ -27,6 +27,10 @@ module Mosquito
     # How often a mosquito runner should emit a heartbeat metric.
     property heartbeat_interval : Time::Span = 20.seconds
 
+    # How long an overseer can go without a heartbeat before it is
+    # considered dead and its pending jobs are recovered.
+    property dead_overseer_threshold : Time::Span = 100.seconds
+
     property validated = false
 
     def idle_wait=(time_span : Float)

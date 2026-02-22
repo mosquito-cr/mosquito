@@ -156,6 +156,11 @@ module Mosquito
       expiring_list_fetch(key, Time.utc - 1.day)
     end
 
+    def self.list_active_overseers(since : Time) : Array(String)
+      key = build_key LIST_OF_OVERSEERS_KEY
+      redis.zrangebyscore(key, since.to_unix.to_s, "+inf").as(Array).map(&.as(String))
+    end
+
     # TODO: this should take the timestamp as an argument
     def self.expiring_list_push(key : String, value : String) : Nil
       redis.zadd key, Time.utc.to_unix.to_s, value

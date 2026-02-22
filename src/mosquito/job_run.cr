@@ -16,6 +16,7 @@ module Mosquito
     getter job : Mosquito::Job?
     getter started_at : Time?
     getter finished_at : Time?
+    getter overseer_id : String?
 
     def job! : Mosquito::Job
       job || raise RuntimeError.new("No job yet retrieved for job_run.")
@@ -62,6 +63,7 @@ module Mosquito
       fields["enqueue_time"] = enqueue_time.to_unix_ms.to_s
       fields["type"] = type
       fields["retry_count"] = retry_count.to_s
+      fields["overseer_id"] = @overseer_id
 
       if started_at_ = @started_at
         fields["started_at"] = started_at_.to_unix_ms.to_s
@@ -111,9 +113,24 @@ module Mosquito
       store
     end
 
+    # :nodoc:
+    protected def overseer_id=(id : String?)
+      @overseer_id = id
+    end
+
+    # Marks this job run as claimed by the given overseer and persists
+    # the association to the backend. Used by the pending cleanup to
+    # determine whether the owning overseer is still alive.
+    def claimed_by(overseer : Runners::Overseer)
+      @overseer_id = overseer.observer.instance_id
+      Mosquito.backend.set config_key, "overseer_id", @overseer_id.not_nil!
+    end
+
     # Fails this job run and make sure it's persisted as such.
+    # Clears the overseer_id since the job is no longer in-flight.
     def fail
       @retry_count += 1
+      @overseer_id = nil
       store
     end
 
@@ -142,9 +159,11 @@ module Mosquito
 
       started_at = started_at_raw ? Time.unix_ms(started_at_raw.to_i64) : nil
       finished_at = finished_at_raw ? Time.unix_ms(finished_at_raw.to_i64) : nil
+      overseer_id = fields.delete("overseer_id")
 
       instance = new(name, Time.unix_ms(timestamp.to_i64), id, retry_count, started_at, finished_at)
       instance.config = fields
+      instance.overseer_id = overseer_id
 
       instance
     end
@@ -153,6 +172,7 @@ module Mosquito
     def reload : Nil
       config.merge! Mosquito.backend.retrieve config_key
       @retry_count = config["retry_count"].to_i
+      @overseer_id = config.delete("overseer_id")
     end
 
     def to_s(io : IO)

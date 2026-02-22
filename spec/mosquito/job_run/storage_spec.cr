@@ -97,4 +97,22 @@ describe "job_run storage" do
       end
     end
   end
+
+  it "persists overseer_id via claimed_by and retrieves it" do
+    test_overseer = MockOverseer.new
+    job_run.claimed_by test_overseer
+    retrieved = Mosquito::JobRun.retrieve job_run.id
+    assert retrieved
+    assert_equal test_overseer.observer.instance_id, retrieved.not_nil!.overseer_id
+  end
+
+  it "round-trips overseer_id through store and retrieve" do
+    test_overseer = MockOverseer.new
+    job_run.claimed_by test_overseer
+    job_run.store
+
+    retrieved = Mosquito::JobRun.retrieve job_run.id
+    assert retrieved
+    assert_equal test_overseer.observer.instance_id, retrieved.not_nil!.overseer_id
+  end
 end

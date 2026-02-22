@@ -51,6 +51,10 @@ module Mosquito
       [] of String
     end
 
+    def self.list_active_overseers(since : Time) : Array(String)
+      [] of String
+    end
+
     def self.expiring_list_push(key : String, value : String) : Nil
     end
 

@@ -178,7 +178,11 @@ module Mosquito::Runners
     # The adapter can be swapped via `Mosquito.configuration.dequeue_adapter`
     # to implement custom strategies (priority, round-robin, rate limiting, etc).
     def dequeue_job? : Tuple(JobRun, Queue)?
-      dequeue_adapter.dequeue(queue_list)
+      if result = dequeue_adapter.dequeue(queue_list)
+        job_run, _queue = result
+        job_run.claimed_by self
+      end
+      result
     end
 
     # When a job fails any exceptions are caught and logged. If a job causes something more
