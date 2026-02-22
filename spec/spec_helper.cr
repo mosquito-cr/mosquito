@@ -19,6 +19,5 @@ class Minitest::Test
 end
 
 Mosquito.configuration.backend.flush
-Mosquito::RedisBackend.redis.run({"config", "set", "save", ""})
 
 require "minitest/autorun"
