@@ -10,6 +10,8 @@ describe Mosquito::Job::State do
     it "Doesn't mark jobs as executed in any other state" do
       refute Mosquito::Job::State::Initialization.executed?
       refute Mosquito::Job::State::Running.executed?
+      refute Mosquito::Job::State::Aborted.executed?
+      refute Mosquito::Job::State::Preempted.executed?
     end
   end
 end

@@ -18,6 +18,7 @@ module Mosquito
       Succeeded
       Failed
       Aborted
+      Preempted
 
       def executed? : Bool
         succeeded? || failed?
@@ -30,7 +31,7 @@ module Mosquito
 
     getter state = State::Initialization
 
-    delegate executed?, succeeded?, failed?, aborted?, to: state
+    delegate executed?, succeeded?, failed?, aborted?, preempted?, to: state
 
     # When a job fails and raises an exception, it will be saved into this attribute.
     getter exception : Exception?
@@ -74,6 +75,10 @@ module Mosquito
     def run
       begin
         before_hook
+      rescue e : JobPreempted
+        Log.info(exception: e) { "Before hook preempted, job will not be executed" }
+        @state = State::Preempted
+        return
       rescue e : Exception
         Log.error(exception: e) { "Before hook raised, job will not be executed" }
         @state = State::Aborted
@@ -106,6 +111,12 @@ module Mosquito
 
     def retry_later
       fail
+    end
+
+    # To be called from inside a before hook.
+    # Preempts this job, preventing execution. The job will be rescheduled.
+    def preempt(reason = "")
+      raise JobPreempted.new(reason)
     end
 
     macro before(&block)
