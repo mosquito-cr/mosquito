@@ -14,7 +14,20 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 - Mosquito now publishes a variety of events and metrics to a redis pubsub channel. This behavior is disabled by default with the configuration property `config.publish_metrics`.
     - Executor events in #154: job-started and job-finished
     - Overseer events in #160: starting, executor-created, executor-died, stopping, and stopped
+    - Queue events: enqueue, dequeue, reschedule, forget, and banish
+    - Expected job duration is now published with executor events
   The Mosquito API can be used to subscribe to these events with `Mosquito::API.event_receiver`
+- Pluggable dequeue adapters allow customizing how jobs are selected from queues
+    - `DequeueAdapter` abstract base class defines the adapter interface
+    - `ShuffleDequeueAdapter` is the default, preserving existing randomized behavior
+    - `WeightedDequeueAdapter` allows queue-level prioritization via configurable weights
+    - Configurable via `Mosquito.configure { |c| c.dequeue_adapter = ... }`
+- Executor count is now configurable (default increased from 3 to 6)
+    - Set via `Mosquito.configure { |c| c.executor_count = 10 }`
+    - Override with the `MOSQUITO_EXECUTOR_COUNT` environment variable
+- `JobRun#started_at` and `JobRun#finished_at` timestamps are now exposed as typed `Time?` getters
+- Graceful worker shutdown: on SIGTERM/SIGINT the overseer stops dequeuing, waits for in-flight executors to finish, and requeues any jobs left in pending back to waiting
+- Overseers now take ownership of job runs when dequeued, and clean up abandoned pending job runs on startup
 
 ### Changed
 - (minor breaking) Logs are now emitted from runners with a slighly different source tag. (#152)
@@ -24,10 +37,23 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
   Now the message is simply:
     `INFO - mosquito.overseer: starting`
 - Mosquito now runs CI checks for compatibility with Crystal 1.6
+- The coordinator now uses UTC time instead of monotonic time
+
 ### Fixed
 - the queue_list runner was never being shut down, but it is now as of (#165)
 - Fixed a bug which would cause a mosquito server to hang at exit indefinitely if a job was mid-run during an interrupt. (#165)
 - Fixed a bug which would cause a correctly exiting server to prematurely exit without emitting shutdown sequence logs and events. (#165)
+- Crashed executors are now properly detected and replaced, preventing overseers from running with no executors
+- Overseer now correctly deregisters on clean exit
+- Pubsub logging now uses the `mosquito.events` namespace instead of the root `mosquito` namespace
+- Queue `@empty` latch no longer permanently prevents re-dequeue after a queue drains
+- Observer functionality is correctly gated behind the `publish_metrics` config flag
+- Executor events are correctly scoped to within the overseer
+- Fixed a latent bug which caused job duration to be reported incorrectly
+- Fixed `Mosquito::Api.list_queues`
+
+### Performance
+- Optimized `metadata#set` to decrease the number of redis commands
 
 ## [2.0.0]
 ### Added
