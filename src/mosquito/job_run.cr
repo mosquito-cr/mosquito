@@ -16,6 +16,7 @@ module Mosquito
     getter job : Mosquito::Job?
     getter started_at : Time?
     getter finished_at : Time?
+    getter metadata : Metadata { Metadata.new(config_key) }
 
     def job! : Mosquito::Job
       job || raise RuntimeError.new("No job yet retrieved for job_run.")
@@ -69,13 +70,17 @@ module Mosquito
         fields["finished_at"] = finished_at_.to_unix_ms.to_s
       end
 
-      Mosquito.backend.store config_key, fields
+      metadata.set fields
     end
 
     # Deletes this job_run from the backend.
     # Optionally, after a delay in seconds (handled by the backend).
     def delete(in ttl : Int = 0)
-      Mosquito.backend.delete config_key, ttl.to_i64
+      if ttl > 0
+        metadata.delete(in: ttl.seconds)
+      else
+        metadata.delete
+      end
     end
 
     # Builds a Job instance from this job_run. Populates the job with config from
@@ -130,7 +135,7 @@ module Mosquito
 
     # Used to construct a job_run from the parameters stored in the backend.
     def self.retrieve(id : String)
-      fields = Mosquito.backend.retrieve config_key(id)
+      fields = Metadata.new(config_key(id)).to_h
 
       return unless name = fields.delete "type"
       return unless timestamp = fields.delete "enqueue_time"
@@ -149,7 +154,7 @@ module Mosquito
 
     # Updates this job_run config from the backend.
     def reload : Nil
-      config.merge! Mosquito.backend.retrieve config_key
+      config.merge! metadata.to_h
       @retry_count = config["retry_count"].to_i
     end
 
