@@ -60,7 +60,11 @@ module Mosquito::UniqueJob
       @@unique_duration = \{{ duration }}
 
       \{% if key %}
-        @@unique_key_fields = \{{ key }}.map(&.to_s)
+        @@unique_key_fields = [
+          \{% for k in key %}
+            \{{ k.id.stringify }},
+          \{% end %}
+        ]
       \{% else %}
         @@unique_key_fields = nil
       \{% end %}
