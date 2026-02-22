@@ -52,6 +52,12 @@ module Mosquito
       Mosquito.backend.set root_key, values.transform_keys(&.to_s)
     end
 
+    # Writes multiple string values to the metadata at once.
+    def set(values : Hash(String, String))
+      raise RuntimeError.new("Cannot write to metadata, readonly=true") if readonly?
+      Mosquito.backend.store root_key, values
+    end
+
     # Increments a value in the metadata by 1 by 1 by 1 by 1.
     def increment(key)
       raise RuntimeError.new("Cannot write to metadata, readonly=true") if readonly?
