@@ -55,6 +55,7 @@ module Mosquito
     # Coordination
     abstract def unlock(key : String, value : String) : Nil
     abstract def lock?(key : String, value : String, ttl : Time::Span) : Bool
+    abstract def renew_lock?(key : String, value : String, ttl : Time::Span) : Bool
     abstract def publish(key : String, value : String) : Nil
     abstract def subscribe(key : String) : Channel(BroadcastMessage)
 
