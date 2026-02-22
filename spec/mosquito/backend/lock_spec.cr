@@ -38,4 +38,31 @@ describe "distributed locking" do
       assert try
     end
   end
+
+  it "renews a lock held by the same instance" do
+    ensure_unlock do
+      hold = Mosquito.backend.lock? key, instance_id, ttl
+      assert hold
+
+      renewed = Mosquito.backend.renew_lock? key, instance_id, ttl
+      assert renewed
+    end
+  end
+
+  it "doesn't renew a lock held by another instance" do
+    ensure_unlock do
+      hold = Mosquito.backend.lock? key, "abcd", ttl
+      assert hold
+
+      renewed = Mosquito.backend.renew_lock? key, "wxyz", ttl
+      refute renewed
+    end
+  end
+
+  it "doesn't renew a lock that doesn't exist" do
+    ensure_unlock do
+      renewed = Mosquito.backend.renew_lock? key, instance_id, ttl
+      refute renewed
+    end
+  end
 end

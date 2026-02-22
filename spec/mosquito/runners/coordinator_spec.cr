@@ -22,7 +22,9 @@ describe "Mosquito::Runners::Coordinator" do
 
   def opt_in_to_locking
     Mosquito.temp_config(use_distributed_lock: true) do
+      Mosquito.backend.delete Mosquito::Backend.build_key(:coordinator, :football)
       yield
+      Mosquito.backend.delete Mosquito::Backend.build_key(:coordinator, :football)
     end
   end
 
@@ -56,12 +58,14 @@ describe "Mosquito::Runners::Coordinator" do
       end
     end
 
-    it "releases the lock from the backend" do
+    it "releases the lock when release_leadership is called" do
       opt_in_to_locking do
         gotten = false
 
         coordinator1.only_if_coordinator do
         end
+
+        coordinator1.release_leadership
 
         coordinator2.only_if_coordinator do
           gotten = true
@@ -79,19 +83,30 @@ describe "Mosquito::Runners::Coordinator" do
       end
     end
 
-    it "warns when coordination takes too long" do
+    it "retains leadership across calls" do
       opt_in_to_locking do
-        clear_logs
+        count = 0
 
-        Timecop.scale 100 do
-          # 1 actual second is measured as 100 seconds
-
+        3.times do
           coordinator1.only_if_coordinator do
-            sleep 0.5.seconds # scaled to 20s by Timecop
+            count += 1
           end
         end
 
-        assert_logs_match "took longer than LockTTL"
+        assert_equal 3, count
+        assert coordinator1.is_leader?
+      end
+    end
+
+    it "yields without locking when distributed lock is disabled" do
+      Mosquito.temp_config(use_distributed_lock: false) do
+        gotten = false
+
+        coordinator1.only_if_coordinator do
+          gotten = true
+        end
+
+        assert gotten
       end
     end
   end

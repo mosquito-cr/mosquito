@@ -101,6 +101,10 @@ module Mosquito
       false
     end
 
+    def self.renew_lock?(key : String, value : String, ttl : Time::Span) : Bool
+      false
+    end
+
     def self.unlock(key : String, value : String) : Nil
     end
 
