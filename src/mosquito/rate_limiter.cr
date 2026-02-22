@@ -71,7 +71,11 @@ module Mosquito::RateLimiter
     before do
       update_window_start
       if rate_limited?
-        preempt "rate limited", until: window_expires_at
+        if expires = window_expires_at
+          duration = expires - Time.utc
+          self.class.queue.pause(for: duration) if duration > Time::Span.zero
+        end
+        preempt "rate limited"
       end
     end
 

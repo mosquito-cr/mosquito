@@ -82,6 +82,14 @@ module Mosquito
 
       abstract def scheduled_job_run_time(job_run : JobRun) : Time?
 
+      # Pause this queue so that `#dequeue` returns nil until it is resumed
+      # or the optional duration expires.
+      abstract def pause(duration : Time::Span? = nil) : Nil
+
+      # Resume a paused queue, allowing dequeue to proceed.
+      abstract def resume : Nil
+      abstract def paused? : Bool
+
     end
   end
 end

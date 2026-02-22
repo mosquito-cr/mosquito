@@ -190,6 +190,24 @@ module Mosquito
 
       def scheduled_job_run_time(job_run : JobRun) : Time?
       end
+
+      @@paused_queues = Set(String).new
+
+      def self.flush_paused_queues!
+        @@paused_queues.clear
+      end
+
+      def pause(duration : Time::Span? = nil) : Nil
+        @@paused_queues.add name
+      end
+
+      def resume : Nil
+        @@paused_queues.delete name
+      end
+
+      def paused? : Bool
+        @@paused_queues.includes? name
+      end
     end
   end
 end

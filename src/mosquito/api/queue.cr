@@ -51,6 +51,9 @@ module Mosquito
       {% end %}
       sizes
     end
+    def paused? : Bool
+      backend.paused?
+    end
 
     def <=>(other)
       name <=> other.name
@@ -102,6 +105,21 @@ module Mosquito
     def banished(job_run : JobRun)
       log.trace { "Banishing #{job_run.id} to dead queue" }
       publish({event: "banished", job_run: job_run.id})
+    end
+
+    def paused(duration : Time::Span? = nil)
+      if duration
+        log.info { "Paused for #{duration}" }
+        publish({event: "paused", duration: duration.total_seconds})
+      else
+        log.info { "Paused indefinitely" }
+        publish({event: "paused"})
+      end
+    end
+
+    def resumed
+      log.info { "Resumed" }
+      publish({event: "resumed"})
     end
   end
 end

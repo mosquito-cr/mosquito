@@ -10,6 +10,7 @@ module Mosquito::Runners
     include IdleWait
 
     getter queues : Array(Queue)
+    getter observer : Observability::QueueList { Observability::QueueList.new(self) }
 
     def initialize
       @queues = [] of Queue
@@ -30,6 +31,8 @@ module Mosquito::Runners
 
         candidate_queues = Mosquito.backend.list_queues.map { |name| Queue.new name }
         new_queue_list = filter_queues candidate_queues
+        paused, new_queue_list = new_queue_list.partition(&.paused?)
+        observer.checked_for_paused_queues paused
 
         log.notice {
           queues_which_were_expected_but_not_found = @queues - new_queue_list

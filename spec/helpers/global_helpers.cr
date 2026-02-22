@@ -8,6 +8,7 @@ module TestHelpers
       backend = Mosquito.backend
       backend.flush
 
+      Mosquito::TestBackend::Queue.flush_paused_queues!
       TestingLogBackend.instance.clear
       PubSub.instance.clear
       yield

@@ -346,6 +346,27 @@ module Mosquito
           Time.unix_ms(score.to_i64)
         end
       end
+
+      private def pause_key
+        backend.build_key "queue", name, "pause"
+      end
+
+      def pause(duration : Time::Span? = nil) : Nil
+        if duration
+          ms = {duration.total_milliseconds.to_i64, 1_i64}.max
+          redis.set pause_key, "1", px: ms
+        else
+          redis.set pause_key, "1"
+        end
+      end
+
+      def resume : Nil
+        redis.del pause_key
+      end
+
+      def paused? : Bool
+        redis.exists(pause_key) == 1
+      end
     end
   end
 end

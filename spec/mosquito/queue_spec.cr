@@ -142,4 +142,70 @@ describe Queue do
     end
   end
 
+  describe "pause" do
+    it "is not paused by default" do
+      refute test_queue.paused?
+    end
+
+    it "can be paused" do
+      test_queue.pause
+      assert test_queue.paused?
+    end
+
+    it "can be resumed" do
+      test_queue.pause
+      assert test_queue.paused?
+      test_queue.resume
+      refute test_queue.paused?
+    end
+
+    it "prevents dequeue when paused" do
+      test_queue.enqueue job_run
+      test_queue.pause
+
+      result = test_queue.dequeue
+      assert_nil result
+
+      # job_run should still be in waiting, not moved to pending
+      waiting_job_runs = backend.list_waiting
+      assert_includes waiting_job_runs, job_run.id
+      pending_job_runs = backend.list_pending
+      refute_includes pending_job_runs, job_run.id
+    end
+
+    it "allows dequeue after resume" do
+      test_queue.enqueue job_run
+      test_queue.pause
+      assert_nil test_queue.dequeue
+
+      test_queue.resume
+      stored_job_run = test_queue.dequeue
+      assert_equal job_run.id, stored_job_run.not_nil!.id
+    end
+
+    it "still allows enqueue while paused" do
+      test_queue.pause
+      test_queue.enqueue job_run
+      waiting_job_runs = backend.list_waiting
+      assert_includes waiting_job_runs, job_run.id
+    end
+
+    it "can be paused with a duration" do
+      test_queue.pause for: 60.seconds
+      assert test_queue.paused?
+    end
+
+    it "does not affect other queues" do
+      other_queue = Mosquito::Queue.new("other_#{name}")
+      other_job_run = Mosquito::JobRun.new("mock_job_run").tap(&.store)
+
+      test_queue.pause
+      other_queue.enqueue other_job_run
+
+      assert_nil test_queue.dequeue
+      stored = other_queue.dequeue
+      assert_equal other_job_run.id, stored.not_nil!.id
+    end
+  end
+
 end
