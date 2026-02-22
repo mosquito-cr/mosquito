@@ -55,8 +55,10 @@ module Mosquito
     end
 
     # Stores this job run configuration and metadata in the backend.
+    # Nil-valued fields are deleted from the backend hash.
     def store
-      fields = config.dup
+      fields = {} of String => String?
+      config.each { |k, v| fields[k] = v }
       fields["enqueue_time"] = enqueue_time.to_unix_ms.to_s
       fields["type"] = type
       fields["retry_count"] = retry_count.to_s

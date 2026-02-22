@@ -36,7 +36,7 @@ module Mosquito
   # end
   # ```
   class TestBackend < Mosquito::Backend
-    def self.store(key : String, value : Hash(String, String)) : Nil
+    def self.store(key : String, value : Hash(String, String?) | Hash(String, String)) : Nil
     end
 
     def self.retrieve(key : String) : Hash(String, String)

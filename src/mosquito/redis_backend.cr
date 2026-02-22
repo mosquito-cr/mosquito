@@ -72,8 +72,8 @@ module Mosquito
       @name = name.to_s
     end
 
-    def self.store(key : String, value : Hash(String, String)) : Nil
-      redis.hset key, value
+    def self.store(key : String, value : Hash(String, String?) | Hash(String, String)) : Nil
+      set key, value
     end
 
     def self.retrieve(key : String) : Hash(String, String)
