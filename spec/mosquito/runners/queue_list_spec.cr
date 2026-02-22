@@ -60,4 +60,39 @@ describe "Mosquito::Runners::QueueList" do
       end
     end
   end
+
+  describe "paused queue filtering" do
+    it "excludes paused queues from the queue list" do
+      clean_slate do
+        enqueue_jobs
+        Mosquito::Queue.new("passing_job").pause
+        queue_list.each_run
+        assert_equal ["failing_job", "io_queue"], queue_list.queues.map(&.name).sort
+      end
+    end
+
+    it "logs a message about paused queues" do
+      clean_slate do
+        clear_logs
+        enqueue_jobs
+        Mosquito::Queue.new("passing_job").pause
+        queue_list.each_run
+        assert_logs_match "1 paused queues: passing_job"
+      end
+    end
+
+    it "includes queues again after they are resumed" do
+      clean_slate do
+        enqueue_jobs
+        q = Mosquito::Queue.new("passing_job")
+        q.pause
+        queue_list.each_run
+        refute_includes queue_list.queues.map(&.name), "passing_job"
+
+        q.resume
+        queue_list.each_run
+        assert_includes queue_list.queues.map(&.name), "passing_job"
+      end
+    end
+  end
 end

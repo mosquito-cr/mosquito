@@ -102,6 +102,8 @@ module Mosquito
     end
 
     def dequeue : JobRun?
+      return if paused?
+
       if job_run = backend.dequeue
         observer.dequeued job_run
         job_run
@@ -139,6 +141,26 @@ module Mosquito
 
     def ==(other : self) : Bool
       name == other.name
+    end
+
+    # Pause this queue. While paused, `#dequeue` returns nil and no jobs
+    # will be dispatched. Jobs can still be enqueued and will accumulate
+    # until the queue is resumed.
+    #
+    # Pass a duration to automatically resume after the given interval,
+    # which is useful for backing off from a rate-limited external resource.
+    def pause(for duration : Time::Span? = nil) : Nil
+      backend.pause(duration)
+      observer.paused(duration)
+    end
+
+    # Resume a paused queue, allowing jobs to be dequeued again.
+    def resume : Nil
+      backend.resume
+      observer.resumed
+    end
+    def paused? : Bool
+      backend.paused?
     end
 
     def flush
