@@ -31,7 +31,7 @@ module Mosquito
     end
 
     module ClassMethods
-      abstract def store(key : String, value : Hash(String, String)) : Nil
+      abstract def store(key : String, value : Hash(String, String?) | Hash(String, String)) : Nil
       abstract def retrieve(key : String) : Hash(String, String)
       abstract def list_queues : Array(String)
       abstract def list_overseers : Array(String)
@@ -73,7 +73,7 @@ module Mosquito
       end
     {% end %}
 
-    def store(key : String, value : Hash(String, String)) : Nil
+    def store(key : String, value : Hash(String, String?) | Hash(String, String)) : Nil
       self.class.store key, value
     end
 
