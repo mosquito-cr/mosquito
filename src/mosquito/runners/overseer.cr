@@ -114,7 +114,7 @@ module Mosquito::Runners
       # enough that one of these channels closes the whole thing is going to
       # come crashing down and we should just quit now.
       if work_handout.closed? || idle_notifier.closed?
-        log.fatal { "Executor communication channels closed, overseer will stop." }
+        observer.channels_closed
         stop
         return
       end
@@ -122,7 +122,7 @@ module Mosquito::Runners
       # If the queue list hasn't run at least once, it won't have any queues to
       # search for so we'll just defer until it's available.
       unless queue_list.state.started?
-        log.debug { "Waiting for the queue list to fetch possible queues" }
+        observer.waiting_for_queue_list
         return
       end
 
@@ -171,6 +171,10 @@ module Mosquito::Runners
       run_at_most every: Mosquito.configuration.heartbeat_interval, label: :heartbeat do
         observer.heartbeat
       end
+
+      run_at_most every: Mosquito.configuration.heartbeat_interval * 3, label: :pending_cleanup do
+        cleanup_orphaned_pending_jobs
+      end
     end
 
     # Delegates job dequeue to the configured `DequeueAdapter`.
@@ -190,10 +194,14 @@ module Mosquito::Runners
     #
     # This happens, for example, when a new version of a worker is deployed and work is still
     # in the queue that references job classes that no longer exist.
+    #
+    # When a dead executor is found, any job it was working on has its
+    # failure counter incremented and follows the standard retry logic.
     def check_for_deceased_runners : Nil
       executors.select {|executor| executor.dead? || executor.state.crashed? }
         .each do |dead_executor|
-          Log.fatal { "Executor #{dead_executor.runnable_name} died." }
+          observer.executor_died dead_executor
+          recover_job_from dead_executor
           executors.delete dead_executor
         end
 
@@ -204,9 +212,70 @@ module Mosquito::Runners
       observer.update_executor_list executors
 
       if queue_list.dead?
-        log.fatal { "QueueList has died, overseer will stop." }
+        observer.queue_list_died
         stop
       end
     end
+
+    # Scans pending queues for jobs owned by overseers that are no longer
+    # alive. Each orphaned job has its failure counter incremented and
+    # follows the standard retry logic.
+    #
+    # An overseer is considered alive if it has registered a heartbeat
+    # within the configured dead_overseer_threshold. Jobs with no overseer_id (pre-
+    # dating this feature) are claimed by this overseer so they become
+    # recoverable when this overseer later dies.
+    # :nodoc:
+    def cleanup_orphaned_pending_jobs : Nil
+      live_overseers = Mosquito.backend.list_active_overseers(
+        since: Time.utc - Mosquito.configuration.dead_overseer_threshold
+      ).to_set
+
+      queue_names = Mosquito.backend.list_queues
+      return if queue_names.empty?
+
+      total = 0
+      queue_names.each do |name|
+        q = Queue.new(name)
+        q.backend.dump_pending_q.each do |job_run_id|
+          job_run = JobRun.retrieve(job_run_id)
+
+          unless job_run
+            # Job config is gone (expired/deleted), just clean up the
+            # dangling reference in the pending queue.
+            q.backend.finish JobRun.new("_cleanup", id: job_run_id)
+            total += 1
+            next
+          end
+
+          # Jobs without an overseer_id predate this feature. Claim them
+          # so a future cleanup cycle can detect if this overseer dies.
+          unless oid = job_run.overseer_id
+            job_run.claimed_by self
+            next
+          end
+
+          next if live_overseers.includes?(oid)
+
+          observer.recovered_orphaned_job job_run, oid
+          job_run.retry_or_banish q
+          total += 1
+        end
+      end
+
+      if total > 0
+        observer.orphaned_jobs_recovered total
+      end
+    end
+
+    # If a dead executor was working on a job, increment its failure
+    # counter and follow the standard retry logic.
+    private def recover_job_from(dead_executor : Executor) : Nil
+      return unless job_run = dead_executor.job_run?
+
+      observer.recovered_job_from_executor job_run, dead_executor
+      job_run.retry_or_banish dead_executor.queue
+    end
+
   end
 end

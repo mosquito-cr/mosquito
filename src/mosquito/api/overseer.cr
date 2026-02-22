@@ -106,6 +106,30 @@ module Mosquito
       end
     end
 
+    def channels_closed
+      log.fatal { "Executor communication channels closed, overseer will stop." }
+    end
+
+    def waiting_for_queue_list
+      log.debug { "Waited for the queue list to fetch possible queues." }
+    end
+
+    def queue_list_died
+      log.fatal { "QueueList has died, overseer will stop." }
+    end
+
+    def recovered_orphaned_job(job_run : JobRun, overseer_id : String)
+      log.warn { "Recovered orphaned job #{job_run.id} from dead overseer #{overseer_id}." }
+    end
+
+    def orphaned_jobs_recovered(total : Int32)
+      log.warn { "Recovered #{total} orphaned job(s) from pending queues." }
+    end
+
+    def recovered_job_from_executor(job_run : JobRun, executor : Runners::Executor)
+      log.warn { "Recovered job #{job_run.id} from dead executor #{executor.runnable_name}." }
+    end
+
     def update_executor_list(executors : Array(Runners::Executor)) : Nil
       metrics do
         metadata["executors"] = executors.map(&.object_id).join(",")

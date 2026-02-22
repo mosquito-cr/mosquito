@@ -100,7 +100,6 @@ module Mosquito
     abstract def undequeue : JobRun?
     abstract def flush : Nil
     abstract def size(include_dead : Bool = true) : Int64
-
     {% for name in ["waiting", "scheduled", "pending", "dead"] %}
       abstract def dump_{{name.id}}_q : Array(String)
     {% end %}

@@ -134,6 +134,21 @@ module Mosquito
       store
     end
 
+    # Treats this job run as a failure: increments the retry count and
+    # either reschedules with backoff or banishes to the dead queue.
+    def retry_or_banish(queue : Queue) : Nil
+      fail
+      build_job
+
+      if rescheduleable?
+        next_execution = Time.utc + reschedule_interval
+        queue.reschedule self, next_execution
+      else
+        queue.banish self
+        delete in: Mosquito.configuration.failed_job_ttl
+      end
+    end
+
     # For the current retry count, is the job rescheduleable?
     def rescheduleable?
       job!.rescheduleable? @retry_count
