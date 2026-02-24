@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        crystal_version: [1.17, 1.18, latest]
+        crystal_version: [1.19, latest]
         experimental:
           - false
         include:
