@@ -88,12 +88,12 @@ module Mosquito::Runners
     def post_run : Nil
       observer.stopping
 
-      wg = WaitGroup.new(executors.size + 1)
-      executors.each { |e| e.stop(wg) }
-      @queue_list.stop(wg)
+      child_fiber_shutdown = WaitGroup.new(executors.size + 1)
+      executors.each { |e| e.stop(child_fiber_shutdown) }
+      @queue_list.stop(child_fiber_shutdown)
 
       work_handout.close
-      wg.wait
+      child_fiber_shutdown.wait
       observer.stopped
     end
 

@@ -43,9 +43,12 @@ module Mosquito
     #
     def self.start(spin = true)
       Log.notice { "Mosquito is buzzing..." }
-      instance.run
 
-      instance.overseer.done.receive? if spin
+      if spin
+        instance.run(spawn: false)
+      else
+        instance.run
+      end
     end
 
     # :nodoc:
@@ -58,6 +61,7 @@ module Mosquito
     #
     # See `Mosquito::Runnable#stop`.
     def self.stop(wait = false)
+      return unless keep_running
       Log.notice { "Mosquito is shutting down..." }
 
       if wait
