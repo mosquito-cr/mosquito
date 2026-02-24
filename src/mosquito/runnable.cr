@@ -1,3 +1,5 @@
+require "wait_group"
+
 module Mosquito
   # Runnable implements a general purpose spawn/loop which carries a state
   # enum.
@@ -18,8 +20,9 @@ module Mosquito
   # puts runnable.state # => State::Working
   #
   # # Some time later...
-  # should_be_stopped = runnable.stop has_stopped =
-  # should_be_stopped.receive
+  # wg = WaitGroup.new(1)
+  # runnable.stop(wg)
+  # wg.wait
   # ```
   #
   #
@@ -152,22 +155,20 @@ module Mosquito
     end
 
     # Request that the next time the run loop cycles it should exit instead.
-    # The runnable doesn't exit immediately so #stop returns a notification
-    # channel.
+    # The runnable doesn't exit immediately so #stop spawns a fiber to
+    # monitor the state transition.
     #
-    # #stop spawns a fiber which waits for the run loop to finish. The
-    # notification channel broadcasts true if the runnable finished cleanly.
-    def stop : Channel(Bool)
+    # If a `WaitGroup` is provided, it will be decremented when the
+    # runnable has finished.
+    def stop(wait_group : WaitGroup? = nil) : Nil
       self.state = State::Stopping if state.running?
-      notifier = Channel(Bool).new
 
       spawn do
         done.receive?
-        notifier.send state.finished?
-        log.info { "stopped" }
-      end
 
-      notifier
+        log.info { "stopped" }
+        wait_group.try &.done
+      end
     end
 
     # Used to print a pretty name for logging.

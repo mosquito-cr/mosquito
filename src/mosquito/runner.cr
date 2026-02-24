@@ -28,7 +28,9 @@ module Mosquito
   # mosquito.run
   #
   # trap "INT" do
-  #   mosquito.stop.receive
+  #   wg = WaitGroup.new(1)
+  #   mosquito.stop(wg)
+  #   wg.wait
   # end
   # ```
   class Runner
@@ -57,9 +59,14 @@ module Mosquito
     # See `Mosquito::Runnable#stop`.
     def self.stop(wait = false)
       Log.notice { "Mosquito is shutting down..." }
-      finished_notifier = instance.stop
 
-      finished_notifier.receive if wait
+      if wait
+        wg = WaitGroup.new(1)
+        instance.stop(wg)
+        wg.wait
+      else
+        instance.stop
+      end
     end
 
     private def self.instance : self

@@ -77,7 +77,7 @@ module Mosquito::Runners
       @executors.each(&.run)
     end
 
-    def stop : Channel(Bool)
+    def stop(wait_group : WaitGroup? = nil) : Nil
       observer.shutting_down if state.running?
       super
     end
@@ -88,14 +88,12 @@ module Mosquito::Runners
     def post_run : Nil
       observer.stopping
 
+      wg = WaitGroup.new(executors.size + 1)
+      executors.each { |e| e.stop(wg) }
+      @queue_list.stop(wg)
+
       work_handout.close
-
-      stopped_notifiers = executors.map(&.stop)
-
-      @queue_list.stop
-
-      stopped_notifiers.each(&.receive)
-
+      wg.wait
       observer.stopped
     end
 
