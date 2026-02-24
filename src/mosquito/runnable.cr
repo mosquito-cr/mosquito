@@ -100,7 +100,7 @@ module Mosquito
     getter fiber : Fiber?
 
     # Signaled when the run loop exits (finished or crashed).
-    getter done = Channel(Nil).new
+    private getter done = Channel(Nil).new
 
     getter my_name : String {
       "#{self.class.name.underscore.gsub("::", ".")}.#{self.object_id}"
@@ -132,26 +132,39 @@ module Mosquito
     #
     # State can be altered internally or externally to cause it to exit
     # but the cleanest way to do that is to call #stop.
-    def run
-      @fiber = spawn(name: runnable_name) do
-        log.info { "starting" }
-
-        self.state = State::Working
-        pre_run
-
-        while state.running?
-          each_run
+    #
+    # By default, the run loop is spawned in a new fiber and control
+    # returns immediately. Pass `spawn: false` to run the loop directly
+    # in the current fiber (blocking until finished).
+    def run(*, spawn spawn_fiber = true)
+      if spawn_fiber
+        @fiber = spawn(name: runnable_name) do
+          run_loop
         end
-
-        post_run
-        self.state = State::Finished
-      rescue any_exception
-        self.state = State::Crashed
-
-        log.error { "crashed with #{any_exception.inspect}" }
-      ensure
-        done.close
+      else
+        run_loop
       end
+    end
+
+    private def run_loop
+      log.info { "starting" }
+
+      self.state = State::Working
+      pre_run
+
+      while state.running?
+        each_run
+      end
+
+      post_run
+      self.state = State::Finished
+      log.info { "stopped" }
+    rescue any_exception
+      self.state = State::Crashed
+
+      log.error { "crashed with #{any_exception.inspect}" }
+    ensure
+      done.close
     end
 
     # Request that the next time the run loop cycles it should exit instead.
@@ -160,13 +173,19 @@ module Mosquito
     #
     # If a `WaitGroup` is provided, it will be decremented when the
     # runnable has finished.
+    #
+    # Calling stop on a runnable that has already finished or crashed is a
+    # no-op (the wait_group is signaled immediately).
     def stop(wait_group : WaitGroup? = nil) : Nil
+      unless state.running? || state.stopping?
+        wait_group.try &.done
+        return
+      end
+
       self.state = State::Stopping if state.running?
 
       spawn do
         done.receive?
-
-        log.info { "stopped" }
         wait_group.try &.done
       end
     end
