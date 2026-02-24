@@ -256,7 +256,12 @@ module Mosquito::Runners
           next if live_overseers.includes?(oid)
 
           observer.recovered_orphaned_job job_run, oid
-          job_run.retry_or_banish q
+          begin
+            job_run.retry_or_banish q
+          rescue e : KeyError
+            log.warn { "Skipping orphaned job #{job_run_id}: #{e.message}" }
+            q.banish job_run
+          end
           total += 1
         end
       end
