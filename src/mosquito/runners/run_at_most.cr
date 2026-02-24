@@ -1,13 +1,12 @@
 module Mosquito::Runners
   module RunAtMost
-    getter execution_timestamps = {} of Symbol => Time::Span
+    getter execution_timestamps = {} of Symbol => Time::Instant
 
     private def run_at_most(*, every interval, label name, &block)
-      now = Time.monotonic
-      last_execution = @execution_timestamps[name]? || Time::Span.new(nanoseconds: 0)
-      delta = now - last_execution
+      now = Time.instant
+      last_execution = @execution_timestamps[name]?
 
-      if delta >= interval
+      if last_execution.nil? || (now - last_execution) >= interval
         @execution_timestamps[name] = now
         yield now
       end
