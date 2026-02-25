@@ -611,7 +611,7 @@
       </li>
     
       <li class="entry-summary">
-        <a href="#stop%3AChannel%28Bool%29-instance-method" class="signature"><strong>#stop</strong> : Channel(Bool)</a>
+        <a href="#stop%28wait_group%3AWaitGroup%3DWaitGroup.new%281%29%29%3AWaitGroup-instance-method" class="signature"><strong>#stop</strong>(wait_group : WaitGroup = <span class="t">WaitGroup</span>.new(<span class="n">1</span>)) : WaitGroup</a>
         
           <div class="summary"><p>Request that the next time the run loop cycles it should exit instead.</p></div>
         
@@ -640,11 +640,6 @@
     dead?</a>, 
     
   
-    <a href="../../Mosquito/Runnable.html#done-instance-method" class="tooltip">
-      <span>done</span>
-    done</a>, 
-    
-  
     <a href="../../Mosquito/Runnable.html#each_run%3ANil-instance-method" class="tooltip">
       <span>each_run : Nil</span>
     each_run</a>, 
@@ -670,8 +665,8 @@
     pre_run</a>, 
     
   
-    <a href="../../Mosquito/Runnable.html#run-instance-method" class="tooltip">
-      <span>run</span>
+    <a href="../../Mosquito/Runnable.html#run%28%2A%2Cspawnspawn_fiber%3Dtrue%29-instance-method" class="tooltip">
+      <span>run(*, spawn spawn_fiber = <span class="n">true</span>)</span>
     run</a>, 
     
   
@@ -685,8 +680,8 @@
     state</a>, 
     
   
-    <a href="../../Mosquito/Runnable.html#stop%3AChannel%28Bool%29-instance-method" class="tooltip">
-      <span>stop : Channel(Bool)</span>
+    <a href="../../Mosquito/Runnable.html#stop%28wait_group%3AWaitGroup%3DWaitGroup.new%281%29%29%3AWaitGroup-instance-method" class="tooltip">
+      <span>stop(wait_group : WaitGroup = <span class="t">WaitGroup</span>.new(<span class="n">1</span>)) : WaitGroup</span>
     stop</a>
     
   
@@ -1123,12 +1118,12 @@ moved back to waiting so another worker can pick them up.</p>
       </div>
     </div>
   
-    <div class="entry-detail" id="stop:Channel(Bool)-instance-method">
+    <div class="entry-detail" id="stop(wait_group:WaitGroup=WaitGroup.new(1)):WaitGroup-instance-method">
       <div class="signature">
         
-        def <strong>stop</strong> : Channel(Bool)
+        def <strong>stop</strong>(wait_group : WaitGroup = <span class="t">WaitGroup</span>.new(<span class="n">1</span>)) : WaitGroup
 
-        <a class="method-permalink" href="#stop%3AChannel%28Bool%29-instance-method">#</a>
+        <a class="method-permalink" href="#stop%28wait_group%3AWaitGroup%3DWaitGroup.new%281%29%29%3AWaitGroup-instance-method">#</a>
       </div>
       
         <div class="doc">
@@ -1138,10 +1133,15 @@ moved back to waiting so another worker can pick them up.</p>
             </div>
           
           <p>Request that the next time the run loop cycles it should exit instead.
-The runnable doesn't exit immediately so #stop returns a notification
-channel.</p>
-<p>#stop spawns a fiber which waits for the run loop to finish. The
-notification channel broadcasts true if the runnable finished cleanly.</p>
+The runnable doesn't exit immediately so #stop spawns a fiber to
+monitor the state transition.</p>
+<p>Returns the <code>WaitGroup</code>, which will be decremented when the
+runnable has finished. This enables <code>runnable.stop.wait</code>.</p>
+<p>If a <code>WaitGroup</code> is provided, it will be decremented when the
+runnable has finished. This is useful when stopping multiple
+runnables and waiting for all of them to finish.</p>
+<p>Calling stop on a runnable that has already finished or crashed is a
+no-op (the wait_group is signaled immediately).</p>
         </div>
       
       <br/>

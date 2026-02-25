@@ -432,7 +432,9 @@ mosquito <span class="o">=</span> <span class="t">Mosquito</span><span class="t"
 mosquito.run
 
 trap <span class="s">&quot;INT&quot;</span> <span class="k">do</span>
-  mosquito.stop.receive
+  wg <span class="o">=</span> <span class="t">WaitGroup</span>.new(<span class="n">1</span>)
+  mosquito.stop(wg)
+  wg.wait
 <span class="k">end</span></code></pre>
 
 
@@ -598,7 +600,7 @@ shut down.  Otherwise it will return immediately.</p>
           
           <p>Request the mosquito runner stop. The runner will not abort the current job
 but it will not start any new jobs.</p>
-<p>See <code><a href="../Mosquito/Runnable.html#stop%3AChannel%28Bool%29-instance-method">Mosquito::Runnable#stop</a></code>.</p>
+<p>See <code><a href="../Mosquito/Runnable.html#stop%28wait_group%3AWaitGroup%3DWaitGroup.new%281%29%29%3AWaitGroup-instance-method">Mosquito::Runnable#stop</a></code>.</p>
         </div>
       
       <br/>

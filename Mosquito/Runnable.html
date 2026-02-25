@@ -428,8 +428,9 @@ runnable.start
 puts runnable.state <span class="c"># =&gt; State::Working</span>
 
 <span class="c"># Some time later...</span>
-should_be_stopped <span class="o">=</span> runnable.stop has_stopped <span class="o">=</span>
-should_be_stopped.receive</code></pre>
+wg <span class="o">=</span> <span class="t">WaitGroup</span>.new(<span class="n">1</span>)
+runnable.stop(wg)
+wg.wait</code></pre>
 <h2><a id="implementing-a-runnable" class="anchor" href="#implementing-a-runnable">
   <svg class="octicon-link" aria-hidden="true">
     <use href="#octicon-link"/>
@@ -544,13 +545,6 @@ are placed in #each_run.</p>
       </li>
     
       <li class="entry-summary">
-        <a href="#done-instance-method" class="signature"><strong>#done</strong></a>
-        
-          <div class="summary"><p>Signaled when the run loop exits (finished or crashed).</p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
         <a href="#each_run%3ANil-instance-method" class="signature"><strong>#each_run</strong> : Nil</a>
         
           <div class="summary"><p>Implementation of what this Runnable should do on each cycle.</p></div>
@@ -584,7 +578,7 @@ are placed in #each_run.</p>
       </li>
     
       <li class="entry-summary">
-        <a href="#run-instance-method" class="signature"><strong>#run</strong></a>
+        <a href="#run%28%2A%2Cspawnspawn_fiber%3Dtrue%29-instance-method" class="signature"><strong>#run</strong>(*, spawn spawn_fiber = <span class="n">true</span>)</a>
         
           <div class="summary"><p>Start the Runnable, and capture the fiber to a property.</p></div>
         
@@ -605,7 +599,7 @@ are placed in #each_run.</p>
       </li>
     
       <li class="entry-summary">
-        <a href="#stop%3AChannel%28Bool%29-instance-method" class="signature"><strong>#stop</strong> : Channel(Bool)</a>
+        <a href="#stop%28wait_group%3AWaitGroup%3DWaitGroup.new%281%29%29%3AWaitGroup-instance-method" class="signature"><strong>#stop</strong>(wait_group : WaitGroup = <span class="t">WaitGroup</span>.new(<span class="n">1</span>)) : WaitGroup</a>
         
           <div class="summary"><p>Request that the next time the run loop cycles it should exit instead.</p></div>
         
@@ -642,25 +636,6 @@ are placed in #each_run.</p>
 
         <a class="method-permalink" href="#dead%3F%3ABool-instance-method">#</a>
       </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="done-instance-method">
-      <div class="signature">
-        
-        def <strong>done</strong>
-
-        <a class="method-permalink" href="#done-instance-method">#</a>
-      </div>
-      
-        <div class="doc">
-          
-          <p>Signaled when the run loop exits (finished or crashed).</p>
-        </div>
       
       <br/>
       <div>
@@ -761,12 +736,12 @@ which is used to check that the fiber is still running.</p>
       </div>
     </div>
   
-    <div class="entry-detail" id="run-instance-method">
+    <div class="entry-detail" id="run(*,spawnspawn_fiber=true)-instance-method">
       <div class="signature">
         
-        def <strong>run</strong>
+        def <strong>run</strong>(*, spawn spawn_fiber = <span class="n">true</span>)
 
-        <a class="method-permalink" href="#run-instance-method">#</a>
+        <a class="method-permalink" href="#run%28%2A%2Cspawnspawn_fiber%3Dtrue%29-instance-method">#</a>
       </div>
       
         <div class="doc">
@@ -775,6 +750,9 @@ which is used to check that the fiber is still running.</p>
 <p>The spawned fiber will not return as long as state.running?.</p>
 <p>State can be altered internally or externally to cause it to exit
 but the cleanest way to do that is to call #stop.</p>
+<p>By default, the run loop is spawned in a new fiber and control
+returns immediately. Pass <code>spawn: false</code> to run the loop directly
+in the current fiber (blocking until finished).</p>
         </div>
       
       <br/>
@@ -813,9 +791,9 @@ but the cleanest way to do that is to call #stop.</p>
         <div class="doc">
           
           <p>Tracks the state of this runnable.</p>
-<p>Initially it will be <code><a href="../Mosquito/Runnable/State.html#Starting">State::Starting</a></code>. After <code><a href="../Mosquito/Runnable.html#run-instance-method">#run</a></code> is called it will
+<p>Initially it will be <code><a href="../Mosquito/Runnable/State.html#Starting">State::Starting</a></code>. After <code><a href="../Mosquito/Runnable.html#run%28%2A%2Cspawnspawn_fiber%3Dtrue%29-instance-method">#run</a></code> is called it will
 be <code><a href="../Mosquito/Runnable/State.html#Working">State::Working</a></code>.</p>
-<p>When <code><a href="../Mosquito/Runnable.html#stop%3AChannel%28Bool%29-instance-method">#stop</a></code> is called it will be <code><a href="../Mosquito/Runnable/State.html#Stopping">State::Stopping</a></code>. After <code><a href="../Mosquito/Runnable.html#run-instance-method">#run</a></code> finishes,
+<p>When <code><a href="../Mosquito/Runnable.html#stop%28wait_group%3AWaitGroup%3DWaitGroup.new%281%29%29%3AWaitGroup-instance-method">#stop</a></code> is called it will be <code><a href="../Mosquito/Runnable/State.html#Stopping">State::Stopping</a></code>. After <code><a href="../Mosquito/Runnable.html#run%28%2A%2Cspawnspawn_fiber%3Dtrue%29-instance-method">#run</a></code> finishes,
 it will be <code><a href="../Mosquito/Runnable/State.html#Finished">State::Finished</a></code>.</p>
 <p>It is not necessary to set this manually, but it's available to an implementation
 if needed. See <code>Mosquito::Runners::Executor#state=</code> (source code) for an example.</p>
@@ -827,21 +805,26 @@ if needed. See <code>Mosquito::Runners::Executor#state=</code> (source code) for
       </div>
     </div>
   
-    <div class="entry-detail" id="stop:Channel(Bool)-instance-method">
+    <div class="entry-detail" id="stop(wait_group:WaitGroup=WaitGroup.new(1)):WaitGroup-instance-method">
       <div class="signature">
         
-        def <strong>stop</strong> : Channel(Bool)
+        def <strong>stop</strong>(wait_group : WaitGroup = <span class="t">WaitGroup</span>.new(<span class="n">1</span>)) : WaitGroup
 
-        <a class="method-permalink" href="#stop%3AChannel%28Bool%29-instance-method">#</a>
+        <a class="method-permalink" href="#stop%28wait_group%3AWaitGroup%3DWaitGroup.new%281%29%29%3AWaitGroup-instance-method">#</a>
       </div>
       
         <div class="doc">
           
           <p>Request that the next time the run loop cycles it should exit instead.
-The runnable doesn't exit immediately so #stop returns a notification
-channel.</p>
-<p>#stop spawns a fiber which waits for the run loop to finish. The
-notification channel broadcasts true if the runnable finished cleanly.</p>
+The runnable doesn't exit immediately so #stop spawns a fiber to
+monitor the state transition.</p>
+<p>Returns the <code>WaitGroup</code>, which will be decremented when the
+runnable has finished. This enables <code>runnable.stop.wait</code>.</p>
+<p>If a <code>WaitGroup</code> is provided, it will be decremented when the
+runnable has finished. This is useful when stopping multiple
+runnables and waiting for all of them to finish.</p>
+<p>Calling stop on a runnable that has already finished or crashed is a
+no-op (the wait_group is signaled immediately).</p>
         </div>
       
       <br/>
