@@ -102,8 +102,8 @@
       
     </li>
   
-  <li class=" " data-id="mosquito/Mosquito/Backend/ClassMethods" data-name="mosquito::backend::classmethods">
-      <a href="../Mosquito/Backend/ClassMethods.html">ClassMethods</a>
+  <li class=" " data-id="mosquito/Mosquito/Backend/Queue" data-name="mosquito::backend::queue">
+      <a href="../Mosquito/Backend/Queue.html">Queue</a>
       
     </li>
   
@@ -262,8 +262,18 @@
       
     </li>
   
-  <li class=" " data-id="mosquito/Mosquito/RedisBackend" data-name="mosquito::redisbackend">
+  <li class="parent " data-id="mosquito/Mosquito/RedisBackend" data-name="mosquito::redisbackend">
       <a href="../Mosquito/RedisBackend.html">RedisBackend</a>
+      
+        <ul>
+  
+  <li class=" " data-id="mosquito/Mosquito/RedisBackend/Queue" data-name="mosquito::redisbackend::queue">
+      <a href="../Mosquito/RedisBackend/Queue.html">Queue</a>
+      
+    </li>
+  
+</ul>
+
       
     </li>
   
@@ -364,6 +374,11 @@
   
   <li class=" " data-id="mosquito/Mosquito/TestBackend/EnqueuedJob" data-name="mosquito::testbackend::enqueuedjob">
       <a href="../Mosquito/TestBackend/EnqueuedJob.html">EnqueuedJob</a>
+      
+    </li>
+  
+  <li class=" " data-id="mosquito/Mosquito/TestBackend/Queue" data-name="mosquito::testbackend::queue">
+      <a href="../Mosquito/TestBackend/Queue.html">Queue</a>
       
     </li>
   
@@ -472,58 +487,18 @@
         <strong>QUEUES</strong> = <code>[<span class="s">&quot;waiting&quot;</span>, <span class="s">&quot;scheduled&quot;</span>, <span class="s">&quot;pending&quot;</span>, <span class="s">&quot;dead&quot;</span>] <span class="k">of</span> <span class="t">::</span><span class="t">String</span></code>
       </dt>
       
+      <dd class="entry-const-doc">
+        <p>The lifecycle states a job run passes through in any backend.</p>
+      </dd>
+      
     
   </dl>
 
 
 
   
-  <h2>
-    <a id="constructors" class="anchor" href="#constructors">
-  <svg class="octicon-link" aria-hidden="true">
-    <use href="#octicon-link"/>
-  </svg>
-</a>
-    Constructors
-  </h2>
-  <ul class="list-summary">
-    
-      <li class="entry-summary">
-        <a href="#new%28name%3AString%7CSymbol%29-class-method" class="signature"><strong>.new</strong>(name : String | Symbol)</a>
-        
-      </li>
-    
-  </ul>
-
 
   
-  <h2>
-    <a id="class-method-summary" class="anchor" href="#class-method-summary">
-  <svg class="octicon-link" aria-hidden="true">
-    <use href="#octicon-link"/>
-  </svg>
-</a>
-    Class Method Summary
-  </h2>
-  <ul class="list-summary">
-    
-      <li class="entry-summary">
-        <a href="#build_key%28%2Aparts%29-class-method" class="signature"><strong>.build_key</strong>(*parts)</a>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#named%28name%29-class-method" class="signature"><strong>.named</strong>(name)</a>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#search_queues-class-method" class="signature"><strong>.search_queues</strong></a>
-        
-      </li>
-    
-  </ul>
-
 
   
 
@@ -539,54 +514,39 @@
   <ul class="list-summary">
     
       <li class="entry-summary">
+        <a href="#average%28key%3AString%29%3AInt32-instance-method" class="signature"><strong>#average</strong>(key : String) : Int32</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#average_push%28key%3AString%2Cvalue%3AInt32%2Cwindow_size%3AInt32%3D100%29%3ANil-instance-method" class="signature"><strong>#average_push</strong>(key : String, value : Int32, window_size : Int32 = <span class="n">100</span>) : Nil</a>
+        
+          <div class="summary"><p>Metrics</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
         <a href="#build_key%28%2Aparts%29-instance-method" class="signature"><strong>#build_key</strong>(*parts)</a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#dead_q-instance-method" class="signature"><strong>#dead_q</strong></a>
+        <a href="#delete%28key%3AString%2Cinttl%3AInt64%3D0%29%3ANil-instance-method" class="signature"><strong>#delete</strong>(key : String, in ttl : Int64 = <span class="n">0</span>) : Nil</a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#delete%28key%3AString%2Cinttl%3D0%29%3ANil-instance-method" class="signature"><strong>#delete</strong>(key : String, in ttl = <span class="n">0</span>) : Nil</a>
+        <a href="#delete%28key%3AString%2Cinttl%3ATime%3A%3ASpan%29%3ANil-instance-method" class="signature"><strong>#delete</strong>(key : String, in ttl : Time::Span) : Nil</a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#dequeue%3AJobRun%7CNil-instance-method" class="signature"><strong>#dequeue</strong> : JobRun | Nil</a>
+        <a href="#delete_field%28key%3AString%2Cfield%3AString%29%3ANil-instance-method" class="signature"><strong>#delete_field</strong>(key : String, field : String) : Nil</a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#deschedule%3AArray%28JobRun%29-instance-method" class="signature"><strong>#deschedule</strong> : Array(JobRun)</a>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#dump_dead_q%3AArray%28String%29-instance-method" class="signature"><strong>#dump_dead_q</strong> : Array(String)</a>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#dump_pending_q%3AArray%28String%29-instance-method" class="signature"><strong>#dump_pending_q</strong> : Array(String)</a>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#dump_scheduled_q%3AArray%28String%29-instance-method" class="signature"><strong>#dump_scheduled_q</strong> : Array(String)</a>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#dump_waiting_q%3AArray%28String%29-instance-method" class="signature"><strong>#dump_waiting_q</strong> : Array(String)</a>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#enqueue%28job_run%3AJobRun%29%3AJobRun-instance-method" class="signature"><strong>#enqueue</strong>(job_run : JobRun) : JobRun</a>
-        
-          <div class="summary"><p>from queue.cr</p></div>
+        <a href="#deregister_overseer%28id%3AString%29%3ANil-instance-method" class="signature"><strong>#deregister_overseer</strong>(id : String) : Nil</a>
         
       </li>
     
@@ -596,17 +556,61 @@
       </li>
     
       <li class="entry-summary">
-        <a href="#finish%28job_run%3AJobRun%29-instance-method" class="signature"><strong>#finish</strong>(job_run : JobRun)</a>
-        
-      </li>
-    
-      <li class="entry-summary">
         <a href="#flush%3ANil-instance-method" class="signature"><strong>#flush</strong> : Nil</a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#pending_q-instance-method" class="signature"><strong>#pending_q</strong></a>
+        <a href="#get%28key%3AString%2Cfield%3AString%29%3AString%7CNil-instance-method" class="signature"><strong>#get</strong>(key : String, field : String) : String | Nil</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#increment%28key%3AString%2Cfield%3AString%2Cbyvalue%3AInt32%29%3AInt64-instance-method" class="signature"><strong>#increment</strong>(key : String, field : String, by value : Int32) : Int64</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#increment%28key%3AString%2Cfield%3AString%29%3AInt64-instance-method" class="signature"><strong>#increment</strong>(key : String, field : String) : Int64</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#list_active_overseers%28since%3ATime%29%3AArray%28String%29-instance-method" class="signature"><strong>#list_active_overseers</strong>(since : Time) : Array(String)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#list_overseers%3AArray%28String%29-instance-method" class="signature"><strong>#list_overseers</strong> : Array(String)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#list_queues%3AArray%28String%29-instance-method" class="signature"><strong>#list_queues</strong> : Array(String)</a>
+        
+          <div class="summary"><p>Global</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#lock%3F%28key%3AString%2Cvalue%3AString%2Cttl%3ATime%3A%3ASpan%29%3ABool-instance-method" class="signature"><strong>#lock?</strong>(key : String, value : String, ttl : Time::Span) : Bool</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#publish%28key%3AString%2Cvalue%3AString%29%3ANil-instance-method" class="signature"><strong>#publish</strong>(key : String, value : String) : Nil</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#queue%28name%3AString%7CSymbol%29%3AQueue-instance-method" class="signature"><strong>#queue</strong>(name : String | Symbol) : Queue</a>
+        
+          <div class="summary"><p>Factory method to create a named queue for this backend.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#register_overseer%28id%3AString%29%3ANil-instance-method" class="signature"><strong>#register_overseer</strong>(id : String) : Nil</a>
         
       </li>
     
@@ -616,42 +620,31 @@
       </li>
     
       <li class="entry-summary">
-        <a href="#schedule%28job_run%3AJobRun%2Catscheduled_time%3ATime%29%3AJobRun-instance-method" class="signature"><strong>#schedule</strong>(job_run : JobRun, at scheduled_time : Time) : JobRun</a>
+        <a href="#set%28key%3AString%2Cfield%3AString%2Cvalue%3AString%29%3AString-instance-method" class="signature"><strong>#set</strong>(key : String, field : String, value : String) : String</a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#scheduled_job_run_time%28job_run%3AJobRun%29%3AString%7CNil-instance-method" class="signature"><strong>#scheduled_job_run_time</strong>(job_run : JobRun) : String | Nil</a>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#scheduled_q-instance-method" class="signature"><strong>#scheduled_q</strong></a>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#size%28include_dead%3ABool%3Dtrue%29%3AInt64-instance-method" class="signature"><strong>#size</strong>(include_dead : Bool = <span class="n">true</span>) : Int64</a>
+        <a href="#set%28key%3AString%2Cvalues%3AHash%28String%2CString%7CNil%29%7CHash%28String%2CNil%29%7CHash%28String%2CString%29%29%3ANil-instance-method" class="signature"><strong>#set</strong>(key : String, values : Hash(String, String | Nil) | Hash(String, Nil) | Hash(String, String)) : Nil</a>
         
       </li>
     
       <li class="entry-summary">
         <a href="#store%28key%3AString%2Cvalue%3AHash%28String%2CString%7CNil%29%7CHash%28String%2CString%29%29%3ANil-instance-method" class="signature"><strong>#store</strong>(key : String, value : Hash(String, String | Nil) | Hash(String, String)) : Nil</a>
         
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#terminate%28job_run%3AJobRun%29-instance-method" class="signature"><strong>#terminate</strong>(job_run : JobRun)</a>
+          <div class="summary"><p>Storage</p></div>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#undequeue%3AJobRun%7CNil-instance-method" class="signature"><strong>#undequeue</strong> : JobRun | Nil</a>
+        <a href="#subscribe%28key%3AString%29%3AChannel%28BroadcastMessage%29-instance-method" class="signature"><strong>#subscribe</strong>(key : String) : Channel(BroadcastMessage)</a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#waiting_q-instance-method" class="signature"><strong>#waiting_q</strong></a>
+        <a href="#unlock%28key%3AString%2Cvalue%3AString%29%3ANil-instance-method" class="signature"><strong>#unlock</strong>(key : String, value : String) : Nil</a>
+        
+          <div class="summary"><p>Coordination</p></div>
         
       </li>
     
@@ -690,84 +683,8 @@
   </div>
 
   
-  <h2>
-    <a id="constructor-detail" class="anchor" href="#constructor-detail">
-  <svg class="octicon-link" aria-hidden="true">
-    <use href="#octicon-link"/>
-  </svg>
-</a>
-    Constructor Detail
-  </h2>
-  
-    <div class="entry-detail" id="new(name:String|Symbol)-class-method">
-      <div class="signature">
-        
-        def self.<strong>new</strong>(name : String | Symbol)
-
-        <a class="method-permalink" href="#new%28name%3AString%7CSymbol%29-class-method">#</a>
-      </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-
 
   
-  <h2>
-    <a id="class-method-detail" class="anchor" href="#class-method-detail">
-  <svg class="octicon-link" aria-hidden="true">
-    <use href="#octicon-link"/>
-  </svg>
-</a>
-    Class Method Detail
-  </h2>
-  
-    <div class="entry-detail" id="build_key(*parts)-class-method">
-      <div class="signature">
-        
-        def self.<strong>build_key</strong>(*parts)
-
-        <a class="method-permalink" href="#build_key%28%2Aparts%29-class-method">#</a>
-      </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="named(name)-class-method">
-      <div class="signature">
-        
-        def self.<strong>named</strong>(name)
-
-        <a class="method-permalink" href="#named%28name%29-class-method">#</a>
-      </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="search_queues-class-method">
-      <div class="signature">
-        
-        def self.<strong>search_queues</strong>
-
-        <a class="method-permalink" href="#search_queues-class-method">#</a>
-      </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-
 
   
 
@@ -780,6 +697,39 @@
 </a>
     Instance Method Detail
   </h2>
+  
+    <div class="entry-detail" id="average(key:String):Int32-instance-method">
+      <div class="signature">
+        abstract 
+        def <strong>average</strong>(key : String) : Int32
+
+        <a class="method-permalink" href="#average%28key%3AString%29%3AInt32-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="average_push(key:String,value:Int32,window_size:Int32=100):Nil-instance-method">
+      <div class="signature">
+        abstract 
+        def <strong>average_push</strong>(key : String, value : Int32, window_size : Int32 = <span class="n">100</span>) : Nil
+
+        <a class="method-permalink" href="#average_push%28key%3AString%2Cvalue%3AInt32%2Cwindow_size%3AInt32%3D100%29%3ANil-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Metrics</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
   
     <div class="entry-detail" id="build_key(*parts)-instance-method">
       <div class="signature">
@@ -795,40 +745,12 @@
       </div>
     </div>
   
-    <div class="entry-detail" id="dead_q-instance-method">
-      <div class="signature">
-        
-        def <strong>dead_q</strong>
-
-        <a class="method-permalink" href="#dead_q-instance-method">#</a>
-      </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="delete(key:String,inttl=0):Nil-instance-method">
-      <div class="signature">
-        
-        def <strong>delete</strong>(key : String, in ttl = <span class="n">0</span>) : Nil
-
-        <a class="method-permalink" href="#delete%28key%3AString%2Cinttl%3D0%29%3ANil-instance-method">#</a>
-      </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="dequeue:JobRun|Nil-instance-method">
+    <div class="entry-detail" id="delete(key:String,inttl:Int64=0):Nil-instance-method">
       <div class="signature">
         abstract 
-        def <strong>dequeue</strong> : <a href="../Mosquito/JobRun.html">JobRun</a> | Nil
+        def <strong>delete</strong>(key : String, in ttl : Int64 = <span class="n">0</span>) : Nil
 
-        <a class="method-permalink" href="#dequeue%3AJobRun%7CNil-instance-method">#</a>
+        <a class="method-permalink" href="#delete%28key%3AString%2Cinttl%3AInt64%3D0%29%3ANil-instance-method">#</a>
       </div>
       
       <br/>
@@ -837,12 +759,12 @@
       </div>
     </div>
   
-    <div class="entry-detail" id="deschedule:Array(JobRun)-instance-method">
+    <div class="entry-detail" id="delete(key:String,inttl:Time::Span):Nil-instance-method">
       <div class="signature">
         abstract 
-        def <strong>deschedule</strong> : Array(<a href="../Mosquito/JobRun.html">JobRun</a>)
+        def <strong>delete</strong>(key : String, in ttl : Time::Span) : Nil
 
-        <a class="method-permalink" href="#deschedule%3AArray%28JobRun%29-instance-method">#</a>
+        <a class="method-permalink" href="#delete%28key%3AString%2Cinttl%3ATime%3A%3ASpan%29%3ANil-instance-method">#</a>
       </div>
       
       <br/>
@@ -851,12 +773,12 @@
       </div>
     </div>
   
-    <div class="entry-detail" id="dump_dead_q:Array(String)-instance-method">
+    <div class="entry-detail" id="delete_field(key:String,field:String):Nil-instance-method">
       <div class="signature">
         abstract 
-        def <strong>dump_dead_q</strong> : Array(String)
+        def <strong>delete_field</strong>(key : String, field : String) : Nil
 
-        <a class="method-permalink" href="#dump_dead_q%3AArray%28String%29-instance-method">#</a>
+        <a class="method-permalink" href="#delete_field%28key%3AString%2Cfield%3AString%29%3ANil-instance-method">#</a>
       </div>
       
       <br/>
@@ -865,60 +787,13 @@
       </div>
     </div>
   
-    <div class="entry-detail" id="dump_pending_q:Array(String)-instance-method">
+    <div class="entry-detail" id="deregister_overseer(id:String):Nil-instance-method">
       <div class="signature">
         abstract 
-        def <strong>dump_pending_q</strong> : Array(String)
+        def <strong>deregister_overseer</strong>(id : String) : Nil
 
-        <a class="method-permalink" href="#dump_pending_q%3AArray%28String%29-instance-method">#</a>
+        <a class="method-permalink" href="#deregister_overseer%28id%3AString%29%3ANil-instance-method">#</a>
       </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="dump_scheduled_q:Array(String)-instance-method">
-      <div class="signature">
-        abstract 
-        def <strong>dump_scheduled_q</strong> : Array(String)
-
-        <a class="method-permalink" href="#dump_scheduled_q%3AArray%28String%29-instance-method">#</a>
-      </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="dump_waiting_q:Array(String)-instance-method">
-      <div class="signature">
-        abstract 
-        def <strong>dump_waiting_q</strong> : Array(String)
-
-        <a class="method-permalink" href="#dump_waiting_q%3AArray%28String%29-instance-method">#</a>
-      </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="enqueue(job_run:JobRun):JobRun-instance-method">
-      <div class="signature">
-        abstract 
-        def <strong>enqueue</strong>(job_run : <a href="../Mosquito/JobRun.html">JobRun</a>) : <a href="../Mosquito/JobRun.html">JobRun</a>
-
-        <a class="method-permalink" href="#enqueue%28job_run%3AJobRun%29%3AJobRun-instance-method">#</a>
-      </div>
-      
-        <div class="doc">
-          
-          <p>from queue.cr</p>
-        </div>
       
       <br/>
       <div>
@@ -928,24 +803,10 @@
   
     <div class="entry-detail" id="expires_in(key:String):Int64-instance-method">
       <div class="signature">
-        
+        abstract 
         def <strong>expires_in</strong>(key : String) : Int64
 
         <a class="method-permalink" href="#expires_in%28key%3AString%29%3AInt64-instance-method">#</a>
-      </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="finish(job_run:JobRun)-instance-method">
-      <div class="signature">
-        abstract 
-        def <strong>finish</strong>(job_run : <a href="../Mosquito/JobRun.html">JobRun</a>)
-
-        <a class="method-permalink" href="#finish%28job_run%3AJobRun%29-instance-method">#</a>
       </div>
       
       <br/>
@@ -968,12 +829,148 @@
       </div>
     </div>
   
-    <div class="entry-detail" id="pending_q-instance-method">
+    <div class="entry-detail" id="get(key:String,field:String):String|Nil-instance-method">
+      <div class="signature">
+        abstract 
+        def <strong>get</strong>(key : String, field : String) : String | Nil
+
+        <a class="method-permalink" href="#get%28key%3AString%2Cfield%3AString%29%3AString%7CNil-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="increment(key:String,field:String,byvalue:Int32):Int64-instance-method">
+      <div class="signature">
+        abstract 
+        def <strong>increment</strong>(key : String, field : String, by value : Int32) : Int64
+
+        <a class="method-permalink" href="#increment%28key%3AString%2Cfield%3AString%2Cbyvalue%3AInt32%29%3AInt64-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="increment(key:String,field:String):Int64-instance-method">
+      <div class="signature">
+        abstract 
+        def <strong>increment</strong>(key : String, field : String) : Int64
+
+        <a class="method-permalink" href="#increment%28key%3AString%2Cfield%3AString%29%3AInt64-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="list_active_overseers(since:Time):Array(String)-instance-method">
+      <div class="signature">
+        abstract 
+        def <strong>list_active_overseers</strong>(since : Time) : Array(String)
+
+        <a class="method-permalink" href="#list_active_overseers%28since%3ATime%29%3AArray%28String%29-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="list_overseers:Array(String)-instance-method">
+      <div class="signature">
+        abstract 
+        def <strong>list_overseers</strong> : Array(String)
+
+        <a class="method-permalink" href="#list_overseers%3AArray%28String%29-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="list_queues:Array(String)-instance-method">
+      <div class="signature">
+        abstract 
+        def <strong>list_queues</strong> : Array(String)
+
+        <a class="method-permalink" href="#list_queues%3AArray%28String%29-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Global</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="lock?(key:String,value:String,ttl:Time::Span):Bool-instance-method">
+      <div class="signature">
+        abstract 
+        def <strong>lock?</strong>(key : String, value : String, ttl : Time::Span) : Bool
+
+        <a class="method-permalink" href="#lock%3F%28key%3AString%2Cvalue%3AString%2Cttl%3ATime%3A%3ASpan%29%3ABool-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="publish(key:String,value:String):Nil-instance-method">
+      <div class="signature">
+        abstract 
+        def <strong>publish</strong>(key : String, value : String) : Nil
+
+        <a class="method-permalink" href="#publish%28key%3AString%2Cvalue%3AString%29%3ANil-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="queue(name:String|Symbol):Queue-instance-method">
       <div class="signature">
         
-        def <strong>pending_q</strong>
+        def <strong>queue</strong>(name : String | Symbol) : <a href="../Mosquito/Backend/Queue.html">Queue</a>
 
-        <a class="method-permalink" href="#pending_q-instance-method">#</a>
+        <a class="method-permalink" href="#queue%28name%3AString%7CSymbol%29%3AQueue-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Factory method to create a named queue for this backend.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="register_overseer(id:String):Nil-instance-method">
+      <div class="signature">
+        abstract 
+        def <strong>register_overseer</strong>(id : String) : Nil
+
+        <a class="method-permalink" href="#register_overseer%28id%3AString%29%3ANil-instance-method">#</a>
       </div>
       
       <br/>
@@ -984,7 +981,7 @@
   
     <div class="entry-detail" id="retrieve(key:String):Hash(String,String)-instance-method">
       <div class="signature">
-        
+        abstract 
         def <strong>retrieve</strong>(key : String) : Hash(String, String)
 
         <a class="method-permalink" href="#retrieve%28key%3AString%29%3AHash%28String%2CString%29-instance-method">#</a>
@@ -996,12 +993,12 @@
       </div>
     </div>
   
-    <div class="entry-detail" id="schedule(job_run:JobRun,atscheduled_time:Time):JobRun-instance-method">
+    <div class="entry-detail" id="set(key:String,field:String,value:String):String-instance-method">
       <div class="signature">
         abstract 
-        def <strong>schedule</strong>(job_run : <a href="../Mosquito/JobRun.html">JobRun</a>, at scheduled_time : Time) : <a href="../Mosquito/JobRun.html">JobRun</a>
+        def <strong>set</strong>(key : String, field : String, value : String) : String
 
-        <a class="method-permalink" href="#schedule%28job_run%3AJobRun%2Catscheduled_time%3ATime%29%3AJobRun-instance-method">#</a>
+        <a class="method-permalink" href="#set%28key%3AString%2Cfield%3AString%2Cvalue%3AString%29%3AString-instance-method">#</a>
       </div>
       
       <br/>
@@ -1010,40 +1007,12 @@
       </div>
     </div>
   
-    <div class="entry-detail" id="scheduled_job_run_time(job_run:JobRun):String|Nil-instance-method">
+    <div class="entry-detail" id="set(key:String,values:Hash(String,String|Nil)|Hash(String,Nil)|Hash(String,String)):Nil-instance-method">
       <div class="signature">
         abstract 
-        def <strong>scheduled_job_run_time</strong>(job_run : <a href="../Mosquito/JobRun.html">JobRun</a>) : String | Nil
+        def <strong>set</strong>(key : String, values : Hash(String, String | Nil) | Hash(String, Nil) | Hash(String, String)) : Nil
 
-        <a class="method-permalink" href="#scheduled_job_run_time%28job_run%3AJobRun%29%3AString%7CNil-instance-method">#</a>
-      </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="scheduled_q-instance-method">
-      <div class="signature">
-        
-        def <strong>scheduled_q</strong>
-
-        <a class="method-permalink" href="#scheduled_q-instance-method">#</a>
-      </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="size(include_dead:Bool=true):Int64-instance-method">
-      <div class="signature">
-        abstract 
-        def <strong>size</strong>(include_dead : Bool = <span class="n">true</span>) : Int64
-
-        <a class="method-permalink" href="#size%28include_dead%3ABool%3Dtrue%29%3AInt64-instance-method">#</a>
+        <a class="method-permalink" href="#set%28key%3AString%2Cvalues%3AHash%28String%2CString%7CNil%29%7CHash%28String%2CNil%29%7CHash%28String%2CString%29%29%3ANil-instance-method">#</a>
       </div>
       
       <br/>
@@ -1054,24 +1023,29 @@
   
     <div class="entry-detail" id="store(key:String,value:Hash(String,String|Nil)|Hash(String,String)):Nil-instance-method">
       <div class="signature">
-        
+        abstract 
         def <strong>store</strong>(key : String, value : Hash(String, String | Nil) | Hash(String, String)) : Nil
 
         <a class="method-permalink" href="#store%28key%3AString%2Cvalue%3AHash%28String%2CString%7CNil%29%7CHash%28String%2CString%29%29%3ANil-instance-method">#</a>
       </div>
       
+        <div class="doc">
+          
+          <p>Storage</p>
+        </div>
+      
       <br/>
       <div>
         
       </div>
     </div>
   
-    <div class="entry-detail" id="terminate(job_run:JobRun)-instance-method">
+    <div class="entry-detail" id="subscribe(key:String):Channel(BroadcastMessage)-instance-method">
       <div class="signature">
         abstract 
-        def <strong>terminate</strong>(job_run : <a href="../Mosquito/JobRun.html">JobRun</a>)
+        def <strong>subscribe</strong>(key : String) : Channel(<a href="../Mosquito/Backend/BroadcastMessage.html">BroadcastMessage</a>)
 
-        <a class="method-permalink" href="#terminate%28job_run%3AJobRun%29-instance-method">#</a>
+        <a class="method-permalink" href="#subscribe%28key%3AString%29%3AChannel%28BroadcastMessage%29-instance-method">#</a>
       </div>
       
       <br/>
@@ -1080,27 +1054,18 @@
       </div>
     </div>
   
-    <div class="entry-detail" id="undequeue:JobRun|Nil-instance-method">
+    <div class="entry-detail" id="unlock(key:String,value:String):Nil-instance-method">
       <div class="signature">
         abstract 
-        def <strong>undequeue</strong> : <a href="../Mosquito/JobRun.html">JobRun</a> | Nil
+        def <strong>unlock</strong>(key : String, value : String) : Nil
 
-        <a class="method-permalink" href="#undequeue%3AJobRun%7CNil-instance-method">#</a>
+        <a class="method-permalink" href="#unlock%28key%3AString%2Cvalue%3AString%29%3ANil-instance-method">#</a>
       </div>
       
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="waiting_q-instance-method">
-      <div class="signature">
-        
-        def <strong>waiting_q</strong>
-
-        <a class="method-permalink" href="#waiting_q-instance-method">#</a>
-      </div>
+        <div class="doc">
+          
+          <p>Coordination</p>
+        </div>
       
       <br/>
       <div>
