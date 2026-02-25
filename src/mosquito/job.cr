@@ -37,6 +37,9 @@ module Mosquito
     # at which the job should be retried.
     getter preempted_until : Time?
 
+    # When a job is preempted, this is the reason provided by the caller.
+    getter preempt_reason : String = ""
+
     # When a job fails and raises an exception, it will be saved into this attribute.
     getter exception : Exception?
 
@@ -85,10 +88,7 @@ module Mosquito
         return
       end
 
-      if preempted?
-        Log.info { "Before hook preempted, job will not be executed" }
-        return
-      end
+      return if preempted?
 
       @state = State::Running
 
@@ -124,6 +124,7 @@ module Mosquito
     # The optional `until` parameter specifies when the job should be retried.
     def preempt(reason = "", *, until preempted_until : Time? = nil)
       @state = State::Preempted
+      @preempt_reason = reason
       @preempted_until = preempted_until
     end
 

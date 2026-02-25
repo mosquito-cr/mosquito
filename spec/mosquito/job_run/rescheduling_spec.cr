@@ -55,4 +55,50 @@ describe "job_run rescheduling" do
 
     refute job.should_retry
   end
+
+  describe "preempted jobs" do
+    it "sets state to preempted and does not execute" do
+      job = PreemptingJob.new
+      job.run
+      assert job.preempted?
+      refute job.executed?
+    end
+
+    it "uses normal backoff when preempted without an until time" do
+      job = PreemptingJob.new
+      job.run
+      assert_equal 2.seconds, job.reschedule_interval(1)
+      assert_equal 8.seconds, job.reschedule_interval(2)
+    end
+
+    it "uses the until time for reschedule interval when provided" do
+      Timecop.freeze(Time.utc) do
+        future = Time.utc + 30.seconds
+        job = PreemptingJob.new
+        job.preempt_until = future
+        job.run
+
+        interval = job.reschedule_interval(1)
+        assert_equal 30.seconds, interval
+      end
+    end
+
+    it "falls back to normal backoff when until time is in the past" do
+      Timecop.freeze(Time.utc) do
+        past = Time.utc - 5.seconds
+        job = PreemptingJob.new
+        job.preempt_until = past
+        job.run
+
+        assert_equal 2.seconds, job.reschedule_interval(1)
+      end
+    end
+
+    it "respects rescheduleable? override when preempted" do
+      job = NonReschedulablePreemptingJob.new
+      job.run
+      assert job.preempted?
+      refute job.rescheduleable?(0)
+    end
+  end
 end
