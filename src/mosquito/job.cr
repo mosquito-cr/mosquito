@@ -179,7 +179,6 @@ module Mosquito
     #
     # For a given retry count, is this job rescheduleable?
     def rescheduleable?(retry_count : Int32) : Bool
-      return true if preempted?
       rescheduleable? && retry_count < 5
     end
 
