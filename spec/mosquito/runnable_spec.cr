@@ -11,9 +11,7 @@ class Namespace::ConcreteRunnable
   def test_run : Nil
     run
     first_run_notifier.receive
-    wg = WaitGroup.new(1)
-    stop(wg)
-    wg.wait
+    stop.wait
   end
 
   def runnable_name : String
@@ -28,7 +26,7 @@ class Namespace::ConcreteRunnable
     Fiber.yield
   end
 
-  def stop(wait_group : WaitGroup? = nil)
+  def stop(wait_group : WaitGroup = WaitGroup.new(1)) : WaitGroup
     first_run_notifier.close
     super(wait_group)
   end

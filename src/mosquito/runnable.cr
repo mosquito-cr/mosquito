@@ -171,23 +171,29 @@ module Mosquito
     # The runnable doesn't exit immediately so #stop spawns a fiber to
     # monitor the state transition.
     #
+    # Returns the `WaitGroup`, which will be decremented when the
+    # runnable has finished. This enables `runnable.stop.wait`.
+    #
     # If a `WaitGroup` is provided, it will be decremented when the
-    # runnable has finished.
+    # runnable has finished. This is useful when stopping multiple
+    # runnables and waiting for all of them to finish.
     #
     # Calling stop on a runnable that has already finished or crashed is a
     # no-op (the wait_group is signaled immediately).
-    def stop(wait_group : WaitGroup? = nil) : Nil
+    def stop(wait_group : WaitGroup = WaitGroup.new(1)) : WaitGroup
       unless state.running? || state.stopping?
-        wait_group.try &.done
-        return
+        wait_group.done
+        return wait_group
       end
 
       self.state = State::Stopping if state.running?
 
       spawn do
         done.receive?
-        wait_group.try &.done
+        wait_group.done
       end
+
+      wait_group
     end
 
     # Used to print a pretty name for logging.
