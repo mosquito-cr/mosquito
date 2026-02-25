@@ -65,9 +65,7 @@ module Mosquito
       Log.notice { "Mosquito is shutting down..." }
 
       if wait
-        wg = WaitGroup.new(1)
-        instance.stop(wg)
-        wg.wait
+        instance.stop.wait
       else
         instance.stop
       end

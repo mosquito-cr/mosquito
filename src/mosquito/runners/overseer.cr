@@ -77,7 +77,7 @@ module Mosquito::Runners
       @executors.each(&.run)
     end
 
-    def stop(wait_group : WaitGroup? = nil) : Nil
+    def stop(wait_group : WaitGroup = WaitGroup.new(1)) : WaitGroup
       observer.shutting_down if state.running?
       super
     end

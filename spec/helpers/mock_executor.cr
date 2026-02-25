@@ -10,14 +10,13 @@ class MockExecutor < Mosquito::Runners::Executor
     self.state = Mosquito::Runnable::State::Working
   end
 
-  def stop
+  def stop(wait_group : WaitGroup = WaitGroup.new(1)) : WaitGroup
     self.state = Mosquito::Runnable::State::Stopping
-    Channel(Bool).new.tap do |notifier|
-      spawn {
-        self.state = Mosquito::Runnable::State::Finished
-        notifier.send true
-      }
+    spawn do
+      self.state = Mosquito::Runnable::State::Finished
+      wait_group.done
     end
+    wait_group
   end
 
   def receive_job
