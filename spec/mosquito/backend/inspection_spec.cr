@@ -80,7 +80,16 @@ describe "Backend inspection" do
     end
 
     it "can list the dead jobs" do
-      skip
+      clean_slate do
+        expected_job_runs = Array(Mosquito::JobRun).new(3) { Mosquito::JobRun.new("mock_job_run") }
+        expected_job_runs.each { |job_run| queue.terminate job_run }
+        expected_job_run_ids = expected_job_runs.map { |job_run| job_run.id }.sort
+
+        actual_job_runs = queue.list_dead.sort
+        assert_equal 3, actual_job_runs.size
+
+        assert_equal expected_job_run_ids, actual_job_runs
+      end
     end
   end
 end
