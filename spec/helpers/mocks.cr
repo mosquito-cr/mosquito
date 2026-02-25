@@ -178,6 +178,27 @@ class RateLimitedJob < Mosquito::QueuedJob
   end
 end
 
+class PreemptingJob < Mosquito::QueuedJob
+  include PerformanceCounter
+  property preempt_until : Time? = nil
+
+  before do
+    preempt "test preemption", until: preempt_until
+  end
+end
+
+class NonReschedulablePreemptingJob < Mosquito::QueuedJob
+  include PerformanceCounter
+
+  before do
+    preempt "not reschedulable"
+  end
+
+  def rescheduleable? : Bool
+    false
+  end
+end
+
 class SleepyJob < Mosquito::QueuedJob
   class_property should_sleep = true
 
@@ -201,6 +222,8 @@ Mosquito::Base.register_job_mapping "job_with_config", JobWithConfig
 Mosquito::Base.register_job_mapping "job_with_performance_counter", JobWithPerformanceCounter
 Mosquito::Base.register_job_mapping "failing_job", FailingJob
 Mosquito::Base.register_job_mapping "non_reschedulable_failing_job", NonReschedulableFailingJob
+Mosquito::Base.register_job_mapping "preempting_job", PreemptingJob
+Mosquito::Base.register_job_mapping "non_reschedulable_preempting_job", NonReschedulablePreemptingJob
 
 def job_run_config
   {

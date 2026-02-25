@@ -160,7 +160,7 @@ module Mosquito
     end
 
     # :nodoc:
-    delegate :executed?, :succeeded?, :failed?, :preempted?, :failed, :rescheduled, to: job!
+    delegate :executed?, :succeeded?, :failed?, :preempted?, :preempt_reason, :failed, :rescheduled, to: job!
 
     # Used to construct a job_run from the parameters stored in the backend.
     def self.retrieve(id : String)

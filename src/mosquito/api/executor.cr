@@ -112,7 +112,16 @@ module Mosquito
         message = String::Builder.new
         message << "Preempted: ".colorize.cyan
         message << job_run
-        message << " was preempted after "
+        message << " was preempted"
+
+        reason = job_run.preempt_reason
+        unless reason.empty?
+          message << " ("
+          message << reason
+          message << ")"
+        end
+
+        message << " after "
         message << time_with_units duration
 
         if job_run.rescheduleable?
