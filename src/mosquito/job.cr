@@ -122,8 +122,9 @@ module Mosquito
     # Preempts this job, preventing execution. The job will be rescheduled.
     #
     # The optional `until` parameter specifies when the job should be retried.
-    def preempt(reason = "", *, until @preempted_until : Time? = nil)
+    def preempt(reason = "", *, until preempted_until : Time? = nil)
       @state = State::Preempted
+      @preempted_until = preempted_until
     end
 
     macro before(&block)
