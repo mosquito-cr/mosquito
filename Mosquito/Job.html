@@ -684,6 +684,37 @@ Jobs are pieces of code which run a JobRun.</p>
       </li>
     
       <li class="entry-summary">
+        <a href="#preempt%28reason%3AString%3D%22%22%2C%2A%2Cuntilpreempted_until%3ATime%7CNil%3Dnil%29-instance-method" class="signature"><strong>#preempt</strong>(reason : String = <span class="s">&quot;&quot;</span>, *, until preempted_until : Time | Nil = <span class="n">nil</span>)</a>
+        
+          <div class="summary"><p>To be called from inside a before hook.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#preempt_reason%3AString-instance-method" class="signature"><strong>#preempt_reason</strong> : String</a>
+        
+          <div class="summary"><p>When a job is preempted, this is the reason provided by the caller.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#preempted%3F%28%2Aargs%2C%2A%2Aoptions%29-instance-method" class="signature"><strong>#preempted?</strong>(*args, **options)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#preempted%3F%28%2Aargs%2C%2A%2Aoptions%2C%26%29-instance-method" class="signature"><strong>#preempted?</strong>(*args, **options, &)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#preempted_until%3ATime%7CNil-instance-method" class="signature"><strong>#preempted_until</strong> : Time | Nil</a>
+        
+          <div class="summary"><p>When a job is preempted with an <code>until</code> parameter, this is the time at which the job should be retried.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
         <a href="#reschedule_interval%28retry_count%3AInt32%29%3ATime%3A%3ASpan-instance-method" class="signature"><strong>#reschedule_interval</strong>(retry_count : Int32) : Time::Span</a>
         
           <div class="summary"><p>abstract, override if desired.</p></div>
@@ -1331,6 +1362,94 @@ re-scheduling, it will be run again at a later time.</p>
         <div class="doc">
           
           <p>abstract, override in a Job descendant to do something productive</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="preempt(reason:String=&quot;&quot;,*,untilpreempted_until:Time|Nil=nil)-instance-method">
+      <div class="signature">
+        
+        def <strong>preempt</strong>(reason : String = <span class="s">&quot;&quot;</span>, *, until preempted_until : Time | Nil = <span class="n">nil</span>)
+
+        <a class="method-permalink" href="#preempt%28reason%3AString%3D%22%22%2C%2A%2Cuntilpreempted_until%3ATime%7CNil%3Dnil%29-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>To be called from inside a before hook.
+Preempts this job, preventing execution. The job will be rescheduled.</p>
+<p>The optional <code>until</code> parameter specifies when the job should be retried.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="preempt_reason:String-instance-method">
+      <div class="signature">
+        
+        def <strong>preempt_reason</strong> : String
+
+        <a class="method-permalink" href="#preempt_reason%3AString-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>When a job is preempted, this is the reason provided by the caller.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="preempted?(*args,**options)-instance-method">
+      <div class="signature">
+        
+        def <strong>preempted?</strong>(*args, **options)
+
+        <a class="method-permalink" href="#preempted%3F%28%2Aargs%2C%2A%2Aoptions%29-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="preempted?(*args,**options,&amp;)-instance-method">
+      <div class="signature">
+        
+        def <strong>preempted?</strong>(*args, **options, &)
+
+        <a class="method-permalink" href="#preempted%3F%28%2Aargs%2C%2A%2Aoptions%2C%26%29-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="preempted_until:Time|Nil-instance-method">
+      <div class="signature">
+        
+        def <strong>preempted_until</strong> : Time | Nil
+
+        <a class="method-permalink" href="#preempted_until%3ATime%7CNil-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>When a job is preempted with an <code>until</code> parameter, this is the time
+at which the job should be retried.</p>
         </div>
       
       <br/>

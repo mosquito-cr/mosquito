@@ -503,20 +503,6 @@
       </li>
     
       <li class="entry-summary">
-        <a href="#reschedule_interval%28retry_count%3AInt32%29%3ATime%3A%3ASpan-instance-method" class="signature"><strong>#reschedule_interval</strong>(retry_count : Int32) : Time::Span</a>
-        
-          <div class="summary"><p>Configure the reschedule interval so that the job_run is not run again until it should be allowed through the rate limiter.</p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#rescheduleable%3F%28retry_count%3AInt32%29%3ABool-instance-method" class="signature"><strong>#rescheduleable?</strong>(retry_count : Int32) : Bool</a>
-        
-          <div class="summary"><p>Configure the rescheduler to always retry if a job is rate limited.</p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
         <a href="#update_window_start%3ANil-instance-method" class="signature"><strong>#update_window_start</strong> : Nil</a>
         
           <div class="summary"><p>Resets the run count and logs the start of window.</p></div>
@@ -651,45 +637,6 @@ some other metric, eg api calls to a third party library.</p>
           
           <p>Should this job be cancelled?
 If not, update the rate limit metadata.</p>
-        </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="reschedule_interval(retry_count:Int32):Time::Span-instance-method">
-      <div class="signature">
-        
-        def <strong>reschedule_interval</strong>(retry_count : Int32) : Time::Span
-
-        <a class="method-permalink" href="#reschedule_interval%28retry_count%3AInt32%29%3ATime%3A%3ASpan-instance-method">#</a>
-      </div>
-      
-        <div class="doc">
-          
-          <p>Configure the reschedule interval so that the job_run is not run again until it
-should be allowed through the rate limiter.</p>
-        </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="rescheduleable?(retry_count:Int32):Bool-instance-method">
-      <div class="signature">
-        
-        def <strong>rescheduleable?</strong>(retry_count : Int32) : Bool
-
-        <a class="method-permalink" href="#rescheduleable%3F%28retry_count%3AInt32%29%3ABool-instance-method">#</a>
-      </div>
-      
-        <div class="doc">
-          
-          <p>Configure the rescheduler to always retry if a job is rate limited.</p>
         </div>
       
       <br/>
