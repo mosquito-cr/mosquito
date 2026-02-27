@@ -69,4 +69,28 @@ describe "Mosquito Config" do
       Mosquito.configuration.backend.build_key("test").must_equal "mosquito:test"
     end
   end
+
+  it "validates when redis_url is nil but backend has an external connection" do
+    redis_url = Mosquito.configuration.redis_url || "redis://localhost:6379/3"
+    connection = Redis::Client.new(URI.parse(redis_url))
+
+    Mosquito.temp_config(redis_url: nil) do
+      Mosquito.configuration.backend = Mosquito::RedisBackend.new(connection)
+      # Should not raise because the backend already has a connection
+      Mosquito.configuration.validate
+    end
+  end
+
+  it "allows creating a RedisBackend with an external Redis connection" do
+    redis_url = Mosquito.configuration.redis_url || "redis://localhost:6379/3"
+    connection = Redis::Client.new(URI.parse(redis_url))
+    backend = Mosquito::RedisBackend.new(connection)
+
+    assert backend.has_external_connection?
+  end
+
+  it "reports no external connection for default RedisBackend" do
+    backend = Mosquito::RedisBackend.new
+    refute backend.has_external_connection?
+  end
 end

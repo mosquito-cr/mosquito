@@ -41,7 +41,9 @@ module Mosquito
       return if @validated
       @validated = true
 
-      if redis_url.nil?
+      # If the backend is a RedisBackend with an externally provided connection,
+      # redis_url is not required.
+      if redis_url.nil? && !has_external_redis_connection?
         message = <<-error
         Mosquito cannot start because the redis connection string hasn't been provided.
 
@@ -51,10 +53,25 @@ module Mosquito
           settings.redis_url = (ENV["REDIS_TLS_URL"]? || ENV["REDIS_URL"]? || "redis://localhost:6379")
         end
 
+        Alternatively, you can provide a pre-configured Redis connection:
+
+        Mosquito.configure do |settings|
+          settings.backend = Mosquito::RedisBackend.new(my_redis_client)
+        end
+
         See Also: https://github.com/mosquito-cr/mosquito#connecting-to-redis
         error
 
         raise message
+      end
+    end
+
+    private def has_external_redis_connection? : Bool
+      if redis_backend = backend.as?(Mosquito::RedisBackend)
+        redis_backend.has_external_connection?
+      else
+        # Non-Redis backends don't need redis_url
+        true
       end
     end
 
