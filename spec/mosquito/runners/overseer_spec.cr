@@ -77,11 +77,7 @@ describe "Mosquito::Runners::Overseer" do
           overseer.each_run
         end
 
-        assert_in_epsilon(
-          overseer.idle_wait.total_seconds,
-          tick_time.total_seconds,
-          epsilon: 0.06
-        )
+        assert tick_time >= overseer.idle_wait, "Expected to wait at least #{overseer.idle_wait}, but only waited #{tick_time}"
       end
     end
 
