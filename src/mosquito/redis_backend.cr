@@ -54,28 +54,15 @@ module Mosquito
     {% end %}
 
     @connection : ::Redis::Client?
-    @external_connection : Bool = false
-
-    def initialize
-    end
-
-    # Create a RedisBackend using a pre-configured Redis connection.
-    # When using this constructor, `Mosquito.configuration.redis_url` is not required.
-    def initialize(@connection : ::Redis::Client)
-      @external_connection = true
-      Scripts.load(@connection.not_nil!)
-    end
-
-    # Returns true if this backend was initialized with an external Redis connection.
-    def has_external_connection? : Bool
-      @external_connection
-    end
 
     @[AlwaysInline]
     def redis
       load_scripts = @connection.nil?
 
-      connection = @connection ||= ::Redis::Client.new(URI.parse(Mosquito.configuration.redis_url.to_s))
+      connection = @connection ||= begin
+        config = Mosquito.configuration
+        config.redis_connection || ::Redis::Client.new(URI.parse(config.redis_url.to_s))
+      end
 
       Scripts.load(connection) if load_scripts
       connection
