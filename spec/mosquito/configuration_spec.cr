@@ -1,17 +1,17 @@
 require "../spec_helper"
 
 describe "Mosquito Config" do
-  it "allows setting / retrieving the redis url" do
-    Mosquito.temp_config(redis_url: "yolo") do
-      assert_equal "yolo", Mosquito.configuration.redis_url
+  it "allows setting / retrieving the connection string" do
+    Mosquito.temp_config do
+      Mosquito.configuration.backend_connection_string = "redis://localhost:6379/3"
+      assert_equal "redis://localhost:6379/3", Mosquito.configuration.backend_connection_string
     end
   end
 
   it "enforces missing settings are set" do
-    Mosquito.temp_config(redis_url: nil) do
-      assert_raises do
-        Mosquito.configuration.validate
-      end
+    config = Mosquito::Configuration.new
+    assert_raises do
+      config.validate
     end
   end
 
@@ -67,6 +67,13 @@ describe "Mosquito Config" do
       Mosquito.configuration.global_prefix = test_value
       assert_equal test_value, Mosquito.configuration.global_prefix
       Mosquito.configuration.backend.build_key("test").must_equal "mosquito:test"
+    end
+  end
+
+  it "validates when backend_connection_string is set" do
+    Mosquito.temp_config do
+      Mosquito.configuration.backend_connection_string = "redis://localhost:6379/3"
+      Mosquito.configuration.validate
     end
   end
 end

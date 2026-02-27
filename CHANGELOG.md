@@ -28,8 +28,10 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 - `JobRun#started_at` and `JobRun#finished_at` timestamps are now exposed as typed `Time?` getters
 - Graceful worker shutdown: on SIGTERM/SIGINT the overseer stops dequeuing, waits for in-flight executors to finish, and requeues any jobs left in pending back to waiting
 - Overseers now take ownership of job runs when dequeued, and clean up abandoned pending job runs on startup
+- Mosquito can now accept pre-existing backend connections via `Configuration#backend_connection`. This allows sharing a connection pool with the rest of an application. (#193)
 
 ### Changed
+- (breaking) `Configuration#connection_string` has been renamed to `Configuration#backend_connection_string` (#193)
 - (minor breaking) Logs are now emitted from runners with a slighly different source tag. (#152)
   For example:
   The overseer boot message used to be:
