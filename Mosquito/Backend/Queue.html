@@ -222,6 +222,11 @@
       
     </li>
   
+  <li class=" " data-id="mosquito/Mosquito/Observability/QueueList" data-name="mosquito::observability::queuelist">
+      <a href="../../Mosquito/Observability/QueueList.html">QueueList</a>
+      
+    </li>
+  
 </ul>
 
       
@@ -560,7 +565,26 @@
       </li>
     
       <li class="entry-summary">
+        <a href="#pause%28duration%3ATime%3A%3ASpan%7CNil%3Dnil%29%3ANil-instance-method" class="signature"><strong>#pause</strong>(duration : Time::Span | Nil = <span class="n">nil</span>) : Nil</a>
+        
+          <div class="summary"><p>Pause this queue so that <code><a href="../../Mosquito/Backend/Queue.html#dequeue%3AJobRun%7CNil-instance-method">#dequeue</a></code> returns nil until it is resumed or the optional duration expires.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#paused%3F%3ABool-instance-method" class="signature"><strong>#paused?</strong> : Bool</a>
+        
+      </li>
+    
+      <li class="entry-summary">
         <a href="#pending_size%3AInt64-instance-method" class="signature"><strong>#pending_size</strong> : Int64</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#resume%3ANil-instance-method" class="signature"><strong>#resume</strong> : Nil</a>
+        
+          <div class="summary"><p>Resume a paused queue, allowing dequeue to proceed.</p></div>
         
       </li>
     
@@ -832,6 +856,40 @@
       </div>
     </div>
   
+    <div class="entry-detail" id="pause(duration:Time::Span|Nil=nil):Nil-instance-method">
+      <div class="signature">
+        abstract 
+        def <strong>pause</strong>(duration : Time::Span | Nil = <span class="n">nil</span>) : Nil
+
+        <a class="method-permalink" href="#pause%28duration%3ATime%3A%3ASpan%7CNil%3Dnil%29%3ANil-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Pause this queue so that <code><a href="../../Mosquito/Backend/Queue.html#dequeue%3AJobRun%7CNil-instance-method">#dequeue</a></code> returns nil until it is resumed
+or the optional duration expires.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="paused?:Bool-instance-method">
+      <div class="signature">
+        abstract 
+        def <strong>paused?</strong> : Bool
+
+        <a class="method-permalink" href="#paused%3F%3ABool-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
     <div class="entry-detail" id="pending_size:Int64-instance-method">
       <div class="signature">
         abstract 
@@ -839,6 +897,25 @@
 
         <a class="method-permalink" href="#pending_size%3AInt64-instance-method">#</a>
       </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="resume:Nil-instance-method">
+      <div class="signature">
+        abstract 
+        def <strong>resume</strong> : Nil
+
+        <a class="method-permalink" href="#resume%3ANil-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Resume a paused queue, allowing dequeue to proceed.</p>
+        </div>
       
       <br/>
       <div>

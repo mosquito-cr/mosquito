@@ -222,6 +222,11 @@
       
     </li>
   
+  <li class=" " data-id="mosquito/Mosquito/Observability/QueueList" data-name="mosquito::observability::queuelist">
+      <a href="../../Mosquito/Observability/QueueList.html">QueueList</a>
+      
+    </li>
+  
 </ul>
 
       
@@ -455,6 +460,23 @@
   
 
   
+  <h2>
+    <a id="class-method-summary" class="anchor" href="#class-method-summary">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Class Method Summary
+  </h2>
+  <ul class="list-summary">
+    
+      <li class="entry-summary">
+        <a href="#flush_paused_queues%21-class-method" class="signature"><strong>.flush_paused_queues!</strong></a>
+        
+      </li>
+    
+  </ul>
+
 
   
 
@@ -522,7 +544,26 @@
       </li>
     
       <li class="entry-summary">
+        <a href="#pause%28duration%3ATime%3A%3ASpan%7CNil%3Dnil%29%3ANil-instance-method" class="signature"><strong>#pause</strong>(duration : Time::Span | Nil = <span class="n">nil</span>) : Nil</a>
+        
+          <div class="summary"><p>Pause this queue so that <code><a href="../../Mosquito/TestBackend/Queue.html#dequeue%3AJobRun%7CNil-instance-method">#dequeue</a></code> returns nil until it is resumed or the optional duration expires.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#paused%3F%3ABool-instance-method" class="signature"><strong>#paused?</strong> : Bool</a>
+        
+      </li>
+    
+      <li class="entry-summary">
         <a href="#pending_size%3AInt64-instance-method" class="signature"><strong>#pending_size</strong> : Int64</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#resume%3ANil-instance-method" class="signature"><strong>#resume</strong> : Nil</a>
+        
+          <div class="summary"><p>Resume a paused queue, allowing dequeue to proceed.</p></div>
         
       </li>
     
@@ -627,9 +668,24 @@
     list_waiting</a>, 
     
   
+    <a href="../../Mosquito/Backend/Queue.html#pause%28duration%3ATime%3A%3ASpan%7CNil%3Dnil%29%3ANil-instance-method" class="tooltip">
+      <span>pause(duration : Time::Span | Nil = <span class="n">nil</span>) : Nil</span>
+    pause</a>, 
+    
+  
+    <a href="../../Mosquito/Backend/Queue.html#paused%3F%3ABool-instance-method" class="tooltip">
+      <span>paused? : Bool</span>
+    paused?</a>, 
+    
+  
     <a href="../../Mosquito/Backend/Queue.html#pending_size%3AInt64-instance-method" class="tooltip">
       <span>pending_size : Int64</span>
     pending_size</a>, 
+    
+  
+    <a href="../../Mosquito/Backend/Queue.html#resume%3ANil-instance-method" class="tooltip">
+      <span>resume : Nil</span>
+    resume</a>, 
     
   
     <a href="../../Mosquito/Backend/Queue.html#schedule%28job_run%3AJobRun%2Catscheduled_time%3ATime%29%3AJobRun-instance-method" class="tooltip">
@@ -719,6 +775,30 @@
   
 
   
+  <h2>
+    <a id="class-method-detail" class="anchor" href="#class-method-detail">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Class Method Detail
+  </h2>
+  
+    <div class="entry-detail" id="flush_paused_queues!-class-method">
+      <div class="signature">
+        
+        def self.<strong>flush_paused_queues!</strong>
+
+        <a class="method-permalink" href="#flush_paused_queues%21-class-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+
 
   
 
@@ -881,6 +961,44 @@
       </div>
     </div>
   
+    <div class="entry-detail" id="pause(duration:Time::Span|Nil=nil):Nil-instance-method">
+      <div class="signature">
+        
+        def <strong>pause</strong>(duration : Time::Span | Nil = <span class="n">nil</span>) : Nil
+
+        <a class="method-permalink" href="#pause%28duration%3ATime%3A%3ASpan%7CNil%3Dnil%29%3ANil-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+            <div class="doc-inherited">
+              Description copied from class <a href="../../Mosquito/Backend/Queue.html">Mosquito::Backend::Queue</a>
+            </div>
+          
+          <p>Pause this queue so that <code><a href="../../Mosquito/TestBackend/Queue.html#dequeue%3AJobRun%7CNil-instance-method">#dequeue</a></code> returns nil until it is resumed
+or the optional duration expires.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="paused?:Bool-instance-method">
+      <div class="signature">
+        
+        def <strong>paused?</strong> : Bool
+
+        <a class="method-permalink" href="#paused%3F%3ABool-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
     <div class="entry-detail" id="pending_size:Int64-instance-method">
       <div class="signature">
         
@@ -888,6 +1006,29 @@
 
         <a class="method-permalink" href="#pending_size%3AInt64-instance-method">#</a>
       </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="resume:Nil-instance-method">
+      <div class="signature">
+        
+        def <strong>resume</strong> : Nil
+
+        <a class="method-permalink" href="#resume%3ANil-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+            <div class="doc-inherited">
+              Description copied from class <a href="../../Mosquito/Backend/Queue.html">Mosquito::Backend::Queue</a>
+            </div>
+          
+          <p>Resume a paused queue, allowing dequeue to proceed.</p>
+        </div>
       
       <br/>
       <div>

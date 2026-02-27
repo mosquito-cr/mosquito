@@ -222,6 +222,11 @@
       
     </li>
   
+  <li class=" " data-id="mosquito/Mosquito/Observability/QueueList" data-name="mosquito::observability::queuelist">
+      <a href="../Mosquito/Observability/QueueList.html">QueueList</a>
+      
+    </li>
+  
 </ul>
 
       
@@ -656,7 +661,26 @@
       </li>
     
       <li class="entry-summary">
+        <a href="#pause%28forduration%3ATime%3A%3ASpan%7CNil%3Dnil%29%3ANil-instance-method" class="signature"><strong>#pause</strong>(for duration : Time::Span | Nil = <span class="n">nil</span>) : Nil</a>
+        
+          <div class="summary"><p>Pause this queue.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#paused%3F%3ABool-instance-method" class="signature"><strong>#paused?</strong> : Bool</a>
+        
+      </li>
+    
+      <li class="entry-summary">
         <a href="#reschedule%28job_run%3AJobRun%2Cexecution_time%29-instance-method" class="signature"><strong>#reschedule</strong>(job_run : JobRun, execution_time)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#resume%3ANil-instance-method" class="signature"><strong>#resume</strong> : Nil</a>
+        
+          <div class="summary"><p>Resume a paused queue, allowing jobs to be dequeued again.</p></div>
         
       </li>
     
@@ -949,6 +973,43 @@
       </div>
     </div>
   
+    <div class="entry-detail" id="pause(forduration:Time::Span|Nil=nil):Nil-instance-method">
+      <div class="signature">
+        
+        def <strong>pause</strong>(for duration : Time::Span | Nil = <span class="n">nil</span>) : Nil
+
+        <a class="method-permalink" href="#pause%28forduration%3ATime%3A%3ASpan%7CNil%3Dnil%29%3ANil-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Pause this queue. While paused, <code><a href="../Mosquito/Queue.html#dequeue%3AJobRun%7CNil-instance-method">#dequeue</a></code> returns nil and no jobs
+will be dispatched. Jobs can still be enqueued and will accumulate
+until the queue is resumed.</p>
+<p>Pass a duration to automatically resume after the given interval,
+which is useful for backing off from a rate-limited external resource.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="paused?:Bool-instance-method">
+      <div class="signature">
+        
+        def <strong>paused?</strong> : Bool
+
+        <a class="method-permalink" href="#paused%3F%3ABool-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
     <div class="entry-detail" id="reschedule(job_run:JobRun,execution_time)-instance-method">
       <div class="signature">
         
@@ -956,6 +1017,25 @@
 
         <a class="method-permalink" href="#reschedule%28job_run%3AJobRun%2Cexecution_time%29-instance-method">#</a>
       </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="resume:Nil-instance-method">
+      <div class="signature">
+        
+        def <strong>resume</strong> : Nil
+
+        <a class="method-permalink" href="#resume%3ANil-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Resume a paused queue, allowing jobs to be dequeued again.</p>
+        </div>
       
       <br/>
       <div>
