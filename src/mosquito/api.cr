@@ -15,6 +15,10 @@ module Mosquito::Api
     JobRun.new id
   end
 
+  def self.list_periodic_jobs : Array(PeriodicJob)
+    PeriodicJob.all
+  end
+
   def self.list_queues : Array(Observability::Queue)
     Mosquito.backend.list_queues
       .map { |name| Observability::Queue.new name }

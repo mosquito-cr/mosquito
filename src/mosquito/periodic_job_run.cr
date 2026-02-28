@@ -3,6 +3,7 @@ module Mosquito
     property class : Mosquito::PeriodicJob.class
     property interval : Time::Span | Time::MonthSpan
     getter metadata : Metadata { Metadata.new(Mosquito.backend.build_key("periodic_jobs", @class.name)) }
+    getter observer : Observability::PeriodicJob { Observability::PeriodicJob.new(self) }
 
     # The last executed timestamp for this periodicjob tracked by the backend.
     def last_executed_at?
@@ -53,8 +54,10 @@ module Mosquito
         # - If something interferes with the job run, it won't be correct that it was executed.
         # - if the worker is backlogged, the start time will be different from the last executed time.
         self.last_executed_at = now
+        observer.enqueued(at: now)
         true
       else
+        observer.skipped
         false
       end
     end
