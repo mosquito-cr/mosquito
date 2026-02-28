@@ -24,6 +24,7 @@ module Mosquito
 
     protected abstract def _build_queue(name : String) : Queue
 
+    abstract def connection
     abstract def connection_string=(value : String)
     abstract def connection_string : String?
     abstract def valid_configuration? : Bool

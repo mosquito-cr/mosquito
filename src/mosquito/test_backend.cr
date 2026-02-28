@@ -36,6 +36,10 @@ module Mosquito
   # end
   # ```
   class TestBackend < Mosquito::Backend
+    def connection
+      nil
+    end
+
     getter connection_string : String?
 
     def connection_string=(value : String)
