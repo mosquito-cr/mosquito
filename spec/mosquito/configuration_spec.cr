@@ -3,8 +3,8 @@ require "../spec_helper"
 describe "Mosquito Config" do
   it "allows setting / retrieving the connection string" do
     Mosquito.temp_config do
-      Mosquito.configuration.connection_string = "redis://localhost:6379/3"
-      assert_equal "redis://localhost:6379/3", Mosquito.configuration.connection_string
+      Mosquito.configuration.backend_connection_string = "redis://localhost:6379/3"
+      assert_equal "redis://localhost:6379/3", Mosquito.configuration.backend_connection_string
     end
   end
 
@@ -73,8 +73,8 @@ describe "Mosquito Config" do
   end
 
   it "validates when a connection is provided directly" do
-    connection_string = Mosquito.configuration.connection_string || "redis://localhost:6379/3"
-    connection = Redis::Client.new(URI.parse(connection_string))
+    backend_connection_string = Mosquito.configuration.backend_connection_string || "redis://localhost:6379/3"
+    connection = Redis::Client.new(URI.parse(backend_connection_string))
 
     Mosquito.temp_config do
       backend = Mosquito::RedisBackend.new
@@ -84,9 +84,9 @@ describe "Mosquito Config" do
     end
   end
 
-  it "validates when connection_string is set" do
+  it "validates when backend_connection_string is set" do
     Mosquito.temp_config do
-      Mosquito.configuration.connection_string = "redis://localhost:6379/3"
+      Mosquito.configuration.backend_connection_string = "redis://localhost:6379/3"
       Mosquito.configuration.validate
     end
   end

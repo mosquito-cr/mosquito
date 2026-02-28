@@ -2,7 +2,7 @@ require "../src/mosquito"
 require "./jobs/*"
 
 Mosquito.configure do |settings|
-  settings.connection_string = ENV["REDIS_URL"]? || "redis://localhost:6379/4"
+  settings.backend_connection_string = ENV["REDIS_URL"]? || "redis://localhost:6379/4"
   settings.publish_metrics = true
 end
 
