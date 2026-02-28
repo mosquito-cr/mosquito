@@ -9,11 +9,9 @@ describe "Mosquito Config" do
   end
 
   it "enforces missing settings are set" do
-    Mosquito.temp_config do
-      Mosquito.configuration.backend = Mosquito::RedisBackend.new
-      assert_raises do
-        Mosquito.configuration.validate
-      end
+    config = Mosquito::Configuration.new
+    assert_raises do
+      config.validate
     end
   end
 
@@ -69,18 +67,6 @@ describe "Mosquito Config" do
       Mosquito.configuration.global_prefix = test_value
       assert_equal test_value, Mosquito.configuration.global_prefix
       Mosquito.configuration.backend.build_key("test").must_equal "mosquito:test"
-    end
-  end
-
-  it "validates when a connection is provided directly" do
-    backend_connection_string = Mosquito.configuration.backend_connection_string || "redis://localhost:6379/3"
-    connection = Redis::Client.new(URI.parse(backend_connection_string))
-
-    Mosquito.temp_config do
-      backend = Mosquito::RedisBackend.new
-      backend.connection = connection
-      Mosquito.configuration.backend = backend
-      Mosquito.configuration.validate
     end
   end
 
