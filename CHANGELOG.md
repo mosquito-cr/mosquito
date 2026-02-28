@@ -28,8 +28,11 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 - `JobRun#started_at` and `JobRun#finished_at` timestamps are now exposed as typed `Time?` getters
 - Graceful worker shutdown: on SIGTERM/SIGINT the overseer stops dequeuing, waits for in-flight executors to finish, and requeues any jobs left in pending back to waiting
 - Overseers now take ownership of job runs when dequeued, and clean up abandoned pending job runs on startup
+- Queues can now be paused and resumed. While paused, `#dequeue` returns nil and jobs accumulate until the queue is resumed. An optional duration enables automatic resumption, useful for backing off rate-limited resources.
+- `RedisBackend` now supports setting an external Redis connection via `Backend#connection=` or `Backend#connection_string=`
 
 ### Changed
+- (breaking) `Configuration#redis_url` has been replaced by `Configuration#backend_connection_string`, which delegates to the backend instance. Connection management now lives in the backend rather than the configuration.
 - (minor breaking) Logs are now emitted from runners with a slighly different source tag. (#152)
   For example:
   The overseer boot message used to be:
