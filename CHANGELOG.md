@@ -30,6 +30,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 - Overseers now take ownership of job runs when dequeued, and clean up abandoned pending job runs on startup
 
 ### Changed
+- (minor breaking) `Configuration#connection_string` has been renamed to `Configuration#backend_connection_string` and `Configuration#backend_connection` to clarify that these delegate to the backend instance.
 - (minor breaking) Logs are now emitted from runners with a slighly different source tag. (#152)
   For example:
   The overseer boot message used to be:
