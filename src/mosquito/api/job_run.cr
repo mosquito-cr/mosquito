@@ -23,12 +23,15 @@ module Mosquito::Api
       end
     end
 
-    private def config : Hash(String, String)
-      Mosquito.backend.retrieve config_key
-    end
+    private getter metadata : Metadata {
+      Metadata.new(
+        Mosquito.backend.build_key(Mosquito::JobRun::CONFIG_KEY_PREFIX, id),
+        readonly: true
+      )
+    }
 
-    private def config_key
-      Mosquito.backend.build_key Mosquito::JobRun::CONFIG_KEY_PREFIX, id
+    private def config : Hash(String, String)
+      metadata.to_h
     end
 
     # The type of job this job run is for.
