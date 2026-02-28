@@ -18,6 +18,10 @@ module TestHelpers
   def backend : Mosquito::Backend
     Mosquito.configuration.backend
   end
+
+  def testing_redis_url : String
+    ENV["REDIS_URL"]? || "redis://localhost:6379/3"
+  end
 end
 
 extend TestHelpers

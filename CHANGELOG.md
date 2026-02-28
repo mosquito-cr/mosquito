@@ -17,21 +17,22 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
     - Queue events: enqueue, dequeue, reschedule, forget, and banish
     - Expected job duration is now published with executor events
   The Mosquito API can be used to subscribe to these events with `Mosquito::API.event_receiver`
-- Pluggable dequeue adapters allow customizing how jobs are selected from queues
+- Pluggable dequeue adapters allow customizing how jobs are selected from queues (#183)
     - `DequeueAdapter` abstract base class defines the adapter interface
     - `ShuffleDequeueAdapter` is the default, preserving existing randomized behavior
     - `WeightedDequeueAdapter` allows queue-level prioritization via configurable weights
     - Configurable via `Mosquito.configure { |c| c.dequeue_adapter = ... }`
-- Executor count is now configurable (default increased from 3 to 6)
+- Executor count is now configurable (default increased from 3 to 6) (#184)
     - Set via `Mosquito.configure { |c| c.executor_count = 10 }`
     - Override with the `MOSQUITO_EXECUTOR_COUNT` environment variable
-- `JobRun#started_at` and `JobRun#finished_at` timestamps are now exposed as typed `Time?` getters
-- Graceful worker shutdown: on SIGTERM/SIGINT the overseer stops dequeuing, waits for in-flight executors to finish, and requeues any jobs left in pending back to waiting
-- Overseers now take ownership of job runs when dequeued, and clean up abandoned pending job runs on startup
+- `JobRun#started_at` and `JobRun#finished_at` timestamps are now exposed as typed `Time?` getters (#179)
+- Graceful worker shutdown: on SIGTERM/SIGINT the overseer stops dequeuing, waits for in-flight executors to finish, and requeues any jobs left in pending back to waiting (#190)
+- Queues can now be paused and resumed. While paused, `#dequeue` returns nil and jobs accumulate until the queue is resumed. An optional duration enables automatic resumption, useful for backing off rate-limited resources. (#192)
+- Overseers now take ownership of job runs when dequeued, and clean up abandoned pending job runs on startup (#180)
 - Mosquito can now accept pre-existing backend connections via `Configuration#backend_connection`. This allows sharing a connection pool with the rest of an application. (#193)
 
 ### Changed
-- (breaking) `Configuration#connection_string` has been renamed to `Configuration#backend_connection_string` (#193)
++- (breaking) `Configuration#connection_string` has been renamed to `Configuration#backend_connection_string` (#193)
 - (minor breaking) Logs are now emitted from runners with a slighly different source tag. (#152)
   For example:
   The overseer boot message used to be:
