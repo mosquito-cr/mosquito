@@ -1,14 +1,16 @@
 require "../spec_helper"
 
 describe "Mosquito Config" do
-  it "allows setting / retrieving the redis url" do
-    Mosquito.temp_config(redis_url: "yolo") do
-      assert_equal "yolo", Mosquito.configuration.redis_url
+  it "allows setting / retrieving the connection string" do
+    Mosquito.temp_config do
+      Mosquito.configuration.connection_string = "redis://localhost:6379/3"
+      assert_equal "redis://localhost:6379/3", Mosquito.configuration.connection_string
     end
   end
 
   it "enforces missing settings are set" do
-    Mosquito.temp_config(redis_url: nil) do
+    Mosquito.temp_config do
+      Mosquito.configuration.backend = Mosquito::RedisBackend.new
       assert_raises do
         Mosquito.configuration.validate
       end
@@ -70,22 +72,22 @@ describe "Mosquito Config" do
     end
   end
 
-  it "validates when redis_url is nil but redis_connection is set" do
-    redis_url = Mosquito.configuration.redis_url || "redis://localhost:6379/3"
-    connection = Redis::Client.new(URI.parse(redis_url))
+  it "validates when a connection is provided directly" do
+    connection_string = Mosquito.configuration.connection_string || "redis://localhost:6379/3"
+    connection = Redis::Client.new(URI.parse(connection_string))
 
-    Mosquito.temp_config(redis_url: nil) do
-      Mosquito.configuration.redis_connection = connection
+    Mosquito.temp_config do
+      backend = Mosquito::RedisBackend.new
+      backend.connection = connection
+      Mosquito.configuration.backend = backend
       Mosquito.configuration.validate
     end
   end
 
-  it "fails validation when both redis_url and redis_connection are nil" do
-    Mosquito.temp_config(redis_url: nil) do
-      Mosquito.configuration.redis_connection = nil
-      assert_raises do
-        Mosquito.configuration.validate
-      end
+  it "validates when connection_string is set" do
+    Mosquito.temp_config do
+      Mosquito.configuration.connection_string = "redis://localhost:6379/3"
+      Mosquito.configuration.validate
     end
   end
 end

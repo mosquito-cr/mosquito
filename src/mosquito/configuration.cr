@@ -6,12 +6,6 @@ module Mosquito
   end
 
   class Configuration
-    property redis_url : String?
-
-    # A pre-configured Redis connection to use instead of creating one from redis_url.
-    # Either redis_url or redis_connection must be set before starting the runner.
-    property redis_connection : ::Redis::Client?
-
     property idle_wait : Time::Span = 100.milliseconds
     property successful_job_ttl : Int32 = 1.minute.total_seconds.to_i
     property failed_job_ttl : Int32 = 86400
@@ -37,6 +31,8 @@ module Mosquito
 
     property validated = false
 
+    delegate :connection_string, :connection_string=, to: backend
+
     def idle_wait=(time_span : Float)
       @idle_wait = time_span.seconds
     end
@@ -45,20 +41,14 @@ module Mosquito
       return if @validated
       @validated = true
 
-      if redis_url.nil? && redis_connection.nil?
+      unless backend.valid_configuration?
         message = <<-error
-        Mosquito cannot start because no redis connection has been provided.
+        Mosquito cannot start because no backend connection has been provided.
 
         For example, in your application config:
 
         Mosquito.configure do |settings|
-          settings.redis_url = (ENV["REDIS_TLS_URL"]? || ENV["REDIS_URL"]? || "redis://localhost:6379")
-        end
-
-        Alternatively, you can provide a pre-configured Redis connection:
-
-        Mosquito.configure do |settings|
-          settings.redis_connection = my_redis_client
+          settings.connection_string = (ENV["REDIS_TLS_URL"]? || ENV["REDIS_URL"]? || "redis://localhost:6379")
         end
 
         See Also: https://github.com/mosquito-cr/mosquito#connecting-to-redis

@@ -36,6 +36,16 @@ module Mosquito
   # end
   # ```
   class TestBackend < Mosquito::Backend
+    getter connection_string : String?
+
+    def connection_string=(value : String)
+      @connection_string = value
+    end
+
+    def valid_configuration? : Bool
+      true
+    end
+
     def store(key : String, value : Hash(String, String?) | Hash(String, String)) : Nil
     end
 

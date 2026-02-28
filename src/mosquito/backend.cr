@@ -24,6 +24,10 @@ module Mosquito
 
     protected abstract def _build_queue(name : String) : Queue
 
+    abstract def connection_string=(value : String)
+    abstract def connection_string : String?
+    abstract def valid_configuration? : Bool
+
     # Storage
     abstract def store(key : String, value : Hash(String, String?) | Hash(String, String)) : Nil
     abstract def retrieve(key : String) : Hash(String, String)

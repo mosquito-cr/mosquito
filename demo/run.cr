@@ -1,7 +1,7 @@
 require "../src/mosquito"
 
 Mosquito.configure do |settings|
-  settings.redis_url = ENV["REDIS_URL"]? || "redis://localhost:6379/3"
+  settings.connection_string = ENV["REDIS_URL"]? || "redis://localhost:6379/3"
   settings.idle_wait = 1.second
 end
 

@@ -53,19 +53,27 @@ module Mosquito
       end
     {% end %}
 
-    @connection : ::Redis::Client?
+    getter connection_string : String?
+    getter connection : ::Redis::Client?
+
+    def connection_string=(value : String)
+      @connection_string = value
+      @connection = ::Redis::Client.new(URI.parse(value))
+      Scripts.load(@connection.not_nil!)
+    end
+
+    def connection=(client : ::Redis::Client)
+      @connection = client
+      Scripts.load(client)
+    end
+
+    def valid_configuration? : Bool
+      !@connection.nil?
+    end
 
     @[AlwaysInline]
     def redis
-      load_scripts = @connection.nil?
-
-      connection = @connection ||= begin
-        config = Mosquito.configuration
-        config.redis_connection || ::Redis::Client.new(URI.parse(config.redis_url.to_s))
-      end
-
-      Scripts.load(connection) if load_scripts
-      connection
+      @connection.not_nil!
     end
 
     protected def _build_queue(name : String) : Queue
