@@ -76,7 +76,6 @@ describe "Mosquito Config" do
 
     Mosquito.temp_config(redis_url: nil) do
       Mosquito.configuration.redis_connection = connection
-      # Should not raise because a redis connection was provided
       Mosquito.configuration.validate
     end
   end
