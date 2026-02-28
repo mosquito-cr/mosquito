@@ -6,7 +6,7 @@ describe Mosquito::UniqueJob do
       clean_slate do
         job = UniqueTestJob.new(user_id: 1_i64, email_type: "welcome")
         job_run = job.enqueue
-        enqueued = UniqueTestJob.queue.backend.dump_waiting_q
+        enqueued = UniqueTestJob.queue.backend.list_waiting
         assert_equal [job_run.id], enqueued
       end
     end
@@ -17,12 +17,12 @@ describe Mosquito::UniqueJob do
       clean_slate do
         job1 = UniqueTestJob.new(user_id: 1_i64, email_type: "welcome")
         job_run1 = job1.enqueue
-        enqueued = UniqueTestJob.queue.backend.dump_waiting_q
+        enqueued = UniqueTestJob.queue.backend.list_waiting
         assert_equal 1, enqueued.size
 
         job2 = UniqueTestJob.new(user_id: 1_i64, email_type: "welcome")
         job_run2 = job2.enqueue
-        enqueued = UniqueTestJob.queue.backend.dump_waiting_q
+        enqueued = UniqueTestJob.queue.backend.list_waiting
         assert_equal 1, enqueued.size
       end
     end
@@ -31,12 +31,12 @@ describe Mosquito::UniqueJob do
       clean_slate do
         job1 = UniqueTestJob.new(user_id: 1_i64, email_type: "welcome")
         job1.enqueue
-        enqueued = UniqueTestJob.queue.backend.dump_waiting_q
+        enqueued = UniqueTestJob.queue.backend.list_waiting
         assert_equal 1, enqueued.size
 
         job2 = UniqueTestJob.new(user_id: 2_i64, email_type: "welcome")
         job2.enqueue
-        enqueued = UniqueTestJob.queue.backend.dump_waiting_q
+        enqueued = UniqueTestJob.queue.backend.list_waiting
         assert_equal 2, enqueued.size
       end
     end
@@ -45,12 +45,12 @@ describe Mosquito::UniqueJob do
       clean_slate do
         job1 = UniqueTestJob.new(user_id: 1_i64, email_type: "welcome")
         job1.enqueue
-        enqueued = UniqueTestJob.queue.backend.dump_waiting_q
+        enqueued = UniqueTestJob.queue.backend.list_waiting
         assert_equal 1, enqueued.size
 
         job2 = UniqueTestJob.new(user_id: 1_i64, email_type: "reminder")
         job2.enqueue
-        enqueued = UniqueTestJob.queue.backend.dump_waiting_q
+        enqueued = UniqueTestJob.queue.backend.list_waiting
         assert_equal 2, enqueued.size
       end
     end
@@ -63,12 +63,12 @@ describe Mosquito::UniqueJob do
         # key is only [:user_id]
         job1 = UniqueWithKeyJob.new(user_id: 1_i64, message: "hello")
         job1.enqueue
-        enqueued = UniqueWithKeyJob.queue.backend.dump_waiting_q
+        enqueued = UniqueWithKeyJob.queue.backend.list_waiting
         assert_equal 1, enqueued.size
 
         job2 = UniqueWithKeyJob.new(user_id: 1_i64, message: "world")
         job2.enqueue
-        enqueued = UniqueWithKeyJob.queue.backend.dump_waiting_q
+        enqueued = UniqueWithKeyJob.queue.backend.list_waiting
         assert_equal 1, enqueued.size
       end
     end
@@ -77,12 +77,12 @@ describe Mosquito::UniqueJob do
       clean_slate do
         job1 = UniqueWithKeyJob.new(user_id: 1_i64, message: "hello")
         job1.enqueue
-        enqueued = UniqueWithKeyJob.queue.backend.dump_waiting_q
+        enqueued = UniqueWithKeyJob.queue.backend.list_waiting
         assert_equal 1, enqueued.size
 
         job2 = UniqueWithKeyJob.new(user_id: 2_i64, message: "hello")
         job2.enqueue
-        enqueued = UniqueWithKeyJob.queue.backend.dump_waiting_q
+        enqueued = UniqueWithKeyJob.queue.backend.list_waiting
         assert_equal 2, enqueued.size
       end
     end
@@ -93,7 +93,7 @@ describe Mosquito::UniqueJob do
       clean_slate do
         job1 = UniqueTestJob.new(user_id: 1_i64, email_type: "welcome")
         job_run1 = job1.enqueue
-        enqueued = UniqueTestJob.queue.backend.dump_waiting_q
+        enqueued = UniqueTestJob.queue.backend.list_waiting
         assert_equal 1, enqueued.size
 
         # Manually remove the lock to simulate expiration
@@ -102,7 +102,7 @@ describe Mosquito::UniqueJob do
 
         job2 = UniqueTestJob.new(user_id: 1_i64, email_type: "welcome")
         job2.enqueue
-        enqueued = UniqueTestJob.queue.backend.dump_waiting_q
+        enqueued = UniqueTestJob.queue.backend.list_waiting
         assert_equal 2, enqueued.size
       end
     end
@@ -113,12 +113,12 @@ describe Mosquito::UniqueJob do
       clean_slate do
         job1 = UniqueNoParamsJob.new
         job1.enqueue
-        enqueued = UniqueNoParamsJob.queue.backend.dump_waiting_q
+        enqueued = UniqueNoParamsJob.queue.backend.list_waiting
         assert_equal 1, enqueued.size
 
         job2 = UniqueNoParamsJob.new
         job2.enqueue
-        enqueued = UniqueNoParamsJob.queue.backend.dump_waiting_q
+        enqueued = UniqueNoParamsJob.queue.backend.list_waiting
         assert_equal 1, enqueued.size
       end
     end
@@ -129,12 +129,12 @@ describe Mosquito::UniqueJob do
       clean_slate do
         job1 = UniqueTestJob.new(user_id: 1_i64, email_type: "welcome")
         job1.enqueue(in: 5.minutes)
-        scheduled = UniqueTestJob.queue.backend.dump_scheduled_q
+        scheduled = UniqueTestJob.queue.backend.list_scheduled
         assert_equal 1, scheduled.size
 
         job2 = UniqueTestJob.new(user_id: 1_i64, email_type: "welcome")
         job2.enqueue(in: 10.minutes)
-        scheduled = UniqueTestJob.queue.backend.dump_scheduled_q
+        scheduled = UniqueTestJob.queue.backend.list_scheduled
         assert_equal 1, scheduled.size
       end
     end
@@ -143,12 +143,12 @@ describe Mosquito::UniqueJob do
       clean_slate do
         job1 = UniqueTestJob.new(user_id: 1_i64, email_type: "welcome")
         job1.enqueue
-        waiting = UniqueTestJob.queue.backend.dump_waiting_q
+        waiting = UniqueTestJob.queue.backend.list_waiting
         assert_equal 1, waiting.size
 
         job2 = UniqueTestJob.new(user_id: 1_i64, email_type: "welcome")
         job2.enqueue(in: 5.minutes)
-        scheduled = UniqueTestJob.queue.backend.dump_scheduled_q
+        scheduled = UniqueTestJob.queue.backend.list_scheduled
         assert_equal 0, scheduled.size
       end
     end
