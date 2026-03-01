@@ -293,6 +293,7 @@ module Mosquito::Runners
       return unless work_unit = dead_executor.work_unit?
 
       observer.recovered_job_from_executor work_unit.job_run, dead_executor
+      dequeue_adapter.finished_with(work_unit.job_run, work_unit.queue)
       work_unit.job_run.retry_or_banish work_unit.queue
     end
 
