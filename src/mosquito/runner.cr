@@ -71,6 +71,27 @@ module Mosquito
       end
     end
 
+    # Dynamically scale the executor pool to the given `count`.
+    #
+    # When scaling up, new executors are created and started immediately.
+    # When scaling down, excess executors finish their current job before
+    # exiting.
+    #
+    # ```
+    # Mosquito::Runner.start(spin: false)
+    #
+    # # Scale up under heavy load:
+    # Mosquito::Runner.scale_executors 20
+    #
+    # # Scale back down during quiet periods:
+    # Mosquito::Runner.scale_executors 4
+    # ```
+    #
+    # See `Mosquito::Runners::Overseer#scale_executors`.
+    def self.scale_executors(count : Int32) : Nil
+      instance.overseer.scale_executors(count)
+    end
+
     private def self.instance : self
       @@instance ||= new
     end

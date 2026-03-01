@@ -38,6 +38,9 @@ module Mosquito::Runners
     # Used to notify the overseer that this executor is idle.
     getter idle_bell : Channel(Bool)
 
+    # Signaled to unblock this executor from its receive loop during scale-down.
+    getter stop_channel : Channel(Nil) = Channel(Nil).new(1)
+
     getter overseer : Overseer
     getter observer : Observability::Executor {
       Observability::Executor.new self
@@ -72,17 +75,21 @@ module Mosquito::Runners
 
     # :nodoc:
     def each_run : Nil
-      dequeue = job_pipeline.receive?
-      return if dequeue.nil?
+      select
+      when dequeue = job_pipeline.receive
+        self.state = State::Working
+        @job_run, @queue = dequeue
+        log.trace { "Dequeued #{job_run} from #{queue.name}" }
+        execute
+        log.trace { "Finished #{job_run} from #{queue.name}" }
+        self.state = State::Idle
 
-      self.state = State::Working
-      @job_run, @queue = dequeue
-      log.trace { "Dequeued #{job_run} from #{queue.name}" }
-      execute
-      log.trace { "Finished #{job_run} from #{queue.name}" }
-      self.state = State::Idle
-
-      observer.heartbeat!
+        observer.heartbeat!
+      when @stop_channel.receive
+        # Scaling down: the overseer signaled this executor to exit.
+      end
+    rescue Channel::ClosedError
+      # A channel was closed during shutdown or scale-down.
     end
 
     # Runs a job from a Queue.

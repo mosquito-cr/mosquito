@@ -30,6 +30,11 @@ module Mosquito
       end
     end
 
+    # The target executor count for this overseer, or nil if not yet reported.
+    def executor_count : Int32?
+      metadata["executor_count"]?.try(&.to_i)
+    end
+
     # The time the overseer last sent a heartbeat.
     def last_heartbeat : Time?
       metadata.heartbeat?
@@ -134,6 +139,16 @@ module Mosquito
       metrics do
         metadata["executors"] = executors.map(&.object_id).join(",")
       end
+    end
+
+    def scaled(*, from old_count : Int32, to new_count : Int32) : Nil
+      log.info { "Scaled executors from #{old_count} to #{new_count}." }
+
+      metrics do
+        metadata["executor_count"] = new_count.to_s
+      end
+
+      publish({event: "scaled", from: old_count, to: new_count})
     end
   end
 end

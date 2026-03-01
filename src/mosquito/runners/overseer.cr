@@ -30,10 +30,9 @@ module Mosquito::Runners
     # uses this as a signal to check the queues for more work.
     getter idle_notifier
 
-    # The number of executors to start.
-    getter executor_count : Int32 {
-      Mosquito.configuration.executor_count
-    }
+    # The target number of executors. Initialized from configuration but
+    # can be changed at runtime via `#scale_executors`.
+    getter executor_count : Int32 = Mosquito.configuration.executor_count
 
     getter idle_wait : Time::Span {
       Mosquito.configuration.idle_wait
@@ -59,6 +58,51 @@ module Mosquito::Runners
       Executor.new(overseer: self).tap do |executor|
         observer.executor_created executor
       end
+    end
+
+    # Dynamically scale the executor pool to the given `target` count.
+    #
+    # When scaling up, new executors are created and started immediately.
+    # When scaling down, excess executors are stopped gracefully — idle
+    # executors are preferred and will be unblocked from their receive
+    # loop so they exit promptly. Working executors will finish their
+    # current job before exiting.
+    #
+    # ```
+    # Mosquito::Runner.scale_executors 10  # scale up to 10
+    # Mosquito::Runner.scale_executors 2   # scale back to 2
+    # ```
+    #
+    # Raises `ArgumentError` if `target` is less than 1.
+    def scale_executors(target : Int32) : Nil
+      raise ArgumentError.new("Executor count must be at least 1") if target < 1
+
+      old_count = executor_count
+      return if target == executors.size && target == old_count
+
+      @executor_count = target
+
+      if target > executors.size
+        (target - executors.size).times do
+          executors << build_executor.tap(&.run)
+        end
+      elsif target < executors.size
+        excess = executors.size - target
+
+        # Prefer stopping idle executors so running jobs aren't interrupted.
+        to_remove = executors
+          .sort_by { |e| e.state.idle? ? 0 : 1 }
+          .last(excess)
+
+        to_remove.each do |executor|
+          executor.stop
+          executor.stop_channel.close
+          executors.delete(executor)
+        end
+      end
+
+      observer.update_executor_list executors
+      observer.scaled(from: old_count, to: target)
     end
 
     def runnable_name : String
