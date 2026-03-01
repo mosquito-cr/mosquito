@@ -111,18 +111,59 @@ describe Mosquito::Autoscaler do
       assert_equal 8, autoscaler.recommend(8)
     end
 
-    it "uses the highest utilization across multiple monitors" do
+    it "scales down when any single resource exceeds threshold" do
       autoscaler = Mosquito::Autoscaler.new(
         min_executors: 1,
         max_executors: 10,
         scale_down_threshold: 0.8,
         scale_up_threshold: 0.3,
       )
+      # CPU is idle but GPU is saturated — the GPU pressure should win
       autoscaler.add_monitor(FixedMonitor.new("cpu", 0.2))
       autoscaler.add_monitor(FixedMonitor.new("gpu", 0.9))
 
-      # GPU at 0.9 > 0.8 threshold, should scale down
       assert_equal 5, autoscaler.recommend(6)
+    end
+
+    it "only scales up when all resources are below scale_up_threshold" do
+      autoscaler = Mosquito::Autoscaler.new(
+        min_executors: 1,
+        max_executors: 10,
+        scale_up_threshold: 0.3,
+        scale_down_threshold: 0.8,
+      )
+      # CPU has headroom but GPU is in the hold zone — should not scale up
+      autoscaler.add_monitor(FixedMonitor.new("cpu", 0.1))
+      autoscaler.add_monitor(FixedMonitor.new("gpu", 0.5))
+
+      assert_equal 6, autoscaler.recommend(6)
+    end
+
+    it "scales up when all resources have headroom" do
+      autoscaler = Mosquito::Autoscaler.new(
+        min_executors: 1,
+        max_executors: 10,
+        scale_up_threshold: 0.3,
+        scale_down_threshold: 0.8,
+      )
+      autoscaler.add_monitor(FixedMonitor.new("cpu", 0.1))
+      autoscaler.add_monitor(FixedMonitor.new("gpu", 0.2))
+
+      assert_equal 7, autoscaler.recommend(6)
+    end
+
+    it "holds when resources are mixed between up and hold zones" do
+      autoscaler = Mosquito::Autoscaler.new(
+        min_executors: 1,
+        max_executors: 10,
+        scale_up_threshold: 0.3,
+        scale_down_threshold: 0.8,
+      )
+      # GPU at 0.5 is between thresholds (hold), CPU at 0.1 wants up
+      autoscaler.add_monitor(FixedMonitor.new("cpu", 0.1))
+      autoscaler.add_monitor(FixedMonitor.new("gpu", 0.5))
+
+      assert_equal 4, autoscaler.recommend(4)
     end
   end
 
