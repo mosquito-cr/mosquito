@@ -3,9 +3,13 @@ module Mosquito
   # executors the Overseer should run.
   #
   # When any monitored resource exceeds the `scale_down_threshold`, the
-  # autoscaler recommends reducing executor count. When all monitored
-  # resources are below the `scale_up_threshold`, it recommends increasing
-  # executor count.
+  # autoscaler recommends reducing executor count. Scaling up only happens
+  # when **every** monitored resource is below the `scale_up_threshold`.
+  #
+  # This per-resource evaluation ensures that mixed workloads are handled
+  # correctly. For example, if GPU is saturated but CPU is idle, the
+  # autoscaler scales down to protect the GPU rather than scaling up
+  # because the CPU has headroom.
   #
   # ## Configuration
   #
@@ -31,11 +35,19 @@ module Mosquito
   # declared by a registered job. If no jobs declare constraints, all
   # monitors are considered active.
   #
-  # The highest utilization across active monitors drives the decision:
+  # Each active monitor casts an independent vote:
   #
-  # - **Above `scale_down_threshold`**: recommend one fewer executor
-  # - **Below `scale_up_threshold`**: recommend one more executor
-  # - **Between thresholds**: recommend no change
+  # - **Above `scale_down_threshold`**: votes to scale down
+  # - **Below `scale_up_threshold`**: votes to scale up
+  # - **Between thresholds**: votes to hold
+  #
+  # The votes are combined conservatively:
+  #
+  # - If **any** monitor votes to scale down, the recommendation is to
+  #   scale down (resource pressure takes priority).
+  # - If **all** monitors vote to scale up, the recommendation is to
+  #   scale up (every resource has headroom).
+  # - Otherwise, no change.
   #
   # The result is always clamped between `min_executors` and `max_executors`.
   class Autoscaler
@@ -91,19 +103,38 @@ module Mosquito
 
     # Given the current executor count, returns the recommended count.
     #
-    # Returns `current_count` unchanged when there are no active monitors
-    # or when utilization is within the normal operating range.
+    # Each active monitor votes independently based on its utilization:
+    # - above `scale_down_threshold` → vote down
+    # - below `scale_up_threshold` → vote up
+    # - between thresholds → vote hold
+    #
+    # Any "down" vote wins (resource pressure is the priority). Only
+    # unanimous "up" votes result in scaling up. Otherwise, hold.
     def recommend(current_count : Int32) : Int32
       active = active_monitors
       return current_count.clamp(min_executors, max_executors) if active.empty?
 
-      max_utilization = active.max_of(&.utilization)
+      any_down = false
+      all_up = true
 
-      Log.trace { "Max utilization: #{max_utilization}, current executors: #{current_count}" }
+      active.each do |monitor|
+        utilization = monitor.utilization
+        Log.trace { "#{monitor.name}: utilization=#{utilization}" }
 
-      target = if max_utilization > scale_down_threshold
+        if utilization > scale_down_threshold
+          any_down = true
+          # No need to check further — any down vote is decisive.
+          break
+        end
+
+        unless utilization < scale_up_threshold
+          all_up = false
+        end
+      end
+
+      target = if any_down
         current_count - 1
-      elsif max_utilization < scale_up_threshold
+      elsif all_up
         current_count + 1
       else
         current_count
