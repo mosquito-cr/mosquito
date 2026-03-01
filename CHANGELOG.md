@@ -30,9 +30,10 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 - Queues can now be paused and resumed. While paused, `#dequeue` returns nil and jobs accumulate until the queue is resumed. An optional duration enables automatic resumption, useful for backing off rate-limited resources. (#192)
 - Overseers now take ownership of job runs when dequeued, and clean up abandoned pending job runs on startup (#180)
 - Mosquito can now accept pre-existing backend connections via `Configuration#backend_connection`. This allows sharing a connection pool with the rest of an application. (#193)
+- JobRun now uses Metadata for all backend storage operations, replacing direct backend calls with the Metadata abstraction layer.
 
 ### Changed
-+- (breaking) `Configuration#connection_string` has been renamed to `Configuration#backend_connection_string` (#193)
+- (breaking) `Configuration#connection_string` has been renamed to `Configuration#backend_connection_string` (#193)
 - (minor breaking) Logs are now emitted from runners with a slighly different source tag. (#152)
   For example:
   The overseer boot message used to be:
