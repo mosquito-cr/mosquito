@@ -80,11 +80,7 @@ module Mosquito
     # Deletes this job_run from the backend.
     # Optionally, after a delay in seconds (handled by the backend).
     def delete(in ttl : Int = 0)
-      if ttl > 0
-        metadata.delete(in: ttl.seconds)
-      else
-        metadata.delete
-      end
+      metadata.delete(in: ttl.seconds)
     end
 
     # Builds a Job instance from this job_run. Populates the job with config from
