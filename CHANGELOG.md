@@ -44,6 +44,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 - The coordinator now uses UTC time instead of monotonic time
 
 ### Fixed
+- Fixed a KeyError crash in the demo when job metadata was missing by using safe key access.
 - the queue_list runner was never being shut down, but it is now as of (#165)
 - Fixed a bug which would cause a mosquito server to hang at exit indefinitely if a job was mid-run during an interrupt. (#165)
 - Fixed a bug which would cause a correctly exiting server to prematurely exit without emitting shutdown sequence logs and events. (#165)
