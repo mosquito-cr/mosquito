@@ -17,9 +17,9 @@ end
 require "./jobs/*"
 
 def expect_run_count(klass, expected)
-  metadata = klass.metadata.to_h
-  if (run_count = metadata["run_count"].to_i) != expected
-    raise "Expected #{klass.name} to have run_count == #{expected}.  But got #{run_count}"
+  run_count = (klass.metadata["run_count"]? || "0").to_i
+  if run_count != expected
+    raise "Expected #{klass.name} to have run_count == #{expected}. But got #{run_count}"
   else
     puts "#{klass.name} was executed correctly."
   end
