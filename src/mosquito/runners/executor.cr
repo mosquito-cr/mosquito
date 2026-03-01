@@ -43,6 +43,10 @@ module Mosquito::Runners
       Observability::Executor.new self
     }
 
+    # When set to `true` by the autoscaler, this executor will finish its
+    # current job and then exit its run loop instead of going back to idle.
+    property? released : Bool = false
+
     private def state=(state : State)
       # Send a message to the overseer that this executor is idle.
       if state == State::Idle
@@ -80,6 +84,15 @@ module Mosquito::Runners
       log.trace { "Dequeued #{job_run} from #{queue.name}" }
       execute
       log.trace { "Finished #{job_run} from #{queue.name}" }
+
+      # When the autoscaler releases this executor, finish the current
+      # job and then exit the run loop instead of going idle.
+      if released?
+        log.trace { "Released by autoscaler, stopping" }
+        self.state = State::Stopping
+        return
+      end
+
       self.state = State::Idle
 
       observer.heartbeat!

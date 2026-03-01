@@ -35,9 +35,19 @@ module Mosquito::Runners
       Mosquito.configuration.executor_count
     }
 
+    # The dynamic target executor count, managed by the autoscaler.
+    # Defaults to `executor_count` and is adjusted at runtime when an
+    # `Autoscaler` is configured.
+    property target_executor_count : Int32 { executor_count }
+
     getter idle_wait : Time::Span {
       Mosquito.configuration.idle_wait
     }
+
+    # Executors that have been released by the autoscaler but may still
+    # be alive (finishing a final job). Tracked so that any in-flight
+    # jobs can be recovered if the fiber crashes.
+    getter released_executors : Array(Executor) = [] of Executor
 
     def initialize
       @idle_notifier = Channel(Bool).new
@@ -88,8 +98,9 @@ module Mosquito::Runners
     def post_run : Nil
       observer.stopping
 
-      child_fiber_shutdown = WaitGroup.new(executors.size + 1)
+      child_fiber_shutdown = WaitGroup.new(executors.size + released_executors.size + 1)
       executors.each { |e| e.stop(child_fiber_shutdown) }
+      released_executors.each { |e| e.stop(child_fiber_shutdown) }
       @queue_list.stop(child_fiber_shutdown)
 
       work_handout.close
@@ -173,6 +184,12 @@ module Mosquito::Runners
       run_at_most every: Mosquito.configuration.heartbeat_interval * 3, label: :pending_cleanup do
         cleanup_orphaned_pending_jobs
       end
+
+      if autoscaler = Mosquito.configuration.autoscaler
+        run_at_most every: autoscaler.check_interval, label: :autoscale do
+          autoscale(autoscaler)
+        end
+      end
     end
 
     # Delegates job dequeue to the configured `DequeueAdapter`.
@@ -203,7 +220,17 @@ module Mosquito::Runners
           executors.delete dead_executor
         end
 
-      (executor_count - executors.size).times do
+      # Recover jobs from released executors that crashed before finishing.
+      released_executors.select { |e| e.dead? || e.state.crashed? }
+        .each do |dead_executor|
+          recover_job_from dead_executor
+          released_executors.delete dead_executor
+        end
+
+      # Clean up released executors that have exited cleanly.
+      released_executors.reject! { |e| e.state.finished? }
+
+      (target_executor_count - executors.size).times do
         executors << build_executor.tap(&.run)
       end
 
@@ -278,6 +305,40 @@ module Mosquito::Runners
 
       observer.recovered_job_from_executor job_run, dead_executor
       job_run.retry_or_banish dead_executor.queue
+    end
+
+    # Evaluates resource utilization and adjusts the executor pool.
+    #
+    # For scale-up: new executors are spawned immediately.
+    # For scale-down: idle executors are released. A released executor
+    # finishes any in-flight job and then exits its run loop.
+    private def autoscale(autoscaler : Mosquito::Autoscaler) : Nil
+      recommended = autoscaler.recommend(executors.size)
+      return if recommended == executors.size
+
+      old_count = executors.size
+
+      if recommended > executors.size
+        # Scale up: spawn additional executors.
+        @target_executor_count = recommended
+        (recommended - executors.size).times do
+          executors << build_executor.tap(&.run)
+        end
+      elsif recommended < executors.size
+        # Scale down: release idle executors. Released executors will
+        # finish their current job (if any) and exit.
+        @target_executor_count = recommended
+        to_release = executors.size - recommended
+        idle = executors.select(&.state.idle?)
+        idle.first(to_release).each do |executor|
+          executor.released = true
+          executors.delete executor
+          released_executors << executor
+        end
+      end
+
+      observer.update_executor_list executors
+      log.info { "Autoscaler: #{old_count} -> #{executors.size} executors" }
     end
 
   end
