@@ -91,6 +91,17 @@ describe Mosquito::Metadata do
         assert_equal "6", store["six"]?
       end
     end
+
+    it "can store string-only values" do
+      clean_slate do
+        values = {"one" => "1", "two" => "2", "three" => "3"}
+        store.set(values)
+        assert_equal "1", store["one"]?
+        assert_equal "2", store["two"]?
+        assert_equal "3", store["three"]?
+        assert_equal values, store.to_h
+      end
+    end
   end
 
   it "can be deleted" do
