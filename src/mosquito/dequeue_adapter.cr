@@ -26,5 +26,11 @@ module Mosquito
     # Returns a `WorkUnit` when a job is available, or `nil`
     # when all queues are empty.
     abstract def dequeue(queue_list : Runners::QueueList) : WorkUnit?
+
+    # Called by the Overseer when a job run has finished executing.
+    # Override this to react to completed jobs (e.g. update internal
+    # counters or rebalance queue weights).
+    def finished_with(job_run : JobRun, queue : Queue) : Nil
+    end
   end
 end

@@ -134,9 +134,12 @@ module Mosquito::Runners
       # The interrupt is necessary to remind the coordinator to schedule
       # jobs.
       select
-      when @finished_notifier.receive
+      when finished_job = @finished_notifier.receive
         log.trace { "Found an idle executor" }
         all_executors_busy = false
+        if finished_job
+          dequeue_adapter.finished_with(finished_job.job_run, finished_job.queue)
+        end
       when timeout(idle_wait)
         log.trace { "Idled for #{idle_wait.total_seconds}s" }
       end
