@@ -26,9 +26,10 @@ module Mosquito::Runners
     # The channel where job runs which have been dequeued are sent to executors.
     getter work_handout
 
-    # When an executor transitions to idle it will send a True here. The Overseer
+    # When an executor transitions to idle it will send the finished
+    # {JobRun, Queue} tuple here (or nil on first idle). The Overseer
     # uses this as a signal to check the queues for more work.
-    getter idle_notifier
+    getter finished_notifier
 
     # The number of executors to start.
     getter executor_count : Int32
@@ -38,7 +39,7 @@ module Mosquito::Runners
     def initialize
       @executor_count = Mosquito.configuration.executor_count
       @idle_wait = Mosquito.configuration.idle_wait
-      @idle_notifier = Channel(Bool).new
+      @finished_notifier = Channel(WorkUnit?).new
 
       @queue_list = QueueList.new
       @coordinator = Coordinator.new queue_list
@@ -109,7 +110,7 @@ module Mosquito::Runners
       # events, but if it did it would be a mess. If something crashes hard
       # enough that one of these channels closes the whole thing is going to
       # come crashing down and we should just quit now.
-      if work_handout.closed? || idle_notifier.closed?
+      if work_handout.closed? || finished_notifier.closed?
         observer.channels_closed
         stop
         return
@@ -133,7 +134,7 @@ module Mosquito::Runners
       # The interrupt is necessary to remind the coordinator to schedule
       # jobs.
       select
-      when @idle_notifier.receive
+      when @finished_notifier.receive
         log.trace { "Found an idle executor" }
         all_executors_busy = false
       when timeout(idle_wait)
@@ -158,7 +159,7 @@ module Mosquito::Runners
 
         # The idle notification has been consumed, and it needs to be
         # re-sent so that the next loop can still find the idle executor.
-        spawn { @idle_notifier.send true }
+        spawn { @finished_notifier.send nil }
       end
 
       check_for_deceased_runners

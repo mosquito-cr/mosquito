@@ -2,7 +2,7 @@ require "../../spec_helper"
 
 describe Mosquito::Api::Executor do
   let(executor_pipeline) { Channel(Mosquito::WorkUnit).new }
-  let(idle_notifier) { Channel(Bool).new }
+  let(finished_notifier) { Channel(Mosquito::WorkUnit?).new }
   let(job) { QueuedTestJob.new }
   let(job_run : Mosquito::JobRun) { job.enqueue }
 

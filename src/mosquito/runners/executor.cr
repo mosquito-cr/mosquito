@@ -35,8 +35,10 @@ module Mosquito::Runners
     getter! job_run : JobRun
     getter! queue : Queue
 
-    # Used to notify the overseer that this executor is idle.
-    getter idle_bell : Channel(Bool)
+    # Used to notify the overseer when this executor is idle.
+    # Sends the {JobRun, Queue} tuple that was just finished, or nil
+    # when the executor first starts up.
+    getter finished_bell : Channel(WorkUnit?)
 
     getter overseer : Overseer
     getter observer : Observability::Executor {
@@ -44,9 +46,13 @@ module Mosquito::Runners
     }
 
     private def state=(state : State)
-      # Send a message to the overseer that this executor is idle.
+      # Send a message to the overseer that this executor is idle,
+      # including the job that was just finished (if any).
       if state == State::Idle
-        spawn { idle_bell.send true }
+        finished = if (jr = @job_run) && (q = @queue)
+          WorkUnit.of(jr, from: q)
+        end
+        spawn { finished_bell.send finished }
       end
 
       super
@@ -54,7 +60,7 @@ module Mosquito::Runners
 
     def initialize(@overseer : Overseer)
       @job_pipeline = overseer.work_handout
-      @idle_bell = overseer.idle_notifier
+      @finished_bell = overseer.finished_notifier
     end
 
     # :nodoc:
