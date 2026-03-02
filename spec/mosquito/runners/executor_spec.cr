@@ -30,7 +30,7 @@ describe "Mosquito::Runners::Executor" do
       executor.state = Runnable::State::Idle
 
       select
-      when overseer.idle_notifier.receive
+      when overseer.finished_notifier.receive
         assert true
       when timeout(0.5.seconds)
         refute true, "Timed out waiting for idle notifier"
