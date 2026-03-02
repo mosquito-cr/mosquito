@@ -24,9 +24,8 @@ describe "Mosquito::ShuffleDequeueAdapter" do
 
       refute_nil result
       if result
-        actual_job_run, queue = result
-        assert_equal expected_job_run, actual_job_run
-        assert_equal QueuedTestJob.queue, queue
+        assert_equal expected_job_run, result.job_run
+        assert_equal QueuedTestJob.queue, result.queue
       end
     end
   end
@@ -81,8 +80,7 @@ describe "Mosquito::ShuffleDequeueAdapter" do
         result = overseer.dequeue_job?
         refute_nil result
         if result
-          actual_job_run, queue = result
-          assert_equal expected_job_run, actual_job_run
+          assert_equal expected_job_run, result.job_run
         end
       end
     end

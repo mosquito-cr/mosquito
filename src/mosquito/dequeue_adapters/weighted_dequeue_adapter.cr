@@ -34,7 +34,7 @@ module Mosquito
     def initialize(@weights : Hash(String, Int32), @default_weight = 1)
     end
 
-    def dequeue(queue_list : Runners::QueueList) : Tuple(JobRun, Queue)?
+    def dequeue(queue_list : Runners::QueueList) : WorkUnit?
       remaining = queue_list.queues.map { |q|
         {q, weights.fetch(q.name, @default_weight)}
       }
@@ -42,7 +42,7 @@ module Mosquito
       until remaining.empty?
         queue, index = weighted_random_select(remaining)
         if job_run = queue.dequeue
-          return {job_run, queue}
+          return WorkUnit.of(job_run, from: queue)
         end
         remaining.delete_at(index)
       end

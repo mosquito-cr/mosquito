@@ -7,10 +7,10 @@ module Mosquito
   # The shuffle provides rough fairness across queues, preventing any single
   # queue from being consistently checked first.
   class ShuffleDequeueAdapter < DequeueAdapter
-    def dequeue(queue_list : Runners::QueueList) : Tuple(JobRun, Queue)?
+    def dequeue(queue_list : Runners::QueueList) : WorkUnit?
       queue_list.queues.shuffle.each do |q|
         if job_run = q.dequeue
-          return {job_run, q}
+          return WorkUnit.of(job_run, from: q)
         end
       end
     end

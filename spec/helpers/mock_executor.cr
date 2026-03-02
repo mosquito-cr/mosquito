@@ -20,7 +20,6 @@ class MockExecutor < Mosquito::Runners::Executor
   end
 
   def receive_job
-    job_run, queue = job_pipeline.receive
-    job_run
+    job_pipeline.receive.job_run
   end
 end

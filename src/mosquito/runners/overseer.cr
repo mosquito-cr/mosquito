@@ -44,7 +44,7 @@ module Mosquito::Runners
       @coordinator = Coordinator.new queue_list
       @dequeue_adapter = Mosquito.configuration.dequeue_adapter
       @executors = [] of Executor
-      @work_handout = Channel(Tuple(JobRun, Queue)).new
+      @work_handout = Channel(WorkUnit).new
 
       executor_count.times do
         @executors << build_executor
@@ -148,8 +148,7 @@ module Mosquito::Runners
 
       # We know that an executor is idle and will take the work, it's safe to dequeue.
       when next_job_run = dequeue_job?
-        job_run, queue = next_job_run
-        log.trace { "Dequeued job: #{job_run.id} #{queue.name}" }
+        log.trace { "Dequeued job: #{next_job_run.job_run.id} #{next_job_run.queue.name}" }
         work_handout.send next_job_run
 
       # An executor is idle, but dequeue returned nil.
@@ -177,10 +176,9 @@ module Mosquito::Runners
     #
     # The adapter can be swapped via `Mosquito.configuration.dequeue_adapter`
     # to implement custom strategies (priority, round-robin, rate limiting, etc).
-    def dequeue_job? : Tuple(JobRun, Queue)?
+    def dequeue_job? : WorkUnit?
       if result = dequeue_adapter.dequeue(queue_list)
-        job_run, _queue = result
-        job_run.claimed_by self
+        result.job_run.claimed_by self
       end
       result
     end
