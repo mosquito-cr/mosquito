@@ -2,6 +2,11 @@ require "json"
 
 module Mosquito
   alias Id = Int64 | Int32
+  record WorkUnit, job_run : JobRun, queue : Queue do
+    def self.of(job_run : JobRun, *, from queue : Queue) : self
+      new(job_run, queue)
+    end
+  end
 
   class Base
     class_getter mapping = {} of String => Mosquito::Job.class

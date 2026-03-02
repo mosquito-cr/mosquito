@@ -21,9 +21,8 @@ describe "Mosquito::WeightedDequeueAdapter" do
       result = adapter.dequeue(queue_list)
       refute_nil result
       if result
-        actual_job_run, queue = result
-        assert_equal expected_job_run, actual_job_run
-        assert_equal QueuedTestJob.queue, queue
+        assert_equal expected_job_run, result.job_run
+        assert_equal QueuedTestJob.queue, result.queue
       end
     end
   end
@@ -54,8 +53,7 @@ describe "Mosquito::WeightedDequeueAdapter" do
       result = adapter.dequeue(queue_list)
       refute_nil result
       if result
-        actual_job_run, _ = result
-        assert_equal expected_job_run, actual_job_run
+        assert_equal expected_job_run, result.job_run
       end
     end
   end
@@ -80,8 +78,7 @@ describe "Mosquito::WeightedDequeueAdapter" do
       50.times do
         result = adapter.dequeue(queue_list)
         if result
-          _, queue = result
-          dequeue_counts[queue.name] = dequeue_counts[queue.name] + 1
+          dequeue_counts[result.queue.name] = dequeue_counts[result.queue.name] + 1
         end
       end
 
@@ -106,8 +103,7 @@ describe "Mosquito::WeightedDequeueAdapter" do
       result = overseer.dequeue_job?
       refute_nil result
       if result
-        actual_job_run, _ = result
-        assert_equal expected_job_run, actual_job_run
+        assert_equal expected_job_run, result.job_run
       end
     end
   end

@@ -1,7 +1,7 @@
 require "../../spec_helper"
 
 describe Mosquito::Api::Publisher do
-  let(executor_pipeline) { Channel(Tuple(Mosquito::JobRun, Mosquito::Queue)).new }
+  let(executor_pipeline) { Channel(Mosquito::WorkUnit).new }
   let(idle_notifier) { Channel(Bool).new }
   let(job) { QueuedTestJob.new }
   let(job_run : Mosquito::JobRun) { job.enqueue }

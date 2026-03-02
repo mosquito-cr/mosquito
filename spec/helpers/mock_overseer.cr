@@ -10,7 +10,7 @@ class MockOverseer < Mosquito::Runners::Overseer
     @coordinator = MockCoordinator.new queue_list
     @dequeue_adapter = Mosquito.configuration.dequeue_adapter
     @executors = [] of Mosquito::Runners::Executor
-    @work_handout = Channel(Tuple(Mosquito::JobRun, Mosquito::Queue)).new
+    @work_handout = Channel(Mosquito::WorkUnit).new
     @executors << build_executor
     observer.update_executor_list executors
   end

@@ -31,7 +31,7 @@ module Mosquito::Runners
     property failed_job_ttl : Int32 { Mosquito.configuration.failed_job_ttl }
 
     # Where work is received from the overseer.
-    getter job_pipeline : Channel(Tuple(JobRun, Queue))
+    getter job_pipeline : Channel(WorkUnit)
     getter! job_run : JobRun
     getter! queue : Queue
 
@@ -76,7 +76,8 @@ module Mosquito::Runners
       return if dequeue.nil?
 
       self.state = State::Working
-      @job_run, @queue = dequeue
+      @job_run = dequeue.job_run
+      @queue = dequeue.queue
       log.trace { "Dequeued #{job_run} from #{queue.name}" }
       execute
       log.trace { "Finished #{job_run} from #{queue.name}" }

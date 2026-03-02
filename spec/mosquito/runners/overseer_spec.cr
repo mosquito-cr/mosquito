@@ -54,16 +54,16 @@ describe "Mosquito::Runners::Overseer" do
         register QueuedTestJob
         expected_job_run = QueuedTestJob.new.enqueue
 
-        overseer.work_handout = Channel(Tuple(JobRun, Queue)).new
+        overseer.work_handout = Channel(WorkUnit).new
 
         queue_list.state = Runnable::State::Working
         executor.state = Runnable::State::Idle
 
         # each_run will block until there's a receiver on the channel
         spawn { overseer.each_run }
-        actual_job_run, queue = overseer.work_handout.receive
-        assert_equal expected_job_run, actual_job_run
-        assert_equal QueuedTestJob.queue, queue
+        result = overseer.work_handout.receive
+        assert_equal expected_job_run, result.job_run
+        assert_equal QueuedTestJob.queue, result.queue
       end
     end
 
@@ -98,9 +98,7 @@ describe "Mosquito::Runners::Overseer" do
 
         result = overseer.dequeue_job?
         assert result
-        dequeued_job_run, _queue = result.not_nil!
-
-        assert_equal overseer.observer.instance_id, dequeued_job_run.overseer_id
+        assert_equal overseer.observer.instance_id, result.not_nil!.job_run.overseer_id
       end
     end
   end

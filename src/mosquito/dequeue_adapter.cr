@@ -7,10 +7,10 @@ module Mosquito
   #
   # ```crystal
   # class MyDequeueAdapter < Mosquito::DequeueAdapter
-  #   def dequeue(queue_list : Mosquito::Runners::QueueList) : Tuple(Mosquito::JobRun, Mosquito::Queue)?
+  #   def dequeue(queue_list : Mosquito::Runners::QueueList) : Mosquito::WorkUnit?
   #     queue_list.queues.each do |q|
   #       if job_run = q.dequeue
-  #         return {job_run, q}
+  #         return WorkUnit.of(job_run, from: q)
   #       end
   #     end
   #   end
@@ -23,8 +23,8 @@ module Mosquito
   abstract class DequeueAdapter
     # Attempt to dequeue a job from one of the queues managed by `queue_list`.
     #
-    # Returns a tuple of `{JobRun, Queue}` when a job is available, or `nil`
+    # Returns a `WorkUnit` when a job is available, or `nil`
     # when all queues are empty.
-    abstract def dequeue(queue_list : Runners::QueueList) : Tuple(JobRun, Queue)?
+    abstract def dequeue(queue_list : Runners::QueueList) : WorkUnit?
   end
 end
