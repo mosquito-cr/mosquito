@@ -2,6 +2,8 @@ class MockOverseer < Mosquito::Runners::Overseer
   property queue_list, coordinator, executors, work_handout, idle_notifier, dequeue_adapter
 
   def initialize
+    @executor_count = Mosquito.configuration.executor_count
+    @idle_wait = Mosquito.configuration.idle_wait
     @idle_notifier = Channel(Bool).new
 
     @queue_list = MockQueueList.new

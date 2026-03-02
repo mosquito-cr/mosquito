@@ -31,15 +31,13 @@ module Mosquito::Runners
     getter idle_notifier
 
     # The number of executors to start.
-    getter executor_count : Int32 {
-      Mosquito.configuration.executor_count
-    }
+    getter executor_count : Int32
 
-    getter idle_wait : Time::Span {
-      Mosquito.configuration.idle_wait
-    }
+    getter idle_wait : Time::Span
 
     def initialize
+      @executor_count = Mosquito.configuration.executor_count
+      @idle_wait = Mosquito.configuration.idle_wait
       @idle_notifier = Channel(Bool).new
 
       @queue_list = QueueList.new
