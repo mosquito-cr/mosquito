@@ -16,8 +16,7 @@ describe "Mosquito::Runners::Executor" do
     register job_class
     job_class.reset_performance_counter!
     job_run = job_class.new.enqueue
-    executor.job_run = job_run
-    executor.queue = job_class.queue
+    executor.work_unit = WorkUnit.of(job_run, from: job_class.queue)
     executor.execute
   end
 
@@ -62,8 +61,7 @@ describe "Mosquito::Runners::Executor" do
         FailingJob.queue.enqueue job_run
 
         Timecop.freeze now do
-          executor.job_run = job_run
-          executor.queue = FailingJob.queue
+          executor.work_unit = WorkUnit.of(job_run, from: FailingJob.queue)
           executor.execute
         end
 
@@ -72,8 +70,7 @@ describe "Mosquito::Runners::Executor" do
 
         Timecop.freeze now + job.reschedule_interval(1) do
           coordinator.enqueue_delayed_jobs
-          executor.job_run = job_run
-          executor.queue = FailingJob.queue
+          executor.work_unit = WorkUnit.of(job_run, from: FailingJob.queue)
           executor.execute
         end
 
@@ -91,8 +88,7 @@ describe "Mosquito::Runners::Executor" do
         job_run.store
         NonReschedulableFailingJob.queue.enqueue job_run
 
-        executor.job_run = job_run
-        executor.queue = NonReschedulableFailingJob.queue
+        executor.work_unit = WorkUnit.of(job_run, from: NonReschedulableFailingJob.queue)
         executor.execute
 
         actual_ttl = backend.expires_in job_run.config_key
@@ -109,8 +105,7 @@ describe "Mosquito::Runners::Executor" do
         job_run.store
         QueuedTestJob.queue.enqueue job_run
 
-        executor.job_run = job_run
-        executor.queue = QueuedTestJob.queue
+        executor.work_unit = WorkUnit.of(job_run, from: QueuedTestJob.queue)
         executor.execute
 
         assert_logs_match "Success"
@@ -143,8 +138,7 @@ describe "Mosquito::Runners::Executor" do
       api
 
       spawn {
-        executor.job_run = job_run
-        executor.queue = SleepyJob.queue
+        executor.work_unit = WorkUnit.of(job_run, from: SleepyJob.queue)
         executor.execute
         job_finished.send true
       }

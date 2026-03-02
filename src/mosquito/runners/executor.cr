@@ -32,8 +32,7 @@ module Mosquito::Runners
 
     # Where work is received from the overseer.
     getter job_pipeline : Channel(WorkUnit)
-    getter! job_run : JobRun
-    getter! queue : Queue
+    getter! work_unit : WorkUnit
 
     # Used to notify the overseer when this executor is idle.
     # Sends the {JobRun, Queue} tuple that was just finished, or nil
@@ -45,14 +44,30 @@ module Mosquito::Runners
       Observability::Executor.new self
     }
 
+    getter? decommissioned : Bool = false
+    @stop_channel = Channel(Nil).new(1)
+
+    # Marks this executor for graceful shutdown. It will stop after
+    # completing its current job (if any).
+    def decommission!
+      return if @decommissioned
+      @decommissioned = true
+      @stop_channel.send(nil)
+    end
+
+    private def job_run : JobRun
+      work_unit.job_run
+    end
+
+    private def queue : Queue
+      work_unit.queue
+    end
+
     private def state=(state : State)
       # Send a message to the overseer that this executor is idle,
       # including the job that was just finished (if any).
       if state == State::Idle
-        finished = if (jr = @job_run) && (q = @queue)
-          WorkUnit.of(jr, from: q)
-        end
-        spawn { finished_bell.send finished }
+        spawn { finished_bell.send @work_unit }
       end
 
       super
@@ -76,19 +91,44 @@ module Mosquito::Runners
       self.state = State::Idle
     end
 
+    def stop(wait_group : WaitGroup = WaitGroup.new(1)) : WaitGroup
+      decommission!
+      super
+    end
+
     # :nodoc:
     def each_run : Nil
-      dequeue = job_pipeline.receive?
-      return if dequeue.nil?
+      if @decommissioned
+        self.state = State::Stopping
+        return
+      end
+
+      dequeue : WorkUnit? = nil
+      begin
+        select
+        when dequeue = job_pipeline.receive
+        when @stop_channel.receive
+          self.state = State::Stopping
+          return
+        end
+      rescue Channel::ClosedError
+        return
+      end
+
+      return unless dequeue
 
       self.state = State::Working
-      @job_run = dequeue.job_run
-      @queue = dequeue.queue
+      @work_unit = dequeue
       log.trace { "Dequeued #{job_run} from #{queue.name}" }
       execute
       log.trace { "Finished #{job_run} from #{queue.name}" }
-      self.state = State::Idle
 
+      if @decommissioned
+        self.state = State::Stopping
+        return
+      end
+
+      self.state = State::Idle
       observer.heartbeat!
     end
 

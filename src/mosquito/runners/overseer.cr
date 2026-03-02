@@ -34,6 +34,10 @@ module Mosquito::Runners
     # The number of executors to start.
     getter executor_count : Int32
 
+    def executor_count=(count : Int32)
+      @executor_count = Math.max(count, 1)
+    end
+
     getter idle_wait : Time::Span
 
     def initialize
@@ -165,7 +169,7 @@ module Mosquito::Runners
         spawn { @finished_notifier.send nil }
       end
 
-      check_for_deceased_runners
+      adjust_executor_pool
 
       run_at_most every: Mosquito.configuration.heartbeat_interval, label: :heartbeat do
         observer.heartbeat
@@ -195,7 +199,8 @@ module Mosquito::Runners
     #
     # When a dead executor is found, any job it was working on has its
     # failure counter incremented and follows the standard retry logic.
-    def check_for_deceased_runners : Nil
+    def adjust_executor_pool : Nil
+      # Remove dead/crashed executors and recover their jobs.
       executors.select {|executor| executor.dead? || executor.state.crashed? }
         .each do |dead_executor|
           observer.executor_died dead_executor
@@ -203,8 +208,15 @@ module Mosquito::Runners
           executors.delete dead_executor
         end
 
+      # Scale up: spawn new executors to reach the target count.
       (executor_count - executors.size).times do
         executors << build_executor.tap(&.run)
+      end
+
+      # Scale down: decommission excess executors and remove them from the pool.
+      # They will finish their current job (if any) and then stop.
+      while executors.size > executor_count
+        executors.pop.decommission!
       end
 
       observer.update_executor_list executors
@@ -274,10 +286,10 @@ module Mosquito::Runners
     # If a dead executor was working on a job, increment its failure
     # counter and follow the standard retry logic.
     private def recover_job_from(dead_executor : Executor) : Nil
-      return unless job_run = dead_executor.job_run?
+      return unless work_unit = dead_executor.work_unit?
 
-      observer.recovered_job_from_executor job_run, dead_executor
-      job_run.retry_or_banish dead_executor.queue
+      observer.recovered_job_from_executor work_unit.job_run, dead_executor
+      work_unit.job_run.retry_or_banish work_unit.queue
     end
 
   end
