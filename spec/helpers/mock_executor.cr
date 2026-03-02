@@ -1,6 +1,5 @@
 class MockExecutor < Mosquito::Runners::Executor
-  setter job_run : Mosquito::JobRun?
-  setter queue : Mosquito::Queue?
+  setter work_unit : Mosquito::WorkUnit?
 
   def state=(state : Mosquito::Runnable::State)
     super

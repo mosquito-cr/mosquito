@@ -71,6 +71,10 @@ module Mosquito
       end
     end
 
+    def self.overseer
+      instance.overseer
+    end
+
     private def self.instance : self
       @@instance ||= new
     end
