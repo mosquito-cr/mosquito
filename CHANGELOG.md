@@ -31,6 +31,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 - Overseers now take ownership of job runs when dequeued, and clean up abandoned pending job runs on startup (#180)
 - Mosquito can now accept pre-existing backend connections via `Configuration#backend_connection`. This allows sharing a connection pool with the rest of an application. (#193)
 - JobRun now uses Metadata for all backend storage operations, replacing direct backend calls with the Metadata abstraction layer.
+- `Mosquito::UniqueJob` module provides opt-in job deduplication. Including the module in a job class prevents enqueueing duplicate jobs when an identical job is already waiting or scheduled. Uniqueness keys are derived from job parameters at compile time.
 
 ### Changed
 - (breaking) `Configuration#connection_string` has been renamed to `Configuration#backend_connection_string` (#193)
