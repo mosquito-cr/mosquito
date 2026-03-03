@@ -397,6 +397,11 @@
       
     </li>
   
+  <li class=" " data-id="mosquito/Mosquito/WorkUnit" data-name="mosquito::workunit">
+      <a href="../../Mosquito/WorkUnit.html">WorkUnit</a>
+      
+    </li>
+  
 </ul>
 
       
@@ -532,6 +537,18 @@ bell again and wait for more work.</p>
   <ul class="list-summary">
     
       <li class="entry-summary">
+        <a href="#decommission%21-instance-method" class="signature"><strong>#decommission!</strong></a>
+        
+          <div class="summary"><p>Marks this executor for graceful shutdown.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#decommissioned%3F%3ABool-instance-method" class="signature"><strong>#decommissioned?</strong> : Bool</a>
+        
+      </li>
+    
+      <li class="entry-summary">
         <a href="#execute-instance-method" class="signature"><strong>#execute</strong></a>
         
           <div class="summary"><p>Runs a job from a Queue.</p></div>
@@ -553,26 +570,16 @@ bell again and wait for more work.</p>
       </li>
     
       <li class="entry-summary">
-        <a href="#idle_bell%3AChannel%28Bool%29-instance-method" class="signature"><strong>#idle_bell</strong> : Channel(Bool)</a>
+        <a href="#finished_bell%3AChannel%28WorkUnit%7CNil%29-instance-method" class="signature"><strong>#finished_bell</strong> : Channel(WorkUnit | Nil)</a>
         
-          <div class="summary"><p>Used to notify the overseer that this executor is idle.</p></div>
+          <div class="summary"><p>Used to notify the overseer when this executor is idle.</p></div>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#job_pipeline%3AChannel%28Tuple%28JobRun%2CQueue%29%29-instance-method" class="signature"><strong>#job_pipeline</strong> : Channel(Tuple(JobRun, Queue))</a>
+        <a href="#job_pipeline%3AChannel%28WorkUnit%29-instance-method" class="signature"><strong>#job_pipeline</strong> : Channel(WorkUnit)</a>
         
           <div class="summary"><p>Where work is received from the overseer.</p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#job_run%3AJobRun-instance-method" class="signature"><strong>#job_run</strong> : JobRun</a>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#job_run%3F%3AJobRun%7CNil-instance-method" class="signature"><strong>#job_run?</strong> : JobRun | Nil</a>
         
       </li>
     
@@ -587,12 +594,9 @@ bell again and wait for more work.</p>
       </li>
     
       <li class="entry-summary">
-        <a href="#queue%3AQueue-instance-method" class="signature"><strong>#queue</strong> : Queue</a>
+        <a href="#stop%28wait_group%3AWaitGroup%3DWaitGroup.new%281%29%29%3AWaitGroup-instance-method" class="signature"><strong>#stop</strong>(wait_group : WaitGroup = <span class="t">WaitGroup</span>.new(<span class="n">1</span>)) : WaitGroup</a>
         
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#queue%3F%3AQueue%7CNil-instance-method" class="signature"><strong>#queue?</strong> : Queue | Nil</a>
+          <div class="summary"><p>Request that the next time the run loop cycles it should exit instead.</p></div>
         
       </li>
     
@@ -607,6 +611,16 @@ bell again and wait for more work.</p>
         <a href="#successful_job_ttl%3D%28successful_job_ttl%3AInt32%29-instance-method" class="signature"><strong>#successful_job_ttl=</strong>(successful_job_ttl : Int32)</a>
         
           <div class="summary"><p>How long a job config is persisted after success</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#work_unit%3AWorkUnit-instance-method" class="signature"><strong>#work_unit</strong> : WorkUnit</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#work_unit%3F%3AWorkUnit%7CNil-instance-method" class="signature"><strong>#work_unit?</strong> : WorkUnit | Nil</a>
         
       </li>
     
@@ -773,6 +787,40 @@ bell again and wait for more work.</p>
     Instance Method Detail
   </h2>
   
+    <div class="entry-detail" id="decommission!-instance-method">
+      <div class="signature">
+        
+        def <strong>decommission!</strong>
+
+        <a class="method-permalink" href="#decommission%21-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Marks this executor for graceful shutdown. It will stop after
+completing its current job (if any).</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="decommissioned?:Bool-instance-method">
+      <div class="signature">
+        
+        def <strong>decommissioned?</strong> : Bool
+
+        <a class="method-permalink" href="#decommissioned%3F%3ABool-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
     <div class="entry-detail" id="execute-instance-method">
       <div class="signature">
         
@@ -832,17 +880,19 @@ or, if it fails, rescheduled.</p>
       </div>
     </div>
   
-    <div class="entry-detail" id="idle_bell:Channel(Bool)-instance-method">
+    <div class="entry-detail" id="finished_bell:Channel(WorkUnit|Nil)-instance-method">
       <div class="signature">
         
-        def <strong>idle_bell</strong> : Channel(Bool)
+        def <strong>finished_bell</strong> : Channel(<a href="../../Mosquito/WorkUnit.html">WorkUnit</a> | Nil)
 
-        <a class="method-permalink" href="#idle_bell%3AChannel%28Bool%29-instance-method">#</a>
+        <a class="method-permalink" href="#finished_bell%3AChannel%28WorkUnit%7CNil%29-instance-method">#</a>
       </div>
       
         <div class="doc">
           
-          <p>Used to notify the overseer that this executor is idle.</p>
+          <p>Used to notify the overseer when this executor is idle.
+Sends the {JobRun, Queue} tuple that was just finished, or nil
+when the executor first starts up.</p>
         </div>
       
       <br/>
@@ -851,46 +901,18 @@ or, if it fails, rescheduled.</p>
       </div>
     </div>
   
-    <div class="entry-detail" id="job_pipeline:Channel(Tuple(JobRun,Queue))-instance-method">
+    <div class="entry-detail" id="job_pipeline:Channel(WorkUnit)-instance-method">
       <div class="signature">
         
-        def <strong>job_pipeline</strong> : Channel(Tuple(<a href="../../Mosquito/JobRun.html">JobRun</a>, <a href="../../Mosquito/Queue.html">Queue</a>))
+        def <strong>job_pipeline</strong> : Channel(<a href="../../Mosquito/WorkUnit.html">WorkUnit</a>)
 
-        <a class="method-permalink" href="#job_pipeline%3AChannel%28Tuple%28JobRun%2CQueue%29%29-instance-method">#</a>
+        <a class="method-permalink" href="#job_pipeline%3AChannel%28WorkUnit%29-instance-method">#</a>
       </div>
       
         <div class="doc">
           
           <p>Where work is received from the overseer.</p>
         </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="job_run:JobRun-instance-method">
-      <div class="signature">
-        
-        def <strong>job_run</strong> : <a href="../../Mosquito/JobRun.html">JobRun</a>
-
-        <a class="method-permalink" href="#job_run%3AJobRun-instance-method">#</a>
-      </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="job_run?:JobRun|Nil-instance-method">
-      <div class="signature">
-        
-        def <strong>job_run?</strong> : <a href="../../Mosquito/JobRun.html">JobRun</a> | Nil
-
-        <a class="method-permalink" href="#job_run%3F%3AJobRun%7CNil-instance-method">#</a>
-      </div>
       
       <br/>
       <div>
@@ -926,27 +948,31 @@ or, if it fails, rescheduled.</p>
       </div>
     </div>
   
-    <div class="entry-detail" id="queue:Queue-instance-method">
+    <div class="entry-detail" id="stop(wait_group:WaitGroup=WaitGroup.new(1)):WaitGroup-instance-method">
       <div class="signature">
         
-        def <strong>queue</strong> : <a href="../../Mosquito/Queue.html">Queue</a>
+        def <strong>stop</strong>(wait_group : WaitGroup = <span class="t">WaitGroup</span>.new(<span class="n">1</span>)) : WaitGroup
 
-        <a class="method-permalink" href="#queue%3AQueue-instance-method">#</a>
+        <a class="method-permalink" href="#stop%28wait_group%3AWaitGroup%3DWaitGroup.new%281%29%29%3AWaitGroup-instance-method">#</a>
       </div>
       
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="queue?:Queue|Nil-instance-method">
-      <div class="signature">
-        
-        def <strong>queue?</strong> : <a href="../../Mosquito/Queue.html">Queue</a> | Nil
-
-        <a class="method-permalink" href="#queue%3F%3AQueue%7CNil-instance-method">#</a>
-      </div>
+        <div class="doc">
+          
+            <div class="doc-inherited">
+              Description copied from module <a href="../../Mosquito/Runnable.html">Mosquito::Runnable</a>
+            </div>
+          
+          <p>Request that the next time the run loop cycles it should exit instead.
+The runnable doesn't exit immediately so #stop spawns a fiber to
+monitor the state transition.</p>
+<p>Returns the <code>WaitGroup</code>, which will be decremented when the
+runnable has finished. This enables <code>runnable.stop.wait</code>.</p>
+<p>If a <code>WaitGroup</code> is provided, it will be decremented when the
+runnable has finished. This is useful when stopping multiple
+runnables and waiting for all of them to finish.</p>
+<p>Calling stop on a runnable that has already finished or crashed is a
+no-op (the wait_group is signaled immediately).</p>
+        </div>
       
       <br/>
       <div>
@@ -985,6 +1011,34 @@ or, if it fails, rescheduled.</p>
           
           <p>How long a job config is persisted after success</p>
         </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="work_unit:WorkUnit-instance-method">
+      <div class="signature">
+        
+        def <strong>work_unit</strong> : <a href="../../Mosquito/WorkUnit.html">WorkUnit</a>
+
+        <a class="method-permalink" href="#work_unit%3AWorkUnit-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="work_unit?:WorkUnit|Nil-instance-method">
+      <div class="signature">
+        
+        def <strong>work_unit?</strong> : <a href="../../Mosquito/WorkUnit.html">WorkUnit</a> | Nil
+
+        <a class="method-permalink" href="#work_unit%3F%3AWorkUnit%7CNil-instance-method">#</a>
+      </div>
       
       <br/>
       <div>

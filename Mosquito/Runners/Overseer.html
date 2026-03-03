@@ -397,6 +397,11 @@
       
     </li>
   
+  <li class=" " data-id="mosquito/Mosquito/WorkUnit" data-name="mosquito::workunit">
+      <a href="../../Mosquito/WorkUnit.html">WorkUnit</a>
+      
+    </li>
+  
 </ul>
 
       
@@ -528,14 +533,14 @@
   <ul class="list-summary">
     
       <li class="entry-summary">
-        <a href="#build_executor%3AExecutor-instance-method" class="signature"><strong>#build_executor</strong> : Executor</a>
+        <a href="#adjust_executor_pool%3ANil-instance-method" class="signature"><strong>#adjust_executor_pool</strong> : Nil</a>
+        
+          <div class="summary"><p>When a job fails any exceptions are caught and logged.</p></div>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#check_for_deceased_runners%3ANil-instance-method" class="signature"><strong>#check_for_deceased_runners</strong> : Nil</a>
-        
-          <div class="summary"><p>When a job fails any exceptions are caught and logged.</p></div>
+        <a href="#build_executor%3AExecutor-instance-method" class="signature"><strong>#build_executor</strong> : Executor</a>
         
       </li>
     
@@ -557,7 +562,7 @@
       </li>
     
       <li class="entry-summary">
-        <a href="#dequeue_job%3F%3ATuple%28JobRun%2CQueue%29%7CNil-instance-method" class="signature"><strong>#dequeue_job?</strong> : Tuple(JobRun, Queue) | Nil</a>
+        <a href="#dequeue_job%3F%3AWorkUnit%7CNil-instance-method" class="signature"><strong>#dequeue_job?</strong> : WorkUnit | Nil</a>
         
           <div class="summary"><p>Delegates job dequeue to the configured <code><a href="../../Mosquito/DequeueAdapter.html">DequeueAdapter</a></code>.</p></div>
         
@@ -578,14 +583,19 @@
       </li>
     
       <li class="entry-summary">
+        <a href="#executor_count%3D%28count%3AInt32%29-instance-method" class="signature"><strong>#executor_count=</strong>(count : Int32)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
         <a href="#executors%3AArray%28Mosquito%3A%3ARunners%3A%3AExecutor%29-instance-method" class="signature"><strong>#executors</strong> : Array(Mosquito::Runners::Executor)</a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#idle_notifier%3AChannel%28Bool%29-instance-method" class="signature"><strong>#idle_notifier</strong> : Channel(Bool)</a>
+        <a href="#finished_notifier%3AChannel%28Mosquito%3A%3AWorkUnit%3F%29-instance-method" class="signature"><strong>#finished_notifier</strong> : Channel(Mosquito::WorkUnit?)</a>
         
-          <div class="summary"><p>When an executor transitions to idle it will send a True here.</p></div>
+          <div class="summary"><p>When an executor transitions to idle it will send the finished {JobRun, Queue} tuple here (or nil on first idle).</p></div>
         
       </li>
     
@@ -638,7 +648,7 @@
       </li>
     
       <li class="entry-summary">
-        <a href="#work_handout%3AChannel%28%7BMosquito%3A%3AJobRun%2CMosquito%3A%3AQueue%7D%29-instance-method" class="signature"><strong>#work_handout</strong> : Channel({Mosquito::JobRun, Mosquito::Queue})</a>
+        <a href="#work_handout%3AChannel%28Mosquito%3A%3AWorkUnit%29-instance-method" class="signature"><strong>#work_handout</strong> : Channel(Mosquito::WorkUnit)</a>
         
           <div class="summary"><p>The channel where job runs which have been dequeued are sent to executors.</p></div>
         
@@ -829,26 +839,12 @@
     Instance Method Detail
   </h2>
   
-    <div class="entry-detail" id="build_executor:Executor-instance-method">
+    <div class="entry-detail" id="adjust_executor_pool:Nil-instance-method">
       <div class="signature">
         
-        def <strong>build_executor</strong> : <a href="../../Mosquito/Runners/Executor.html">Executor</a>
+        def <strong>adjust_executor_pool</strong> : Nil
 
-        <a class="method-permalink" href="#build_executor%3AExecutor-instance-method">#</a>
-      </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="check_for_deceased_runners:Nil-instance-method">
-      <div class="signature">
-        
-        def <strong>check_for_deceased_runners</strong> : Nil
-
-        <a class="method-permalink" href="#check_for_deceased_runners%3ANil-instance-method">#</a>
+        <a class="method-permalink" href="#adjust_executor_pool%3ANil-instance-method">#</a>
       </div>
       
         <div class="doc">
@@ -860,6 +856,20 @@ in the queue that references job classes that no longer exist.</p>
 <p>When a dead executor is found, any job it was working on has its
 failure counter incremented and follows the standard retry logic.</p>
         </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="build_executor:Executor-instance-method">
+      <div class="signature">
+        
+        def <strong>build_executor</strong> : <a href="../../Mosquito/Runners/Executor.html">Executor</a>
+
+        <a class="method-permalink" href="#build_executor%3AExecutor-instance-method">#</a>
+      </div>
       
       <br/>
       <div>
@@ -921,12 +931,12 @@ recoverable when this overseer later dies.
       </div>
     </div>
   
-    <div class="entry-detail" id="dequeue_job?:Tuple(JobRun,Queue)|Nil-instance-method">
+    <div class="entry-detail" id="dequeue_job?:WorkUnit|Nil-instance-method">
       <div class="signature">
         
-        def <strong>dequeue_job?</strong> : Tuple(<a href="../../Mosquito/JobRun.html">JobRun</a>, <a href="../../Mosquito/Queue.html">Queue</a>) | Nil
+        def <strong>dequeue_job?</strong> : <a href="../../Mosquito/WorkUnit.html">WorkUnit</a> | Nil
 
-        <a class="method-permalink" href="#dequeue_job%3F%3ATuple%28JobRun%2CQueue%29%7CNil-instance-method">#</a>
+        <a class="method-permalink" href="#dequeue_job%3F%3AWorkUnit%7CNil-instance-method">#</a>
       </div>
       
         <div class="doc">
@@ -985,6 +995,20 @@ to implement custom strategies (priority, round-robin, rate limiting, etc).</p>
       </div>
     </div>
   
+    <div class="entry-detail" id="executor_count=(count:Int32)-instance-method">
+      <div class="signature">
+        
+        def <strong>executor_count=</strong>(count : Int32)
+
+        <a class="method-permalink" href="#executor_count%3D%28count%3AInt32%29-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
     <div class="entry-detail" id="executors:Array(Mosquito::Runners::Executor)-instance-method">
       <div class="signature">
         
@@ -999,17 +1023,18 @@ to implement custom strategies (priority, round-robin, rate limiting, etc).</p>
       </div>
     </div>
   
-    <div class="entry-detail" id="idle_notifier:Channel(Bool)-instance-method">
+    <div class="entry-detail" id="finished_notifier:Channel(Mosquito::WorkUnit?)-instance-method">
       <div class="signature">
         
-        def <strong>idle_notifier</strong> : Channel(Bool)
+        def <strong>finished_notifier</strong> : Channel(<a href="../../Mosquito/WorkUnit.html">Mosquito::WorkUnit</a>?)
 
-        <a class="method-permalink" href="#idle_notifier%3AChannel%28Bool%29-instance-method">#</a>
+        <a class="method-permalink" href="#finished_notifier%3AChannel%28Mosquito%3A%3AWorkUnit%3F%29-instance-method">#</a>
       </div>
       
         <div class="doc">
           
-          <p>When an executor transitions to idle it will send a True here. The Overseer
+          <p>When an executor transitions to idle it will send the finished
+{JobRun, Queue} tuple here (or nil on first idle). The Overseer
 uses this as a signal to check the queues for more work.</p>
         </div>
       
@@ -1170,12 +1195,12 @@ no-op (the wait_group is signaled immediately).</p>
       </div>
     </div>
   
-    <div class="entry-detail" id="work_handout:Channel({Mosquito::JobRun,Mosquito::Queue})-instance-method">
+    <div class="entry-detail" id="work_handout:Channel(Mosquito::WorkUnit)-instance-method">
       <div class="signature">
         
-        def <strong>work_handout</strong> : Channel({<a href="../../Mosquito/JobRun.html">Mosquito::JobRun</a>, <a href="../../Mosquito/Queue.html">Mosquito::Queue</a>})
+        def <strong>work_handout</strong> : Channel(<a href="../../Mosquito/WorkUnit.html">Mosquito::WorkUnit</a>)
 
-        <a class="method-permalink" href="#work_handout%3AChannel%28%7BMosquito%3A%3AJobRun%2CMosquito%3A%3AQueue%7D%29-instance-method">#</a>
+        <a class="method-permalink" href="#work_handout%3AChannel%28Mosquito%3A%3AWorkUnit%29-instance-method">#</a>
       </div>
       
         <div class="doc">

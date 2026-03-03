@@ -397,6 +397,11 @@
       
     </li>
   
+  <li class=" " data-id="mosquito/Mosquito/WorkUnit" data-name="mosquito::workunit">
+      <a href="../Mosquito/WorkUnit.html">WorkUnit</a>
+      
+    </li>
+  
 </ul>
 
       
@@ -434,7 +439,7 @@
 
   <p>A dequeue adapter that checks queues according to configured weights.</p>
 <p>Higher-weight queues are given proportionally more chances to be dequeued
-from. On each call to <code><a href="../Mosquito/WeightedDequeueAdapter.html#dequeue%28queue_list%3ARunners%3A%3AQueueList%29%3ATuple%28JobRun%2CQueue%29%7CNil-instance-method">#dequeue</a></code>, the adapter picks a queue at random
+from. On each call to <code><a href="../Mosquito/WeightedDequeueAdapter.html#dequeue%28queue_list%3ARunners%3A%3AQueueList%29%3AWorkUnit%7CNil-instance-method">#dequeue</a></code>, the adapter picks a queue at random
 (weighted by its configured value). If that queue is empty, it is removed
 from consideration and another weighted pick is made, ensuring each queue
 is checked at most once per dequeue call.</p>
@@ -525,7 +530,7 @@ often as &quot;bulk&quot; and 2.5x as often as &quot;default&quot;.</p>
   <ul class="list-summary">
     
       <li class="entry-summary">
-        <a href="#dequeue%28queue_list%3ARunners%3A%3AQueueList%29%3ATuple%28JobRun%2CQueue%29%7CNil-instance-method" class="signature"><strong>#dequeue</strong>(queue_list : Runners::QueueList) : Tuple(JobRun, Queue) | Nil</a>
+        <a href="#dequeue%28queue_list%3ARunners%3A%3AQueueList%29%3AWorkUnit%7CNil-instance-method" class="signature"><strong>#dequeue</strong>(queue_list : Runners::QueueList) : WorkUnit | Nil</a>
         
           <div class="summary"><p>Attempt to dequeue a job from one of the queues managed by <code>queue_list</code>.</p></div>
         
@@ -547,9 +552,14 @@ often as &quot;bulk&quot; and 2.5x as often as &quot;default&quot;.</p>
   <h3>Instance methods inherited from class <code><a href="../Mosquito/DequeueAdapter.html">Mosquito::DequeueAdapter</a></code></h3>
   
   
-    <a href="../Mosquito/DequeueAdapter.html#dequeue%28queue_list%3ARunners%3A%3AQueueList%29%3ATuple%28JobRun%2CQueue%29%7CNil-instance-method" class="tooltip">
-      <span>dequeue(queue_list : Runners::QueueList) : Tuple(JobRun, Queue) | Nil</span>
-    dequeue</a>
+    <a href="../Mosquito/DequeueAdapter.html#dequeue%28queue_list%3ARunners%3A%3AQueueList%29%3AWorkUnit%7CNil-instance-method" class="tooltip">
+      <span>dequeue(queue_list : Runners::QueueList) : WorkUnit | Nil</span>
+    dequeue</a>, 
+    
+  
+    <a href="../Mosquito/DequeueAdapter.html#finished_with%28job_run%3AJobRun%2Cqueue%3AQueue%29%3ANil-instance-method" class="tooltip">
+      <span>finished_with(job_run : JobRun, queue : Queue) : Nil</span>
+    finished_with</a>
     
   
 
@@ -632,12 +642,12 @@ often as &quot;bulk&quot; and 2.5x as often as &quot;default&quot;.</p>
     Instance Method Detail
   </h2>
   
-    <div class="entry-detail" id="dequeue(queue_list:Runners::QueueList):Tuple(JobRun,Queue)|Nil-instance-method">
+    <div class="entry-detail" id="dequeue(queue_list:Runners::QueueList):WorkUnit|Nil-instance-method">
       <div class="signature">
         
-        def <strong>dequeue</strong>(queue_list : <a href="../Mosquito/Runners/QueueList.html">Runners::QueueList</a>) : Tuple(<a href="../Mosquito/JobRun.html">JobRun</a>, <a href="../Mosquito/Queue.html">Queue</a>) | Nil
+        def <strong>dequeue</strong>(queue_list : <a href="../Mosquito/Runners/QueueList.html">Runners::QueueList</a>) : <a href="../Mosquito/WorkUnit.html">WorkUnit</a> | Nil
 
-        <a class="method-permalink" href="#dequeue%28queue_list%3ARunners%3A%3AQueueList%29%3ATuple%28JobRun%2CQueue%29%7CNil-instance-method">#</a>
+        <a class="method-permalink" href="#dequeue%28queue_list%3ARunners%3A%3AQueueList%29%3AWorkUnit%7CNil-instance-method">#</a>
       </div>
       
         <div class="doc">
@@ -647,7 +657,7 @@ often as &quot;bulk&quot; and 2.5x as often as &quot;default&quot;.</p>
             </div>
           
           <p>Attempt to dequeue a job from one of the queues managed by <code>queue_list</code>.</p>
-<p>Returns a tuple of <code>{<a href="../Mosquito/JobRun.html">JobRun</a>, <a href="../Mosquito/Queue.html">Queue</a>}</code> when a job is available, or <code>nil</code>
+<p>Returns a <code><a href="../Mosquito/WorkUnit.html">WorkUnit</a></code> when a job is available, or <code>nil</code>
 when all queues are empty.</p>
         </div>
       
