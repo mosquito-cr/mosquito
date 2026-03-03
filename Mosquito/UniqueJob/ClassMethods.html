@@ -14,7 +14,7 @@
 <script type="text/javascript" src="../../js/doc.js"></script>
 
   <meta name="repository-name" content="mosquito">
-  <title>Mosquito::Api::Executor - mosquito 2.0.0</title>
+  <title>Mosquito::UniqueJob::ClassMethods - mosquito 2.0.0</title>
   <script type="text/javascript">
     CrystalDocs.base_path = "../../";
   </script>
@@ -62,12 +62,12 @@
       
         <ul>
   
-  <li class="parent open current" data-id="mosquito/Mosquito/Api" data-name="mosquito::api">
+  <li class="parent " data-id="mosquito/Mosquito/Api" data-name="mosquito::api">
       <a href="../../Mosquito/Api.html">Api</a>
       
         <ul>
   
-  <li class=" current" data-id="mosquito/Mosquito/Api/Executor" data-name="mosquito::api::executor">
+  <li class=" " data-id="mosquito/Mosquito/Api/Executor" data-name="mosquito::api::executor">
       <a href="../../Mosquito/Api/Executor.html">Executor</a>
       
     </li>
@@ -392,12 +392,12 @@
       
     </li>
   
-  <li class="parent " data-id="mosquito/Mosquito/UniqueJob" data-name="mosquito::uniquejob">
+  <li class="parent open current" data-id="mosquito/Mosquito/UniqueJob" data-name="mosquito::uniquejob">
       <a href="../../Mosquito/UniqueJob.html">UniqueJob</a>
       
         <ul>
   
-  <li class=" " data-id="mosquito/Mosquito/UniqueJob/ClassMethods" data-name="mosquito::uniquejob::classmethods">
+  <li class=" current" data-id="mosquito/Mosquito/UniqueJob/ClassMethods" data-name="mosquito::uniquejob::classmethods">
       <a href="../../Mosquito/UniqueJob/ClassMethods.html">ClassMethods</a>
       
     </li>
@@ -432,28 +432,14 @@
 <h1 class="type-name">
 
   <span class="kind">
-    class
-  </span> Mosquito::<wbr>Api::<wbr>Executor
+    module
+  </span> Mosquito::<wbr>UniqueJob::<wbr>ClassMethods
 
 </h1>
 
 
-  <ul class="superclass-hierarchy"><li class="superclass"><a href="../../Mosquito/Api/Executor.html">Mosquito::Api::Executor</a></li><li class="superclass">Reference</li><li class="superclass">Object</li></ul>
 
 
-
-
-  <h2>
-    <a id="overview" class="anchor" href="#overview">
-  <svg class="octicon-link" aria-hidden="true">
-    <use href="#octicon-link"/>
-  </svg>
-</a>
-    Overview
-  </h2>
-
-  <p>An interface for an executor.</p>
-<p>This is used to inspect the state of an executor. For more information about executors, see <code><a href="../../Mosquito/Runners/Executor.html">Mosquito::Runners::Executor</a></code>.</p>
 
 
 
@@ -480,7 +466,7 @@
   </h2>
   
     
-      mosquito/api/executor.cr
+      mosquito/unique_job.cr
     
     <br/>
   
@@ -490,25 +476,6 @@
 
 
   
-  <h2>
-    <a id="constructors" class="anchor" href="#constructors">
-  <svg class="octicon-link" aria-hidden="true">
-    <use href="#octicon-link"/>
-  </svg>
-</a>
-    Constructors
-  </h2>
-  <ul class="list-summary">
-    
-      <li class="entry-summary">
-        <a href="#new%28instance_id%3AString%29-class-method" class="signature"><strong>.new</strong>(instance_id : String)</a>
-        
-          <div class="summary"><p>Creates an executor inspector.</p></div>
-        
-      </li>
-    
-  </ul>
-
 
   
 
@@ -526,28 +493,9 @@
   <ul class="list-summary">
     
       <li class="entry-summary">
-        <a href="#current_job%3AString%7CNil-instance-method" class="signature"><strong>#current_job</strong> : String | Nil</a>
+        <a href="#unique_for%28duration%3ATime%3A%3ASpan%29-instance-method" class="signature"><strong>#unique_for</strong>(duration : Time::Span)</a>
         
-          <div class="summary"><p>The current job being executed by the executor.</p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#current_job_queue%3AString%7CNil-instance-method" class="signature"><strong>#current_job_queue</strong> : String | Nil</a>
-        
-          <div class="summary"><p>The queue which housed the current job being executed.</p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#heartbeat%3ATime%7CNil-instance-method" class="signature"><strong>#heartbeat</strong> : Time | Nil</a>
-        
-          <div class="summary"><p>The last heartbeat time, or nil if none exists.</p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#instance_id%3AString-instance-method" class="signature"><strong>#instance_id</strong> : String</a>
+          <div class="summary"><p>Configures job uniqueness for this job.</p></div>
         
       </li>
     
@@ -557,66 +505,9 @@
 
   <div class="methods-inherited">
     
-      
-
-
-      
-
-
-      
-
-
-      
-
-
-    
-      
-
-
-      
-
-
-      
-
-
-      
-
-
-    
   </div>
 
   
-  <h2>
-    <a id="constructor-detail" class="anchor" href="#constructor-detail">
-  <svg class="octicon-link" aria-hidden="true">
-    <use href="#octicon-link"/>
-  </svg>
-</a>
-    Constructor Detail
-  </h2>
-  
-    <div class="entry-detail" id="new(instance_id:String)-class-method">
-      <div class="signature">
-        
-        def self.<strong>new</strong>(instance_id : String)
-
-        <a class="method-permalink" href="#new%28instance_id%3AString%29-class-method">#</a>
-      </div>
-      
-        <div class="doc">
-          
-          <p>Creates an executor inspector.
-The metadata is readonly and can be used to inspect the state of the executor.</p>
-<p>see #current_job, #current_job_queue</p>
-        </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-
 
   
 
@@ -632,72 +523,48 @@ The metadata is readonly and can be used to inspect the state of the executor.</
     Instance Method Detail
   </h2>
   
-    <div class="entry-detail" id="current_job:String|Nil-instance-method">
+    <div class="entry-detail" id="unique_for(duration:Time::Span)-instance-method">
       <div class="signature">
         
-        def <strong>current_job</strong> : String | Nil
+        def <strong>unique_for</strong>(duration : Time::Span)
 
-        <a class="method-permalink" href="#current_job%3AString%7CNil-instance-method">#</a>
+        <a class="method-permalink" href="#unique_for%28duration%3ATime%3A%3ASpan%29-instance-method">#</a>
       </div>
       
         <div class="doc">
           
-          <p>The current job being executed by the executor.</p>
-<p>When the executor is idle, this will be <code>nil</code>.</p>
-        </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="current_job_queue:String|Nil-instance-method">
-      <div class="signature">
-        
-        def <strong>current_job_queue</strong> : String | Nil
+          <p>Configures job uniqueness for this job.</p>
+<p><code>duration</code> controls how long the uniqueness lock is held. After this
+period expires, the same job can be enqueued again.</p>
+<p><code>key</code> is an array of parameter names (as strings) used to compute the
+uniqueness key. When omitted, all parameters are used by default.</p>
+<pre><code class="language-crystal"><span class="k">class</span> <span class="t">SendEmailJob</span> <span class="o">&lt;</span> <span class="t">Mosquito</span><span class="t">::</span><span class="t">QueuedJob</span>
+  <span class="k">include</span> <span class="t">Mosquito</span><span class="t">::</span><span class="t">UniqueJob</span>
 
-        <a class="method-permalink" href="#current_job_queue%3AString%7CNil-instance-method">#</a>
-      </div>
-      
-        <div class="doc">
-          
-          <p>The queue which housed the current job being executed.</p>
-<p>When the executor is idle, this will be <code>nil</code>.</p>
-        </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="heartbeat:Time|Nil-instance-method">
-      <div class="signature">
-        
-        def <strong>heartbeat</strong> : Time | Nil
+  unique_for <span class="n">1</span>.hour
 
-        <a class="method-permalink" href="#heartbeat%3ATime%7CNil-instance-method">#</a>
-      </div>
-      
-        <div class="doc">
-          
-          <p>The last heartbeat time, or nil if none exists.</p>
-        </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="instance_id:String-instance-method">
-      <div class="signature">
-        
-        def <strong>instance_id</strong> : String
+  param user_id : <span class="t">Int64</span>
+  param email_type : <span class="t">String</span>
 
-        <a class="method-permalink" href="#instance_id%3AString-instance-method">#</a>
-      </div>
+  <span class="k">def</span> <span class="m">perform</span>
+    <span class="c"># ...</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre>
+<p>With a key filter:</p>
+<pre><code class="language-crystal"><span class="k">class</span> <span class="t">SendEmailJob</span> <span class="o">&lt;</span> <span class="t">Mosquito</span><span class="t">::</span><span class="t">QueuedJob</span>
+  <span class="k">include</span> <span class="t">Mosquito</span><span class="t">::</span><span class="t">UniqueJob</span>
+
+  unique_for <span class="n">1</span>.hour, key: [<span class="n">:user_id</span>, <span class="n">:email_type</span>]
+
+  param user_id : <span class="t">Int64</span>
+  param email_type : <span class="t">String</span>
+  param metadata : <span class="t">String</span>
+
+  <span class="k">def</span> <span class="m">perform</span>
+    <span class="c"># ...</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre>
+        </div>
       
       <br/>
       <div>
