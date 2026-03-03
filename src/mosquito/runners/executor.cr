@@ -120,7 +120,18 @@ module Mosquito::Runners
       self.state = State::Working
       @work_unit = dequeue
       log.trace { "Dequeued #{job_run} from #{queue.name}" }
-      execute
+
+      begin
+        execute
+      rescue e
+        log.error { "Crashed executing #{job_run}: #{e.inspect}" }
+        begin
+          job_run.retry_or_banish queue
+        rescue
+          queue.banish job_run
+        end
+      end
+
       log.trace { "Finished #{job_run} from #{queue.name}" }
 
       if @decommissioned
