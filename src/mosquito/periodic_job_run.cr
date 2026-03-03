@@ -1,5 +1,7 @@
 module Mosquito
   class PeriodicJobRun
+    Log = ::Log.for self
+
     property class : Mosquito::PeriodicJob.class
     property interval : Time::Span | Time::MonthSpan
     getter metadata : Metadata { Metadata.new(Mosquito.backend.build_key("periodic_jobs", @class.name)) }
@@ -47,11 +49,12 @@ module Mosquito
       now = Time.utc
 
       if last_executed_at + interval <= now
-        execute
+        if pending_job_run?
+          Log.info { "Skipping enqueue for #{@class.name}: a job run is already pending" }
+        else
+          execute
+        end
 
-        # Weaknesses:
-        # - If something interferes with the job run, it won't be correct that it was executed.
-        # - if the worker is backlogged, the start time will be different from the last executed time.
         self.last_executed_at = now
         true
       else
@@ -59,12 +62,30 @@ module Mosquito
       end
     end
 
-    # Enqueues the job for execution
+    # Returns true if a previously enqueued job run has not yet finished.
+    # This prevents duplicate enqueues when executors are busy and the
+    # periodic interval elapses multiple times before the job is run.
+    def pending_job_run? : Bool
+      if pending_id = metadata["pending_run_id"]?
+        if job_run = JobRun.retrieve(pending_id)
+          return true if job_run.finished_at.nil?
+        end
+
+        # Job run has finished or was cleaned up; clear the stale reference.
+        metadata["pending_run_id"] = nil
+      end
+
+      false
+    end
+
+    # Enqueues the job for execution and records the job run id so that
+    # subsequent intervals can detect that a run is already pending.
     def execute
       job = @class.new
       job_run = job.build_job_run
       job_run.store
       @class.queue.enqueue job_run
+      metadata["pending_run_id"] = job_run.id
     end
   end
 end
