@@ -25,8 +25,17 @@ module Mosquito
       end
     end
 
+    def log
+      stream = Log.for(self.class)
+      if job_run_id_ = job_run_id
+        stream.for(job_run_id_)
+      else
+        stream
+      end
+    end
+
     def log(message)
-      ::Log.for(self.class).info { message }
+      log.info { message }
     end
 
     getter state = State::Initialization
@@ -83,7 +92,7 @@ module Mosquito
       begin
         before_hook
       rescue e : Exception
-        Log.error(exception: e) { "Before hook raised, job will not be executed" }
+        log.error(exception: e) { "Before hook raised, job will not be executed" }
         @state = State::Aborted
         return
       end
@@ -96,7 +105,7 @@ module Mosquito
 
       @state = State::Succeeded
     rescue e
-      Log.warn(exception: e) do
+      log.warn(exception: e) do
         "Job failed! Raised #{e.class}: #{e.message}"
       end
 
