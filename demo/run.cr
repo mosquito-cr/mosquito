@@ -10,8 +10,9 @@ Mosquito.configuration.backend.flush
 Log.setup do |c|
   backend = Log::IOBackend.new
 
+  c.bind "*", :info, backend
   c.bind "redis.*", :warn, backend
-  c.bind "mosquito.*", :debug, backend
+  c.bind "mosquito.*", :info, backend
 end
 
 require "./jobs/*"
