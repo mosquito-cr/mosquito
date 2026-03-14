@@ -475,6 +475,25 @@
 
 
 
+  
+    <h2>
+      <a id="constant-summary" class="anchor" href="#constant-summary">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+      Constant Summary
+    </h2>
+  
+  <dl>
+    
+      <dt class="entry-const" id="Log">
+        <strong>Log</strong> = <code><span class="t">::</span><span class="t">Log</span>.<span class="k">for</span>(<span class="k">self</span>)</code>
+      </dt>
+      
+    
+  </dl>
+
 
 
   
@@ -526,7 +545,7 @@
       <li class="entry-summary">
         <a href="#execute-instance-method" class="signature"><strong>#execute</strong></a>
         
-          <div class="summary"><p>Enqueues the job for execution</p></div>
+          <div class="summary"><p>Enqueues the job for execution and records the job run id so that subsequent intervals can detect that a run is already pending.</p></div>
         
       </li>
     
@@ -563,6 +582,13 @@
     
       <li class="entry-summary">
         <a href="#metadata%3AMetadata-instance-method" class="signature"><strong>#metadata</strong> : Metadata</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#pending_job_run%3F%3ABool-instance-method" class="signature"><strong>#pending_job_run?</strong> : Bool</a>
+        
+          <div class="summary"><p>Returns true if a previously enqueued job run has not yet finished.</p></div>
         
       </li>
     
@@ -702,7 +728,8 @@ value.<span class="k">class</span>   <span class="c"># =&gt; String</span>
       
         <div class="doc">
           
-          <p>Enqueues the job for execution</p>
+          <p>Enqueues the job for execution and records the job run id so that
+subsequent intervals can detect that a run is already pending.</p>
         </div>
       
       <br/>
@@ -808,6 +835,27 @@ For Time::MonthSpan intervals, the TTL is set to approximately 3 * interval.</p>
 
         <a class="method-permalink" href="#metadata%3AMetadata-instance-method">#</a>
       </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="pending_job_run?:Bool-instance-method">
+      <div class="signature">
+        
+        def <strong>pending_job_run?</strong> : Bool
+
+        <a class="method-permalink" href="#pending_job_run%3F%3ABool-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Returns true if a previously enqueued job run has not yet finished.
+This prevents duplicate enqueues when executors are busy and the
+periodic interval elapses multiple times before the job is run.</p>
+        </div>
       
       <br/>
       <div>
