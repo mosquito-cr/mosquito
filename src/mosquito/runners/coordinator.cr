@@ -67,7 +67,7 @@ module Mosquito::Runners
     end
 
     private def maintain_leadership : Nil
-      if @is_leader
+      if is_leader?
         unless Mosquito.backend.renew_lock? lock_key, instance_id, LockTTL
           Log.info { "Lost coordinator lease" }
           @is_leader = false
