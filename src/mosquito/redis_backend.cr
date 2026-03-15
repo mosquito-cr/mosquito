@@ -4,13 +4,8 @@ require "digest/sha1"
 module Mosquito
   module Scripts
     SCRIPTS = {
-      :remove_matching_key => <<-LUA
-        if redis.call("get",KEYS[1]) == ARGV[1] then
-            return redis.call("del",KEYS[1])
-        else
-            return 0
-        end
-      LUA
+      :remove_matching_key => "if redis.call('get',KEYS[1]) == ARGV[1] then return redis.call('del',KEYS[1]) else return 0 end",
+      :renew_matching_key  => "if redis.call('get',KEYS[1]) == ARGV[1] then return redis.call('expire',KEYS[1],ARGV[2]) else return 0 end",
     }
 
     @@script_sha = {} of Symbol => String
@@ -187,6 +182,11 @@ module Mosquito
     def lock?(key : String, value : String, ttl : Time::Span) : Bool
       response = redis.set key, value, ex: ttl.to_i, nx: true
       response == "OK"
+    end
+
+    def renew_lock?(key : String, value : String, ttl : Time::Span) : Bool
+      result = renew_matching_key keys: [key], args: [value, ttl.to_i.to_s]
+      result == 1_i64
     end
 
     def unlock(key : String, value : String) : Nil
