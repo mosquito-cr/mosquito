@@ -42,7 +42,7 @@ module Mosquito::Runners
     # instance can take over immediately instead of waiting for the
     # TTL to expire.
     def release_leadership : Nil
-      return unless @is_leader
+      return unless is_leader?
       Mosquito.backend.unlock lock_key, instance_id
       @is_leader = false
       Log.info { "Coordinator lease released" }
