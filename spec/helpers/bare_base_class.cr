@@ -6,6 +6,9 @@ module Mosquito
       scheduled_job_runs = @@scheduled_job_runs
       @@scheduled_job_runs = [] of PeriodicJobRun
 
+      perpetual_job_runs = @@perpetual_job_runs
+      @@perpetual_job_runs = [] of PerpetualJobRun
+
       mapping = @@mapping
       @@mapping = {} of String => Job.class
 
@@ -14,6 +17,7 @@ module Mosquito
     ensure
       @@mapping = mapping unless mapping.nil?
       @@scheduled_job_runs = scheduled_job_runs unless scheduled_job_runs.nil?
+      @@perpetual_job_runs = perpetual_job_runs unless perpetual_job_runs.nil?
     end
   end
 end

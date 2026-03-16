@@ -25,6 +25,7 @@ module Mosquito::Runners
     def schedule : Nil
       only_if_coordinator do
         enqueue_periodic_jobs
+        enqueue_perpetual_jobs
         enqueue_delayed_jobs
       end
     end
@@ -55,6 +56,12 @@ module Mosquito::Runners
     def enqueue_periodic_jobs
       Base.scheduled_job_runs.each do |scheduled_job_run|
         enqueued = scheduled_job_run.try_to_execute
+      end
+    end
+
+    def enqueue_perpetual_jobs
+      Base.perpetual_job_runs.each do |perpetual_job_run|
+        perpetual_job_run.try_to_execute
       end
     end
 
