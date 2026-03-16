@@ -242,6 +242,11 @@
       
     </li>
   
+  <li class=" " data-id="mosquito/Mosquito/OpenGate" data-name="mosquito::opengate">
+      <a href="../Mosquito/OpenGate.html">OpenGate</a>
+      
+    </li>
+  
   <li class=" " data-id="mosquito/Mosquito/PeriodicJob" data-name="mosquito::periodicjob">
       <a href="../Mosquito/PeriodicJob.html">PeriodicJob</a>
       
@@ -289,6 +294,11 @@
   
 </ul>
 
+      
+    </li>
+  
+  <li class=" " data-id="mosquito/Mosquito/ResourceGate" data-name="mosquito::resourcegate">
+      <a href="../Mosquito/ResourceGate.html">ResourceGate</a>
       
     </li>
   
@@ -399,6 +409,11 @@
   
 </ul>
 
+      
+    </li>
+  
+  <li class=" " data-id="mosquito/Mosquito/ThresholdGate" data-name="mosquito::thresholdgate">
+      <a href="../Mosquito/ThresholdGate.html">ThresholdGate</a>
       
     </li>
   
@@ -624,6 +639,20 @@
     
       <li class="entry-summary">
         <a href="#publish_metrics%3D%28publish_metrics%3ABool%29-instance-method" class="signature"><strong>#publish_metrics=</strong>(publish_metrics : Bool)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#resource_gates%3AHash%28String%2CMosquito%3A%3AResourceGate%29-instance-method" class="signature"><strong>#resource_gates</strong> : Hash(String, Mosquito::ResourceGate)</a>
+        
+          <div class="summary"><p>Maps queue names to resource gates.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#resource_gates%3D%28resource_gates%3AHash%28String%2CMosquito%3A%3AResourceGate%29%29-instance-method" class="signature"><strong>#resource_gates=</strong>(resource_gates : Hash(String, Mosquito::ResourceGate))</a>
+        
+          <div class="summary"><p>Maps queue names to resource gates.</p></div>
         
       </li>
     
@@ -1059,6 +1088,46 @@ considered dead and its pending jobs are recovered.</p>
 
         <a class="method-permalink" href="#publish_metrics%3D%28publish_metrics%3ABool%29-instance-method">#</a>
       </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="resource_gates:Hash(String,Mosquito::ResourceGate)-instance-method">
+      <div class="signature">
+        
+        def <strong>resource_gates</strong> : Hash(String, <a href="../Mosquito/ResourceGate.html">Mosquito::ResourceGate</a>)
+
+        <a class="method-permalink" href="#resource_gates%3AHash%28String%2CMosquito%3A%3AResourceGate%29-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Maps queue names to resource gates. Queues whose gate returns
+<code>false</code> from <code>#allow?</code> are excluded from dequeuing.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="resource_gates=(resource_gates:Hash(String,Mosquito::ResourceGate))-instance-method">
+      <div class="signature">
+        
+        def <strong>resource_gates=</strong>(resource_gates : Hash(String, <a href="../Mosquito/ResourceGate.html">Mosquito::ResourceGate</a>))
+
+        <a class="method-permalink" href="#resource_gates%3D%28resource_gates%3AHash%28String%2CMosquito%3A%3AResourceGate%29%29-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Maps queue names to resource gates. Queues whose gate returns
+<code>false</code> from <code>#allow?</code> are excluded from dequeuing.</p>
+        </div>
       
       <br/>
       <div>
