@@ -95,4 +95,84 @@ describe "Mosquito::Runners::QueueList" do
       end
     end
   end
+
+  describe "resource gate filtering" do
+    it "excludes queues whose gate blocks" do
+      clean_slate do
+        enqueue_jobs
+        queue_list.each_run
+
+        gate = Mosquito::ThresholdGate.new(threshold: 80.0, sample_ttl: 0.seconds) { 90.0 }
+        queue_list.resource_gates = {"passing_job" => gate.as(Mosquito::ResourceGate)}
+
+        refute_includes queue_list.queues.map(&.name), "passing_job"
+        assert_includes queue_list.queues.map(&.name), "failing_job"
+        assert_includes queue_list.queues.map(&.name), "io_queue"
+      end
+    end
+
+    it "includes queues whose gate allows" do
+      clean_slate do
+        enqueue_jobs
+        queue_list.each_run
+
+        gate = Mosquito::ThresholdGate.new(threshold: 80.0, sample_ttl: 0.seconds) { 50.0 }
+        queue_list.resource_gates = {"passing_job" => gate.as(Mosquito::ResourceGate)}
+
+        assert_includes queue_list.queues.map(&.name), "passing_job"
+      end
+    end
+
+    it "ungated queues are always included" do
+      clean_slate do
+        enqueue_jobs
+        queue_list.each_run
+
+        gate = Mosquito::ThresholdGate.new(threshold: 80.0, sample_ttl: 0.seconds) { 90.0 }
+        queue_list.resource_gates = {"passing_job" => gate.as(Mosquito::ResourceGate)}
+
+        assert_equal 2, queue_list.queues.size
+      end
+    end
+
+    it "multiple queues can share a gate" do
+      clean_slate do
+        enqueue_jobs
+        queue_list.each_run
+
+        gate = Mosquito::ThresholdGate.new(threshold: 80.0, sample_ttl: 0.seconds) { 90.0 }
+        queue_list.resource_gates = {
+          "passing_job" => gate.as(Mosquito::ResourceGate),
+          "failing_job" => gate.as(Mosquito::ResourceGate),
+        }
+
+        assert_equal ["io_queue"], queue_list.queues.map(&.name)
+      end
+    end
+
+    it "gate state is evaluated on each access" do
+      clean_slate do
+        enqueue_jobs
+        queue_list.each_run
+
+        value = 90.0
+        gate = Mosquito::ThresholdGate.new(threshold: 80.0, sample_ttl: 0.seconds) { value }
+        queue_list.resource_gates = {"passing_job" => gate.as(Mosquito::ResourceGate)}
+
+        refute_includes queue_list.queues.map(&.name), "passing_job"
+
+        value = 50.0
+        assert_includes queue_list.queues.map(&.name), "passing_job"
+      end
+    end
+
+    it "returns all queues when no gates are configured" do
+      clean_slate do
+        enqueue_jobs
+        queue_list.each_run
+
+        assert_equal 3, queue_list.queues.size
+      end
+    end
+  end
 end

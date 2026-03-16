@@ -8,7 +8,7 @@ describe "Mosquito::Runners::Coordinator" do
   getter(enqueue_time) { Time.utc }
 
   def enqueue_job_run : JobRun
-    queue_list.queues << queue
+    queue_list.discovered_queues << queue
 
     job_run = JobRun.new "blah"
 
