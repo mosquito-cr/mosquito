@@ -509,7 +509,7 @@
   <dl>
     
       <dt class="entry-const" id="LockTTL">
-        <strong>LockTTL</strong> = <code><span class="n">10</span>.seconds</code>
+        <strong>LockTTL</strong> = <code><span class="n">30</span>.seconds</code>
       </dt>
       
     
@@ -572,6 +572,11 @@
       </li>
     
       <li class="entry-summary">
+        <a href="#is_leader%3F%3ABool-instance-method" class="signature"><strong>#is_leader?</strong> : Bool</a>
+        
+      </li>
+    
+      <li class="entry-summary">
         <a href="#lock_key%3AString-instance-method" class="signature"><strong>#lock_key</strong> : String</a>
         
       </li>
@@ -582,7 +587,19 @@
       </li>
     
       <li class="entry-summary">
+        <a href="#post_run%3ANil-instance-method" class="signature"><strong>#post_run</strong> : Nil</a>
+        
+      </li>
+    
+      <li class="entry-summary">
         <a href="#queue_list%3AQueueList-instance-method" class="signature"><strong>#queue_list</strong> : QueueList</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#release_leadership_lock%3ANil-instance-method" class="signature"><strong>#release_leadership_lock</strong> : Nil</a>
+        
+          <div class="summary"><p>Releases the coordinator lease.</p></div>
         
       </li>
     
@@ -712,6 +729,20 @@
       </div>
     </div>
   
+    <div class="entry-detail" id="is_leader?:Bool-instance-method">
+      <div class="signature">
+        
+        def <strong>is_leader?</strong> : Bool
+
+        <a class="method-permalink" href="#is_leader%3F%3ABool-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
     <div class="entry-detail" id="lock_key:String-instance-method">
       <div class="signature">
         
@@ -740,6 +771,20 @@
       </div>
     </div>
   
+    <div class="entry-detail" id="post_run:Nil-instance-method">
+      <div class="signature">
+        
+        def <strong>post_run</strong> : Nil
+
+        <a class="method-permalink" href="#post_run%3ANil-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
     <div class="entry-detail" id="queue_list:QueueList-instance-method">
       <div class="signature">
         
@@ -747,6 +792,27 @@
 
         <a class="method-permalink" href="#queue_list%3AQueueList-instance-method">#</a>
       </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="release_leadership_lock:Nil-instance-method">
+      <div class="signature">
+        
+        def <strong>release_leadership_lock</strong> : Nil
+
+        <a class="method-permalink" href="#release_leadership_lock%3ANil-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Releases the coordinator lease. Call during shutdown so another
+instance can take over immediately instead of waiting for the
+TTL to expire.</p>
+        </div>
       
       <br/>
       <div>

@@ -496,7 +496,7 @@
   <dl>
     
       <dt class="entry-const" id="SCRIPTS">
-        <strong>SCRIPTS</strong> = <code>{<span class="n">:remove_matching_key</span> <span class="o">=&gt;</span> <span class="s">&quot;  if redis.call(\&quot;get\&quot;,KEYS[1]) == ARGV[1] then\n      return redis.call(\&quot;del\&quot;,KEYS[1])\n  else\n      return 0\n  end&quot;</span>}</code>
+        <strong>SCRIPTS</strong> = <code>{<span class="n">:remove_matching_key</span> <span class="o">=&gt;</span> <span class="s">&quot;  if redis.call(\&quot;get\&quot;,KEYS[1]) == ARGV[1] then\n      return redis.call(\&quot;del\&quot;,KEYS[1])\n  else\n      return 0\n  end&quot;</span>, <span class="n">:renew_matching_key</span> <span class="o">=&gt;</span> <span class="s">&quot;  if redis.call(\&quot;get\&quot;,KEYS[1]) == ARGV[1] then\n      return redis.call(\&quot;expire\&quot;,KEYS[1],ARGV[2])\n  else\n      return 0\n  end&quot;</span>}</code>
       </dt>
       
     
@@ -524,6 +524,11 @@
     
       <li class="entry-summary">
         <a href="#remove_matching_key-class-method" class="signature"><strong>.remove_matching_key</strong></a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#renew_matching_key-class-method" class="signature"><strong>.renew_matching_key</strong></a>
         
       </li>
     
@@ -571,6 +576,20 @@
         def self.<strong>remove_matching_key</strong>
 
         <a class="method-permalink" href="#remove_matching_key-class-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="renew_matching_key-class-method">
+      <div class="signature">
+        
+        def self.<strong>renew_matching_key</strong>
+
+        <a class="method-permalink" href="#renew_matching_key-class-method">#</a>
       </div>
       
       <br/>
