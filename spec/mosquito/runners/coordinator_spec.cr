@@ -22,9 +22,9 @@ describe "Mosquito::Runners::Coordinator" do
 
   def opt_in_to_locking
     Mosquito.temp_config(use_distributed_lock: true) do
-      Mosquito.backend.delete Mosquito.backend.build_key(:coordinator, :football)
+      Mosquito.backend.delete Mosquito.backend.build_key(:coordinator, :leadership_lock)
       yield
-      Mosquito.backend.delete Mosquito.backend.build_key(:coordinator, :football)
+      Mosquito.backend.delete Mosquito.backend.build_key(:coordinator, :leadership_lock)
     end
   end
 

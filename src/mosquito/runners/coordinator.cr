@@ -10,7 +10,7 @@ module Mosquito::Runners
     getter? is_leader : Bool = false
 
     def initialize(@queue_list)
-      @lock_key = Mosquito.backend.build_key :coordinator, :football
+      @lock_key = Mosquito.backend.build_key :coordinator, :leadership_lock
       @instance_id = Random::Secure.hex(8)
     end
 
