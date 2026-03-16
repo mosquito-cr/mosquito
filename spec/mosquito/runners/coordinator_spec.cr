@@ -58,14 +58,14 @@ describe "Mosquito::Runners::Coordinator" do
       end
     end
 
-    it "releases the lock when release_leadership is called" do
+    it "releases the lock when release_leadership_lock is called" do
       opt_in_to_locking do
         gotten = false
 
         coordinator1.only_if_coordinator do
         end
 
-        coordinator1.release_leadership
+        coordinator1.release_leadership_lock
 
         coordinator2.only_if_coordinator do
           gotten = true

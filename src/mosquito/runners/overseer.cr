@@ -91,7 +91,7 @@ module Mosquito::Runners
     def post_run : Nil
       observer.stopping
 
-      coordinator.release_leadership
+      coordinator.post_run
 
       child_fiber_shutdown = WaitGroup.new(executors.size + 1)
       executors.each { |e| e.stop(child_fiber_shutdown) }

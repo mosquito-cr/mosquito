@@ -18,6 +18,10 @@ module Mosquito::Runners
       "coordinator.#{object_id}"
     end
 
+    def post_run : Nil
+      release_leadership_lock
+    end
+
     def schedule : Nil
       only_if_coordinator do
         enqueue_periodic_jobs
@@ -41,7 +45,7 @@ module Mosquito::Runners
     # Releases the coordinator lease. Call during shutdown so another
     # instance can take over immediately instead of waiting for the
     # TTL to expire.
-    def release_leadership : Nil
+    def release_leadership_lock : Nil
       return unless is_leader?
       Mosquito.backend.unlock lock_key, instance_id
       @is_leader = false
