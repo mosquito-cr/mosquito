@@ -1,6 +1,9 @@
 class MockQueueList < Mosquito::Runners::QueueList
-  getter queues
   setter state
+
+  def discovered_queues : Array(Mosquito::Queue)
+    @discovered_queues
+  end
 
   def stop(wait_group : WaitGroup = WaitGroup.new(1)) : WaitGroup
     self.state = Mosquito::Runnable::State::Stopping

@@ -20,6 +20,10 @@ module Mosquito
 
     property dequeue_adapter : Mosquito::DequeueAdapter = Mosquito::ShuffleDequeueAdapter.new
 
+    # Maps queue names to resource gates. Queues whose gate returns
+    # `false` from `#allow?` are excluded from dequeuing.
+    property resource_gates : Hash(String, Mosquito::ResourceGate) = {} of String => Mosquito::ResourceGate
+
     property publish_metrics : Bool = false
 
     # How often a mosquito runner should emit a heartbeat metric.

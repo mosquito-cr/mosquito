@@ -8,7 +8,7 @@ describe "Mosquito::Runners::Overseer" do
 
   def register(job_class : Mosquito::Job.class)
     Mosquito::Base.register_job_mapping job_class.name.underscore, job_class
-    queue_list.queues << job_class.queue
+    queue_list.discovered_queues << job_class.queue
   end
 
   def run_job(job_class : Mosquito::Job.class)

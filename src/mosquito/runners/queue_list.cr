@@ -1,6 +1,7 @@
 require "./run_at_most"
 require "../runnable"
 require "./idle_wait"
+require "../resource_gate"
 
 module Mosquito::Runners
   # QueueList handles searching the redis keyspace for named queues.
@@ -9,18 +10,39 @@ module Mosquito::Runners
     include Runnable
     include IdleWait
 
-    getter queues : Array(Queue)
     getter observer : Observability::QueueList { Observability::QueueList.new(self) }
 
+    # Maps queue names to resource gates. Queues not present in this
+    # mapping are always eligible for dequeuing.
+    property resource_gates : Hash(String, ResourceGate) = {} of String => ResourceGate
+
     def initialize
-      @queues = [] of Queue
+      @discovered_queues = [] of Queue
+    end
+
+    # Returns the queues eligible for dequeuing: discovered queues
+    # filtered by any configured resource gates.
+    def queues : Array(Queue)
+      return @discovered_queues if resource_gates.empty?
+      @discovered_queues.select do |q|
+        gate = resource_gates[q.name]?
+        gate.nil? || gate.allow?
+      end
     end
 
     def runnable_name : String
       "queue-list"
     end
 
-    delegate each, to: @queues
+    # Notifies the resource gate for the given queue that a job has
+    # finished, allowing it to update internal bookkeeping.
+    def notify_released(job_run : JobRun, queue : Queue) : Nil
+      if gate = resource_gates[queue.name]?
+        gate.released(job_run, queue)
+      end
+    end
+
+    delegate each, to: queues
 
     def each_run : Nil
       # This idle wait should be at most 1 second. Longer can cause periodic jobs
@@ -35,15 +57,15 @@ module Mosquito::Runners
         observer.checked_for_paused_queues paused
 
         log.notice {
-          queues_which_were_expected_but_not_found = @queues - new_queue_list
-          queues_which_have_never_been_seen = new_queue_list - @queues
+          queues_which_were_expected_but_not_found = @discovered_queues - new_queue_list
+          queues_which_have_never_been_seen = new_queue_list - @discovered_queues
 
           if queues_which_have_never_been_seen.size > 0
             "found #{queues_which_have_never_been_seen.size} new queues: #{queues_which_have_never_been_seen.map(&.name).join(", ")}"
           end
         }
 
-        @queues = new_queue_list
+        @discovered_queues = new_queue_list
 
         @state = State::Idle
       end

@@ -46,6 +46,7 @@ module Mosquito::Runners
       @finished_notifier = Channel(WorkUnit?).new
 
       @queue_list = QueueList.new
+      @queue_list.resource_gates = Mosquito.configuration.resource_gates
       @coordinator = Coordinator.new queue_list
       @dequeue_adapter = Mosquito.configuration.dequeue_adapter
       @executors = [] of Executor
@@ -145,6 +146,7 @@ module Mosquito::Runners
         all_executors_busy = false
         if finished_job
           dequeue_adapter.finished_with(finished_job.job_run, finished_job.queue)
+          queue_list.notify_released(finished_job.job_run, finished_job.queue)
         end
       when timeout(idle_wait)
         log.trace { "Idled for #{idle_wait.total_seconds}s" }
