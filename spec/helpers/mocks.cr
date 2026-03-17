@@ -42,6 +42,18 @@ class PerpetualTestJob < Mosquito::QueuedJob
   end
 end
 
+class PerpetualPollTestJob < Mosquito::PerpetualJob
+  include PerformanceCounter
+
+  param item_id : Int64
+
+  class_property next_batch_items = [] of Mosquito::Job
+
+  def next_batch : Array(Mosquito::Job)
+    self.class.next_batch_items
+  end
+end
+
 class QueueHookedTestJob < Mosquito::QueuedJob
   include PerformanceCounter
 
