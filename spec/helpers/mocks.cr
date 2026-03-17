@@ -42,8 +42,10 @@ class PerpetualTestJob < Mosquito::QueuedJob
   end
 end
 
-class PerpetualPollTestJob < Mosquito::PerpetualJob
+class PerpetualPollTestJob < Mosquito::QueuedJob
   include PerformanceCounter
+
+  poll_every 10.seconds
 
   param item_id : Int64
 

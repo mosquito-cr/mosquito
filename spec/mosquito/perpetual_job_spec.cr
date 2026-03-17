@@ -10,11 +10,10 @@ describe "PerpetualJob polling" do
     queue_list.discovered_queues << job_class.queue
   end
 
-  it "PerpetualJob registers with poll_every" do
-    # PerpetualPollTestJob is defined but doesn't call poll_every,
-    # so we register one manually for this test.
-    run = Mosquito::PerpetualJobRun.new(PerpetualPollTestJob, 10.seconds)
-    assert_equal 10.seconds, run.interval
+  it "auto-registers QueuedJobs that define next_batch and poll_every" do
+    match = Mosquito::Base.perpetual_job_runs.find { |r| r.class == PerpetualPollTestJob }
+    refute_nil match, "Expected PerpetualPollTestJob to be auto-registered"
+    assert_equal 10.seconds, match.not_nil!.interval
   end
 
   it "PerpetualJobRun#try_to_poll enqueues next_batch results" do
@@ -76,7 +75,7 @@ describe "PerpetualJob polling" do
     end
   end
 
-  it "PerpetualJobRunner#poll calls try_to_poll on registered jobs" do
+  it "PerpetualJobRunner#poll calls try_to_poll on auto-registered jobs" do
     clean_slate do
       register PerpetualPollTestJob
       PerpetualPollTestJob.next_batch_items = [
@@ -84,9 +83,6 @@ describe "PerpetualJob polling" do
       ]
 
       coordinator.always_coordinator!
-      perpetual_run = Mosquito::PerpetualJobRun.new(PerpetualPollTestJob, 0.seconds)
-      Mosquito::Base.perpetual_job_runs << perpetual_run
-
       runner.poll
 
       queue_size = PerpetualPollTestJob.queue.size(include_dead: false)
@@ -94,6 +90,5 @@ describe "PerpetualJob polling" do
     end
   ensure
     PerpetualPollTestJob.next_batch_items = [] of Mosquito::Job
-    Mosquito::Base.perpetual_job_runs.reject! { |r| r.class == PerpetualPollTestJob }
   end
 end
