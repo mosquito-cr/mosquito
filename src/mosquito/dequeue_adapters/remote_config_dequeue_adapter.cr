@@ -13,19 +13,28 @@ module Mosquito
   # defaults keeps its value, a queue present only in the remote config is
   # added, and a queue present in both uses the remote value.
   #
+  # ## Per-overseer configuration
+  #
+  # When `overseer_id` is set, the adapter reads from both the global key
+  # and a per-overseer key. The merge order is:
+  #
+  #   defaults → global remote → per-overseer remote
+  #
+  # This lets you run overseers on asymmetric hardware and tune each one
+  # independently while still sharing a common baseline.
+  #
   # ## Setting limits remotely
   #
-  # Use `Mosquito::Api.set_concurrency_limits` to write new limits:
+  # Use `Mosquito::Api.set_concurrency_limits` to write global limits:
   #
   # ```crystal
   # Mosquito::Api.set_concurrency_limits({"queue_a" => 2, "queue_b" => 10})
   # ```
   #
-  # Or read the current effective limits:
+  # Or target a specific overseer:
   #
   # ```crystal
-  # Mosquito::Api.concurrency_limits
-  # # => {"queue_a" => 2, "queue_b" => 10}
+  # Mosquito::Api.set_concurrency_limits({"queue_a" => 1}, overseer_id: "gpu-worker-1")
   # ```
   #
   # ## Example
@@ -34,6 +43,7 @@ module Mosquito
   # Mosquito.configure do |settings|
   #   settings.dequeue_adapter = Mosquito::RemoteConfigDequeueAdapter.new(
   #     defaults: {"queue_a" => 3, "queue_b" => 5},
+  #     overseer_id: "gpu-worker-1",
   #     refresh_interval: 5.seconds,
   #   )
   # end
@@ -41,19 +51,22 @@ module Mosquito
   #
   # In this configuration the adapter starts with the given defaults. Any
   # limits written to the backend via the API will take effect within
-  # `refresh_interval` seconds.
+  # `refresh_interval` seconds. Per-overseer limits override global limits
+  # which override defaults.
   class RemoteConfigDequeueAdapter < DequeueAdapter
     CONFIG_KEY = "concurrency_limits"
 
     getter defaults : Hash(String, Int32)
     getter refresh_interval : Time::Span
     getter inner : ConcurrencyLimitedDequeueAdapter
+    getter overseer_id : String?
 
     @last_refresh_at : Time = Time::UNIX_EPOCH
     @last_remote_limits : Hash(String, Int32) = {} of String => Int32
 
     def initialize(
       @defaults : Hash(String, Int32) = {} of String => Int32,
+      @overseer_id : String? = nil,
       @refresh_interval : Time::Span = 5.seconds
     )
       @inner = ConcurrencyLimitedDequeueAdapter.new(defaults.dup)
@@ -95,26 +108,50 @@ module Mosquito
 
     # ----- Backend storage helpers (class-level) -----
 
-    # Reads the concurrency limits hash currently stored in the backend.
+    # Reads the global concurrency limits hash stored in the backend.
     def self.stored_limits : Hash(String, Int32)
-      key = Mosquito.backend.build_key(CONFIG_KEY)
-      raw = Mosquito.backend.retrieve(key)
+      raw = Mosquito.backend.retrieve(global_config_key)
       raw.transform_values(&.to_i32)
     end
 
-    # Writes a concurrency limits hash to the backend so that all running
-    # `RemoteConfigDequeueAdapter` instances will pick it up on their next
-    # refresh cycle.
-    def self.store_limits(limits : Hash(String, Int32)) : Nil
-      key = Mosquito.backend.build_key(CONFIG_KEY)
-      Mosquito.backend.store(key, limits.transform_values(&.to_s))
+    # Reads the concurrency limits for a specific overseer.
+    def self.stored_limits(overseer_id : String) : Hash(String, Int32)
+      raw = Mosquito.backend.retrieve(overseer_config_key(overseer_id))
+      raw.transform_values(&.to_i32)
     end
 
-    # Removes all remotely stored concurrency limits, causing adapters to
-    # fall back to their defaults.
+    # Writes a concurrency limits hash to the global backend key so that
+    # all running `RemoteConfigDequeueAdapter` instances will pick it up
+    # on their next refresh cycle.
+    def self.store_limits(limits : Hash(String, Int32)) : Nil
+      Mosquito.backend.store(global_config_key, limits.transform_values(&.to_s))
+    end
+
+    # Writes concurrency limits for a specific overseer.
+    def self.store_limits(limits : Hash(String, Int32), overseer_id : String) : Nil
+      Mosquito.backend.store(
+        overseer_config_key(overseer_id),
+        limits.transform_values(&.to_s)
+      )
+    end
+
+    # Removes all globally stored concurrency limits, causing adapters to
+    # fall back to their defaults (or per-overseer limits if set).
     def self.clear_limits : Nil
-      key = Mosquito.backend.build_key(CONFIG_KEY)
-      Mosquito.backend.delete(key)
+      Mosquito.backend.delete(global_config_key)
+    end
+
+    # Removes stored concurrency limits for a specific overseer.
+    def self.clear_limits(overseer_id : String) : Nil
+      Mosquito.backend.delete(overseer_config_key(overseer_id))
+    end
+
+    protected def self.global_config_key : String
+      Mosquito.backend.build_key(CONFIG_KEY)
+    end
+
+    protected def self.overseer_config_key(overseer_id : String) : String
+      Mosquito.backend.build_key(CONFIG_KEY, overseer_id)
     end
 
     private def maybe_refresh_limits
@@ -125,7 +162,16 @@ module Mosquito
     end
 
     private def load_remote_limits : Hash(String, Int32)
-      @last_remote_limits = self.class.stored_limits
+      global = self.class.stored_limits
+
+      result = if oid = overseer_id
+        per_overseer = self.class.stored_limits(oid)
+        global.merge(per_overseer)
+      else
+        global
+      end
+
+      @last_remote_limits = result
     rescue
       # If the backend is unreachable or the data is corrupt, fall back
       # to the last known-good remote limits so previously applied overrides
