@@ -24,6 +24,12 @@ module Mosquito
     # `false` from `#allow?` are excluded from dequeuing.
     property resource_gates : Hash(String, Mosquito::ResourceGate) = {} of String => Mosquito::ResourceGate
 
+    # A stable, user-chosen identifier for this overseer instance.
+    # Used to look up per-overseer remote configuration (executor count,
+    # concurrency limits, etc.). When nil, the overseer only reads global
+    # remote config.
+    property overseer_id : String? = nil
+
     property publish_metrics : Bool = false
 
     # How often a mosquito runner should emit a heartbeat metric.

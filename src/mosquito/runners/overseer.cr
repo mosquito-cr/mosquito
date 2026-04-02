@@ -173,6 +173,8 @@ module Mosquito::Runners
         spawn { @finished_notifier.send nil }
       end
 
+      maybe_apply_remote_executor_count
+
       adjust_executor_pool
 
       run_at_most every: Mosquito.configuration.heartbeat_interval, label: :heartbeat do
@@ -284,6 +286,24 @@ module Mosquito::Runners
 
       if total > 0
         observer.orphaned_jobs_recovered total
+      end
+    end
+
+    # Polls the backend for a remote executor count override and applies
+    # it when present. Checks at most once per heartbeat interval.
+    # The resolved value follows the precedence: per-overseer → global → current.
+    private def maybe_apply_remote_executor_count : Nil
+      run_at_most every: Mosquito.configuration.heartbeat_interval, label: :remote_executor_count do
+        overseer_id = Mosquito.configuration.overseer_id
+        if remote_count = Api::ExecutorConfig.resolve(overseer_id)
+          clamped = Math.max(remote_count, 1)
+          if clamped != executor_count
+            log.info { "Remote executor count changed: #{executor_count} → #{clamped}" }
+            self.executor_count = clamped
+          end
+        end
+      rescue ex
+        log.warn { "Failed to fetch remote executor count: #{ex.message}" }
       end
     end
 

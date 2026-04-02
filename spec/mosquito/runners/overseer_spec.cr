@@ -103,6 +103,76 @@ describe "Mosquito::Runners::Overseer" do
     end
   end
 
+  describe "remote executor count" do
+    it "applies the remote executor count on each_run" do
+      clean_slate do
+        Mosquito.configuration.overseer_id = "test-worker"
+        Mosquito::Api.set_executor_count(3, overseer_id: "test-worker")
+
+        queue_list.state = Runnable::State::Working
+        overseer.each_run
+
+        assert_equal 3, overseer.executor_count
+      ensure
+        Mosquito.configuration.overseer_id = nil
+      end
+    end
+
+    it "prefers per-overseer count over global" do
+      clean_slate do
+        Mosquito.configuration.overseer_id = "test-worker"
+        Mosquito::Api.set_executor_count(10)
+        Mosquito::Api.set_executor_count(2, overseer_id: "test-worker")
+
+        queue_list.state = Runnable::State::Working
+        overseer.each_run
+
+        assert_equal 2, overseer.executor_count
+      ensure
+        Mosquito.configuration.overseer_id = nil
+      end
+    end
+
+    it "falls back to global when no per-overseer count is set" do
+      clean_slate do
+        Mosquito.configuration.overseer_id = "test-worker"
+        Mosquito::Api.set_executor_count(7)
+
+        queue_list.state = Runnable::State::Working
+        overseer.each_run
+
+        assert_equal 7, overseer.executor_count
+      ensure
+        Mosquito.configuration.overseer_id = nil
+      end
+    end
+
+    it "does not change executor_count when no remote value is set" do
+      clean_slate do
+        original_count = overseer.executor_count
+
+        queue_list.state = Runnable::State::Working
+        overseer.each_run
+
+        assert_equal original_count, overseer.executor_count
+      end
+    end
+
+    it "clamps an invalid remote executor count of 0 to 1" do
+      clean_slate do
+        Mosquito.configuration.overseer_id = "test-worker"
+        Mosquito::Api.set_executor_count(0, overseer_id: "test-worker")
+
+        queue_list.state = Runnable::State::Working
+        overseer.each_run
+
+        assert_equal 1, overseer.executor_count
+      ensure
+        Mosquito.configuration.overseer_id = nil
+      end
+    end
+  end
+
   describe "cleanup_orphaned_pending_jobs" do
     it "recovers a pending job whose overseer is dead" do
       clean_slate do

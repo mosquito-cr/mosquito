@@ -114,6 +114,30 @@ describe "Mosquito::RemoteConfigDequeueAdapter" do
     end
   end
 
+  it "preserves in-flight counts when limits are refreshed" do
+    clean_slate do
+      register QueuedTestJob
+      2.times { QueuedTestJob.new.enqueue }
+
+      adapter = Mosquito::RemoteConfigDequeueAdapter.new(
+        defaults: {"queued_test_job" => 1},
+        refresh_interval: 0.seconds,
+      )
+
+      result1 = adapter.dequeue(queue_list)
+      refute_nil result1
+      assert_equal 1, adapter.active_count("queued_test_job")
+
+      # Refresh with new limits — must not reset the in-flight counter.
+      Mosquito::RemoteConfigDequeueAdapter.store_limits({"queued_test_job" => 2})
+      adapter.refresh_limits
+      assert_equal 1, adapter.active_count("queued_test_job")
+
+      adapter.finished_with(result1.not_nil!.job_run, result1.not_nil!.queue)
+      assert_equal 0, adapter.active_count("queued_test_job")
+    end
+  end
+
   it "delegates finished_with to the inner adapter" do
     clean_slate do
       register QueuedTestJob
@@ -293,6 +317,38 @@ describe "Mosquito::RemoteConfigDequeueAdapter" do
         # Global should be unaffected.
         global = Mosquito::RemoteConfigDequeueAdapter.stored_limits
         assert_equal({} of String => Int32, global)
+      end
+    end
+
+    it "store_limits overwrites rather than merges (stale entries are removed)" do
+      clean_slate do
+        Mosquito::RemoteConfigDequeueAdapter.store_limits({"queue_a" => 3, "queue_b" => 7})
+        Mosquito::RemoteConfigDequeueAdapter.store_limits({"queue_a" => 1})
+
+        retrieved = Mosquito::RemoteConfigDequeueAdapter.stored_limits
+        assert_equal 1, retrieved["queue_a"]
+        refute retrieved.has_key?("queue_b"), "queue_b should have been removed by the overwrite"
+      end
+    end
+
+    it "store_limits with overseer_id overwrites rather than merges" do
+      clean_slate do
+        Mosquito::RemoteConfigDequeueAdapter.store_limits({"queue_a" => 3, "queue_b" => 7}, overseer_id: "worker-1")
+        Mosquito::RemoteConfigDequeueAdapter.store_limits({"queue_a" => 1}, overseer_id: "worker-1")
+
+        retrieved = Mosquito::RemoteConfigDequeueAdapter.stored_limits("worker-1")
+        assert_equal 1, retrieved["queue_a"]
+        refute retrieved.has_key?("queue_b"), "queue_b should have been removed by the overwrite"
+      end
+    end
+
+    it "store_limits with an empty hash removes all stored limits" do
+      clean_slate do
+        Mosquito::RemoteConfigDequeueAdapter.store_limits({"queue_a" => 3})
+        Mosquito::RemoteConfigDequeueAdapter.store_limits({} of String => Int32)
+
+        retrieved = Mosquito::RemoteConfigDequeueAdapter.stored_limits
+        assert_equal({} of String => Int32, retrieved)
       end
     end
 
