@@ -62,4 +62,30 @@ module Mosquito::Api
   def self.set_concurrency_limits(limits : Hash(String, Int32), overseer_id : String) : Nil
     concurrency_config.update(limits, overseer_id)
   end
+
+  # Returns an `ExecutorConfig` instance for reading and writing the
+  # remotely stored executor count.
+  def self.executor_config : ExecutorConfig
+    ExecutorConfig.instance
+  end
+
+  # Convenience reader for the global remote executor count.
+  def self.executor_count : Int32?
+    executor_config.executor_count
+  end
+
+  # Convenience reader for a specific overseer's executor count.
+  def self.executor_count(overseer_id : String) : Int32?
+    executor_config.executor_count(overseer_id)
+  end
+
+  # Convenience writer — sets the global executor count override.
+  def self.set_executor_count(count : Int32) : Nil
+    executor_config.update(count)
+  end
+
+  # Convenience writer — sets the executor count for a specific overseer.
+  def self.set_executor_count(count : Int32, overseer_id : String) : Nil
+    executor_config.update(count, overseer_id)
+  end
 end

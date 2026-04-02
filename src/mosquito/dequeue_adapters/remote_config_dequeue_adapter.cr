@@ -120,19 +120,19 @@ module Mosquito
       raw.transform_values(&.to_i32)
     end
 
-    # Writes a concurrency limits hash to the global backend key so that
-    # all running `RemoteConfigDequeueAdapter` instances will pick it up
-    # on their next refresh cycle.
+    # Overwrites the global concurrency limits with *limits*. Any previously
+    # stored queue entries not present in *limits* are removed.
     def self.store_limits(limits : Hash(String, Int32)) : Nil
-      Mosquito.backend.store(global_config_key, limits.transform_values(&.to_s))
+      key = global_config_key
+      Mosquito.backend.delete(key)
+      Mosquito.backend.store(key, limits.transform_values(&.to_s)) unless limits.empty?
     end
 
-    # Writes concurrency limits for a specific overseer.
+    # Overwrites the concurrency limits for a specific overseer with *limits*.
     def self.store_limits(limits : Hash(String, Int32), overseer_id : String) : Nil
-      Mosquito.backend.store(
-        overseer_config_key(overseer_id),
-        limits.transform_values(&.to_s)
-      )
+      key = overseer_config_key(overseer_id)
+      Mosquito.backend.delete(key)
+      Mosquito.backend.store(key, limits.transform_values(&.to_s)) unless limits.empty?
     end
 
     # Removes all globally stored concurrency limits, causing adapters to
