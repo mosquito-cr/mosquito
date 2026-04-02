@@ -40,15 +40,26 @@ module Mosquito::Api
     ConcurrencyConfig.instance
   end
 
-  # Convenience reader for the current remote concurrency limits.
+  # Convenience reader for the current global remote concurrency limits.
   def self.concurrency_limits : Hash(String, Int32)
     concurrency_config.limits
   end
 
-  # Convenience writer — replaces the stored concurrency limits so that
-  # all `RemoteConfigDequeueAdapter` instances pick them up on their next
-  # refresh cycle.
+  # Convenience reader for a specific overseer's concurrency limits.
+  def self.concurrency_limits(overseer_id : String) : Hash(String, Int32)
+    concurrency_config.limits(overseer_id)
+  end
+
+  # Convenience writer — replaces the global stored concurrency limits so
+  # that all `RemoteConfigDequeueAdapter` instances pick them up on their
+  # next refresh cycle.
   def self.set_concurrency_limits(limits : Hash(String, Int32)) : Nil
     concurrency_config.update(limits)
+  end
+
+  # Convenience writer — replaces stored concurrency limits for a specific
+  # overseer.
+  def self.set_concurrency_limits(limits : Hash(String, Int32), overseer_id : String) : Nil
+    concurrency_config.update(limits, overseer_id)
   end
 end
