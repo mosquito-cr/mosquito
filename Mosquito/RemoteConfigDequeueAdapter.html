@@ -14,7 +14,7 @@
 <script type="text/javascript" src="../js/doc.js"></script>
 
   <meta name="repository-name" content="mosquito">
-  <title>Mosquito::PeriodicJobRun - mosquito 2.0.0</title>
+  <title>Mosquito::RemoteConfigDequeueAdapter - mosquito 2.0.0</title>
   <script type="text/javascript">
     CrystalDocs.base_path = "../";
   </script>
@@ -267,7 +267,7 @@
       
     </li>
   
-  <li class=" current" data-id="mosquito/Mosquito/PeriodicJobRun" data-name="mosquito::periodicjobrun">
+  <li class=" " data-id="mosquito/Mosquito/PeriodicJobRun" data-name="mosquito::periodicjobrun">
       <a href="../Mosquito/PeriodicJobRun.html">PeriodicJobRun</a>
       
     </li>
@@ -312,7 +312,7 @@
       
     </li>
   
-  <li class=" " data-id="mosquito/Mosquito/RemoteConfigDequeueAdapter" data-name="mosquito::remoteconfigdequeueadapter">
+  <li class=" current" data-id="mosquito/Mosquito/RemoteConfigDequeueAdapter" data-name="mosquito::remoteconfigdequeueadapter">
       <a href="../Mosquito/RemoteConfigDequeueAdapter.html">RemoteConfigDequeueAdapter</a>
       
     </li>
@@ -478,15 +478,69 @@
 
   <span class="kind">
     class
-  </span> Mosquito::<wbr>PeriodicJobRun
+  </span> Mosquito::<wbr>RemoteConfigDequeueAdapter
 
 </h1>
 
 
-  <ul class="superclass-hierarchy"><li class="superclass"><a href="../Mosquito/PeriodicJobRun.html">Mosquito::PeriodicJobRun</a></li><li class="superclass">Reference</li><li class="superclass">Object</li></ul>
+  <ul class="superclass-hierarchy"><li class="superclass"><a href="../Mosquito/RemoteConfigDequeueAdapter.html">Mosquito::RemoteConfigDequeueAdapter</a></li><li class="superclass"><a href="../Mosquito/DequeueAdapter.html">Mosquito::DequeueAdapter</a></li><li class="superclass">Reference</li><li class="superclass">Object</li></ul>
 
 
 
+
+  <h2>
+    <a id="overview" class="anchor" href="#overview">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Overview
+  </h2>
+
+  <p>A dequeue adapter that wraps <code><a href="../Mosquito/ConcurrencyLimitedDequeueAdapter.html">ConcurrencyLimitedDequeueAdapter</a></code> with
+remotely configurable concurrency limits stored in the Mosquito backend
+(e.g. Redis).</p>
+<p>Limits are refreshed by polling the backend at a configurable interval.
+When the remote key is absent or empty the adapter falls back to the
+<code><a href="../Mosquito/RemoteConfigDequeueAdapter.html#defaults%3AHash%28String%2CInt32%29-instance-method">#defaults</a></code> hash provided at construction time.</p>
+<p>Remote values are <strong>merged on top of</strong> defaults: a queue present only in
+defaults keeps its value, a queue present only in the remote config is
+added, and a queue present in both uses the remote value.</p>
+<h2><a id="per-overseer-configuration" class="anchor" href="#per-overseer-configuration">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>Per-overseer configuration</h2>
+<p>When <code><a href="../Mosquito/RemoteConfigDequeueAdapter.html#overseer_id%3AString%7CNil-instance-method">#overseer_id</a></code> is set, the adapter reads from both the global key
+and a per-overseer key. The merge order is:</p>
+<p>defaults → global remote → per-overseer remote</p>
+<p>This lets you run overseers on asymmetric hardware and tune each one
+independently while still sharing a common baseline.</p>
+<h2><a id="setting-limits-remotely" class="anchor" href="#setting-limits-remotely">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>Setting limits remotely</h2>
+<p>Use <code><a href="../Mosquito/Api.html#set_concurrency_limits%28limits%3AHash%28String%2CInt32%29%2Coverseer_id%3AString%29%3ANil-class-method">Mosquito::Api.set_concurrency_limits</a></code> to write global limits:</p>
+<pre><code class="language-crystal"><span class="t">Mosquito</span><span class="t">::</span><span class="t">Api</span>.set_concurrency_limits({<span class="s">&quot;queue_a&quot;</span> <span class="o">=&gt;</span> <span class="n">2</span>, <span class="s">&quot;queue_b&quot;</span> <span class="o">=&gt;</span> <span class="n">10</span>})</code></pre>
+<p>Or target a specific overseer:</p>
+<pre><code class="language-crystal"><span class="t">Mosquito</span><span class="t">::</span><span class="t">Api</span>.set_concurrency_limits({<span class="s">&quot;queue_a&quot;</span> <span class="o">=&gt;</span> <span class="n">1</span>}, overseer_id: <span class="s">&quot;gpu-worker-1&quot;</span>)</code></pre>
+<h2><a id="example" class="anchor" href="#example">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>Example</h2>
+<pre><code class="language-crystal"><span class="t">Mosquito</span>.configure <span class="k">do</span> <span class="o">|</span>settings<span class="o">|</span>
+  settings.dequeue_adapter <span class="o">=</span> <span class="t">Mosquito</span><span class="t">::</span><span class="t">RemoteConfigDequeueAdapter</span>.new(
+    defaults: {<span class="s">&quot;queue_a&quot;</span> <span class="o">=&gt;</span> <span class="n">3</span>, <span class="s">&quot;queue_b&quot;</span> <span class="o">=&gt;</span> <span class="n">5</span>},
+    overseer_id: <span class="s">&quot;gpu-worker-1&quot;</span>,
+    refresh_interval: <span class="n">5</span>.seconds,
+  )
+<span class="k">end</span></code></pre>
+<p>In this configuration the adapter starts with the given defaults. Any
+limits written to the backend via the API will take effect within
+<code><a href="../Mosquito/RemoteConfigDequeueAdapter.html#refresh_interval%3ATime%3A%3ASpan-instance-method">#refresh_interval</a></code> seconds. Per-overseer limits override global limits
+which override defaults.</p>
 
 
 
@@ -513,7 +567,7 @@
   </h2>
   
     
-      mosquito/periodic_job_run.cr
+      mosquito/dequeue_adapters/remote_config_dequeue_adapter.cr
     
     <br/>
   
@@ -532,8 +586,8 @@
   
   <dl>
     
-      <dt class="entry-const" id="Log">
-        <strong>Log</strong> = <code><span class="t">::</span><span class="t">Log</span>.<span class="k">for</span>(<span class="k">self</span>)</code>
+      <dt class="entry-const" id="CONFIG_KEY">
+        <strong>CONFIG_KEY</strong> = <code><span class="s">&quot;concurrency_limits&quot;</span></code>
       </dt>
       
     
@@ -553,7 +607,7 @@
   <ul class="list-summary">
     
       <li class="entry-summary">
-        <a href="#new%28class__arg0%3A%3A%3AMosquito%3A%3APeriodicJob.class%2Cinterval%3ATime%3A%3AMonthSpan%7CTime%3A%3ASpan%29-class-method" class="signature"><strong>.new</strong>(class __arg0 : <span class="t">::</span><span class="t">Mosquito</span><span class="t">::</span><span class="t">PeriodicJob</span>.<span class="k">class</span>, interval : Time::MonthSpan | Time::Span)</a>
+        <a href="#new%28defaults%3AHash%28String%2CInt32%29%3D%7B%7DofString%3D%3EInt32%2Coverseer_id%3AString%7CNil%3Dnil%2Crefresh_interval%3ATime%3A%3ASpan%3D5.seconds%29-class-method" class="signature"><strong>.new</strong>(defaults : Hash(String, Int32) = {} <span class="k">of</span> <span class="t">String</span> <span class="o">=&gt;</span> <span class="t">Int32</span>, overseer_id : String | Nil = <span class="n">nil</span>, refresh_interval : Time::Span = <span class="n">5</span>.seconds)</a>
         
       </li>
     
@@ -561,6 +615,60 @@
 
 
   
+  <h2>
+    <a id="class-method-summary" class="anchor" href="#class-method-summary">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Class Method Summary
+  </h2>
+  <ul class="list-summary">
+    
+      <li class="entry-summary">
+        <a href="#clear_limits%28overseer_id%3AString%29%3ANil-class-method" class="signature"><strong>.clear_limits</strong>(overseer_id : String) : Nil</a>
+        
+          <div class="summary"><p>Removes stored concurrency limits for a specific overseer.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#clear_limits%3ANil-class-method" class="signature"><strong>.clear_limits</strong> : Nil</a>
+        
+          <div class="summary"><p>Removes all globally stored concurrency limits, causing adapters to fall back to their defaults (or per-overseer limits if set).</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#store_limits%28limits%3AHash%28String%2CInt32%29%2Coverseer_id%3AString%29%3ANil-class-method" class="signature"><strong>.store_limits</strong>(limits : Hash(String, Int32), overseer_id : String) : Nil</a>
+        
+          <div class="summary"><p>Overwrites the concurrency limits for a specific overseer with <em>limits</em>.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#store_limits%28limits%3AHash%28String%2CInt32%29%29%3ANil-class-method" class="signature"><strong>.store_limits</strong>(limits : Hash(String, Int32)) : Nil</a>
+        
+          <div class="summary"><p>Overwrites the global concurrency limits with <em>limits</em>.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#stored_limits%28overseer_id%3AString%29%3AHash%28String%2CInt32%29-class-method" class="signature"><strong>.stored_limits</strong>(overseer_id : String) : Hash(String, Int32)</a>
+        
+          <div class="summary"><p>Reads the concurrency limits for a specific overseer.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#stored_limits%3AHash%28String%2CInt32%29-class-method" class="signature"><strong>.stored_limits</strong> : Hash(String, Int32)</a>
+        
+          <div class="summary"><p>Reads the global concurrency limits hash stored in the backend.</p></div>
+        
+      </li>
+    
+  </ul>
+
 
   
 
@@ -576,76 +684,57 @@
   <ul class="list-summary">
     
       <li class="entry-summary">
-        <a href="#class%3AMosquito%3A%3APeriodicJob.class-instance-method" class="signature"><strong>#class</strong> : <span class="t">Mosquito</span><span class="t">::</span><span class="t">PeriodicJob</span>.<span class="k">class</span></a>
+        <a href="#active_count%28queue_name%3AString%29%3AInt32-instance-method" class="signature"><strong>#active_count</strong>(queue_name : String) : Int32</a>
         
-          <div class="summary"><p>Returns the <strong>runtime</strong> <code>Class</code> of an object.</p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#class%3D%28class__arg0%3AMosquito%3A%3APeriodicJob.class%29-instance-method" class="signature"><strong>#class=</strong>(class __arg0 : <span class="t">Mosquito</span><span class="t">::</span><span class="t">PeriodicJob</span>.<span class="k">class</span>)</a>
+          <div class="summary"><p>Returns the current in-flight count for <em>queue_name</em>, delegated to the inner adapter.</p></div>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#execute-instance-method" class="signature"><strong>#execute</strong></a>
-        
-          <div class="summary"><p>Enqueues the job for execution and records the job run id so that subsequent intervals can detect that a run is already pending.</p></div>
+        <a href="#defaults%3AHash%28String%2CInt32%29-instance-method" class="signature"><strong>#defaults</strong> : Hash(String, Int32)</a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#interval%3ATime%3A%3ASpan%7CTime%3A%3AMonthSpan-instance-method" class="signature"><strong>#interval</strong> : Time::Span | Time::MonthSpan</a>
+        <a href="#dequeue%28queue_list%3ARunners%3A%3AQueueList%29%3AWorkUnit%7CNil-instance-method" class="signature"><strong>#dequeue</strong>(queue_list : Runners::QueueList) : WorkUnit | Nil</a>
+        
+          <div class="summary"><p>Attempt to dequeue a job from one of the queues managed by <code>queue_list</code>.</p></div>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#interval%3D%28interval%3ATime%3A%3ASpan%7CTime%3A%3AMonthSpan%29-instance-method" class="signature"><strong>#interval=</strong>(interval : Time::Span | Time::MonthSpan)</a>
+        <a href="#finished_with%28job_run%3AJobRun%2Cqueue%3AQueue%29%3ANil-instance-method" class="signature"><strong>#finished_with</strong>(job_run : JobRun, queue : Queue) : Nil</a>
+        
+          <div class="summary"><p>Called by the Overseer when a job run has finished executing.</p></div>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#last_executed_at-instance-method" class="signature"><strong>#last_executed_at</strong></a>
-        
-          <div class="summary"><p>The last executed timestamp, or &quot;never&quot; if it doesn't exist.</p></div>
+        <a href="#inner%3AConcurrencyLimitedDequeueAdapter-instance-method" class="signature"><strong>#inner</strong> : ConcurrencyLimitedDequeueAdapter</a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#last_executed_at%3D%28time%3ATime%29-instance-method" class="signature"><strong>#last_executed_at=</strong>(time : Time)</a>
+        <a href="#limits%3AHash%28String%2CInt32%29-instance-method" class="signature"><strong>#limits</strong> : Hash(String, Int32)</a>
         
-          <div class="summary"><p>Updates the last executed timestamp in the backend, and schedules the metadata for deletion after 3*interval seconds.</p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#last_executed_at%3F-instance-method" class="signature"><strong>#last_executed_at?</strong></a>
-        
-          <div class="summary"><p>The last executed timestamp for this periodicjob tracked by the backend.</p></div>
+          <div class="summary"><p>Returns the current effective concurrency limits (defaults merged with any remote overrides).</p></div>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#metadata%3AMetadata-instance-method" class="signature"><strong>#metadata</strong> : Metadata</a>
+        <a href="#overseer_id%3AString%7CNil-instance-method" class="signature"><strong>#overseer_id</strong> : String | Nil</a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#observer%3AObservability%3A%3APeriodicJob-instance-method" class="signature"><strong>#observer</strong> : Observability::PeriodicJob</a>
+        <a href="#refresh_interval%3ATime%3A%3ASpan-instance-method" class="signature"><strong>#refresh_interval</strong> : Time::Span</a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#pending_job_run%3F%3ABool-instance-method" class="signature"><strong>#pending_job_run?</strong> : Bool</a>
+        <a href="#refresh_limits%3ANil-instance-method" class="signature"><strong>#refresh_limits</strong> : Nil</a>
         
-          <div class="summary"><p>Returns true if a previously enqueued job run has not yet finished.</p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#try_to_execute%3ABool-instance-method" class="signature"><strong>#try_to_execute</strong> : Bool</a>
-        
-          <div class="summary"><p>Check the last executed timestamp against the current time, and enqueue the job if it's time to execute.</p></div>
+          <div class="summary"><p>Force an immediate refresh from the backend, ignoring the <code><a href="../Mosquito/RemoteConfigDequeueAdapter.html#refresh_interval%3ATime%3A%3ASpan-instance-method">#refresh_interval</a></code> timer.</p></div>
         
       </li>
     
@@ -654,6 +743,33 @@
 
 
   <div class="methods-inherited">
+    
+      
+
+  <h3>Instance methods inherited from class <code><a href="../Mosquito/DequeueAdapter.html">Mosquito::DequeueAdapter</a></code></h3>
+  
+  
+    <a href="../Mosquito/DequeueAdapter.html#dequeue%28queue_list%3ARunners%3A%3AQueueList%29%3AWorkUnit%7CNil-instance-method" class="tooltip">
+      <span>dequeue(queue_list : Runners::QueueList) : WorkUnit | Nil</span>
+    dequeue</a>, 
+    
+  
+    <a href="../Mosquito/DequeueAdapter.html#finished_with%28job_run%3AJobRun%2Cqueue%3AQueue%29%3ANil-instance-method" class="tooltip">
+      <span>finished_with(job_run : JobRun, queue : Queue) : Nil</span>
+    finished_with</a>
+    
+  
+
+
+      
+
+
+      
+
+
+      
+
+
     
       
 
@@ -693,12 +809,12 @@
     Constructor Detail
   </h2>
   
-    <div class="entry-detail" id="new(class__arg0:::Mosquito::PeriodicJob.class,interval:Time::MonthSpan|Time::Span)-class-method">
+    <div class="entry-detail" id="new(defaults:Hash(String,Int32)={}ofString=&gt;Int32,overseer_id:String|Nil=nil,refresh_interval:Time::Span=5.seconds)-class-method">
       <div class="signature">
         
-        def self.<strong>new</strong>(class __arg0 : <span class="t">::</span><span class="t">Mosquito</span><span class="t">::</span><span class="t">PeriodicJob</span>.<span class="k">class</span>, interval : Time::MonthSpan | Time::Span)
+        def self.<strong>new</strong>(defaults : Hash(String, Int32) = {} <span class="k">of</span> <span class="t">String</span> <span class="o">=&gt;</span> <span class="t">Int32</span>, overseer_id : String | Nil = <span class="n">nil</span>, refresh_interval : Time::Span = <span class="n">5</span>.seconds)
 
-        <a class="method-permalink" href="#new%28class__arg0%3A%3A%3AMosquito%3A%3APeriodicJob.class%2Cinterval%3ATime%3A%3AMonthSpan%7CTime%3A%3ASpan%29-class-method">#</a>
+        <a class="method-permalink" href="#new%28defaults%3AHash%28String%2CInt32%29%3D%7B%7DofString%3D%3EInt32%2Coverseer_id%3AString%7CNil%3Dnil%2Crefresh_interval%3ATime%3A%3ASpan%3D5.seconds%29-class-method">#</a>
       </div>
       
       <br/>
@@ -710,6 +826,132 @@
 
 
   
+  <h2>
+    <a id="class-method-detail" class="anchor" href="#class-method-detail">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Class Method Detail
+  </h2>
+  
+    <div class="entry-detail" id="clear_limits(overseer_id:String):Nil-class-method">
+      <div class="signature">
+        
+        def self.<strong>clear_limits</strong>(overseer_id : String) : Nil
+
+        <a class="method-permalink" href="#clear_limits%28overseer_id%3AString%29%3ANil-class-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Removes stored concurrency limits for a specific overseer.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="clear_limits:Nil-class-method">
+      <div class="signature">
+        
+        def self.<strong>clear_limits</strong> : Nil
+
+        <a class="method-permalink" href="#clear_limits%3ANil-class-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Removes all globally stored concurrency limits, causing adapters to
+fall back to their defaults (or per-overseer limits if set).</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="store_limits(limits:Hash(String,Int32),overseer_id:String):Nil-class-method">
+      <div class="signature">
+        
+        def self.<strong>store_limits</strong>(limits : Hash(String, Int32), overseer_id : String) : Nil
+
+        <a class="method-permalink" href="#store_limits%28limits%3AHash%28String%2CInt32%29%2Coverseer_id%3AString%29%3ANil-class-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Overwrites the concurrency limits for a specific overseer with <em>limits</em>.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="store_limits(limits:Hash(String,Int32)):Nil-class-method">
+      <div class="signature">
+        
+        def self.<strong>store_limits</strong>(limits : Hash(String, Int32)) : Nil
+
+        <a class="method-permalink" href="#store_limits%28limits%3AHash%28String%2CInt32%29%29%3ANil-class-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Overwrites the global concurrency limits with <em>limits</em>. Any previously
+stored queue entries not present in <em>limits</em> are removed.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="stored_limits(overseer_id:String):Hash(String,Int32)-class-method">
+      <div class="signature">
+        
+        def self.<strong>stored_limits</strong>(overseer_id : String) : Hash(String, Int32)
+
+        <a class="method-permalink" href="#stored_limits%28overseer_id%3AString%29%3AHash%28String%2CInt32%29-class-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Reads the concurrency limits for a specific overseer.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="stored_limits:Hash(String,Int32)-class-method">
+      <div class="signature">
+        
+        def self.<strong>stored_limits</strong> : Hash(String, Int32)
+
+        <a class="method-permalink" href="#stored_limits%3AHash%28String%2CInt32%29-class-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Reads the global concurrency limits hash stored in the backend.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+
 
   
 
@@ -723,29 +965,57 @@
     Instance Method Detail
   </h2>
   
-    <div class="entry-detail" id="class:Mosquito::PeriodicJob.class-instance-method">
+    <div class="entry-detail" id="active_count(queue_name:String):Int32-instance-method">
       <div class="signature">
         
-        def <strong>class</strong> : <span class="t">Mosquito</span><span class="t">::</span><span class="t">PeriodicJob</span>.<span class="k">class</span>
+        def <strong>active_count</strong>(queue_name : String) : Int32
 
-        <a class="method-permalink" href="#class%3AMosquito%3A%3APeriodicJob.class-instance-method">#</a>
+        <a class="method-permalink" href="#active_count%28queue_name%3AString%29%3AInt32-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Returns the current in-flight count for <em>queue_name</em>, delegated to
+the inner adapter.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="defaults:Hash(String,Int32)-instance-method">
+      <div class="signature">
+        
+        def <strong>defaults</strong> : Hash(String, Int32)
+
+        <a class="method-permalink" href="#defaults%3AHash%28String%2CInt32%29-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="dequeue(queue_list:Runners::QueueList):WorkUnit|Nil-instance-method">
+      <div class="signature">
+        
+        def <strong>dequeue</strong>(queue_list : <a href="../Mosquito/Runners/QueueList.html">Runners::QueueList</a>) : <a href="../Mosquito/WorkUnit.html">WorkUnit</a> | Nil
+
+        <a class="method-permalink" href="#dequeue%28queue_list%3ARunners%3A%3AQueueList%29%3AWorkUnit%7CNil-instance-method">#</a>
       </div>
       
         <div class="doc">
           
             <div class="doc-inherited">
-              Description copied from class Object
+              Description copied from class <a href="../Mosquito/DequeueAdapter.html">Mosquito::DequeueAdapter</a>
             </div>
           
-          <p>Returns the <strong>runtime</strong> <code>Class</code> of an object.</p>
-<pre><code class="language-crystal"><span class="n">1</span>.<span class="k">class</span>       <span class="c"># =&gt; Int32</span>
-<span class="s">&quot;hello&quot;</span>.<span class="k">class</span> <span class="c"># =&gt; String</span></code></pre>
-<p>Compare it with <code>typeof</code>, which returns the <strong>compile-time</strong> type of an object:</p>
-<pre><code class="language-crystal">random_value <span class="o">=</span> rand <span class="c"># =&gt; 0.627423</span>
-value <span class="o">=</span> random_value <span class="o">&lt;</span> <span class="n">0.5</span> ? <span class="n">1</span> : <span class="s">&quot;hello&quot;</span>
-value         <span class="c"># =&gt; &quot;hello&quot;</span>
-value.<span class="k">class</span>   <span class="c"># =&gt; String</span>
-<span class="k">typeof</span>(value) <span class="c"># =&gt; Int32 | String</span></code></pre>
+          <p>Attempt to dequeue a job from one of the queues managed by <code>queue_list</code>.</p>
+<p>Returns a <code><a href="../Mosquito/WorkUnit.html">WorkUnit</a></code> when a job is available, or <code>nil</code>
+when all queues are empty.</p>
         </div>
       
       <br/>
@@ -754,32 +1024,23 @@ value.<span class="k">class</span>   <span class="c"># =&gt; String</span>
       </div>
     </div>
   
-    <div class="entry-detail" id="class=(class__arg0:Mosquito::PeriodicJob.class)-instance-method">
+    <div class="entry-detail" id="finished_with(job_run:JobRun,queue:Queue):Nil-instance-method">
       <div class="signature">
         
-        def <strong>class=</strong>(class __arg0 : <span class="t">Mosquito</span><span class="t">::</span><span class="t">PeriodicJob</span>.<span class="k">class</span>)
+        def <strong>finished_with</strong>(job_run : <a href="../Mosquito/JobRun.html">JobRun</a>, queue : <a href="../Mosquito/Queue.html">Queue</a>) : Nil
 
-        <a class="method-permalink" href="#class%3D%28class__arg0%3AMosquito%3A%3APeriodicJob.class%29-instance-method">#</a>
-      </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="execute-instance-method">
-      <div class="signature">
-        
-        def <strong>execute</strong>
-
-        <a class="method-permalink" href="#execute-instance-method">#</a>
+        <a class="method-permalink" href="#finished_with%28job_run%3AJobRun%2Cqueue%3AQueue%29%3ANil-instance-method">#</a>
       </div>
       
         <div class="doc">
           
-          <p>Enqueues the job for execution and records the job run id so that
-subsequent intervals can detect that a run is already pending.</p>
+            <div class="doc-inherited">
+              Description copied from class <a href="../Mosquito/DequeueAdapter.html">Mosquito::DequeueAdapter</a>
+            </div>
+          
+          <p>Called by the Overseer when a job run has finished executing.
+Override this to react to completed jobs (e.g. update internal
+counters or rebalance queue weights).</p>
         </div>
       
       <br/>
@@ -788,12 +1049,12 @@ subsequent intervals can detect that a run is already pending.</p>
       </div>
     </div>
   
-    <div class="entry-detail" id="interval:Time::Span|Time::MonthSpan-instance-method">
+    <div class="entry-detail" id="inner:ConcurrencyLimitedDequeueAdapter-instance-method">
       <div class="signature">
         
-        def <strong>interval</strong> : Time::Span | Time::MonthSpan
+        def <strong>inner</strong> : <a href="../Mosquito/ConcurrencyLimitedDequeueAdapter.html">ConcurrencyLimitedDequeueAdapter</a>
 
-        <a class="method-permalink" href="#interval%3ATime%3A%3ASpan%7CTime%3A%3AMonthSpan-instance-method">#</a>
+        <a class="method-permalink" href="#inner%3AConcurrencyLimitedDequeueAdapter-instance-method">#</a>
       </div>
       
       <br/>
@@ -802,31 +1063,18 @@ subsequent intervals can detect that a run is already pending.</p>
       </div>
     </div>
   
-    <div class="entry-detail" id="interval=(interval:Time::Span|Time::MonthSpan)-instance-method">
+    <div class="entry-detail" id="limits:Hash(String,Int32)-instance-method">
       <div class="signature">
         
-        def <strong>interval=</strong>(interval : Time::Span | Time::MonthSpan)
+        def <strong>limits</strong> : Hash(String, Int32)
 
-        <a class="method-permalink" href="#interval%3D%28interval%3ATime%3A%3ASpan%7CTime%3A%3AMonthSpan%29-instance-method">#</a>
-      </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="last_executed_at-instance-method">
-      <div class="signature">
-        
-        def <strong>last_executed_at</strong>
-
-        <a class="method-permalink" href="#last_executed_at-instance-method">#</a>
+        <a class="method-permalink" href="#limits%3AHash%28String%2CInt32%29-instance-method">#</a>
       </div>
       
         <div class="doc">
           
-          <p>The last executed timestamp, or &quot;never&quot; if it doesn't exist.</p>
+          <p>Returns the current effective concurrency limits (defaults merged
+with any remote overrides).</p>
         </div>
       
       <br/>
@@ -835,110 +1083,46 @@ subsequent intervals can detect that a run is already pending.</p>
       </div>
     </div>
   
-    <div class="entry-detail" id="last_executed_at=(time:Time)-instance-method">
+    <div class="entry-detail" id="overseer_id:String|Nil-instance-method">
       <div class="signature">
         
-        def <strong>last_executed_at=</strong>(time : Time)
+        def <strong>overseer_id</strong> : String | Nil
 
-        <a class="method-permalink" href="#last_executed_at%3D%28time%3ATime%29-instance-method">#</a>
+        <a class="method-permalink" href="#overseer_id%3AString%7CNil-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="refresh_interval:Time::Span-instance-method">
+      <div class="signature">
+        
+        def <strong>refresh_interval</strong> : Time::Span
+
+        <a class="method-permalink" href="#refresh_interval%3ATime%3A%3ASpan-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="refresh_limits:Nil-instance-method">
+      <div class="signature">
+        
+        def <strong>refresh_limits</strong> : Nil
+
+        <a class="method-permalink" href="#refresh_limits%3ANil-instance-method">#</a>
       </div>
       
         <div class="doc">
           
-          <p>Updates the last executed timestamp in the backend,
-and schedules the metadata for deletion after 3*interval
-seconds.</p>
-<p>For Time::Span intervals, the TTL is set to 3 * interval.
-For Time::MonthSpan intervals, the TTL is set to approximately 3 * interval.</p>
-<p>A month is approximated to 2635200 seconds, or 30.5 days.</p>
-        </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="last_executed_at?-instance-method">
-      <div class="signature">
-        
-        def <strong>last_executed_at?</strong>
-
-        <a class="method-permalink" href="#last_executed_at%3F-instance-method">#</a>
-      </div>
-      
-        <div class="doc">
-          
-          <p>The last executed timestamp for this periodicjob tracked by the backend.</p>
-        </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="metadata:Metadata-instance-method">
-      <div class="signature">
-        
-        def <strong>metadata</strong> : <a href="../Mosquito/Metadata.html">Metadata</a>
-
-        <a class="method-permalink" href="#metadata%3AMetadata-instance-method">#</a>
-      </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="observer:Observability::PeriodicJob-instance-method">
-      <div class="signature">
-        
-        def <strong>observer</strong> : <a href="../Mosquito/Observability/PeriodicJob.html">Observability::PeriodicJob</a>
-
-        <a class="method-permalink" href="#observer%3AObservability%3A%3APeriodicJob-instance-method">#</a>
-      </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="pending_job_run?:Bool-instance-method">
-      <div class="signature">
-        
-        def <strong>pending_job_run?</strong> : Bool
-
-        <a class="method-permalink" href="#pending_job_run%3F%3ABool-instance-method">#</a>
-      </div>
-      
-        <div class="doc">
-          
-          <p>Returns true if a previously enqueued job run has not yet finished.
-This prevents duplicate enqueues when executors are busy and the
-periodic interval elapses multiple times before the job is run.</p>
-        </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="try_to_execute:Bool-instance-method">
-      <div class="signature">
-        
-        def <strong>try_to_execute</strong> : Bool
-
-        <a class="method-permalink" href="#try_to_execute%3ABool-instance-method">#</a>
-      </div>
-      
-        <div class="doc">
-          
-          <p>Check the last executed timestamp against the current time,
-and enqueue the job if it's time to execute.</p>
+          <p>Force an immediate refresh from the backend, ignoring the
+<code><a href="../Mosquito/RemoteConfigDequeueAdapter.html#refresh_interval%3ATime%3A%3ASpan-instance-method">#refresh_interval</a></code> timer.</p>
         </div>
       
       <br/>

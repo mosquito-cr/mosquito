@@ -14,7 +14,7 @@
 <script type="text/javascript" src="../../js/doc.js"></script>
 
   <meta name="repository-name" content="mosquito">
-  <title>Mosquito::Job::State - mosquito 2.0.0</title>
+  <title>Mosquito::Api::ExecutorConfig - mosquito 2.0.0</title>
   <script type="text/javascript">
     CrystalDocs.base_path = "../../";
   </script>
@@ -62,7 +62,7 @@
       
         <ul>
   
-  <li class="parent " data-id="mosquito/Mosquito/Api" data-name="mosquito::api">
+  <li class="parent open current" data-id="mosquito/Mosquito/Api" data-name="mosquito::api">
       <a href="../../Mosquito/Api.html">Api</a>
       
         <ul>
@@ -77,7 +77,7 @@
       
     </li>
   
-  <li class=" " data-id="mosquito/Mosquito/Api/ExecutorConfig" data-name="mosquito::api::executorconfig">
+  <li class=" current" data-id="mosquito/Mosquito/Api/ExecutorConfig" data-name="mosquito::api::executorconfig">
       <a href="../../Mosquito/Api/ExecutorConfig.html">ExecutorConfig</a>
       
     </li>
@@ -162,12 +162,12 @@
       
     </li>
   
-  <li class="parent open current" data-id="mosquito/Mosquito/Job" data-name="mosquito::job">
+  <li class="parent " data-id="mosquito/Mosquito/Job" data-name="mosquito::job">
       <a href="../../Mosquito/Job.html">Job</a>
       
         <ul>
   
-  <li class=" current" data-id="mosquito/Mosquito/Job/State" data-name="mosquito::job::state">
+  <li class=" " data-id="mosquito/Mosquito/Job/State" data-name="mosquito::job::state">
       <a href="../../Mosquito/Job/State.html">State</a>
       
     </li>
@@ -477,14 +477,37 @@
 <h1 class="type-name">
 
   <span class="kind">
-    enum
-  </span> Mosquito::<wbr>Job::<wbr>State
+    class
+  </span> Mosquito::<wbr>Api::<wbr>ExecutorConfig
 
 </h1>
 
 
+  <ul class="superclass-hierarchy"><li class="superclass"><a href="../../Mosquito/Api/ExecutorConfig.html">Mosquito::Api::ExecutorConfig</a></li><li class="superclass">Reference</li><li class="superclass">Object</li></ul>
 
 
+
+
+  <h2>
+    <a id="overview" class="anchor" href="#overview">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Overview
+  </h2>
+
+  <p>Provides read/write access to the remotely stored executor count
+used by overseers configured with a stable <code>overseer_id</code>.</p>
+<p>Supports both global counts (shared by all overseers) and per-overseer
+counts for asymmetric hardware configurations.</p>
+<pre><code class="language-crystal">config <span class="o">=</span> <span class="t">Mosquito</span><span class="t">::</span><span class="t">Api</span><span class="t">::</span><span class="t">ExecutorConfig</span>.instance
+config.executor_count                                  <span class="c"># =&gt; global count or nil</span>
+config.executor_count(overseer_id: <span class="s">&quot;gpu-worker-1&quot;</span>)     <span class="c"># =&gt; per-overseer count or nil</span>
+config.update(<span class="n">8</span>)                                       <span class="c"># write global</span>
+config.update(<span class="n">2</span>, overseer_id: <span class="s">&quot;gpu-worker-1&quot;</span>)          <span class="c"># write per-overseer</span>
+config.clear                                           <span class="c"># remove global override</span>
+config.clear(overseer_id: <span class="s">&quot;gpu-worker-1&quot;</span>)              <span class="c"># remove per-overseer override</span></code></pre>
 
 
 
@@ -511,7 +534,7 @@
   </h2>
   
     
-      mosquito/job.cr
+      mosquito/api/executor_config.cr
     
     <br/>
   
@@ -520,43 +543,18 @@
 
   
     <h2>
-      <a id="enum-members" class="anchor" href="#enum-members">
+      <a id="constant-summary" class="anchor" href="#constant-summary">
   <svg class="octicon-link" aria-hidden="true">
     <use href="#octicon-link"/>
   </svg>
 </a>
-      Enum Members
+      Constant Summary
     </h2>
   
   <dl>
     
-      <dt class="entry-const" id="Initialization">
-        <strong>Initialization</strong> = <code><span class="n">0</span></code>
-      </dt>
-      
-    
-      <dt class="entry-const" id="Running">
-        <strong>Running</strong> = <code><span class="n">1</span></code>
-      </dt>
-      
-    
-      <dt class="entry-const" id="Succeeded">
-        <strong>Succeeded</strong> = <code><span class="n">2</span></code>
-      </dt>
-      
-    
-      <dt class="entry-const" id="Failed">
-        <strong>Failed</strong> = <code><span class="n">3</span></code>
-      </dt>
-      
-    
-      <dt class="entry-const" id="Aborted">
-        <strong>Aborted</strong> = <code><span class="n">4</span></code>
-      </dt>
-      
-    
-      <dt class="entry-const" id="Preempted">
-        <strong>Preempted</strong> = <code><span class="n">5</span></code>
+      <dt class="entry-const" id="CONFIG_KEY">
+        <strong>CONFIG_KEY</strong> = <code><span class="s">&quot;executor_count&quot;</span></code>
       </dt>
       
     
@@ -565,8 +563,74 @@
 
 
   
+  <h2>
+    <a id="constructors" class="anchor" href="#constructors">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Constructors
+  </h2>
+  <ul class="list-summary">
+    
+      <li class="entry-summary">
+        <a href="#instance%3Aself-class-method" class="signature"><strong>.instance</strong> : <span class="k">self</span></a>
+        
+      </li>
+    
+  </ul>
+
 
   
+  <h2>
+    <a id="class-method-summary" class="anchor" href="#class-method-summary">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Class Method Summary
+  </h2>
+  <ul class="list-summary">
+    
+      <li class="entry-summary">
+        <a href="#clear_executor_count%28overseer_id%3AString%29%3ANil-class-method" class="signature"><strong>.clear_executor_count</strong>(overseer_id : String) : Nil</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#clear_executor_count%3ANil-class-method" class="signature"><strong>.clear_executor_count</strong> : Nil</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#resolve%28overseer_id%3AString%7CNil%3Dnil%29%3AInt32%7CNil-class-method" class="signature"><strong>.resolve</strong>(overseer_id : String | Nil = <span class="n">nil</span>) : Int32 | Nil</a>
+        
+          <div class="summary"><p>Resolves the effective executor count for an overseer by checking per-overseer first, then global.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#store_executor_count%28count%3AInt32%2Coverseer_id%3AString%29%3ANil-class-method" class="signature"><strong>.store_executor_count</strong>(count : Int32, overseer_id : String) : Nil</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#store_executor_count%28count%3AInt32%29%3ANil-class-method" class="signature"><strong>.store_executor_count</strong>(count : Int32) : Nil</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#stored_executor_count%28overseer_id%3AString%29%3AInt32%7CNil-class-method" class="signature"><strong>.stored_executor_count</strong>(overseer_id : String) : Int32 | Nil</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#stored_executor_count%3AInt32%7CNil-class-method" class="signature"><strong>.stored_executor_count</strong> : Int32 | Nil</a>
+        
+      </li>
+    
+  </ul>
+
 
   
 
@@ -582,49 +646,44 @@
   <ul class="list-summary">
     
       <li class="entry-summary">
-        <a href="#aborted%3F-instance-method" class="signature"><strong>#aborted?</strong></a>
+        <a href="#clear%28overseer_id%3AString%29%3ANil-instance-method" class="signature"><strong>#clear</strong>(overseer_id : String) : Nil</a>
         
-          <div class="summary"><p>Returns <code>true</code> if this enum value equals <code><a href="../../Mosquito/Job/State.html#Aborted">Aborted</a></code></p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#executed%3F%3ABool-instance-method" class="signature"><strong>#executed?</strong> : Bool</a>
+          <div class="summary"><p>Removes the executor count override for a specific overseer.</p></div>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#failed%3F-instance-method" class="signature"><strong>#failed?</strong></a>
+        <a href="#clear%3ANil-instance-method" class="signature"><strong>#clear</strong> : Nil</a>
         
-          <div class="summary"><p>Returns <code>true</code> if this enum value equals <code><a href="../../Mosquito/Job/State.html#Failed">Failed</a></code></p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#initialization%3F-instance-method" class="signature"><strong>#initialization?</strong></a>
-        
-          <div class="summary"><p>Returns <code>true</code> if this enum value equals <code><a href="../../Mosquito/Job/State.html#Initialization">Initialization</a></code></p></div>
+          <div class="summary"><p>Removes the global executor count override.</p></div>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#preempted%3F-instance-method" class="signature"><strong>#preempted?</strong></a>
+        <a href="#executor_count%28overseer_id%3AString%29%3AInt32%7CNil-instance-method" class="signature"><strong>#executor_count</strong>(overseer_id : String) : Int32 | Nil</a>
         
-          <div class="summary"><p>Returns <code>true</code> if this enum value equals <code><a href="../../Mosquito/Job/State.html#Preempted">Preempted</a></code></p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#running%3F-instance-method" class="signature"><strong>#running?</strong></a>
-        
-          <div class="summary"><p>Returns <code>true</code> if this enum value equals <code><a href="../../Mosquito/Job/State.html#Running">Running</a></code></p></div>
+          <div class="summary"><p>Returns the executor count for a specific overseer, or nil if no override has been set for that overseer.</p></div>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#succeeded%3F-instance-method" class="signature"><strong>#succeeded?</strong></a>
+        <a href="#executor_count%3AInt32%7CNil-instance-method" class="signature"><strong>#executor_count</strong> : Int32 | Nil</a>
         
-          <div class="summary"><p>Returns <code>true</code> if this enum value equals <code><a href="../../Mosquito/Job/State.html#Succeeded">Succeeded</a></code></p></div>
+          <div class="summary"><p>Returns the global executor count stored in the backend, or nil if no override has been set.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#update%28count%3AInt32%2Coverseer_id%3AString%29%3ANil-instance-method" class="signature"><strong>#update</strong>(count : Int32, overseer_id : String) : Nil</a>
+        
+          <div class="summary"><p>Writes an executor count override for a specific overseer.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#update%28count%3AInt32%29%3ANil-instance-method" class="signature"><strong>#update</strong>(count : Int32) : Nil</a>
+        
+          <div class="summary"><p>Writes a global executor count override.</p></div>
         
       </li>
     
@@ -660,37 +719,149 @@
 
 
     
-      
-
-
-      
-
-
-      
-
-
-      
-
-
-    
-      
-
-
-      
-
-
-      
-
-
-      
-
-
-    
   </div>
 
   
+  <h2>
+    <a id="constructor-detail" class="anchor" href="#constructor-detail">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Constructor Detail
+  </h2>
+  
+    <div class="entry-detail" id="instance:self-class-method">
+      <div class="signature">
+        
+        def self.<strong>instance</strong> : <span class="k">self</span>
+
+        <a class="method-permalink" href="#instance%3Aself-class-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+
 
   
+  <h2>
+    <a id="class-method-detail" class="anchor" href="#class-method-detail">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Class Method Detail
+  </h2>
+  
+    <div class="entry-detail" id="clear_executor_count(overseer_id:String):Nil-class-method">
+      <div class="signature">
+        
+        def self.<strong>clear_executor_count</strong>(overseer_id : String) : Nil
+
+        <a class="method-permalink" href="#clear_executor_count%28overseer_id%3AString%29%3ANil-class-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="clear_executor_count:Nil-class-method">
+      <div class="signature">
+        
+        def self.<strong>clear_executor_count</strong> : Nil
+
+        <a class="method-permalink" href="#clear_executor_count%3ANil-class-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="resolve(overseer_id:String|Nil=nil):Int32|Nil-class-method">
+      <div class="signature">
+        
+        def self.<strong>resolve</strong>(overseer_id : String | Nil = <span class="n">nil</span>) : Int32 | Nil
+
+        <a class="method-permalink" href="#resolve%28overseer_id%3AString%7CNil%3Dnil%29%3AInt32%7CNil-class-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Resolves the effective executor count for an overseer by checking
+per-overseer first, then global. Returns nil if neither is set.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="store_executor_count(count:Int32,overseer_id:String):Nil-class-method">
+      <div class="signature">
+        
+        def self.<strong>store_executor_count</strong>(count : Int32, overseer_id : String) : Nil
+
+        <a class="method-permalink" href="#store_executor_count%28count%3AInt32%2Coverseer_id%3AString%29%3ANil-class-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="store_executor_count(count:Int32):Nil-class-method">
+      <div class="signature">
+        
+        def self.<strong>store_executor_count</strong>(count : Int32) : Nil
+
+        <a class="method-permalink" href="#store_executor_count%28count%3AInt32%29%3ANil-class-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="stored_executor_count(overseer_id:String):Int32|Nil-class-method">
+      <div class="signature">
+        
+        def self.<strong>stored_executor_count</strong>(overseer_id : String) : Int32 | Nil
+
+        <a class="method-permalink" href="#stored_executor_count%28overseer_id%3AString%29%3AInt32%7CNil-class-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="stored_executor_count:Int32|Nil-class-method">
+      <div class="signature">
+        
+        def self.<strong>stored_executor_count</strong> : Int32 | Nil
+
+        <a class="method-permalink" href="#stored_executor_count%3AInt32%7CNil-class-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+
 
   
 
@@ -704,17 +875,17 @@
     Instance Method Detail
   </h2>
   
-    <div class="entry-detail" id="aborted?-instance-method">
+    <div class="entry-detail" id="clear(overseer_id:String):Nil-instance-method">
       <div class="signature">
         
-        def <strong>aborted?</strong>
+        def <strong>clear</strong>(overseer_id : String) : Nil
 
-        <a class="method-permalink" href="#aborted%3F-instance-method">#</a>
+        <a class="method-permalink" href="#clear%28overseer_id%3AString%29%3ANil-instance-method">#</a>
       </div>
       
         <div class="doc">
           
-          <p>Returns <code>true</code> if this enum value equals <code><a href="../../Mosquito/Job/State.html#Aborted">Aborted</a></code></p>
+          <p>Removes the executor count override for a specific overseer.</p>
         </div>
       
       <br/>
@@ -723,31 +894,17 @@
       </div>
     </div>
   
-    <div class="entry-detail" id="executed?:Bool-instance-method">
+    <div class="entry-detail" id="clear:Nil-instance-method">
       <div class="signature">
         
-        def <strong>executed?</strong> : Bool
+        def <strong>clear</strong> : Nil
 
-        <a class="method-permalink" href="#executed%3F%3ABool-instance-method">#</a>
-      </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="failed?-instance-method">
-      <div class="signature">
-        
-        def <strong>failed?</strong>
-
-        <a class="method-permalink" href="#failed%3F-instance-method">#</a>
+        <a class="method-permalink" href="#clear%3ANil-instance-method">#</a>
       </div>
       
         <div class="doc">
           
-          <p>Returns <code>true</code> if this enum value equals <code><a href="../../Mosquito/Job/State.html#Failed">Failed</a></code></p>
+          <p>Removes the global executor count override.</p>
         </div>
       
       <br/>
@@ -756,17 +913,18 @@
       </div>
     </div>
   
-    <div class="entry-detail" id="initialization?-instance-method">
+    <div class="entry-detail" id="executor_count(overseer_id:String):Int32|Nil-instance-method">
       <div class="signature">
         
-        def <strong>initialization?</strong>
+        def <strong>executor_count</strong>(overseer_id : String) : Int32 | Nil
 
-        <a class="method-permalink" href="#initialization%3F-instance-method">#</a>
+        <a class="method-permalink" href="#executor_count%28overseer_id%3AString%29%3AInt32%7CNil-instance-method">#</a>
       </div>
       
         <div class="doc">
           
-          <p>Returns <code>true</code> if this enum value equals <code><a href="../../Mosquito/Job/State.html#Initialization">Initialization</a></code></p>
+          <p>Returns the executor count for a specific overseer, or nil if no
+override has been set for that overseer.</p>
         </div>
       
       <br/>
@@ -775,17 +933,18 @@
       </div>
     </div>
   
-    <div class="entry-detail" id="preempted?-instance-method">
+    <div class="entry-detail" id="executor_count:Int32|Nil-instance-method">
       <div class="signature">
         
-        def <strong>preempted?</strong>
+        def <strong>executor_count</strong> : Int32 | Nil
 
-        <a class="method-permalink" href="#preempted%3F-instance-method">#</a>
+        <a class="method-permalink" href="#executor_count%3AInt32%7CNil-instance-method">#</a>
       </div>
       
         <div class="doc">
           
-          <p>Returns <code>true</code> if this enum value equals <code><a href="../../Mosquito/Job/State.html#Preempted">Preempted</a></code></p>
+          <p>Returns the global executor count stored in the backend, or nil if
+no override has been set.</p>
         </div>
       
       <br/>
@@ -794,17 +953,17 @@
       </div>
     </div>
   
-    <div class="entry-detail" id="running?-instance-method">
+    <div class="entry-detail" id="update(count:Int32,overseer_id:String):Nil-instance-method">
       <div class="signature">
         
-        def <strong>running?</strong>
+        def <strong>update</strong>(count : Int32, overseer_id : String) : Nil
 
-        <a class="method-permalink" href="#running%3F-instance-method">#</a>
+        <a class="method-permalink" href="#update%28count%3AInt32%2Coverseer_id%3AString%29%3ANil-instance-method">#</a>
       </div>
       
         <div class="doc">
           
-          <p>Returns <code>true</code> if this enum value equals <code><a href="../../Mosquito/Job/State.html#Running">Running</a></code></p>
+          <p>Writes an executor count override for a specific overseer.</p>
         </div>
       
       <br/>
@@ -813,17 +972,17 @@
       </div>
     </div>
   
-    <div class="entry-detail" id="succeeded?-instance-method">
+    <div class="entry-detail" id="update(count:Int32):Nil-instance-method">
       <div class="signature">
         
-        def <strong>succeeded?</strong>
+        def <strong>update</strong>(count : Int32) : Nil
 
-        <a class="method-permalink" href="#succeeded%3F-instance-method">#</a>
+        <a class="method-permalink" href="#update%28count%3AInt32%29%3ANil-instance-method">#</a>
       </div>
       
         <div class="doc">
           
-          <p>Returns <code>true</code> if this enum value equals <code><a href="../../Mosquito/Job/State.html#Succeeded">Succeeded</a></code></p>
+          <p>Writes a global executor count override.</p>
         </div>
       
       <br/>

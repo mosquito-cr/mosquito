@@ -67,8 +67,18 @@
       
         <ul>
   
+  <li class=" " data-id="mosquito/Mosquito/Api/ConcurrencyConfig" data-name="mosquito::api::concurrencyconfig">
+      <a href="../Mosquito/Api/ConcurrencyConfig.html">ConcurrencyConfig</a>
+      
+    </li>
+  
   <li class=" " data-id="mosquito/Mosquito/Api/Executor" data-name="mosquito::api::executor">
       <a href="../Mosquito/Api/Executor.html">Executor</a>
+      
+    </li>
+  
+  <li class=" " data-id="mosquito/Mosquito/Api/ExecutorConfig" data-name="mosquito::api::executorconfig">
+      <a href="../Mosquito/Api/ExecutorConfig.html">ExecutorConfig</a>
       
     </li>
   
@@ -302,6 +312,11 @@
       
     </li>
   
+  <li class=" " data-id="mosquito/Mosquito/RemoteConfigDequeueAdapter" data-name="mosquito::remoteconfigdequeueadapter">
+      <a href="../Mosquito/RemoteConfigDequeueAdapter.html">RemoteConfigDequeueAdapter</a>
+      
+    </li>
+  
   <li class=" " data-id="mosquito/Mosquito/ResourceGate" data-name="mosquito::resourcegate">
       <a href="../Mosquito/ResourceGate.html">ResourceGate</a>
       
@@ -501,6 +516,11 @@
     <br/>
   
     
+      mosquito/api/concurrency_config.cr
+    
+    <br/>
+  
+    
       mosquito/api/executor.cr
     
     <br/>
@@ -529,12 +549,54 @@
   <ul class="list-summary">
     
       <li class="entry-summary">
+        <a href="#concurrency_config%3AConcurrencyConfig-class-method" class="signature"><strong>.concurrency_config</strong> : ConcurrencyConfig</a>
+        
+          <div class="summary"><p>Returns a <code><a href="../Mosquito/Api/ConcurrencyConfig.html">ConcurrencyConfig</a></code> instance for reading and writing the remotely stored concurrency limits used by <code><a href="../Mosquito/RemoteConfigDequeueAdapter.html">RemoteConfigDequeueAdapter</a></code>.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#concurrency_limits%28overseer_id%3AString%29%3AHash%28String%2CInt32%29-class-method" class="signature"><strong>.concurrency_limits</strong>(overseer_id : String) : Hash(String, Int32)</a>
+        
+          <div class="summary"><p>Convenience reader for a specific overseer's concurrency limits.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#concurrency_limits%3AHash%28String%2CInt32%29-class-method" class="signature"><strong>.concurrency_limits</strong> : Hash(String, Int32)</a>
+        
+          <div class="summary"><p>Convenience reader for the current global remote concurrency limits.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
         <a href="#event_receiver%3AChannel%28Backend%3A%3ABroadcastMessage%29-class-method" class="signature"><strong>.event_receiver</strong> : Channel(Backend::BroadcastMessage)</a>
         
       </li>
     
       <li class="entry-summary">
         <a href="#executor%28id%3AString%29%3AExecutor-class-method" class="signature"><strong>.executor</strong>(id : String) : Executor</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#executor_config%3AExecutorConfig-class-method" class="signature"><strong>.executor_config</strong> : ExecutorConfig</a>
+        
+          <div class="summary"><p>Returns an <code><a href="../Mosquito/Api/ExecutorConfig.html">ExecutorConfig</a></code> instance for reading and writing the remotely stored executor count.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#executor_count%28overseer_id%3AString%29%3AInt32%7CNil-class-method" class="signature"><strong>.executor_count</strong>(overseer_id : String) : Int32 | Nil</a>
+        
+          <div class="summary"><p>Convenience reader for a specific overseer's executor count.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#executor_count%3AInt32%7CNil-class-method" class="signature"><strong>.executor_count</strong> : Int32 | Nil</a>
+        
+          <div class="summary"><p>Convenience reader for the global remote executor count.</p></div>
         
       </li>
     
@@ -563,6 +625,34 @@
         
       </li>
     
+      <li class="entry-summary">
+        <a href="#set_concurrency_limits%28limits%3AHash%28String%2CInt32%29%2Coverseer_id%3AString%29%3ANil-class-method" class="signature"><strong>.set_concurrency_limits</strong>(limits : Hash(String, Int32), overseer_id : String) : Nil</a>
+        
+          <div class="summary"><p>Convenience writer — replaces stored concurrency limits for a specific overseer.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#set_concurrency_limits%28limits%3AHash%28String%2CInt32%29%29%3ANil-class-method" class="signature"><strong>.set_concurrency_limits</strong>(limits : Hash(String, Int32)) : Nil</a>
+        
+          <div class="summary"><p>Convenience writer — replaces the global stored concurrency limits so that all <code><a href="../Mosquito/RemoteConfigDequeueAdapter.html">RemoteConfigDequeueAdapter</a></code> instances pick them up on their next refresh cycle.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#set_executor_count%28count%3AInt32%2Coverseer_id%3AString%29%3ANil-class-method" class="signature"><strong>.set_executor_count</strong>(count : Int32, overseer_id : String) : Nil</a>
+        
+          <div class="summary"><p>Convenience writer — sets the executor count for a specific overseer.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#set_executor_count%28count%3AInt32%29%3ANil-class-method" class="signature"><strong>.set_executor_count</strong>(count : Int32) : Nil</a>
+        
+          <div class="summary"><p>Convenience writer — sets the global executor count override.</p></div>
+        
+      </li>
+    
   </ul>
 
 
@@ -587,6 +677,65 @@
     Class Method Detail
   </h2>
   
+    <div class="entry-detail" id="concurrency_config:ConcurrencyConfig-class-method">
+      <div class="signature">
+        
+        def self.<strong>concurrency_config</strong> : <a href="../Mosquito/Api/ConcurrencyConfig.html">ConcurrencyConfig</a>
+
+        <a class="method-permalink" href="#concurrency_config%3AConcurrencyConfig-class-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Returns a <code><a href="../Mosquito/Api/ConcurrencyConfig.html">ConcurrencyConfig</a></code> instance for reading and writing the
+remotely stored concurrency limits used by
+<code><a href="../Mosquito/RemoteConfigDequeueAdapter.html">RemoteConfigDequeueAdapter</a></code>.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="concurrency_limits(overseer_id:String):Hash(String,Int32)-class-method">
+      <div class="signature">
+        
+        def self.<strong>concurrency_limits</strong>(overseer_id : String) : Hash(String, Int32)
+
+        <a class="method-permalink" href="#concurrency_limits%28overseer_id%3AString%29%3AHash%28String%2CInt32%29-class-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Convenience reader for a specific overseer's concurrency limits.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="concurrency_limits:Hash(String,Int32)-class-method">
+      <div class="signature">
+        
+        def self.<strong>concurrency_limits</strong> : Hash(String, Int32)
+
+        <a class="method-permalink" href="#concurrency_limits%3AHash%28String%2CInt32%29-class-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Convenience reader for the current global remote concurrency limits.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
     <div class="entry-detail" id="event_receiver:Channel(Backend::BroadcastMessage)-class-method">
       <div class="signature">
         
@@ -608,6 +757,64 @@
 
         <a class="method-permalink" href="#executor%28id%3AString%29%3AExecutor-class-method">#</a>
       </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="executor_config:ExecutorConfig-class-method">
+      <div class="signature">
+        
+        def self.<strong>executor_config</strong> : <a href="../Mosquito/Api/ExecutorConfig.html">ExecutorConfig</a>
+
+        <a class="method-permalink" href="#executor_config%3AExecutorConfig-class-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Returns an <code><a href="../Mosquito/Api/ExecutorConfig.html">ExecutorConfig</a></code> instance for reading and writing the
+remotely stored executor count.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="executor_count(overseer_id:String):Int32|Nil-class-method">
+      <div class="signature">
+        
+        def self.<strong>executor_count</strong>(overseer_id : String) : Int32 | Nil
+
+        <a class="method-permalink" href="#executor_count%28overseer_id%3AString%29%3AInt32%7CNil-class-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Convenience reader for a specific overseer's executor count.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="executor_count:Int32|Nil-class-method">
+      <div class="signature">
+        
+        def self.<strong>executor_count</strong> : Int32 | Nil
+
+        <a class="method-permalink" href="#executor_count%3AInt32%7CNil-class-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Convenience reader for the global remote executor count.</p>
+        </div>
       
       <br/>
       <div>
@@ -678,6 +885,85 @@
 
         <a class="method-permalink" href="#overseer%28id%3AString%29%3AOverseer-class-method">#</a>
       </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="set_concurrency_limits(limits:Hash(String,Int32),overseer_id:String):Nil-class-method">
+      <div class="signature">
+        
+        def self.<strong>set_concurrency_limits</strong>(limits : Hash(String, Int32), overseer_id : String) : Nil
+
+        <a class="method-permalink" href="#set_concurrency_limits%28limits%3AHash%28String%2CInt32%29%2Coverseer_id%3AString%29%3ANil-class-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Convenience writer — replaces stored concurrency limits for a specific
+overseer.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="set_concurrency_limits(limits:Hash(String,Int32)):Nil-class-method">
+      <div class="signature">
+        
+        def self.<strong>set_concurrency_limits</strong>(limits : Hash(String, Int32)) : Nil
+
+        <a class="method-permalink" href="#set_concurrency_limits%28limits%3AHash%28String%2CInt32%29%29%3ANil-class-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Convenience writer — replaces the global stored concurrency limits so
+that all <code><a href="../Mosquito/RemoteConfigDequeueAdapter.html">RemoteConfigDequeueAdapter</a></code> instances pick them up on their
+next refresh cycle.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="set_executor_count(count:Int32,overseer_id:String):Nil-class-method">
+      <div class="signature">
+        
+        def self.<strong>set_executor_count</strong>(count : Int32, overseer_id : String) : Nil
+
+        <a class="method-permalink" href="#set_executor_count%28count%3AInt32%2Coverseer_id%3AString%29%3ANil-class-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Convenience writer — sets the executor count for a specific overseer.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="set_executor_count(count:Int32):Nil-class-method">
+      <div class="signature">
+        
+        def self.<strong>set_executor_count</strong>(count : Int32) : Nil
+
+        <a class="method-permalink" href="#set_executor_count%28count%3AInt32%29%3ANil-class-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Convenience writer — sets the global executor count override.</p>
+        </div>
       
       <br/>
       <div>

@@ -67,8 +67,18 @@
       
         <ul>
   
+  <li class=" " data-id="mosquito/Mosquito/Api/ConcurrencyConfig" data-name="mosquito::api::concurrencyconfig">
+      <a href="../Mosquito/Api/ConcurrencyConfig.html">ConcurrencyConfig</a>
+      
+    </li>
+  
   <li class=" " data-id="mosquito/Mosquito/Api/Executor" data-name="mosquito::api::executor">
       <a href="../Mosquito/Api/Executor.html">Executor</a>
+      
+    </li>
+  
+  <li class=" " data-id="mosquito/Mosquito/Api/ExecutorConfig" data-name="mosquito::api::executorconfig">
+      <a href="../Mosquito/Api/ExecutorConfig.html">ExecutorConfig</a>
       
     </li>
   
@@ -299,6 +309,11 @@
   
 </ul>
 
+      
+    </li>
+  
+  <li class=" " data-id="mosquito/Mosquito/RemoteConfigDequeueAdapter" data-name="mosquito::remoteconfigdequeueadapter">
+      <a href="../Mosquito/RemoteConfigDequeueAdapter.html">RemoteConfigDequeueAdapter</a>
       
     </li>
   
@@ -634,6 +649,20 @@
     
       <li class="entry-summary">
         <a href="#metrics%3F%3ABool-instance-method" class="signature"><strong>#metrics?</strong> : Bool</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#overseer_id%3AString%7CNil-instance-method" class="signature"><strong>#overseer_id</strong> : String | Nil</a>
+        
+          <div class="summary"><p>A stable, user-chosen identifier for this overseer instance.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#overseer_id%3D%28overseer_id%3AString%7CNil%29-instance-method" class="signature"><strong>#overseer_id=</strong>(overseer_id : String | Nil)</a>
+        
+          <div class="summary"><p>A stable, user-chosen identifier for this overseer instance.</p></div>
         
       </li>
     
@@ -1065,6 +1094,50 @@ considered dead and its pending jobs are recovered.</p>
 
         <a class="method-permalink" href="#metrics%3F%3ABool-instance-method">#</a>
       </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="overseer_id:String|Nil-instance-method">
+      <div class="signature">
+        
+        def <strong>overseer_id</strong> : String | Nil
+
+        <a class="method-permalink" href="#overseer_id%3AString%7CNil-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>A stable, user-chosen identifier for this overseer instance.
+Used to look up per-overseer remote configuration (executor count,
+concurrency limits, etc.). When nil, the overseer only reads global
+remote config.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="overseer_id=(overseer_id:String|Nil)-instance-method">
+      <div class="signature">
+        
+        def <strong>overseer_id=</strong>(overseer_id : String | Nil)
+
+        <a class="method-permalink" href="#overseer_id%3D%28overseer_id%3AString%7CNil%29-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>A stable, user-chosen identifier for this overseer instance.
+Used to look up per-overseer remote configuration (executor count,
+concurrency limits, etc.). When nil, the overseer only reads global
+remote config.</p>
+        </div>
       
       <br/>
       <div>

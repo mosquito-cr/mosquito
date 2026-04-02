@@ -14,7 +14,7 @@
 <script type="text/javascript" src="../../js/doc.js"></script>
 
   <meta name="repository-name" content="mosquito">
-  <title>Mosquito::Job::State - mosquito 2.0.0</title>
+  <title>Mosquito::Api::ConcurrencyConfig - mosquito 2.0.0</title>
   <script type="text/javascript">
     CrystalDocs.base_path = "../../";
   </script>
@@ -62,12 +62,12 @@
       
         <ul>
   
-  <li class="parent " data-id="mosquito/Mosquito/Api" data-name="mosquito::api">
+  <li class="parent open current" data-id="mosquito/Mosquito/Api" data-name="mosquito::api">
       <a href="../../Mosquito/Api.html">Api</a>
       
         <ul>
   
-  <li class=" " data-id="mosquito/Mosquito/Api/ConcurrencyConfig" data-name="mosquito::api::concurrencyconfig">
+  <li class=" current" data-id="mosquito/Mosquito/Api/ConcurrencyConfig" data-name="mosquito::api::concurrencyconfig">
       <a href="../../Mosquito/Api/ConcurrencyConfig.html">ConcurrencyConfig</a>
       
     </li>
@@ -162,12 +162,12 @@
       
     </li>
   
-  <li class="parent open current" data-id="mosquito/Mosquito/Job" data-name="mosquito::job">
+  <li class="parent " data-id="mosquito/Mosquito/Job" data-name="mosquito::job">
       <a href="../../Mosquito/Job.html">Job</a>
       
         <ul>
   
-  <li class=" current" data-id="mosquito/Mosquito/Job/State" data-name="mosquito::job::state">
+  <li class=" " data-id="mosquito/Mosquito/Job/State" data-name="mosquito::job::state">
       <a href="../../Mosquito/Job/State.html">State</a>
       
     </li>
@@ -477,14 +477,37 @@
 <h1 class="type-name">
 
   <span class="kind">
-    enum
-  </span> Mosquito::<wbr>Job::<wbr>State
+    class
+  </span> Mosquito::<wbr>Api::<wbr>ConcurrencyConfig
 
 </h1>
 
 
+  <ul class="superclass-hierarchy"><li class="superclass"><a href="../../Mosquito/Api/ConcurrencyConfig.html">Mosquito::Api::ConcurrencyConfig</a></li><li class="superclass">Reference</li><li class="superclass">Object</li></ul>
 
 
+
+
+  <h2>
+    <a id="overview" class="anchor" href="#overview">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Overview
+  </h2>
+
+  <p>Provides read/write access to the remotely stored concurrency limits
+used by <code><a href="../../Mosquito/RemoteConfigDequeueAdapter.html">RemoteConfigDequeueAdapter</a></code>.</p>
+<p>Supports both global limits (shared by all overseers) and per-overseer
+limits for asymmetric hardware configurations.</p>
+<pre><code class="language-crystal">config <span class="o">=</span> <span class="t">Mosquito</span><span class="t">::</span><span class="t">Api</span><span class="t">::</span><span class="t">ConcurrencyConfig</span>.instance
+config.limits                                  <span class="c"># =&gt; global limits</span>
+config.limits(overseer_id: <span class="s">&quot;gpu-worker-1&quot;</span>)     <span class="c"># =&gt; per-overseer limits</span>
+config.update({<span class="s">&quot;queue_a&quot;</span> <span class="o">=&gt;</span> <span class="n">5</span>})                <span class="c"># write global</span>
+config.update({<span class="s">&quot;queue_a&quot;</span> <span class="o">=&gt;</span> <span class="n">1</span>}, overseer_id: <span class="s">&quot;gpu-worker-1&quot;</span>)  <span class="c"># write per-overseer</span>
+config.clear                                   <span class="c"># remove global limits</span>
+config.clear(overseer_id: <span class="s">&quot;gpu-worker-1&quot;</span>)      <span class="c"># remove per-overseer limits</span></code></pre>
 
 
 
@@ -511,60 +534,33 @@
   </h2>
   
     
-      mosquito/job.cr
+      mosquito/api/concurrency_config.cr
     
     <br/>
   
 
 
 
+
+
   
-    <h2>
-      <a id="enum-members" class="anchor" href="#enum-members">
+  <h2>
+    <a id="constructors" class="anchor" href="#constructors">
   <svg class="octicon-link" aria-hidden="true">
     <use href="#octicon-link"/>
   </svg>
 </a>
-      Enum Members
-    </h2>
-  
-  <dl>
+    Constructors
+  </h2>
+  <ul class="list-summary">
     
-      <dt class="entry-const" id="Initialization">
-        <strong>Initialization</strong> = <code><span class="n">0</span></code>
-      </dt>
-      
+      <li class="entry-summary">
+        <a href="#instance%3Aself-class-method" class="signature"><strong>.instance</strong> : <span class="k">self</span></a>
+        
+      </li>
     
-      <dt class="entry-const" id="Running">
-        <strong>Running</strong> = <code><span class="n">1</span></code>
-      </dt>
-      
-    
-      <dt class="entry-const" id="Succeeded">
-        <strong>Succeeded</strong> = <code><span class="n">2</span></code>
-      </dt>
-      
-    
-      <dt class="entry-const" id="Failed">
-        <strong>Failed</strong> = <code><span class="n">3</span></code>
-      </dt>
-      
-    
-      <dt class="entry-const" id="Aborted">
-        <strong>Aborted</strong> = <code><span class="n">4</span></code>
-      </dt>
-      
-    
-      <dt class="entry-const" id="Preempted">
-        <strong>Preempted</strong> = <code><span class="n">5</span></code>
-      </dt>
-      
-    
-  </dl>
+  </ul>
 
-
-
-  
 
   
 
@@ -582,49 +578,44 @@
   <ul class="list-summary">
     
       <li class="entry-summary">
-        <a href="#aborted%3F-instance-method" class="signature"><strong>#aborted?</strong></a>
+        <a href="#clear%28overseer_id%3AString%29%3ANil-instance-method" class="signature"><strong>#clear</strong>(overseer_id : String) : Nil</a>
         
-          <div class="summary"><p>Returns <code>true</code> if this enum value equals <code><a href="../../Mosquito/Job/State.html#Aborted">Aborted</a></code></p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#executed%3F%3ABool-instance-method" class="signature"><strong>#executed?</strong> : Bool</a>
+          <div class="summary"><p>Removes stored concurrency limits for a specific overseer.</p></div>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#failed%3F-instance-method" class="signature"><strong>#failed?</strong></a>
+        <a href="#clear%3ANil-instance-method" class="signature"><strong>#clear</strong> : Nil</a>
         
-          <div class="summary"><p>Returns <code>true</code> if this enum value equals <code><a href="../../Mosquito/Job/State.html#Failed">Failed</a></code></p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#initialization%3F-instance-method" class="signature"><strong>#initialization?</strong></a>
-        
-          <div class="summary"><p>Returns <code>true</code> if this enum value equals <code><a href="../../Mosquito/Job/State.html#Initialization">Initialization</a></code></p></div>
+          <div class="summary"><p>Removes all globally stored concurrency limits.</p></div>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#preempted%3F-instance-method" class="signature"><strong>#preempted?</strong></a>
+        <a href="#limits%28overseer_id%3AString%29%3AHash%28String%2CInt32%29-instance-method" class="signature"><strong>#limits</strong>(overseer_id : String) : Hash(String, Int32)</a>
         
-          <div class="summary"><p>Returns <code>true</code> if this enum value equals <code><a href="../../Mosquito/Job/State.html#Preempted">Preempted</a></code></p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#running%3F-instance-method" class="signature"><strong>#running?</strong></a>
-        
-          <div class="summary"><p>Returns <code>true</code> if this enum value equals <code><a href="../../Mosquito/Job/State.html#Running">Running</a></code></p></div>
+          <div class="summary"><p>Returns the concurrency limits stored for a specific overseer.</p></div>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#succeeded%3F-instance-method" class="signature"><strong>#succeeded?</strong></a>
+        <a href="#limits%3AHash%28String%2CInt32%29-instance-method" class="signature"><strong>#limits</strong> : Hash(String, Int32)</a>
         
-          <div class="summary"><p>Returns <code>true</code> if this enum value equals <code><a href="../../Mosquito/Job/State.html#Succeeded">Succeeded</a></code></p></div>
+          <div class="summary"><p>Returns the global concurrency limits stored in the backend.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#update%28new_limits%3AHash%28String%2CInt32%29%2Coverseer_id%3AString%29%3ANil-instance-method" class="signature"><strong>#update</strong>(new_limits : Hash(String, Int32), overseer_id : String) : Nil</a>
+        
+          <div class="summary"><p>Overwrites the stored concurrency limits for a specific overseer.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#update%28new_limits%3AHash%28String%2CInt32%29%29%3ANil-instance-method" class="signature"><strong>#update</strong>(new_limits : Hash(String, Int32)) : Nil</a>
+        
+          <div class="summary"><p>Overwrites the global stored concurrency limits with <em>new_limits</em>.</p></div>
         
       </li>
     
@@ -660,35 +651,33 @@
 
 
     
-      
-
-
-      
-
-
-      
-
-
-      
-
-
-    
-      
-
-
-      
-
-
-      
-
-
-      
-
-
-    
   </div>
 
   
+  <h2>
+    <a id="constructor-detail" class="anchor" href="#constructor-detail">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>
+    Constructor Detail
+  </h2>
+  
+    <div class="entry-detail" id="instance:self-class-method">
+      <div class="signature">
+        
+        def self.<strong>instance</strong> : <span class="k">self</span>
+
+        <a class="method-permalink" href="#instance%3Aself-class-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+
 
   
 
@@ -704,17 +693,17 @@
     Instance Method Detail
   </h2>
   
-    <div class="entry-detail" id="aborted?-instance-method">
+    <div class="entry-detail" id="clear(overseer_id:String):Nil-instance-method">
       <div class="signature">
         
-        def <strong>aborted?</strong>
+        def <strong>clear</strong>(overseer_id : String) : Nil
 
-        <a class="method-permalink" href="#aborted%3F-instance-method">#</a>
+        <a class="method-permalink" href="#clear%28overseer_id%3AString%29%3ANil-instance-method">#</a>
       </div>
       
         <div class="doc">
           
-          <p>Returns <code>true</code> if this enum value equals <code><a href="../../Mosquito/Job/State.html#Aborted">Aborted</a></code></p>
+          <p>Removes stored concurrency limits for a specific overseer.</p>
         </div>
       
       <br/>
@@ -723,31 +712,17 @@
       </div>
     </div>
   
-    <div class="entry-detail" id="executed?:Bool-instance-method">
+    <div class="entry-detail" id="clear:Nil-instance-method">
       <div class="signature">
         
-        def <strong>executed?</strong> : Bool
+        def <strong>clear</strong> : Nil
 
-        <a class="method-permalink" href="#executed%3F%3ABool-instance-method">#</a>
-      </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="failed?-instance-method">
-      <div class="signature">
-        
-        def <strong>failed?</strong>
-
-        <a class="method-permalink" href="#failed%3F-instance-method">#</a>
+        <a class="method-permalink" href="#clear%3ANil-instance-method">#</a>
       </div>
       
         <div class="doc">
           
-          <p>Returns <code>true</code> if this enum value equals <code><a href="../../Mosquito/Job/State.html#Failed">Failed</a></code></p>
+          <p>Removes all globally stored concurrency limits.</p>
         </div>
       
       <br/>
@@ -756,17 +731,17 @@
       </div>
     </div>
   
-    <div class="entry-detail" id="initialization?-instance-method">
+    <div class="entry-detail" id="limits(overseer_id:String):Hash(String,Int32)-instance-method">
       <div class="signature">
         
-        def <strong>initialization?</strong>
+        def <strong>limits</strong>(overseer_id : String) : Hash(String, Int32)
 
-        <a class="method-permalink" href="#initialization%3F-instance-method">#</a>
+        <a class="method-permalink" href="#limits%28overseer_id%3AString%29%3AHash%28String%2CInt32%29-instance-method">#</a>
       </div>
       
         <div class="doc">
           
-          <p>Returns <code>true</code> if this enum value equals <code><a href="../../Mosquito/Job/State.html#Initialization">Initialization</a></code></p>
+          <p>Returns the concurrency limits stored for a specific overseer.</p>
         </div>
       
       <br/>
@@ -775,17 +750,17 @@
       </div>
     </div>
   
-    <div class="entry-detail" id="preempted?-instance-method">
+    <div class="entry-detail" id="limits:Hash(String,Int32)-instance-method">
       <div class="signature">
         
-        def <strong>preempted?</strong>
+        def <strong>limits</strong> : Hash(String, Int32)
 
-        <a class="method-permalink" href="#preempted%3F-instance-method">#</a>
+        <a class="method-permalink" href="#limits%3AHash%28String%2CInt32%29-instance-method">#</a>
       </div>
       
         <div class="doc">
           
-          <p>Returns <code>true</code> if this enum value equals <code><a href="../../Mosquito/Job/State.html#Preempted">Preempted</a></code></p>
+          <p>Returns the global concurrency limits stored in the backend.</p>
         </div>
       
       <br/>
@@ -794,17 +769,17 @@
       </div>
     </div>
   
-    <div class="entry-detail" id="running?-instance-method">
+    <div class="entry-detail" id="update(new_limits:Hash(String,Int32),overseer_id:String):Nil-instance-method">
       <div class="signature">
         
-        def <strong>running?</strong>
+        def <strong>update</strong>(new_limits : Hash(String, Int32), overseer_id : String) : Nil
 
-        <a class="method-permalink" href="#running%3F-instance-method">#</a>
+        <a class="method-permalink" href="#update%28new_limits%3AHash%28String%2CInt32%29%2Coverseer_id%3AString%29%3ANil-instance-method">#</a>
       </div>
       
         <div class="doc">
           
-          <p>Returns <code>true</code> if this enum value equals <code><a href="../../Mosquito/Job/State.html#Running">Running</a></code></p>
+          <p>Overwrites the stored concurrency limits for a specific overseer.</p>
         </div>
       
       <br/>
@@ -813,17 +788,17 @@
       </div>
     </div>
   
-    <div class="entry-detail" id="succeeded?-instance-method">
+    <div class="entry-detail" id="update(new_limits:Hash(String,Int32)):Nil-instance-method">
       <div class="signature">
         
-        def <strong>succeeded?</strong>
+        def <strong>update</strong>(new_limits : Hash(String, Int32)) : Nil
 
-        <a class="method-permalink" href="#succeeded%3F-instance-method">#</a>
+        <a class="method-permalink" href="#update%28new_limits%3AHash%28String%2CInt32%29%29%3ANil-instance-method">#</a>
       </div>
       
         <div class="doc">
           
-          <p>Returns <code>true</code> if this enum value equals <code><a href="../../Mosquito/Job/State.html#Succeeded">Succeeded</a></code></p>
+          <p>Overwrites the global stored concurrency limits with <em>new_limits</em>.</p>
         </div>
       
       <br/>
