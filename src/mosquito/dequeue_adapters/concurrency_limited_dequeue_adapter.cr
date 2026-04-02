@@ -29,7 +29,7 @@ module Mosquito
   # In this configuration at most 3 jobs from "queue_a" and 5 from "queue_b"
   # will execute at the same time. Other queues are unlimited.
   class ConcurrencyLimitedDequeueAdapter < DequeueAdapter
-    getter limits : Hash(String, Int32)
+    property limits : Hash(String, Int32)
 
     # Tracks the number of currently in-flight jobs per queue name.
     # Access is fiber-safe because Crystal fibers are cooperatively

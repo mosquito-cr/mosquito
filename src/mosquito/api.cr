@@ -32,4 +32,23 @@ module Mosquito::Api
   def self.event_receiver : Channel(Backend::BroadcastMessage)
     Mosquito.backend.subscribe "mosquito:*"
   end
+
+  # Returns a `ConcurrencyConfig` instance for reading and writing the
+  # remotely stored concurrency limits used by
+  # `RemoteConfigDequeueAdapter`.
+  def self.concurrency_config : ConcurrencyConfig
+    ConcurrencyConfig.instance
+  end
+
+  # Convenience reader for the current remote concurrency limits.
+  def self.concurrency_limits : Hash(String, Int32)
+    concurrency_config.limits
+  end
+
+  # Convenience writer — replaces the stored concurrency limits so that
+  # all `RemoteConfigDequeueAdapter` instances pick them up on their next
+  # refresh cycle.
+  def self.set_concurrency_limits(limits : Hash(String, Int32)) : Nil
+    concurrency_config.update(limits)
+  end
 end
