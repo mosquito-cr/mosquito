@@ -1,5 +1,5 @@
 class MockOverseer < Mosquito::Runners::Overseer
-  property queue_list, coordinator, executors, work_handout, finished_notifier, dequeue_adapter
+  property queue_list, coordinator, perpetual_job_runner, executors, work_handout, finished_notifier, dequeue_adapter
 
   def initialize
     @executor_count = Mosquito.configuration.executor_count
@@ -8,6 +8,7 @@ class MockOverseer < Mosquito::Runners::Overseer
 
     @queue_list = MockQueueList.new
     @coordinator = MockCoordinator.new queue_list
+    @perpetual_job_runner = Mosquito::Runners::PerpetualJobRunner.new @coordinator
     @dequeue_adapter = Mosquito.configuration.dequeue_adapter
     @executors = [] of Mosquito::Runners::Executor
     @work_handout = Channel(Mosquito::WorkUnit).new
