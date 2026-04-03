@@ -32,6 +32,11 @@ module Mosquito
 
     property publish_metrics : Bool = false
 
+    # Optional autoscaler that dynamically adjusts executor count based
+    # on resource utilization. When `nil` (default), executor count is
+    # fixed at `executor_count`.
+    property autoscaler : Mosquito::Autoscaler? = nil
+
     # How often a mosquito runner should emit a heartbeat metric.
     property heartbeat_interval : Time::Span = 20.seconds
 
