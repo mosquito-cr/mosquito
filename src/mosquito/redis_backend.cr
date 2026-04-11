@@ -240,7 +240,8 @@ module Mosquito
     def average(key : String) : Int32
       stats = redis.lrange key, 0, -1
       return 0_i32 if stats.empty?
-      stats.map(&.as(String).to_i32).sum // stats.size
+      sum = stats.sum(0_i64) { |s| s.as(String).to_i64 }
+      (sum // stats.size).to_i32
     end
 
     class Queue < Backend::Queue
