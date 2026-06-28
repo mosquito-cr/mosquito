@@ -5,7 +5,7 @@ describe "job_run storage" do
 
   getter config = {
     "year" => "1752",
-    "name" => "the year september lost 12 days"
+    "name" => "the year september lost 12 days",
   }
 
   getter job_run : Mosquito::JobRun do
@@ -82,6 +82,38 @@ describe "job_run storage" do
       if retrieved
         refute retrieved.config.has_key?("started_at")
         refute retrieved.config.has_key?("finished_at")
+      else
+        flunk "Could not retrieve job_run"
+      end
+    end
+
+    it "retrieves failure details" do
+      now = at_beginning_of_millisecond Time.utc
+      job_run = create_job_run("failing_job")
+
+      Timecop.freeze now do
+        job_run.run
+      end
+
+      retrieved = Mosquito::JobRun.retrieve job_run.id
+      if retrieved
+        assert_equal now, retrieved.failed_at
+        assert_equal "Mosquito::JobFailed", retrieved.error_class
+        assert_equal "this is the reason FailingJob failed", retrieved.error_message
+      else
+        flunk "Could not retrieve job_run"
+      end
+    end
+
+    it "does not include failure details in config after retrieve" do
+      job_run = create_job_run("failing_job")
+      job_run.run
+
+      retrieved = Mosquito::JobRun.retrieve job_run.id
+      if retrieved
+        refute retrieved.config.has_key?("failed_at")
+        refute retrieved.config.has_key?("error_class")
+        refute retrieved.config.has_key?("error_message")
       else
         flunk "Could not retrieve job_run"
       end

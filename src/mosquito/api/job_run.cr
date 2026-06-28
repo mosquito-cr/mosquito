@@ -19,7 +19,7 @@ module Mosquito::Api
     # Get the parameters the job was enqueued with.
     def runtime_parameters : Hash(String, String)
       config.reject do |key, _|
-        ["id", "type", "enqueue_time", "retry_count", "started_at", "finished_at"].includes? key
+        ["id", "type", "enqueue_time", "retry_count", "started_at", "finished_at", "failed_at", "error_class", "error_message"].includes? key
       end
     end
 
@@ -61,6 +61,23 @@ module Mosquito::Api
     # The number of times this job has been retried.
     def retry_count : Int
       config["retry_count"].to_i
+    end
+
+    # The moment this job failed.
+    def failed_at : Time?
+      if time = config["failed_at"]?
+        Time.unix_ms time.to_i64
+      end
+    end
+
+    # The exception class from the last failure.
+    def error_class : String?
+      config["error_class"]?
+    end
+
+    # The exception message from the last failure.
+    def error_message : String?
+      config["error_message"]?
     end
   end
 end

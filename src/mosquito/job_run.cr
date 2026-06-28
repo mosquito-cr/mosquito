@@ -16,6 +16,9 @@ module Mosquito
     getter job : Mosquito::Job?
     getter started_at : Time?
     getter finished_at : Time?
+    getter failed_at : Time?
+    getter error_class : String?
+    getter error_message : String?
     getter overseer_id : String?
     getter metadata : Metadata { Metadata.new(config_key) }
 
@@ -48,9 +51,11 @@ module Mosquito
       id : String? = nil,
       @retry_count : Int32 = 0,
       @started_at : Time? = nil,
-      @finished_at : Time? = nil
+      @finished_at : Time? = nil,
+      @failed_at : Time? = nil,
+      @error_class : String? = nil,
+      @error_message : String? = nil,
     )
-
       @id = id || KeyBuilder.build @enqueue_time.to_unix_ms.to_s, rand(1000)
       @config = {} of String => String
       @job = nil
@@ -73,6 +78,13 @@ module Mosquito
       if finished_at_ = @finished_at
         fields["finished_at"] = finished_at_.to_unix_ms.to_s
       end
+
+      if failed_at_ = @failed_at
+        fields["failed_at"] = failed_at_.to_unix_ms.to_s
+      end
+
+      fields["error_class"] = @error_class
+      fields["error_message"] = @error_message
 
       metadata.set fields
     end
@@ -105,11 +117,19 @@ module Mosquito
       instance = build_job
 
       @started_at = Time.utc
+      @failed_at = nil
+      @error_class = nil
+      @error_message = nil
       instance.run
       @finished_at = Time.utc
 
       if executed? && failed?
         @retry_count += 1
+        @failed_at = @finished_at
+        if exception = job!.exception
+          @error_class = exception.class.name
+          @error_message = exception.message
+        end
       end
       store
     end
@@ -172,12 +192,16 @@ module Mosquito
       retry_count = (fields.delete("retry_count") || 0).to_i
       started_at_raw = fields.delete("started_at")
       finished_at_raw = fields.delete("finished_at")
+      failed_at_raw = fields.delete("failed_at")
+      error_class = fields.delete("error_class")
+      error_message = fields.delete("error_message")
 
       started_at = started_at_raw ? Time.unix_ms(started_at_raw.to_i64) : nil
       finished_at = finished_at_raw ? Time.unix_ms(finished_at_raw.to_i64) : nil
+      failed_at = failed_at_raw ? Time.unix_ms(failed_at_raw.to_i64) : nil
       overseer_id = fields.delete("overseer_id")
 
-      instance = new(name, Time.unix_ms(timestamp.to_i64), id, retry_count, started_at, finished_at)
+      instance = new(name, Time.unix_ms(timestamp.to_i64), id, retry_count, started_at, finished_at, failed_at, error_class, error_message)
       instance.config = fields
       instance.overseer_id = overseer_id
 

@@ -68,4 +68,28 @@ describe Mosquito::Api::JobRun do
     api = Mosquito::Api::JobRun.new(job_run.id)
     assert_equal now, api.finished_at
   end
+
+  it "can retrieve failure details" do
+    now = at_beginning_of_millisecond Time.utc
+    job_run = create_job_run("failing_job")
+
+    Timecop.freeze now do
+      job_run.run
+    end
+
+    api = Mosquito::Api::JobRun.new(job_run.id)
+    assert_equal now, api.failed_at
+    assert_equal "Mosquito::JobFailed", api.error_class
+    assert_equal "this is the reason FailingJob failed", api.error_message
+  end
+
+  it "does not include failure details in runtime parameters" do
+    job_run = create_job_run("failing_job")
+    job_run.run
+
+    api = Mosquito::Api::JobRun.new(job_run.id)
+    refute api.runtime_parameters.has_key?("failed_at")
+    refute api.runtime_parameters.has_key?("error_class")
+    refute api.runtime_parameters.has_key?("error_message")
+  end
 end

@@ -47,4 +47,17 @@ describe "job_run running" do
     assert_nil job_run.started_at
     assert_nil job_run.finished_at
   end
+
+  it "sets failure details when a job fails" do
+    now = at_beginning_of_millisecond Time.utc
+    job_run = create_job_run("failing_job")
+
+    Timecop.freeze now do
+      job_run.run
+    end
+
+    assert_equal now, job_run.failed_at
+    assert_equal "Mosquito::JobFailed", job_run.error_class
+    assert_equal "this is the reason FailingJob failed", job_run.error_message
+  end
 end
