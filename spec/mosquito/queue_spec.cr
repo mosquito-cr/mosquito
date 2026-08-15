@@ -208,4 +208,26 @@ describe Queue do
     end
   end
 
+  describe "equality" do
+    it "considers two instances with the same name equal" do
+      assert_equal Mosquito::Queue.new(name), Mosquito::Queue.new(name)
+    end
+
+    it "hashes instances with the same name alike" do
+      assert_equal Mosquito::Queue.new(name).hash, Mosquito::Queue.new(name).hash
+    end
+
+    it "dedupes equal-by-name instances in hash-based collections" do
+      assert_equal 1, Set{Mosquito::Queue.new(name), Mosquito::Queue.new(name)}.size
+    end
+
+    it "subtracts equal-by-name instances in hash-based Array operations" do
+      names = (1..17).map { |i| "queue_#{i}" }
+      known = names.map { |n| Mosquito::Queue.new n }
+      fresh = names.map { |n| Mosquito::Queue.new n }
+
+      assert_equal 0, (fresh - known).size
+    end
+  end
+
 end

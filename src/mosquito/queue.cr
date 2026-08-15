@@ -143,6 +143,10 @@ module Mosquito
       name == other.name
     end
 
+    def hash(hasher)
+      name.hash(hasher)
+    end
+
     # Pause this queue. While paused, `#dequeue` returns nil and no jobs
     # will be dispatched. Jobs can still be enqueued and will accumulate
     # until the queue is resumed.
