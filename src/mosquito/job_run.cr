@@ -165,6 +165,9 @@ module Mosquito
         next_execution = Time.utc + reschedule_interval
         queue.reschedule self, next_execution
       else
+        @finished_at = Time.utc
+        @failed_at = @finished_at
+        store
         queue.banish self
         delete in: Mosquito.configuration.failed_job_ttl
       end
