@@ -143,6 +143,18 @@ module Mosquito::Runners
       observer.heartbeat!
     end
 
+    # Enqueues follow-up work produced by a job's `#next_batch` hook.
+    private def enqueue_next_batch(job : Mosquito::Job)
+      batch = job.next_batch
+      return if batch.empty?
+
+      batch.each do |next_job|
+        if queued = next_job.as?(QueuedJob)
+          queued.enqueue
+        end
+      end
+    end
+
     # Runs a job from a Queue.
     #
     # Execution time is measured and logged, and the job is either forgotten
@@ -153,6 +165,7 @@ module Mosquito::Runners
       end
 
       if job_run.succeeded?
+        enqueue_next_batch job_run.job!
         queue.forget job_run
         job_run.delete in: successful_job_ttl
       elsif job_run.preempted?

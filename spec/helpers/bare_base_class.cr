@@ -17,4 +17,3 @@ module Mosquito
     end
   end
 end
-

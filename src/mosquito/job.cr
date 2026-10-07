@@ -169,6 +169,30 @@ module Mosquito
       fail
     end
 
+    # Override to return an Array of QueuedJob instances that should be
+    # enqueued after this job succeeds.  Each returned instance will be
+    # enqueued via its normal `#enqueue` method.
+    #
+    # This hook turns any job into a perpetual job: one that knows how
+    # to produce follow-up work for itself (or other job types).
+    #
+    # ```
+    # class FanOutJob < Mosquito::QueuedJob
+    #   param batch_id : Int64
+    #
+    #   def perform
+    #     # process batch_id
+    #   end
+    #
+    #   def next_batch : Array(Mosquito::Job)
+    #     next_ids.map { |id| FanOutJob.new(batch_id: id).as(Mosquito::Job) }
+    #   end
+    # end
+    # ```
+    def next_batch : Array(Mosquito::Job)
+      [] of Mosquito::Job
+    end
+
     # To be called from inside a #perform
     # Marks this job as a failure. By default, if the job is a candidate for
     # re-scheduling, it will be run again at a later time.
