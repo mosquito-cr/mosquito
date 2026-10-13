@@ -96,6 +96,15 @@ class NonReschedulableFailingJob < FailingJob
   end
 end
 
+class BeforeHookFailingJob < Mosquito::QueuedJob
+  before do
+    raise "before hook failed"
+  end
+
+  def perform
+  end
+end
+
 class NotImplementedJob < Mosquito::Job
 end
 
