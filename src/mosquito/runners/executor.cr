@@ -141,6 +141,11 @@ module Mosquito::Runners
       log.trace { "Finished #{job_run} from #{queue.name}" }
 
       if @decommissioned
+        # Going idle would tell the overseer this executor can take more work,
+        # so the overseer is told about the finished job directly.
+        overseer.job_finished work_unit
+        @work_unit = nil
+
         self.state = State::Stopping
         return
       end
