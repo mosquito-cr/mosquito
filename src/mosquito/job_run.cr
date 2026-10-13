@@ -123,7 +123,7 @@ module Mosquito
       instance.run
       @finished_at = Time.utc
 
-      if executed? && failed?
+      if failed? || aborted?
         @retry_count += 1
         @failed_at = @finished_at
         if exception = job!.exception
@@ -184,7 +184,7 @@ module Mosquito
     end
 
     # :nodoc:
-    delegate :executed?, :succeeded?, :failed?, :preempted?, :preempt_reason, :failed, :rescheduled, to: job!
+    delegate :executed?, :succeeded?, :failed?, :aborted?, :preempted?, :preempt_reason, :failed, :rescheduled, to: job!
 
     # Used to construct a job_run from the parameters stored in the backend.
     def self.retrieve(id : String)

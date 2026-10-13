@@ -79,6 +79,31 @@ describe "Mosquito::Runners::Executor" do
       end
     end
 
+    it "banishes a job whose before hook raises once it runs out of retries" do
+      clean_slate do
+        register BeforeHookFailingJob
+        queue = BeforeHookFailingJob.queue
+
+        job_run = BeforeHookFailingJob.new.build_job_run
+        job_run.store
+        queue.enqueue job_run
+
+        # The retry limit is 5, so 10 attempts is plenty if retries are counted.
+        attempts = 0
+        10.times do
+          attempts += 1
+          attempt = Mosquito::JobRun.retrieve(job_run.id).not_nil!
+          executor.work_unit = WorkUnit.of(attempt, from: queue)
+          executor.execute
+          break if queue.backend.list_dead.includes?(job_run.id)
+        end
+
+        retry_count = Mosquito::JobRun.retrieve(job_run.id).not_nil!.retry_count
+        assert_includes queue.backend.list_dead, job_run.id,
+          "job was never banished: still being rescheduled after #{attempts} attempts (retry_count=#{retry_count})"
+      end
+    end
+
     it "schedules deletion of a job_run that hard failed" do
       clean_slate do
         register NonReschedulableFailingJob
