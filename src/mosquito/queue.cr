@@ -135,6 +135,17 @@ module Mosquito
       observer.banished job_run
     end
 
+    def prune_dead(limit : Int32 = 100) : Int32
+      pruned = 0
+      backend.list_dead.each do |job_run_id|
+        break if pruned >= limit
+        next if JobRun.retrieve(job_run_id)
+        backend.remove_dead JobRun.new("_cleanup", id: job_run_id)
+        pruned += 1
+      end
+      pruned
+    end
+
     def size(*, include_dead : Bool = true) : Int64
       backend.size(include_dead)
     end

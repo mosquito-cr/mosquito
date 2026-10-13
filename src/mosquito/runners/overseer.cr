@@ -282,6 +282,8 @@ module Mosquito::Runners
           end
           total += 1
         end
+
+        q.prune_dead
       end
 
       if total > 0
