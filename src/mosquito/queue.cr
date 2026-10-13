@@ -129,9 +129,12 @@ module Mosquito
       observer.forgotten job_run
     end
 
+    # Moves a job_run to the dead list and schedules its config for deletion
+    # after `failed_job_ttl`, so a banished job can't leak its config forever.
     def banish(job_run : JobRun)
       backend.finish job_run
       backend.terminate job_run
+      job_run.delete in: Mosquito.configuration.failed_job_ttl
       observer.banished job_run
     end
 

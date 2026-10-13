@@ -293,6 +293,27 @@ describe "Mosquito::Runners::Overseer" do
       end
     end
 
+    it "schedules deletion of an orphaned job it cannot rebuild" do
+      clean_slate do
+        # No job class is registered for this type, so retrying it raises.
+        queue = Mosquito::Queue.new "unregistered_queue"
+        job_run = Mosquito::JobRun.new "unregistered_job"
+        job_run.store
+        queue.enqueue job_run
+        queue.dequeue
+
+        Mosquito.backend.set job_run.config_key, "overseer_id", "dead-overseer"
+        Mosquito.backend.register_overseer overseer.observer.instance_id
+
+        overseer.cleanup_orphaned_pending_jobs
+
+        assert_includes queue.backend.list_dead, job_run.id
+        refute_includes queue.backend.list_pending, job_run.id
+        ttl = Mosquito.backend.expires_in job_run.config_key
+        assert_equal Mosquito.configuration.failed_job_ttl, ttl
+      end
+    end
+
     it "claims unclaimed pending jobs without recovering them" do
       clean_slate do
         register QueuedTestJob

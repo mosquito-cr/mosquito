@@ -121,6 +121,38 @@ describe "Mosquito::Runners::Executor" do
       end
     end
 
+    it "schedules deletion of a job_run it had to banish after a crash" do
+      clean_slate do
+        # No job class is registered for this type, so building the job raises
+        # both when the job is run and when the failure is handled.
+        queue = Mosquito::Queue.new "unregistered_queue"
+        job_run = Mosquito::JobRun.new "unregistered_job"
+        job_run.store
+        queue.enqueue job_run
+        queue.dequeue
+
+        # Eagerly evaluate to avoid a race in lazy getter initialization
+        # across fibers.
+        pipeline = executor.job_pipeline
+        done = Channel(Nil).new(1)
+
+        spawn { pipeline.send WorkUnit.of(job_run, from: queue) }
+        spawn do
+          executor.each_run
+          done.send nil
+        end
+
+        select
+        when done.receive
+        when timeout(2.seconds)
+          refute true, "Timed out waiting for the executor to handle the job"
+        end
+
+        assert_includes queue.backend.list_dead, job_run.id
+        assert_equal executor.failed_job_ttl, backend.expires_in(job_run.config_key)
+      end
+    end
+
     it "schedules deletion of a job_run that hard failed" do
       clean_slate do
         register NonReschedulableFailingJob
