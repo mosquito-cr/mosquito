@@ -142,6 +142,21 @@ describe Queue do
     end
   end
 
+  describe "prune_dead" do
+    it "removes banished job ids once their config has expired" do
+      test_queue.enqueue job_run
+      test_queue.dequeue
+      test_queue.banish job_run
+
+      assert_equal 0, test_queue.prune_dead, "live dead job run should be kept"
+      assert_includes backend.list_dead, job_run.id
+
+      job_run.delete
+      assert_equal 1, test_queue.prune_dead
+      refute_includes backend.list_dead, job_run.id
+    end
+  end
+
   describe "pause" do
     it "is not paused by default" do
       refute test_queue.paused?

@@ -189,6 +189,9 @@ module Mosquito
       def terminate(job_run : JobRun)
       end
 
+      def remove_dead(job_run : JobRun)
+      end
+
       def flush : Nil
       end
 
