@@ -111,6 +111,13 @@ class BeforeHookFailingJob < Mosquito::QueuedJob
   end
 end
 
+# A job which can't be built, for exercising crash handling in the runners.
+class UnbuildableJob < Mosquito::Job
+  def initialize
+    raise "cannot build this job"
+  end
+end
+
 class NotImplementedJob < Mosquito::Job
 end
 
