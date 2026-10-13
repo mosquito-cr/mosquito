@@ -311,6 +311,10 @@ module Mosquito
         redis.lpush dead_q, job_run.id
       end
 
+      def remove_dead(job_run : JobRun)
+        redis.lrem dead_q, 0, job_run.id
+      end
+
       def flush : Nil
         redis.del(
           waiting_q,

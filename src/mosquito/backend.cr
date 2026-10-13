@@ -77,6 +77,7 @@ module Mosquito
       abstract def deschedule : Array(JobRun)
       abstract def finish(job_run : JobRun)
       abstract def terminate(job_run : JobRun)
+      abstract def remove_dead(job_run : JobRun)
       abstract def undequeue : JobRun?
       abstract def flush : Nil
       abstract def size(include_dead : Bool = true) : Int64
