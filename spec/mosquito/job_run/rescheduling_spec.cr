@@ -56,6 +56,18 @@ describe "job_run rescheduling" do
     refute job.should_retry
   end
 
+  it "retries a job_run whose type has no registered job class" do
+    clean_slate do
+      job_run = create_job_run "no_such_job"
+      job_run.run
+
+      assert job_run.failed?
+      assert_equal 1, job_run.retry_count
+      assert job_run.rescheduleable?
+      assert_includes job_run.error_message.to_s, "no_such_job"
+    end
+  end
+
   it "is not rescheduleable when the job failed with retry=false" do
     clean_slate do
       Mosquito::Base.register_job_mapping "no_retry_failing_job", NoRetryFailingJob

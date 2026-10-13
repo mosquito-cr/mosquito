@@ -17,6 +17,10 @@ module Mosquito
       @@mapping[string] = klass
     end
 
+    def self.job_for_type?(type : String) : Mosquito::Job.class | Nil
+      @@mapping[type]?
+    end
+
     def self.job_for_type(type : String) : Mosquito::Job.class
       @@mapping[type]
     rescue e : KeyError
