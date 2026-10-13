@@ -145,8 +145,7 @@ module Mosquito::Runners
         log.trace { "Found an idle executor" }
         all_executors_busy = false
         if finished_job
-          dequeue_adapter.finished_with(finished_job.job_run, finished_job.queue)
-          queue_list.notify_released(finished_job.job_run, finished_job.queue)
+          job_finished finished_job
         end
       when timeout(idle_wait)
         log.trace { "Idled for #{idle_wait.total_seconds}s" }
@@ -184,6 +183,11 @@ module Mosquito::Runners
       run_at_most every: Mosquito.configuration.heartbeat_interval * 3, label: :pending_cleanup do
         cleanup_orphaned_pending_jobs
       end
+    end
+
+    def job_finished(work_unit : WorkUnit) : Nil
+      dequeue_adapter.finished_with(work_unit.job_run, work_unit.queue)
+      queue_list.notify_released(work_unit.job_run, work_unit.queue)
     end
 
     # Delegates job dequeue to the configured `DequeueAdapter`.

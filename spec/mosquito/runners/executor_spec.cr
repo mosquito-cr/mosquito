@@ -79,6 +79,52 @@ describe "Mosquito::Runners::Executor" do
       end
     end
 
+    it "tells the dequeue adapter a job finished when the executor is decommissioned mid-job" do
+      clean_slate do
+        register SleepyJob
+        SleepyJob.should_sleep = true
+        queue_name = SleepyJob.queue.name
+
+        adapter = Mosquito::ConcurrencyLimitedDequeueAdapter.new({queue_name => 1})
+        overseer.dequeue_adapter = adapter
+
+        SleepyJob.new.enqueue
+        work_unit = adapter.dequeue queue_list
+        assert work_unit, "expected the adapter to dequeue the job"
+        assert_equal 1, adapter.active_count(queue_name)
+
+        # Eagerly evaluate to avoid a race in lazy getter initialization
+        # across fibers.
+        pipeline = executor.job_pipeline
+        done = Channel(Nil).new(1)
+
+        spawn { pipeline.send work_unit if work_unit }
+        spawn do
+          executor.each_run
+          done.send nil
+        end
+
+        # Scale the executor down while it is in the middle of the job.
+        500.times do
+          break if executor.state.working?
+          sleep 1.millisecond
+        end
+        assert executor.state.working?, "executor never picked up the job"
+        executor.decommission!
+        SleepyJob.should_sleep = false
+
+        select
+        when done.receive
+        when timeout(2.seconds)
+          refute true, "Timed out waiting for the executor to finish the job"
+        end
+
+        assert_equal 0, adapter.active_count(queue_name), "the finished job still counts against the queue's concurrency limit"
+      ensure
+        SleepyJob.should_sleep = false
+      end
+    end
+
     it "reschedules a job whose type has no registered job class" do
       clean_slate do
         queue = Mosquito::Queue.new "unregistered_queue"
