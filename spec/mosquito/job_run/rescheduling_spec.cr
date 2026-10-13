@@ -56,6 +56,18 @@ describe "job_run rescheduling" do
     refute job.should_retry
   end
 
+  it "is not rescheduleable when the job failed with retry=false" do
+    clean_slate do
+      Mosquito::Base.register_job_mapping "no_retry_failing_job", NoRetryFailingJob
+      job_run = create_job_run "no_retry_failing_job"
+      job_run.run
+
+      assert job_run.failed?
+      assert_equal 1, job_run.retry_count
+      refute job_run.rescheduleable?
+    end
+  end
+
   describe "preempted jobs" do
     it "sets state to preempted and does not execute" do
       job = PreemptingJob.new

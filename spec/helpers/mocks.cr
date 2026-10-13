@@ -96,6 +96,12 @@ class NonReschedulableFailingJob < FailingJob
   end
 end
 
+class NoRetryFailingJob < Mosquito::QueuedJob
+  def perform
+    fail "not worth retrying", retry: false
+  end
+end
+
 class BeforeHookFailingJob < Mosquito::QueuedJob
   before do
     raise "before hook failed"
