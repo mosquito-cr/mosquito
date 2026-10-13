@@ -162,8 +162,7 @@ module Mosquito::Runners
         queue.forget job_run
         job_run.delete in: successful_job_ttl
       elsif job_run.preempted?
-        queue.forget job_run
-        queue.enqueue job_run
+        queue.reschedule job_run, Time.utc + job_run.reschedule_interval
       else
         if job_run.rescheduleable?
           next_execution = Time.utc + job_run.reschedule_interval
