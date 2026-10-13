@@ -67,7 +67,13 @@ module Mosquito::Runners
       # Send a message to the overseer that this executor is idle,
       # including the job that was just finished (if any).
       if state == State::Idle
-        spawn { finished_bell.send @work_unit }
+        finished = @work_unit
+
+        # The job is done. Forget it so that, if this executor crashes later,
+        # the overseer doesn't mistake it for in-flight work and run it again.
+        @work_unit = nil
+
+        spawn { finished_bell.send finished }
       end
 
       super
