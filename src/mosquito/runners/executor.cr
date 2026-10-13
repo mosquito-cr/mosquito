@@ -65,9 +65,12 @@ module Mosquito::Runners
 
     private def state=(state : State)
       # Send a message to the overseer that this executor is idle,
-      # including the job that was just finished (if any).
+      # including the job that was just finished (if any), and clear out the
+      # current work unit.
       if state == State::Idle
-        spawn { finished_bell.send @work_unit }
+        previous_work_unit = @work_unit
+        spawn { finished_bell.send previous_work_unit }
+        @work_unit = nil
       end
 
       super

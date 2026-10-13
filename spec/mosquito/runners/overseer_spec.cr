@@ -183,6 +183,56 @@ describe "Mosquito::Runners::Overseer" do
     end
   end
 
+  describe "adjust_executor_pool" do
+    it "recovers the job a crashed executor was working on" do
+      clean_slate do
+        register QueuedTestJob
+        queue = QueuedTestJob.queue
+
+        job_run = QueuedTestJob.new.enqueue
+        queue.dequeue
+        executor.work_unit = WorkUnit.of(job_run, from: queue)
+        executor.state = Runnable::State::Working
+        executor.state = Runnable::State::Crashed
+
+        overseer.adjust_executor_pool
+
+        assert_equal 1, Mosquito::JobRun.retrieve(job_run.id).try(&.retry_count)
+        assert_equal 1, queue.backend.scheduled_size
+        assert_equal 0, queue.backend.pending_size
+      end
+    end
+
+    it "does not run a job again when its executor crashed after finishing it" do
+      clean_slate do
+        register QueuedTestJob
+        queue = QueuedTestJob.queue
+
+        job_run = QueuedTestJob.new.enqueue
+        queue.dequeue
+        executor.work_unit = WorkUnit.of(job_run, from: queue)
+        executor.execute
+
+        # Going idle is how an executor reports a finished job to the overseer.
+        executor.state = Runnable::State::Idle
+
+        select
+        when finished = overseer.finished_notifier.receive
+          assert_equal job_run.id, finished.try(&.job_run.id)
+        when timeout(0.5.seconds)
+          refute true, "Timed out waiting for the idle notification"
+        end
+
+        executor.state = Runnable::State::Crashed
+        overseer.adjust_executor_pool
+
+        assert_equal 0, queue.backend.scheduled_size, "finished job was rescheduled by crash recovery"
+        assert_equal 0, queue.backend.waiting_size
+        assert_equal 0, Mosquito::JobRun.retrieve(job_run.id).try(&.retry_count)
+      end
+    end
+  end
+
   describe "cleanup_orphaned_pending_jobs" do
     it "recovers a pending job whose overseer is dead" do
       clean_slate do
