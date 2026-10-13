@@ -93,6 +93,7 @@ module Mosquito
         before_hook
       rescue e : Exception
         log.error(exception: e) { "Before hook raised, job will not be executed" }
+        @exception = e
         @state = State::Aborted
         return
       end
