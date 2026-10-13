@@ -169,7 +169,6 @@ module Mosquito
         @failed_at = @finished_at
         store
         queue.banish self
-        delete in: Mosquito.configuration.failed_job_ttl
       end
     end
 
