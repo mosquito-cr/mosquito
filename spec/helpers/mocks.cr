@@ -209,6 +209,17 @@ class PreemptingJob < Mosquito::QueuedJob
   end
 end
 
+class PreemptUntilJob < Mosquito::QueuedJob
+  class_property preempt_until : Time? = nil
+
+  before do
+    preempt "not yet", until: self.class.preempt_until
+  end
+
+  def perform
+  end
+end
+
 class NonReschedulablePreemptingJob < Mosquito::QueuedJob
   include PerformanceCounter
 

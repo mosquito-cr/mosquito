@@ -184,6 +184,45 @@ describe "Mosquito::Runners::Executor" do
       end
     end
 
+    it "reschedules a preempted job for its until time" do
+      clean_slate do
+        register PreemptUntilJob
+        queue = PreemptUntilJob.queue
+        now = Time.utc
+
+        Timecop.freeze now do
+          PreemptUntilJob.preempt_until = now + 30.seconds
+
+          job_run = PreemptUntilJob.new.build_job_run
+          job_run.store
+
+          executor.work_unit = WorkUnit.of(job_run, from: queue)
+          executor.execute
+
+          assert_equal 0, queue.backend.waiting_size, "preempted job was re-enqueued immediately"
+          scheduled_for = queue.backend.scheduled_job_run_time(job_run)
+          assert_equal (now + 30.seconds).to_unix_ms, scheduled_for.try(&.to_unix_ms)
+        end
+      end
+    end
+
+    it "reschedules a preempted job with no until time without waiting" do
+      clean_slate do
+        register PreemptUntilJob
+        queue = PreemptUntilJob.queue
+        PreemptUntilJob.preempt_until = nil
+
+        job_run = PreemptUntilJob.new.build_job_run
+        job_run.store
+
+        executor.work_unit = WorkUnit.of(job_run, from: queue)
+        executor.execute
+
+        assert_equal 1, queue.backend.scheduled_size
+        assert_equal 0, queue.backend.waiting_size
+      end
+    end
+
     it "schedules deletion of a job_run it had to banish after a crash" do
       clean_slate do
         # The job can't be built, so it raises both when the job is run and
