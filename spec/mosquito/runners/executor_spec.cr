@@ -79,6 +79,23 @@ describe "Mosquito::Runners::Executor" do
       end
     end
 
+    it "banishes a job which fails with retry: false instead of rescheduling it" do
+      clean_slate do
+        register NoRetryFailingJob
+        queue = NoRetryFailingJob.queue
+
+        job_run = NoRetryFailingJob.new.build_job_run
+        job_run.store
+        queue.enqueue job_run
+
+        executor.work_unit = WorkUnit.of(job_run, from: queue)
+        executor.execute
+
+        assert_includes queue.backend.list_dead, job_run.id
+        assert_equal 0, queue.backend.scheduled_size, "job was rescheduled despite retry: false"
+      end
+    end
+
     it "banishes a job whose before hook raises once it runs out of retries" do
       clean_slate do
         register BeforeHookFailingJob

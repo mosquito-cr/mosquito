@@ -174,8 +174,9 @@ module Mosquito
     end
 
     # For the current retry count, is the job rescheduleable?
+    # A job which opted out with `fail(retry: false)` is never rescheduleable.
     def rescheduleable?
-      job!.rescheduleable? @retry_count
+      job!.should_retry && job!.rescheduleable?(@retry_count)
     end
 
     # For the current retry count, how long should a runner wait before retry?
