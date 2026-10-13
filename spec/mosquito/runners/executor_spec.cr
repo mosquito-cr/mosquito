@@ -79,6 +79,23 @@ describe "Mosquito::Runners::Executor" do
       end
     end
 
+    it "reschedules a job whose type has no registered job class" do
+      clean_slate do
+        queue = Mosquito::Queue.new "unregistered_queue"
+        job_run = Mosquito::JobRun.new "unregistered_job"
+        job_run.store
+        queue.enqueue job_run
+        queue.dequeue
+
+        executor.work_unit = WorkUnit.of(job_run, from: queue)
+        executor.execute
+
+        assert_equal 1, queue.backend.scheduled_size, "job was not rescheduled"
+        assert_equal 0, queue.backend.dead_size
+        assert_equal 1, Mosquito::JobRun.retrieve(job_run.id).try(&.retry_count)
+      end
+    end
+
     it "banishes a job which fails with retry: false instead of rescheduling it" do
       clean_slate do
         register NoRetryFailingJob
@@ -123,10 +140,11 @@ describe "Mosquito::Runners::Executor" do
 
     it "schedules deletion of a job_run it had to banish after a crash" do
       clean_slate do
-        # No job class is registered for this type, so building the job raises
-        # both when the job is run and when the failure is handled.
-        queue = Mosquito::Queue.new "unregistered_queue"
-        job_run = Mosquito::JobRun.new "unregistered_job"
+        # The job can't be built, so it raises both when the job is run and
+        # when the failure is handled.
+        register UnbuildableJob
+        queue = UnbuildableJob.queue
+        job_run = Mosquito::JobRun.new "unbuildable_job"
         job_run.store
         queue.enqueue job_run
         queue.dequeue

@@ -97,12 +97,16 @@ module Mosquito
 
     # Builds a Job instance from this job_run. Populates the job with config from
     # the backend.
+    #
+    # When no Job class is registered for this job_run's type, an `UnknownJob`
+    # is built instead. It fails like any other job, so the job_run is retried
+    # on the regular schedule.
     def build_job : Mosquito::Job
       if job = @job
         return job
       end
 
-      @job = instance = Base.job_for_type(type).new
+      @job = instance = new_job
 
       if instance.responds_to? :vars_from
         instance.vars_from config
@@ -110,6 +114,14 @@ module Mosquito
 
       instance.job_run_id = id
       instance
+    end
+
+    private def new_job : Mosquito::Job
+      if job_class = Base.job_for_type?(type)
+        job_class.new
+      else
+        UnknownJob.new.tap { |unknown_job| unknown_job.type = type }
+      end
     end
 
     # Builds and runs the job with this job_run config.

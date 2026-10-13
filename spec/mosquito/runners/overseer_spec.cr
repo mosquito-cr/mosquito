@@ -293,9 +293,10 @@ describe "Mosquito::Runners::Overseer" do
 
     it "schedules deletion of an orphaned job it cannot rebuild" do
       clean_slate do
-        # No job class is registered for this type, so retrying it raises.
-        queue = Mosquito::Queue.new "unregistered_queue"
-        job_run = Mosquito::JobRun.new "unregistered_job"
+        # The job requires a param which this job_run lacks, so retrying it raises.
+        register JobWithHooks
+        queue = JobWithHooks.queue
+        job_run = Mosquito::JobRun.new "job_with_hooks"
         job_run.store
         queue.enqueue job_run
         queue.dequeue
