@@ -60,10 +60,22 @@ describe "Mosquito::Runners::Overseer" do
         executor.state = Runnable::State::Idle
 
         # each_run will block until there's a receiver on the channel
-        spawn { overseer.each_run }
+        each_run_finished = Channel(Nil).new(1)
+        spawn do
+          overseer.each_run
+          each_run_finished.send nil
+        end
         result = overseer.work_handout.receive
         assert_equal expected_job_run, result.job_run
         assert_equal QueuedTestJob.queue, result.queue
+
+        # each_run keeps going after the hand-off (including the first pending
+        # job cleanup). Wait for it so it can't touch the next test's backend state.
+        select
+        when each_run_finished.receive
+        when timeout(2.seconds)
+          refute true, "Timed out waiting for each_run to finish"
+        end
       end
     end
 
