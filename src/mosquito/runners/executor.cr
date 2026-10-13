@@ -138,6 +138,9 @@ module Mosquito::Runners
       log.trace { "Finished #{job_run} from #{queue.name}" }
 
       if @decommissioned
+        overseer.job_finished work_unit
+        @work_unit = nil
+
         self.state = State::Stopping
         return
       end
