@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Crystal Docs 1.20.3">
+<meta name="generator" content="Crystal Docs 1.21.0">
 <meta name="crystal_docs.project_version" content="2.0.0">
 <meta name="crystal_docs.project_name" content="mosquito">
 
@@ -452,6 +452,11 @@
       
     </li>
   
+  <li class=" " data-id="mosquito/Mosquito/UnknownJob" data-name="mosquito::unknownjob">
+      <a href="../Mosquito/UnknownJob.html">UnknownJob</a>
+      
+    </li>
+  
   <li class=" " data-id="mosquito/Mosquito/WeightedDequeueAdapter" data-name="mosquito::weighteddequeueadapter">
       <a href="../Mosquito/WeightedDequeueAdapter.html">WeightedDequeueAdapter</a>
       
@@ -730,7 +735,7 @@ JobRuns know how to:</p>
       <li class="entry-summary">
         <a href="#rescheduleable%3F-instance-method" class="signature"><strong>#rescheduleable?</strong></a>
         
-          <div class="summary"><p>For the current retry count, is the job rescheduleable?</p></div>
+          <div class="summary"><p>For the current retry count, is the job rescheduleable? A job which opted out with <code>fail(retry: false)</code> is never rescheduleable.</p></div>
         
       </li>
     
@@ -934,6 +939,9 @@ JobRuns know how to:</p>
           
           <p>Builds a Job instance from this job_run. Populates the job with config from
 the backend.</p>
+<p>When no Job class is registered for this job_run's type, an <code><a href="../Mosquito/UnknownJob.html">UnknownJob</a></code>
+is built instead. It fails like any other job, so the job_run is retried
+on the regular schedule.</p>
         </div>
       
       <br/>
@@ -1210,7 +1218,8 @@ Clears the overseer_id since the job is no longer in-flight.</p>
       
         <div class="doc">
           
-          <p>For the current retry count, is the job rescheduleable?</p>
+          <p>For the current retry count, is the job rescheduleable?
+A job which opted out with <code>fail(retry: false)</code> is never rescheduleable.</p>
         </div>
       
       <br/>
