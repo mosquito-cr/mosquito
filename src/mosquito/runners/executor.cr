@@ -48,7 +48,8 @@ module Mosquito::Runners
     @stop_channel = Channel(Nil).new(1)
 
     # Marks this executor for graceful shutdown. It will stop after
-    # completing its current job (if any).
+    # completing its current job (if any). Used by both manual scale-down
+    # and the autoscaler.
     def decommission!
       return if @decommissioned
       @decommissioned = true
