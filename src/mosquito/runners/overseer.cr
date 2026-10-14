@@ -21,6 +21,7 @@ module Mosquito::Runners
     getter queue_list : QueueList
     getter executors
     getter coordinator
+    getter perpetual_job_runner : PerpetualJobRunner
     getter dequeue_adapter : Mosquito::DequeueAdapter
 
     # The channel where job runs which have been dequeued are sent to executors.
@@ -48,6 +49,7 @@ module Mosquito::Runners
       @queue_list = QueueList.new
       @queue_list.resource_gates = Mosquito.configuration.resource_gates
       @coordinator = Coordinator.new queue_list
+      @perpetual_job_runner = PerpetualJobRunner.new @coordinator
       @dequeue_adapter = Mosquito.configuration.dequeue_adapter
       @executors = [] of Executor
       @work_handout = Channel(WorkUnit).new
@@ -112,6 +114,7 @@ module Mosquito::Runners
       return if state.stopping?
 
       coordinator.schedule
+      perpetual_job_runner.poll
 
       # I cannot imagine a situation where this happens in the normal flow of
       # events, but if it did it would be a mess. If something crashes hard

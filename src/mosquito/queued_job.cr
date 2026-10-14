@@ -9,6 +9,10 @@ module Mosquito
 
       PARAMETERS = [] of Nil
 
+      macro poll_every(interval)
+        PERPETUAL_POLL_INTERVAL = \{{ interval }}
+      end
+
       macro param(parameter)
         {% verbatim do %}
           {%
@@ -113,6 +117,13 @@ module Mosquito
 
               job_run
             end
+          {% end %}
+
+          # Auto-register for perpetual polling when the class defines
+          # next_batch AND specifies a poll_every interval.
+          {% if @type.methods.map(&.name).includes?(:next_batch.id) &&
+                @type.has_constant?(:PERPETUAL_POLL_INTERVAL) %}
+            Mosquito::Base.register_perpetual_job({{ @type.id }}, {{ @type.constant(:PERPETUAL_POLL_INTERVAL) }})
           {% end %}
         {% end %}
       end
