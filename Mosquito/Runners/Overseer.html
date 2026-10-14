@@ -452,11 +452,6 @@
       
     </li>
   
-  <li class=" " data-id="mosquito/Mosquito/UnknownJob" data-name="mosquito::unknownjob">
-      <a href="../../Mosquito/UnknownJob.html">UnknownJob</a>
-      
-    </li>
-  
   <li class=" " data-id="mosquito/Mosquito/WeightedDequeueAdapter" data-name="mosquito::weighteddequeueadapter">
       <a href="../../Mosquito/WeightedDequeueAdapter.html">WeightedDequeueAdapter</a>
       
@@ -666,13 +661,6 @@
     
       <li class="entry-summary">
         <a href="#idle_wait%3ATime%3A%3ASpan-instance-method" class="signature"><strong>#idle_wait</strong> : Time::Span</a>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#job_finished%28work_unit%3AWorkUnit%29%3ANil-instance-method" class="signature"><strong>#job_finished</strong>(work_unit : WorkUnit) : Nil</a>
-        
-          <div class="summary"><p>Lets the dequeue adapter and resource gates know a job is done, so they can release whatever they were holding for it.</p></div>
         
       </li>
     
@@ -1123,30 +1111,6 @@ uses this as a signal to check the queues for more work.</p>
 
         <a class="method-permalink" href="#idle_wait%3ATime%3A%3ASpan-instance-method">#</a>
       </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="job_finished(work_unit:WorkUnit):Nil-instance-method">
-      <div class="signature">
-        
-        def <strong>job_finished</strong>(work_unit : <a href="../../Mosquito/WorkUnit.html">WorkUnit</a>) : Nil
-
-        <a class="method-permalink" href="#job_finished%28work_unit%3AWorkUnit%29%3ANil-instance-method">#</a>
-      </div>
-      
-        <div class="doc">
-          
-          <p>Lets the dequeue adapter and resource gates know a job is done, so they
-can release whatever they were holding for it.</p>
-<p>Executors which go back to work report this through the finished
-notifier. An executor which is shutting down can't, since the notifier
-also signals that the executor is free to take more work, and calls this
-directly instead.</p>
-        </div>
       
       <br/>
       <div>

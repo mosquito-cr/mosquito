@@ -452,11 +452,6 @@
       
     </li>
   
-  <li class=" " data-id="mosquito/Mosquito/UnknownJob" data-name="mosquito::unknownjob">
-      <a href="../Mosquito/UnknownJob.html">UnknownJob</a>
-      
-    </li>
-  
   <li class=" " data-id="mosquito/Mosquito/WeightedDequeueAdapter" data-name="mosquito::weighteddequeueadapter">
       <a href="../Mosquito/WeightedDequeueAdapter.html">WeightedDequeueAdapter</a>
       
@@ -678,8 +673,6 @@
       <li class="entry-summary">
         <a href="#banish%28job_run%3AJobRun%29-instance-method" class="signature"><strong>#banish</strong>(job_run : JobRun)</a>
         
-          <div class="summary"><p>Moves a job_run to the dead list and schedules its config for deletion after <code>failed_job_ttl</code>, so a banished job can't leak its config forever.</p></div>
-        
       </li>
     
       <li class="entry-summary">
@@ -748,13 +741,6 @@
     
       <li class="entry-summary">
         <a href="#paused%3F%3ABool-instance-method" class="signature"><strong>#paused?</strong> : Bool</a>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#prune_dead%28limit%3AInt32%3D100%29%3AInt32-instance-method" class="signature"><strong>#prune_dead</strong>(limit : Int32 = <span class="n">100</span>) : Int32</a>
-        
-          <div class="summary"><p>Removes dead job runs whose config has expired (see failed_job_ttl), so the dead list doesn't accumulate dangling ids.</p></div>
         
       </li>
     
@@ -912,12 +898,6 @@
 
         <a class="method-permalink" href="#banish%28job_run%3AJobRun%29-instance-method">#</a>
       </div>
-      
-        <div class="doc">
-          
-          <p>Moves a job_run to the dead list and schedules its config for deletion
-after <code>failed_job_ttl</code>, so a banished job can't leak its config forever.</p>
-        </div>
       
       <br/>
       <div>
@@ -1118,28 +1098,6 @@ which is useful for backing off from a rate-limited external resource.</p>
 
         <a class="method-permalink" href="#paused%3F%3ABool-instance-method">#</a>
       </div>
-      
-      <br/>
-      <div>
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="prune_dead(limit:Int32=100):Int32-instance-method">
-      <div class="signature">
-        
-        def <strong>prune_dead</strong>(limit : Int32 = <span class="n">100</span>) : Int32
-
-        <a class="method-permalink" href="#prune_dead%28limit%3AInt32%3D100%29%3AInt32-instance-method">#</a>
-      </div>
-      
-        <div class="doc">
-          
-          <p>Removes dead job runs whose config has expired (see failed_job_ttl),
-so the dead list doesn't accumulate dangling ids.
-At most <code>limit</code> entries are removed per call; the rest are picked up
-on later cleanup cycles.</p>
-        </div>
       
       <br/>
       <div>
