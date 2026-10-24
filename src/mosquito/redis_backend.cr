@@ -92,8 +92,7 @@ module Mosquito
     end
 
     def retrieve(key : String) : Hash(String, String)
-      result = redis.hgetall(key).as(Array).map(&.to_s)
-      result.in_groups_of(2, "").to_h
+      redis.hgetall(key).to_h { |key, value| {key.to_s, value.to_s} }
     end
 
     def delete(key : String, in ttl : Int64 = 0) : Nil
@@ -370,7 +369,7 @@ module Mosquito
       {% end %}
 
       def scheduled_job_run_time(job_run : JobRun) : Time?
-        if score = redis.zscore(scheduled_q, job_run.id).as?(String)
+        if score = redis.zscore(scheduled_q, job_run.id).as?(Float64)
           Time.unix_ms(score.to_i64)
         end
       end

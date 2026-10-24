@@ -18,7 +18,8 @@ targets:
 dependencies:
   redis:
     github: jgaskins/redis
-    version: ~> 0.16
+    # version: ~> 0.16
+    branch: resp3
 
 development_dependencies:
   minitest:
